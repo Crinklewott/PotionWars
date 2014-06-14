@@ -76,6 +76,8 @@ class Room(universal.RPGObject):
         if character.get_id() in self.characters:
             del self.characters[character.get_id()]
 
+    def has(self, character):
+        return character.get_id() in self.characters.keys()
     def add_adjacent(self, adjacent):
         if self.adjacent is None:
             if type(adjacent) is list:
@@ -260,6 +262,7 @@ def save(previousModeIn):
     except FileNotFoundError:
         os.mkdir('save')
         saveFiles = [f for f in os.listdir('save') if f[0] != '.']
+    universal.clear_world_view()
     universal.say_title('Save')
     try:
         saveFiles.insert(0, saveFiles.pop(saveFiles.index('quick.sav')))
@@ -378,6 +381,7 @@ def load(returnMode=town_mode):
         saveFiles.insert(0, saveFiles.pop(saveFiles.index('quick.sav')))
     except ValueError: 
         pass
+    universal.clear_world_view()
     universal.say_title('Load')
     universal.say('\n'.join(universal.numbered_list([sf for sf in saveFiles if sf[0] != '.'])))
     if len(saveFiles) < 10:

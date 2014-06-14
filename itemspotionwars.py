@@ -90,7 +90,7 @@ boyShorts = items.Underwear('boyshorts', 'A pair of dark red boyshorts that comp
 
 stealthThongBonus = [0 for i in range(universal.NUM_STATS)]
 stealthThongBonus[universal.STEALTH] = 1
-Thong = items.Thong('thong of stealth', ' '.join(['A V-string, dark red thong that is lightly imbued with magic. The magic provides the wearer with improved fine motor''',
+stealthThong = items.Thong('loincloth of stealth', ' '.join(["A dark red loincloth that leaves the majority of the wearer's cheeks exposed. It is lightly imbued with magic. The magic provides the wearer with improved fine motor",
     '''control over their legs, improving the wearer's ability to move stealthily. Provides a +1 bonus to Stealth.''']), price=200, 
     statBonuses=stealthThongBonus)
 

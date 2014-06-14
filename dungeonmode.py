@@ -658,6 +658,7 @@ class Dungeon(townmode.Room):
         square = self[floor][row][column][HERE]
         event = False
         set_commands(['(P)arty', '(S)ave', '(Q)uick Save', '(L)oad', 't(I)tle Screen', '(Esc)Quit'])
+        universal.clear_world_view()
         if (has_char('*', square) or has_char('s', square)) and self.dungeonEvents[floor][row][column] is not None:
             event = True
             self.dungeonEvents[floor][row][column]()

@@ -212,7 +212,6 @@ avaricumSquare.add_adjacent(edgeOfAvaricum)
 shrine = Room('Shrine', '''Despite the size of the cathedral, the actual place of worship is tiny, no more than a shrine with with four pews, each of which could seat five people if they didn't mind being friendly. At the back of the shrine is an equallly small altar. Sitting on the center of the altar is a brightly painted wooden idol of the Mother. Behind the altar is a straight-backed, armless oaken chair. There is a sign carved into the wood of the vestibule: "Although the Avaricum Cathedral is open to all who seek help in any form, because of the small size of the shrine, only Sisters are allowed to attend the weekly worship."''', bgMusic=CHURCH)
 
 def shrine_before_arrival():
-    print('calling shrine_before_arrival.')
     if p.PC.currentEpisode == episode1 and p.PC.currentEpisode.currentSceneIndex == 0 and 'second_hand_tragedy' in p.PC.keywords:
         universal.say(universal.format_line([name(), 'has no interest in going to the Matirian Church again any time soon.']))
         return False
@@ -527,22 +526,31 @@ def marias_home_before_arrival():
     if not 'Marias_home' in keywords():
         universal.say(universal.format_text([['''While''', name(), '''would like to find Maria's home,''', heshe(), '''has no idea where it is.''']]), justification=0)
         return False
+    elif 'grudge_against_Maria' in keywords() and p.PC.currentEpisode == episode1:
+        universal.say(universal.format_text([[name(), '''has no interest in speaking to Maria right now.''']]), justification=0)
+        return False
     return True
 def marias_home_after_arrival():
     universal.say_title("Maria's Home")
+    if mariasHome.has(maria) and p.PC.currentEpisode == episode1:
+        mariasHome.description = format_text([mariasHomeDesc, ['''Maria is hunched over the small firepit, making some stew. She glances up as''', name(), 
+            '''enters.''']])
     if 'boarding_with_Maria' in keywords() and p.PC.currentEpisode == episode1:
         mariasHome.description = universal.format_text([['''Maria lives in a dinky little room with barely enough room for two people to lie down comfortably. The''',
     '''floor is packed dirt, and the old wooden walls sag, seeming on the verge of collapse at any moment. A small, stone-circled firepit sits in the''',
     '''center, just below a small hole in the ceiling. A small collection of wooden bowls, plates, and  skewers lie next to the pit. A pile of ragged''',
-    '''blankets is crumpled up in the corner. A few additional blankets are spread out next to the firepit. There is a small note written in the dirt. It reads: 
-    "Went for a walk. Your blankets are spread out next to the pit. We'll look for a better place tomorrow. Maria"'''],
-    ['''If''', name(), '''wishes,''', heshe(), '''can Rest, and put an end to this seemingly neverending day.''']])
+    '''blankets is crumpled up in the corner. A few additional blankets are spread out next to the firepit.''']])
+        if 'Elise_shows_you_around' in keywords():
+            mariasHome.description = universal.format_text([mariasHome.description, ['''There is a small note written in the dirt. It reads:''',
+    '''"Went for a walk. Your blankets are spread out next to the pit. We'll look for a better place tomorrow. Maria"''']])
+        mariasHome.description = format_text([mariasHome.description, [''' If''', name(), '''wishes,''', heshe(), 
+            '''can Rest, and put an end to this seemingly neverending day.''']])
 
-
-mariasHome = Bedroom("Maria's Home", description=universal.format_line(['''Maria lives in a dinky little room with barely enough room for two people to lie down comfortably. The''',
+mariasHomeDesc = universal.format_line(['''Maria lives in a dinky little room with barely enough room for two people to lie down comfortably. The''',
     '''floor is packed dirt, and the old wooden walls sag, seeming on the verge of collapse at any moment. A small, stone-circled firepit sits in the''',
     '''center, just below a small hole in the ceiling. A small collection of wooden bowls, plates, and  skewers lie next to the pit. A pile of ragged''',
-    '''blankets is crumpled up in the corner.''']), bgMusic=TAIRONAN, before_arrival=marias_home_before_arrival, after_arrival=marias_home_after_arrival)
+    '''blankets is crumpled up in the corner.'''])
+mariasHome = Bedroom("Maria's Home", description=mariasHomeDesc, bgMusic=TAIRONAN, before_arrival=marias_home_before_arrival, after_arrival=marias_home_after_arrival)
 mariasHome.add_adjacent(slums)
 slums.add_adjacent(mariasHome)
 
@@ -5521,10 +5529,10 @@ def e0_6_1_caning_interpreter(keyEvent):
 def e0_8_5():
     universal.say_title('Grappling Room')
     if not 'met_Cosima' in keywords():
-        universal.say(universal.format_line([['''Another large, open room. However, unlike the others, in this one there is a large, hay-filled sack covering most of the floor like some''',
+        universal.say(universal.format_line(['''Another large, open room. However, unlike the others, in this one there is a large, hay-filled sack covering most of the floor like some''',
             '''sort of carpet for lovers of all thing stables. Scattered about the room are several Vengadores, all lying on the ground, clutching at their bare''',
             '''bottoms. In the center of the room is a tall, lanky, middle-aged woman with olive-skin, dark hair and matching eyes. She has managed to wrestle''',
-            '''a Taironan''','''into the diaper position, and is vigorously spanking the other woman's exposed ass with a small paddle.''']]))
+            '''a Taironan''','''into the diaper position, and is vigorously spanking the other woman's exposed ass with a small paddle.''']))
     else:
         universal.say(universal.format_line(['''Other than the chastised Vengadores scattered about, the room is empty; Cosima has left to aid in repulsing the attackers.''']), 
                 justification=0)
@@ -6055,6 +6063,8 @@ def e0_3_5():
             '''claustrophobic maze. The whole maze has the feeling of a forest where the birds have suddenly gone quiet.'''],
             [name(), '''glances over''', hisher(), '''shoulder at the door, and considers the wisdom of continuing into these dark corridors.\n\n''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+    else:
+        backOfGuild.display()
     if not 'Cosimas_task' in keywords():
         universal.say(universal.format_text([['''Eventually,''', heshe(), '''backs away, deciding not to enter the scary looking maze. Perhaps''', heshe(), 
             '''would be better off checking out a different place for now. Like the training room to the north.''']]))
@@ -6064,22 +6074,32 @@ def e0_5_5():
     if not 'met_Mai' in keywords():
         universal.say(universal.format_text([[name(), '''freezes. For a second there,''', heshe(), '''thought''', heshe(), '''heard a faint scrabbling.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+    else:
+        backOfGuild.display()
 def e0_1_6():
     if not 'met_Mai' in keywords():
         universal.say(universal.format_text([['''A dead end. As''', name(), '''turns,''', heshe(), '''catches a glimpse of something moving through the shadows.''', HeShe(), 
             '''freezes, and waits for the movement to occur again. After several minutes,''', heshe(), '''takes a deep breath and continues moving.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+    else:
+        backOfGuild.display()
+    
 def e0_2_9():
     if not 'met_Mai' in keywords():
         universal.say(universal.format_text([['''A faint, haunting giggle wafts through the air.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+    else:
+        backOfGuild.display()
 def e0_5_9():
     if not 'met_Mai' in keywords():
         universal.say(universal.format_text([['''As''', name(), '''draws abreast of another shadowy alcove,''', heshe(), '''glances to''', hisher(), '''left. And freezes. In the alcove to''',
             hisher(), '''left is a dim figure. The figure is standing so perfectly still, that''', name(), '''almost didn't see it. Almost.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+    else:
+        backOfGuild.display()
 def e0_5_8():
     if 'met_Mai' in keywords():
+        backOfGuild.display()
         return
     increment_spankings_taken()
     add_keyword('met_Mai')
@@ -6522,7 +6542,7 @@ def mai_squat_thrusts_interpreter(keyEvent):
             universal.say(universal.format_text([['''"Great," says Mai, grinning. But then she shakes her finger at''', name() + ".", '''"However, if you want my exercises''',
                 '''have any affect, you have come everyday. Sporadic attendance waste both our times. So I'm going turn you over my knee and spank you everytime you''',
                 '''don't show up. Clear?"'''],
-                [name(), '''nods.''']]), justification=0)
+                [name(), '''nods.\n\n''']]), justification=0)
             if 'Cosimas_task' in keywords():
                 convince_mai()
             else:
@@ -11329,7 +11349,7 @@ ep1_maria_temper_forgive.children = [ep1_maria_live, ep1_maria_dont_live]
 
 def ep1_maria_live_question():
     quip = universal.format_line(['''Anyway, I was wondering if you'd like to live with me. It's not much, but it's a home. In fact, we could even upgrade a little, and still only''',
-        '''cost us each fifty coins a month. I live in kind of a rough neighborhood, though, on the edge of the Slums."'''])
+        '''cost us each fifty coins a month."'''])
     if 'boarding_with_Adrian' in keywords(): 
         quip = universal.format_text([quip, ['''"Sorry," says''', name() + ".", '''"But I'm already boarding with Adrian."'''],
             ['''"Oh." Maria's hesitant smile fades. "Well, OK. I mean, you certainly don't have to live with me. Probably safer to live with Adrian, anyway."''']])
@@ -11343,8 +11363,10 @@ def ep1_maria_live_qf():
     mariasHome.boarding = True
     remove_keyword('boarding_with_Adrian')
     guildBedroom.boarding = False
-    add_keyword('mariasHome')
-    ep1_maria_live.quip = universal.format_text([['''Maria grins. "Excellent. You can find me on the edge of the slums, just past the Adventurer's Guild."''']])
+    ep1_maria_live.quip = universal.format_text([['''Maria grins. "Excellent."''']])
+    if not 'Marias_home' in keywords(): 
+        ep1_maria_live.quip += format_line([''' You can find my place right on the edge of the slums, near the Adventurer's Guild."'''])
+    add_keyword('Marias_home')
     if 'taking_Carrie_home' in keywords() and not ('lied_about_name' in keywords() or 'lied_about_Bonda' in keywords()):
         ep1_maria_live.quip = universal.format_text([ep1_maria_live.quip, ['''Carrie limps out a few seconds later. Her eyes light up when she sees''', name() + ".", '''"Hey''', name() + "!", 
             '''Good news. Sister''',
@@ -11353,21 +11375,26 @@ def ep1_maria_live_qf():
             '''Maria nearby in case things turn ugly."'''],
             ['''"Good to know," says''', name() + ".", '''Though he feels a bit insulted that Sister Samantha would think him capable of such a thing, a little bit of''',
                 '''caution is probably called for. "Shall we go?"''']])
-    return (universal.acknowledge, [townmode.go, avaricumSquare])
+    if 'Elise_shows_you_around' in keywords():
+        return (universal.acknowledge, [townmode.go, avaricumSquare])
+    else:
+        return (universal.acknowledge, [townmode.go, mariasHome])
 ep1_maria_live.quip_function = ep1_maria_live_qf        
 
 ep1_maria_dont_live.comment = '''"Sorry, but I think I'll look for something else. Something a bit safer."'''
 def ep1_maria_dont_live_qf():
-    add_keyword('mariasHome')
+    add_keyword('Marias_home')
     if not 'boarding_with_Adrian' in keywords():
         ep1_maria_dont_live.quip = universal.format_text([['''"That's understandable," says Maria with a nod. "I'd recommend talking to Adrian. He often lets adventurers board''',
             '''with him for very low rates and a few chores. Plus, the rooms are quite nice, and the Guild is fairly safe. Well, it was, anyway."'''],
             ['''"Ok, I will," says''', name() + ".", '''"I'll see you around, I guess."'''],
             ['''"Yeah. I'll see you." Maria leaves.''']])
     else:
-        ep1_maria_dont_live.quip = universal.format_text([['''"Yeah. I guess we will," says Maria. She gives''', name(), '''a brief hug. "Anyway, you can find me in at the edge''',
+        ep1_maria_dont_live.quip = universal.format_text([['''"Yeah. I guess we will," says Maria. She gives''', name(), '''a brief hug.''']])
+        if not 'mariasHome' in keywords(): 
+            ep1_maria_dont_live.quip += format_line([''' "Anyway, you can find me in at the edge''',
             '''of the slums, just past the Adventurer's Guild. It's good to see you. Try to stay out of trouble."'''],
-            [name(), '''returns the hug.''']])
+            [name(), '''returns the hug.'''])
     if 'taking_Carrie_home' in keywords():
         ep1_maria_dont_live.quip = universal.format_text([ep1_maria_dont_live.quip, ['''Carrie limps out a few seconds later. Her eyes light up when she sees''', name() + ".", '''"Hey''', name() + "!", 
             '''Good news. Sister''',
@@ -11375,7 +11402,8 @@ def ep1_maria_dont_live_qf():
             '''tell you to stop, and you don't, she will rob you of your manhood in the most violent manner imaginable. Also, Maria needs to be nearby, so that she''',
             '''can help me in case you turn out less pleasant than you appear, so to speak."'''],
             ['''"Good to know," says''', name() + ".", '''"Shall we go?"''']])
-    return (universal.acknowledge, [townmode.go, avaricumSquare])
+    if 'Elise_shows_you_around' in keywords():
+        return (universal.acknowledge, [townmode.go, avaricumSquare])
 ep1_maria_dont_live.quip_function = ep1_maria_dont_live_qf
 
 ep1_maria_temper_refuse = Node(308)
@@ -11425,19 +11453,25 @@ ep1_maria_dont_chase.quip_function = ep1_maria_dont_chase_qf
 
 
 def maria_slap(node):
-    quip = universal.format_text([['''Maria chews anxiously on her lower lip. Her face is drawn and tearstained. Her fingers twist anxiously around each other. "Umm. Hi,''', name() + '."'],
-        ['''Sister Samantha exchanges a look with Roland, then grabs Carrie by the ear and drags her off to the corner, while Roland guides Elise to a different corner.'''],
-        ['''"Get buried," says''', name() + ",", '''turning towards the door. "I'm going back to the Guild and finding a bed."'''],
-        [name(), '''approaches the Shrine door, accompanied by the intense murmur of Sister Samantha's scolding, Carrie's abashed answers, and the sharp smack of''',
+    quip = universal.format_text([['''Maria chews anxiously on her lower lip. Her face is drawn and tearstained. Her fingers twist anxiously around each other. "Umm. Hi,''', name() + '."']])
+    if 'Elise_shows_you_around' in keywords():
+        quip = universal.format_text([quip, ['''Sister Samantha exchanges a look with Roland, then grabs Carrie by the ear and drags her off to the corner, while Roland guides Elise to a different corner.''']])
+    quip = universal.format_text([quip, ['''"Get buried," says''', name() + ",", '''turning towards the door. "I'm going back to the Guild and finding a bed."''']])
+    if 'Elise_shows_you_around' in keywords():
+        quip = universal.format_text([quip, [name(), '''approaches the Shrine door, accompanied by the intense murmur of Sister Samantha's scolding, Carrie's abashed answers, and the sharp smack of''',
         '''hand to bottom as Roland begins''',
-            '''spanking Elise.'''],
-        ['"' + name(), '''wait," says Maria, rushing forward. "Please, can't we talk?"''']])
+            '''spanking Elise.''']])
+    else:
+        quip = universal.format_text([quip, ['''"Why did you come here?" asks Maria.'''],
+            ['''"I don't know."''', name(), '''opens the door. "But it was a mistake."''']])
+    quip = universal.format_text([quip, ['"' + name(), '''wait," says Maria, rushing forward. "Please, can't we talk?"''']])
     node.children = [ep1_maria_ignore, ep1_maria_talk, ep1_maria_about_what]
     return quip
 
 ep1_maria_ignore = Node(311)
 ep1_maria_ignore.comment = '''Ignore Maria.'''
 def ep1_maria_ignore_qf():
+    add_keyword('grudge_against_Maria')
     ep1_maria_ignore.quip = universal.format_text([[name(), '''pulls open the door, and leaves. Maria doesn't follow.''']])
     if 'taking_Carrie_home' in keywords():
         ep1_maria_ignore.quip = universal.format_text([['''After a few minutes, Carrie comes out. Her eyes are bright, her face is tear-stained, and she's more waddling than''',
@@ -11447,7 +11481,10 @@ def ep1_maria_ignore_qf():
             ['''"Yeah. Let's go."'''],
             ['''"You do have a bed right?"'''],
             [name(), '''grins. Carrie groans.''']])
-    return (townmode.go, [avaricumSquare])
+    if 'Elise_shows_you_around' in keywords():
+        return (townmode.go, [avaricumSquare])
+    else:
+        return (townmode.go, [slums])
 ep1_maria_ignore.quip_function = ep1_maria_ignore_qf
 
 ep1_maria_talk = Node(312)
@@ -11455,36 +11492,39 @@ ep1_maria_talk.comment = '''"Yeah. Yeah, we can talk."'''
 def ep1_maria_talk_qf():
     ep1_maria_talk.quip = universal.format_text([[name(), '''waits.'''],
         ['''Maria rolls her palm across the hilt of her dagger. She taps her thumb against it, and slides her fingertips across the sheathed blade. She''',
-            '''glances at''', name(), '''several times, and opens her mouth. Then she looks away. She walks towards a pew, and begins picking at the wood with her''',
-            '''fingernail.'''],
-        ['''There is a solid thwack, and a howl of pain. Sister Samantha has pulled Carrie's skirt up over her hips,''', '''and pulled down the young woman's''',
+            '''glances at''', name(), '''several times, and opens her mouth. Then she looks away.''']])
+    if 'Elise_shows_you_around' in keywords():
+        ep1_maria_talk.quip = format_text([ep1_maria_talk.quip, ['''There is a solid thwack, and a howl of pain. Sister Samantha has pulled Carrie's skirt up over her hips,''', '''and pulled down the young woman's''',
             '''rather modest panties.''' if 'Samantha_saw_Carries_dress' in keywords() else '''exposing a (very!) small purple thong.''', '''Now, she is vigorously''',
-            '''paddling Carrie's bare, wobbling cheeks, while the younger woman kicks and wails.'''],
-        [name(), '''considers sitting down, but instead leans against the pew, trying to ignore''', hisher(), '''friends' punishments.'''],
-        ['''"I'm sorry," says Maria in Taironan, her quiet voice nearly lost in the din of the two spankings. She sits down, and starts picking at her skirt. "I just''',
-            '''don't want you hurt."'''],
-        ['''There is a sharp thwack, and a particularly loud wail.''', name(), '''glances towards Roland and Elise. Roland has yanked down Elise's thin, lacy panties,''',
+            '''paddling Carrie's bare, wobbling cheeks, while the younger woman kicks and wails.''']])
+    ep1_maria_talk.quip = format_text([ep1_maria_talk.quip, [name(), '''considers sitting down, but instead leans against the wall.'''],
+        ['''"I'm sorry," says Maria in Taironan, her voice barely audible. She sits down, and starts picking at her skirt. "I just''',
+            '''don't want you hurt."''']])
+    if 'Elise_shows_you_around' in keywords():
+        ep1_maria_talk.quip = format_text([ep1_maria_talk.quip, ['''There is a sharp thwack, and a particularly loud wail.''', name(), '''glances towards Roland and Elise. Roland has yanked down Elise's thin, lacy panties,''',
         '''and''',
-            '''removed one of her slippers. He is cracking the sole of the slipper against her voluptuous bum, making her buck kick and squeal.'''],
-        [name(), '''waits for Maria to say more.'''],
+            '''removed one of her slippers. He is cracking the sole of the slipper against her voluptuous bum, making her buck kick and squeal.''']])
+    ep1_maria_talk.quip = format_text([ep1_maria_talk.quip, [name(), '''waits for Maria to say more.'''],
         ['''Maria says nothing, just shifts her glance between her lap and''', name() + "."],
-        ['''"Shouldn't that be up to me?" asks''', name(), '''in a quiet voice. Carrie lets out a particularly loud shriek, and''', name(), '''winces a little. Girl's''',
+        ['''"Shouldn't that be up to me?" asks''', name(), '''in a quiet voice.''']]) 
+    if 'Elise_shows_you_around' in keywords():
+        ep1_maria_talk.quip = format_text([ep1_maria_talk.quip, ['''Carrie lets out a particularly loud shriek, and''', name(), '''winces a little. Girl's''',
             '''got an impressive set of lungs.'''],
-        ['''"Oh stop milking it," snaps Sister Samantha, cracking the hairbrush against Carrie's right sitspot. "I'm not paddling you that hard."'''],
-        ['''"But you don't understand the situation," says Maria. She stands and begins to pace. "It's not like you're going to go off, get too drunk, and get in a''',
-            '''fight and spend the night in the dungeon. In the best case, you'd do damage to your reputation that could take years to recover, if it ever does."'''],
+        ['''"Oh stop milking it," snaps Sister Samantha, cracking the hairbrush against Carrie's right sitspot. "I'm not paddling you that hard."''']])
+    ep1_maria_talk.quip = format_text([ep1_maria_talk.quip, ['''"But you don't understand the situation," says Maria. She stands and begins to pace. "It's not like you're going to go off, get too drunk, and get in a''',
+            '''fight and spend the night in the dungeon. You'd be ostracized."'''],
         ['''"But I didn't do anything," says''', name() + "."],
         ['''"I know. But it doesn't matter. People still won't trust you," says Maria, anxiously tapping her dagger hilt. "And good luck getting a job. Even Adrian''',
         '''wouldn't touch you if he knew."'''],
         ['''"You don't know that," says''', name() + ".", '''"And even if that's true maybe it's worth it? Maybe it'll do some good."'''],
-        ['''Maria laughs bitterly. "Speaking out won't do any good until a noble has been wrongly MC'd, and trust me, that's not going to happen anytime soon. Nobles''',
-            '''have a special priviledge in Avaricum: even when suspected of a crime, they can refuse to be MC'd."'''],
+        ['''Maria laughs bitterly. "Speaking out won't do any good until a noble has been wrongly controlled, and trust me, that's not going to happen anytime soon. Nobles''',
+            '''have a special priviledge in Avaricum: even when suspected of a crime, they can refuse to be controlled."'''],
         ['''"You're kidding," says''', name() + "."],
-        ['''Maria shakes her head. "Nope. You can be MC'd for breathing wrong. They could murder their own mother, and the most the guard would do is ask a few polite''',
-            '''questions about her sudden and rapid deterioration. Do you see what you're dealing with here? Nobody cares."'''],
-        ['''"Now wait just a minute."''', name(), '''turns towards Roland, and begins speaking in Carnutian. "Roland! What's this garbage about nobles not being''',
-        '''MC'd even if they're suspected of a''',
-        '''crime?"'''],
+        ['''Maria shakes her head. "Nope. You can be controlled for breathing wrong. They could murder their own mother, and the most the guard would do is ask a few polite''',
+            '''questions about her sudden and rapid deterioration. Do you see what you're dealing with here? Nobody cares."''']])
+    if 'Elise_shows_you_around' in keywords():
+            ep1_maria_talk.quip = format_text([ep1_maria_talk.quip, ['''"Now wait just a minute."''', name(), '''turns towards Roland, and begins speaking in Carnutian. "Roland! What's this garbage about nobles not being''',
+        '''controlled even if they're suspected of a''','''crime?"'''],
         ['''"You idiot!" hisses Maria, her eyes wide.'''],
         ['''"What?" asks''', name(), '''angrily. "I can't ask a simple question?"'''],
         ['''Roland growls. "Don't even get me started on that. I've been fighting it for years, but the rest of the nobility refuse to admit that they could''',
@@ -11499,6 +11539,20 @@ def ep1_maria_talk_qf():
         ['''"There, you see?" says Maria. "Make as big a stink as you want, and Roland'll just shrug it off."'''],
         [name(), '''grimaces. "I suppose you're right."'''],
         '''"''' + ep1_maria_live_question()])
+    else:
+        ep1_maria_talk.quip = format_text([ep1_maria_talk.quip, [name(), '''runs a hand through''', hisher(), '''hair. "So, what are we?"'''],
+            ['''"Dirt," says Maria. She laughs bitterly. "Or mud, if you prefer."'''],
+            ['''"And you just accept it?" asks''', name() + "."],
+            ['''Maria's eyes turn haunted. "I didn't once. Catalin and I, we tried to make things better. Got involved in a group agitating for better treatment. Things''',
+                '''got violent. It didn't end well."'''],
+            ['''"What happened? And where's Catalin?" asks''', name() + "."],
+            ['''Maria shakes her head. "I don't know where Cat went. As for a what happened, I don't want to talk about it."'''],
+            ['''"But-"'''],
+            ['''"Please," says Maria. "Please just let it lie."'''],
+            [name(), '''nods reluctantly.'''],
+            ['''"''' + ep1_maria_live_question()]])
+
+
 ep1_maria_talk.quip_function = ep1_maria_talk_qf
 ep1_maria_talk_right = Node(313) 
 ep1_maria_talk_wrong = Node(314)
@@ -11535,12 +11589,12 @@ ep1_maria_about_what = Node(315)
 ep1_maria_about_what.comment = '''"About what? About how you manhandled me?"'''
 def ep1_maria_about_what_qf():
     ep1_maria_about_what.quip = universal.format_text([['''Maria winces. "Yeah. About that."'''],
-        ['''"I said all I wanted to say this morning."''', name(), '''leaves the Shrine.'''],
+        ['''"I said all I wanted to say this morning."''', name(), '''goes back outside.'''],
         ['"' + name(), '''please," says Maria, following''', himher(), '''out, and touching''', names(), '''shoulder. "I just want to help-"'''],
         ['''"Help?" cries''', name() + ",", '''rounding on the other Taironan. "How? How in La Madre's name does keeping quiet help?"'''],
-        ['''Maria glances about, looking to see if any of the few people still in the Square are paying attention. None of them seem to be.'''],
+        ['''Maria glances about, looking to see if there's anyone eavesdropping. The streets seem empty, however.'''],
         ['''"How about by keeping you out of the dungeons? Does that count as helping?" asks Maria.'''],
-        ['''"That's not helping, that's hiding," says''', name() + ",", '''slamming''', hisher(), '''fist down on the stair railing.'''],
+        ['''"That's not helping, that's hiding," says''', name(), '''angrily.'''],
         ['''"You know, you keep talking like you have a choice," says Maria, her voice rising. "Well guess what oh Courageous Crusader, you don't! The only''',
             '''thing you'll do is make yourself disappear for a while. Then, one day, after everyone's forgotten about you, you'll reappear with no memory of where''',
             '''you were, or what you were doing, and a sick dread every time you think about mind control. Is that what you want?"'''],
@@ -11556,13 +11610,13 @@ def ep1_maria_about_what_qf():
         ['''"Because I tried once already," says Maria in quiet voice. "When Catalin and I first arrived. We saw what was going on, we saw how poorly Taironans are''',
             '''treated, and we joined a movement to reclaim our dignity. It was a disaster. Afterwards, I lost track of Catalin. I still don't know where she is, or''',
             '''what she's doing. Curses, she could be dead for all I know."'''],
-        ['''The two Taironans stand in silence for a moment, listening to the dim sounds of spankings coming from inside the Shrine.'''],
+        ['''The two Taironans stand in silence for a moment.'''],
         ['''"Maria-"'''],
-        ['''"I just don't want you to make the same mistake we did," says Maria. She walks over, and begins lightly tracing the large stone hand rails. "Maybe there''',
+        ['''"I just don't want you to make the same mistake we did," says Maria. She walks a few paces away, and kicks absently at a small stone. "Maybe there''',
             '''is a way to make things better, I don't know. But I do know vocal protests aren't the way to do it."'''],
         ['''"Maybe it'll be different this time," says''', name(), '''weakly, rubbing''', hisher(), '''arm.'''],
         ['''Maria shakes her head. "No. Things have only gotten worse. Taironans are tolerated even less than they were when we started."'''],
-        ['''The two stand in silence. It takes a minute for''', name(), '''to realize that the spankings have stopped.'''],
+        [name(), '''doesn't respond. Instead,''', heshe(), '''tries to digest the events of the day, and to figure out what to do about them, if anything.'''],
         '"' + ep1_maria_live_question()])
 ep1_maria_about_what.quip_function = ep1_maria_about_what_qf
 ep1_maria_about_what.children = [ep1_maria_live, ep1_maria_dont_live]
@@ -11761,9 +11815,9 @@ ep1_maria_home = Node(316)
 def ep1_maria_home_qf():
     music.play_music(MARIA)
     if 'lied_about_name' in keywords() or 'lied_about_Bonda' in keywords():
-        quip = universal.format_text([quip, maria_lied(node)])
+        quip = maria_lied(ep1_maria_home)
     elif 'slapped_Maria' in keywords() or 'disowned_Maria' in keywords():
-        quip = universal.format_text([quip, maria_slap(node)])
+        quip = maria_slap(ep1_maria_home)
     else:
         quip = universal.format_text([['''"Hey," says Maria, her eyes lighting up. "Good to see you found your way here."'''],
             [name(), '''shrugs. "Wasn't too hard. You gave pretty good directions."'''],
@@ -11780,8 +11834,9 @@ def ep1_maria_home_qf():
         ['''"As near as I can tell, they're sincere," says Maria uneasily. "Though I fail to see how sparking a two-front war with Avaricum and the Potion''',
         '''Lords 'frees' anybody."'''],
         [name(), '''nods thoughtfully.'''],
+        ['''Maria stares down at the stew for a moment. Then, she shakes her head. '''],
         ep1_maria_live_question()])
-    marias_home.quip = quip
+    ep1_maria_home.quip = quip
 ep1_maria_home.quip_function = ep1_maria_home_qf
 
 ep1_maria_temper_spank = Node(317)
@@ -11932,7 +11987,7 @@ def ep1_roland():
     return universal.format_text([[''' She stops. Her eyes narrow, and she spins to face the door, her notched''',
         '''blade in one fist, the other bursting into flame.''', '''\mThe door slams open, and four city guards charge in. Standing in their midst, his''',
     '''superbly-crafted''',
-            '''blade gripped in both hands, is Roland. Standing next to him is the woman who interrogated''', name(), '''in the guild.'''],
+            '''blade gripped in both hands, is Roland, the Captain of the Avaricum City Guard. Standing next to him is the woman who interrogated''', name(), '''in the guild.'''],
                 ['''"What in-"'''],
                 ['''"You, Catalin of Chengue," says Roland, pointing his blade at Catalin. "Are under arrest for terrorist actions against the City of Avaricum. Drop''',
                     '''your sword and surrender, or face the consequences."'''],
@@ -11997,11 +12052,11 @@ episode1.nextEpisode = episode2
 import logging, logging.handlers
 errorLog = logging.getLogger("errors")
 errorLog.setLevel(logging.ERROR)
+with open("errors.log", 'w') as f:
+    pass
 errorLog.addHandler(logging.FileHandler("errors.log"))
 try:
     eng.begin_game(episode1)
 except Exception, e:
     errorLog.exception("My life is pain!")
     raise
-
-

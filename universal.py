@@ -323,6 +323,13 @@ def clear_screen():
     screen.blit(clearScreen, commandView)
     pygame.display.flip()
 
+def clear_world_view():
+    worldView = get_world_view()
+    clearScreen = pygame.Surface((worldView.width, worldView.height))
+    clearScreen.fill(DARK_GREY)
+    get_screen().blit(clearScreen, worldView)
+    pygame.display.flip()
+
 def clear_commands():
     global textToDisplay
     clearScreen = pygame.Surface((commandView.width, commandView.height))
