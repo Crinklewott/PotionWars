@@ -455,7 +455,6 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
                         print("------You tried to add a music flag '\m', but didn't also include some music. Text that generated the exception:------")
                         print(text)
                         print('---------------Music:---------------------')
-                        print(playedMusic.items())
                         sys.exit(1)
                 #if isTitle:
                     #titleRect = textSurface.get_rect().copy()

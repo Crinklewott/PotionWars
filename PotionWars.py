@@ -5070,6 +5070,8 @@ def e0_8_4():
         '''air is filled with the chaotic sounds of battle. However, the sounds aren't quite as overwhelming; likely the most intense fighting is still occuring''',
         '''upstairs.''','''Somewhere down here is the armory, and the end of''', names(), '''first "mission" with the Adventurer's Guild.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+    else:
+        backOfGuild.display()
         
 def e0_6_3():
     if 'met_Airell' in keywords():
@@ -7075,7 +7077,7 @@ def necia_ambush():
         ['''Soon, the hard sole of the sandal has reduced the woman to tears, and left deep red marks on her bottom. Still, the elf paddles the Vengador, never slowing, no matter how much the Taironan carries''',
             '''on. Finally, the Vengador sags, all her energy spent. She sobs into the floor, as the sandle continues to rise and fall.'''],
         ['''Then, the door bursts open, and the warslinger charges in. Mai leaps to her feet, and spins to face the warslinger, even as he raises his hand and unleashes four pulsing blue spikes. The spikes''',
-            '''slam into the elf, and drive to the ground. They pulse three times, each time eliciting a scream of pain from the elf. After the third pulse, the elf sags, clearly suffering from combat''',
+            '''slam into the elf, and drive her to the ground. They pulse three times, each time eliciting a scream of pain from the elf. After the third pulse, the elf sags, clearly suffering from combat''',
             '''fatigue.'''],
         ['''The warslinger dashes into the room, grabs his sobbing friend, and throws her over his shoulder.'''],
         ['''"Wait," says the Vengador. "First pull-"'''],
@@ -7390,7 +7392,7 @@ def necia_wimpy_continue_spanking():
         '''your fifth decade?"'''],
     ['''"Please," says the woman through gritted teeth. "You really think I'm going to live to my fifth decade? I'll be impressed if I make it to forty."'''],
     ['''"Of course you won't, if you keep getting into fights like this," cries''', name() + ",", '''landing a series of particularly hard slaps to the girl's firm globes.'''],
-    ['''"What do you care, anyway?" muttered the woman. "We're enemies, remember?"'''],
+    ['''"What do you care, anyway?" mutters the woman. "We're enemies, remember?"'''],
     ['''"Padre de la Madre," says''', name(), '''in exasperation.''', HeShe(), '''smacks the girl's left sitspot, eliciting a yelp and squirm. "We're not enemies. Maybe you've got a grudge against Avaricum.''',
         '''Fine, whatever. But I'm not an Avaricumite, Madre, I'm not even Carnutian. I just want to be left alone to live my life. You respect that, and we won't get into situations like this. Understand?"'''],
     ['''"Either you're with us, or you're supporting our enemies," says the woman grimly.'''],
@@ -7446,7 +7448,7 @@ def necia_lecture_interpreter(keyEvent):
         return
     if num == 1:
         universal.say(universal.format_text([['''"I'm not a thief. I'm a defender of the Bondan people," says the Vengador, forcing herself to sit up straight.'''],
-            ['''"How very noble," says''', name() + ".", HeShe(), '''grabs the woman's arm, and yanks her to her feet. "I'm going to martyr your bottom now. Brace yourself."\n\n''']]), justification=0)
+            ['''"How very noble," says''', name() + ".", '''"I'm going to martyr your bottom now. Brace yourself."\n\n''']]), justification=0)
         necia_wimpy_spanking()
     elif num == 2:
         necia_wimpy_spanking()
@@ -7957,7 +7959,7 @@ def episode_1_guild_end():
         ['''The Taironan woman, Alondra, looks around hesitantly. "Are, are they finally gone?"'''],
         ['''"Yes." Ildri gives the girl's shoulder a comforting pat. "They're gone. You're safe."'''],
         ['''Alondra sags with relief, leans against the counter, and runs a shaking hand through her tangled hair.'''],
-        ['''Ildri leans against the counter next to her, and gives her a comforting hug. "Now, why don't you go sit down, and I'll get something to''',
+        ['''Ildri leans against the counter next to her, and gives her a comforting hug. "Now, why don't you go sit down, and I'll get you something to''',
         '''eat."'''],
         ['''Alondra looks around the ruined kitchen. "Where?"'''],
         ['''Ildri chuckles. "Alright, maybe you won't sit, but just wait for me to get you something to eat."'''],
@@ -7970,7 +7972,7 @@ def episode_1_guild_end():
     else:
         universal.say(universal.format_text([[name(), '''returns the smile, but it's a touch wary. "You're one of the Vengadores who attacked us, right?"'''],
             ['''The woman winces, and her smile fades. "Erm, yeah, but I didn't join because I wanted to hurt anyone."\n\n''']]), justification=0)
-    universal.say(universal.format_text([['''"So, why did you join the Vengadores?" asks''', name() + "."],
+    universal.say(universal.format_text([['''"So, why did you join?" asks''', name() + "."],
         ['''Alondra shrugs. "They promised food for my younger siblings. You know how hard it is to feed four kids when their dad's a drunkard, and''',
             '''their mother's dead?"'''],
         ['''"Oh. Uh, no, not really," says''', name(), '''uneasily.'''],
@@ -8011,7 +8013,7 @@ def adrian_recap_interpreter(keyEvent):
         majorOmission = False
         universal.say(universal.format_text([[name(), '''proceeds to tell Adrian an edited version of what happened, glossing over or downright ignoring any events that''',
             '''didn't work out quite so well.'''],
-            ['''Adrian nods thoughtfully throughout''', names(), '''story. "Not half-bad for your first time. However,''']]), 
+            ['''Adrian nods thoughtfully throughout''', names(), '''story. "Not half-bad for your first time.''']]), 
             justification=0)
         summaryOfFailure = []
         if 'failed_to_help_Paloma' in keywords():
@@ -8031,72 +8033,73 @@ def adrian_recap_interpreter(keyEvent):
             summaryOfFailure.append('''the fact that you punched Airell in the nose''')
         if len(summaryOfFailure) > 1:
             summaryOfFailure[-1] = 'and ' + summaryOfFailure[-1]
-        universal.say(' you failed to mention ' + ', '.join(summaryOfFailure) + '.', justification=0)
-        if 'failed_to_help_Paloma' in keywords() and 'talk_with_Mai' in keywords() and 'talk_with_Cosima' in keywords() and 'talk_with_Morey' in keywords() and 'talk_with_Airell' in keywords():
-            universal.say(universal.format_text([[''' Mother's love, it's almost like you want your bottom lashed to ribbons. It'll take a month to work through the backlog''',
-                '''of punishments you've earned yourself."'''],
-                ['''"A month?" says''', name(), '''with a small squeak. "Really?"'''],
-                ['''"Well, I need to give you time to heal between sessions," says Adrian curtly. "For now, we can get your caning out of the way."'''],
-                ['''"My what?" says''', name(), '''in a very small voice.''']]), justification=0)
-        else:
-            universal.say(universal.format_line(['''"\n\n"Heh, heh," says''', name(), '''weakly. "Didn't know you knew about that."''']), justification=0)
-        if majorOmission:
-            universal.say(universal.format_text([['''\n\n"Your conduct is unbecoming a guild member." Adrian crouches behind the counter, and comes up with a long''',
-                '''thin cane. He flexes it experimentally. Naturally, the cane is the only cursed thing in the entire Guild that wasn't damaged in the''',
-                '''fight. "You will visit each wronged instructor at some point over the next month, and submit to their punishment. Today, we'll start''',
-                '''with me."'''],
-                ['''"But, what did I do to you?" asks''', name() + ",", hisher(), '''eyes never leaving the flexing cane.'''],
-                ['''"You lied to me," says Adrian, his voice intense. "I don't mind if things go wrong on a job. They will go wrong, that's how life''',
-                    '''works, but you have to tell me everything. Otherwise, I can't gauge the danger of the job, and I can't gauge your skill. You''',
-                    '''lie to make yourself look good, and I'll send you into jobs that you can't handle, and you'll end up getting seriously hurt''',
-                    '''or killed. And I will not have that!"'''],
-                [name(), '''shrinks away as Adrian's sharp voice cracks against''', hisher(), '''ears like a whip.'''],
-                ['''"Now, I want you to bare your bottom, and bend over the counter." Adrian's lips twist wryly. "Well, what's left of it, anyway."'''],
-                ['''"Completely bare, sir?" says''', name() + ",", '''hesitantly.'''],
-                ['''"Completely," says Adrian in a firm voice.'''],
-                [name(), '''chews uneasily on''', hisher(), '''lips as''', heshe(), '''eyes the cane.'''],
-                ['''"Young''', manlady() + ",", '''you will get extra if I have to do it for you." Adrian snaps the cane against the counter, making''',
-                    name(), '''jump.'''],
-                [name(), '''hastily''', items.lowerlift(p.PC.clothing_below_the_waist()) + "s", hisher(), p.PC.clothing_below_the_waist().name + ",", 
-                universal.format_line(['''and''' if wearing_skirt_or_pants() else universal.format_line(['''and lowers''', hisher()]), p.PC.underwear().name, '''to''', hisher(), '''knees. Then,''', heshe(), 
-                '''bends over the counter and grips the far side.\n\n''']) if wearing_skirt_or_dress_or_pants() and  wearing_underwear() else 
-                universal.format_line(['''Then,''', heshe(), '''bends over the counter, and grips the far side.\n\n'''])]]), justification=0)
-            if p.PC.numSpankings > 2:
-                universal.say(universal.format_text([['''\n\n"My goodness," says Adrian, as he studies''', names(), '''bruised, welted, and angry red bottom. "You've had a''',
-                    '''terrible day, haven't you?"'''],
-                    [name(), '''nods, trying to fight back tears of despair.'''],
-                    ['''"Stand up and cover yourself," says Adrian. He steps around''', name(), '''and returns the cane to its original place beneath''',
-                        '''the counter. "I'll punish you after you've had some time to heal."'''],
-                    [name(), '''jumps to''', hisher(), '''feet and quickly returns''', hisher(), '''clothing to its proper place. "Thank you, sir."'''],
-                    ['''Adrian grunts. "I don't want to hurt you. Just put a sting in your bum, to drive the lesson home. Now, go help Ildri."''']]),
-                    justification=0)
+        if summaryOfFailure != []:
+            universal.say('However, you failed to mention ' + ', '.join(summaryOfFailure) + '.', justification=0)
+            if 'failed_to_help_Paloma' in keywords() and 'talk_with_Mai' in keywords() and 'talk_with_Cosima' in keywords() and 'talk_with_Morey' in keywords() and 'talk_with_Airell' in keywords():
+                universal.say(universal.format_text([[''' Mother's love, it's almost like you want your bottom lashed to ribbons. It'll take a month to work through the backlog''',
+                    '''of punishments you've earned yourself."'''],
+                    ['''"A month?" says''', name(), '''with a small squeak. "Really?"'''],
+                    ['''"Well, I need to give you time to heal between sessions," says Adrian curtly. "For now, we can get your caning out of the way."'''],
+                    ['''"My what?" says''', name(), '''in a very small voice.''']]), justification=0)
             else:
-                add_keyword('caned_by_Adrian')
-                universal.say(universal.format_text([['''"Right, you'll get one stroke for each omission," says Adrian. He taps the cane lightly against''', names(), 
-                '''bum.''', name(), '''hisses, and reflexively clenches.'''],
-                ['''Adrian sighs, and lowers the cane. "Now, don't do that, you'll just make it worse."'''],
-                [name(), '''nods, and takes a slow, deep breath. As''', heshe(), '''releases,''', heshe(), '''relaxes''', hisher(), '''exposed bottom.'''],
-                ['''Then, there is a snap, and a deep stinging line of fire lances across the middle of''', names(), '''bottom.''', name(), 
-                '''shrieks, and thrashes''', hisher(), '''bottom back and forth.''', HeShe(), '''pounds''', hisher(), '''feet against the ground, and''',
-                '''digs''', hisher(), '''fingernails into the countertop.'''],
-                ['''"That was one," says Adrian.'''],
-                ['''One? Only one? Padres' mercy, how could''', heshe(), '''ever take more?''']]), justification=0)
-                if num_omissions() == 1:
-                    universal.say(universal.format_text([['''\n\n"And that's it," says Adrian.'''],
-                    ['''Oh. Right.'''],
-                    ['''Adrian steps around''', name(), '''and places the cane back in its place beneath''',
-                        '''the counter. "Not so bad, right?"'''],
-                        [name(), '''grunts, and straightens.''', HeShe(), '''returns''', hisher(), '''clothing to the proper place, while silently''',
-                            '''vowing never to give Adrian reason to give''', himher(), '''more strokes with that horrible thing.'''],
-                        ['''"Why don't you go help Ildri, now," says Adrian.''']]), justification=0)
-                else:
-                    universal.say(universal.format_text([[''' Then, the cane whips against''', hisher(), '''bottom a second time, and''', hisher(), '''attention is on nothing but the hellish sting in''', hisher(), '''bottom.''',
-                    '''In total,''', name(), '''endures''', str(num_omissions()), '''strokes. Each stroke stings worse''',
-                        '''than the last, and by the end''', name(), '''is a sobbing wreck.'''],
-                        ['''"There," says Adrian. "All done. You going to be honest with me in the future?"'''],
-                        [name(), '''nods, as''', heshe(), '''straightens and fixes''', hisher(), '''clothing, sniffing miserably and wiping the tears from''', hisher(), '''face.'''],
-                        ['''"Good. Now, why don't you go and help Ildri," says Adrian. "I've taken up enough of your time already."''']]), 
+                universal.say(universal.format_line(['''"\n\n"Heh, heh," says''', name(), '''weakly. "Didn't know you knew about that."''']), justification=0)
+            if majorOmission:
+                universal.say(universal.format_text([['''\n\n"Your conduct is unbecoming a guild member." Adrian crouches behind the counter, and comes up with a long''',
+                    '''thin cane. He flexes it experimentally. Naturally, the cane is the only cursed thing in the entire Guild that wasn't damaged in the''',
+                    '''fight. "You will visit each wronged instructor at some point over the next month, and submit to their punishment. Today, we'll start''',
+                    '''with me."'''],
+                    ['''"But, what did I do to you?" asks''', name() + ",", hisher(), '''eyes never leaving the flexing cane.'''],
+                    ['''"You lied to me," says Adrian, his voice intense. "I don't mind if things go wrong on a job. They will go wrong, that's how life''',
+                        '''works, but you have to tell me everything. Otherwise, I can't gauge the danger of the job, and I can't gauge your skill. You''',
+                        '''lie to make yourself look good, and I'll send you into jobs that you can't handle, and you'll end up getting seriously hurt''',
+                        '''or killed. And I will not have that!"'''],
+                    [name(), '''shrinks away as Adrian's sharp voice cracks against''', hisher(), '''ears like a whip.'''],
+                    ['''"Now, I want you to bare your bottom, and bend over the counter." Adrian's lips twist wryly. "Well, what's left of it, anyway."'''],
+                    ['''"Completely bare, sir?" says''', name() + ",", '''hesitantly.'''],
+                    ['''"Completely," says Adrian in a firm voice.'''],
+                    [name(), '''chews uneasily on''', hisher(), '''lips as''', heshe(), '''eyes the cane.'''],
+                    ['''"Young''', manlady() + ",", '''you will get extra if I have to do it for you." Adrian snaps the cane against the counter, making''',
+                        name(), '''jump.'''],
+                    [name(), '''hastily''', items.lowerlift(p.PC.clothing_below_the_waist()) + "s", hisher(), p.PC.clothing_below_the_waist().name + ",", 
+                    universal.format_line(['''and''' if wearing_skirt_or_pants() else universal.format_line(['''and lowers''', hisher()]), p.PC.underwear().name, '''to''', hisher(), '''knees. Then,''', heshe(), 
+                    '''bends over the counter and grips the far side.\n\n''']) if wearing_skirt_or_dress_or_pants() and  wearing_underwear() else 
+                    universal.format_line(['''Then,''', heshe(), '''bends over the counter, and grips the far side.\n\n'''])]]), justification=0)
+                if p.PC.numSpankings > 2:
+                    universal.say(universal.format_text([['''\n\n"My goodness," says Adrian, as he studies''', names(), '''bruised, welted, and angry red bottom. "You've had a''',
+                        '''terrible day, haven't you?"'''],
+                        [name(), '''nods, trying to fight back tears of despair.'''],
+                        ['''"Stand up and cover yourself," says Adrian. He steps around''', name(), '''and returns the cane to its original place beneath''',
+                            '''the counter. "I'll punish you after you've had some time to heal."'''],
+                        [name(), '''jumps to''', hisher(), '''feet and quickly returns''', hisher(), '''clothing to its proper place. "Thank you, sir."'''],
+                        ['''Adrian grunts. "I don't want to hurt you. Just put a sting in your bum, to drive the lesson home. Now, go help Ildri."''']]),
                         justification=0)
+                else:
+                    add_keyword('caned_by_Adrian')
+                    universal.say(universal.format_text([['''"Right, you'll get one stroke for each omission," says Adrian. He taps the cane lightly against''', names(), 
+                    '''bum.''', name(), '''hisses, and reflexively clenches.'''],
+                    ['''Adrian sighs, and lowers the cane. "Now, don't do that, you'll just make it worse."'''],
+                    [name(), '''nods, and takes a slow, deep breath. As''', heshe(), '''releases,''', heshe(), '''relaxes''', hisher(), '''exposed bottom.'''],
+                    ['''Then, there is a snap, and a deep stinging line of fire lances across the middle of''', names(), '''bottom.''', name(), 
+                    '''shrieks, and thrashes''', hisher(), '''bottom back and forth.''', HeShe(), '''pounds''', hisher(), '''feet against the ground, and''',
+                    '''digs''', hisher(), '''fingernails into the countertop.'''],
+                    ['''"That was one," says Adrian.'''],
+                    ['''One? Only one? Padres' mercy, how could''', heshe(), '''ever take more?''']]), justification=0)
+                    if num_omissions() == 1:
+                        universal.say(universal.format_text([['''\n\n"And that's it," says Adrian.'''],
+                        ['''Oh. Right.'''],
+                        ['''Adrian steps around''', name(), '''and places the cane back in its place beneath''',
+                            '''the counter. "Not so bad, right?"'''],
+                            [name(), '''grunts, and straightens.''', HeShe(), '''returns''', hisher(), '''clothing to the proper place, while silently''',
+                                '''vowing never to give Adrian reason to give''', himher(), '''more strokes with that horrible thing.'''],
+                            ['''"Why don't you go help Ildri, now," says Adrian.''']]), justification=0)
+                    else:
+                        universal.say(universal.format_text([[''' Then, the cane whips against''', hisher(), '''bottom a second time, and''', hisher(), '''attention is on nothing but the hellish sting in''', hisher(), '''bottom.''',
+                        '''In total,''', name(), '''endures''', str(num_omissions()), '''strokes. Each stroke stings worse''',
+                            '''than the last, and by the end''', name(), '''is a sobbing wreck.'''],
+                            ['''"There," says Adrian. "All done. You going to be honest with me in the future?"'''],
+                            [name(), '''nods, as''', heshe(), '''straightens and fixes''', hisher(), '''clothing, sniffing miserably and wiping the tears from''', hisher(), '''face.'''],
+                            ['''"Good. Now, why don't you go and help Ildri," says Adrian. "I've taken up enough of your time already."''']]), 
+                            justification=0)
         else:
             universal.say(universal.format_text([['''Adrian nods. "Alright. Sounds like you did pretty well, and your story lines up with what the instructors told me. So''',
                 '''why don't you go help Ildri, before she starts waving that spatula of hers around."''']]), justification=0)
@@ -8213,7 +8216,8 @@ def peter_end_episode_1_qf():
                 '''to see you're alright. Oh, and try to be quiet, alright? I just put the munchkin to bed."''']])
             peter_end_episode_1.children = [ep1_peter_nonchalance, ep1_peter_child_alright, peter_3_1_1, peter_4_1_1]
             if p.PC.is_female():
-                ep1EndPeterRootChildren.insert(0, ep1_peter_flirt, ep1_peter_flirt_lesbian)
+                ep1EndPeterRootChildren.insert(0, ep1_peter_flirt)
+                ep1EndPeterRootChildren.insert(0, ep1_peter_flirt_lesbian)
         else:
             peter_greeting.quip_function()
             peter_end_episode_1.children = peter_greeting.children
@@ -8790,7 +8794,7 @@ def ep1_peter_nonchalance_qf():
         '''"Apparently, just before the attack, a fight broke out between a bunch of Bondan and Avaricumite gangs, and the fight spilled over into''',
         '''the residential district down at the south end of the city. The guards were too busy keeping that contained to respond to the attack on''',
         '''the Guild."'''],
-        ['''"Well, that's convenient," says''', name() + ",", '''crossing''', hisher(), '''hands over''', hisher(), '''chest.'''],
+        ['''"Well, that's convenient," says''', name() + ",", '''crossing''', hisher(), '''arms over''', hisher(), '''chest.'''],
         ['''Peter nods. "Makes you kind of scared doesn't it? If these Vengadores managed to orchestrate a gang fight large enough to distract the''',
             '''guards, you gotta wonder how much influence they have in the slums."'''],
         [name(), '''doesn't respond immediately.''', HeShe(), '''watches Peter clean, as if considering something. "What do you think of the Vengadores? They claim they're trying to make Taironan lives better."'''],
@@ -9546,14 +9550,14 @@ def ep1_elise_prank_sorry_catfight():
         ['''"Let go of me!" cries Carrie, kicking her legs. A pulse of power bursts from her body, and runs up''', names(), '''arms like an electric''',
             '''shock.''', name(), '''is no stranger to Spectral Pushes however, and Carrie's, while powerful, is not particularly well directed.''',
             name(), '''easily maintains her grip.'''],
-        [name(), '''grabs the edge of Carrie's tiny dress, and pushes it up over the woman's round hips, exposing a matching purple string-thong, and''',
+        [name(), '''grabs the edge of Carrie's tiny dress, and pushes it up over the woman's round hips. She grabs the student's tights and tugs them down to the tops of her thighs, exposing a matching purple string-thong, and''',
             '''a pair of round, quivering, bright-red bum cheeks. Mixed amongst the general redness are more than a few handprints.'''],
         ['''"Heh heh heh. Side-effects of your spanking from Elise?" says''', name() + ",", '''tracing one of the handprints with a fingernail.'''],
         ['''"Let go of me you mud-skinned-oww!" howls Carrie, as a full-armed smack cracks against her bottom, right on top of one of Elise's''',
             '''handprints.'''],
         ['''"Wow, was that ever the wrong thing to say," says''', name(), '''in a tight, angry voice.'''],
         ['''Water starts flying everwhere, as''', name(), '''administers hard, full-armed spanks to Carrie's wet, wobbling butt cheeks. Carrie''',
-        '''starts kicking and flailing send water flying everwhere. The sharp slap of hand to wet flesh rings through the air.'''],
+        '''starts kicking and flailing, sending water flying everwhere. The sharp slap of hand to wet flesh rings through the air.'''],
         ['''Elise stands at the edge of the tub, her fists tangled anxiously in her dress.''', '"' + name() + ',', '''stop it, please!"'''],
         [name(), '''ignores her. Carrie, meanwhile, is cursing and howling, shocks of magic rushing up''', names(), '''left arm as the woman casts''',
             '''Spectral Push again and again. The woman is clearly unpracticed at it however, especially in a stressful situation. Each Push is''',
@@ -9565,7 +9569,7 @@ def ep1_elise_prank_sorry_catfight():
         ['''"Sister Samantha!" cries Elise in a mixture of relief and fear.'''],
         ['''The Sister points her left hand at''', name() + ".", '''a small silver battering ram flings itself from her palm and collides with''', names(),
             '''chest, firmly shoving her away from Carrie. Carrie scrambles out of the pool, clutching at her bright red bottom, and trying to''',
-            '''tug her soaking wet dress back over her bottom.'''],
+            '''tug her soaking wet dress back over it.'''],
         ['''"What is going on here?" thunders Sister Samantha.'''],
         ['''"That bitch shoved me in the tub-"'''],
         ['''"Because you stripped and-"'''],
@@ -9605,13 +9609,13 @@ def ep1_elise_samantha_refuse_qf():
         ['''"Good. Now," says the Sister over''', names(), '''sniveling. "Elise, you will explain to me what happened, and just the facts. I want no''',
             '''speculation about why either one of these two brats did what they did. Quickly girl, I've got a lot''',
         '''to do yet tonight. And for the Mother's sake, stop twisting your dress!"'''],
-        ep1_trouble_with_samantha()])
+        ep1_trouble_with_samantha(True)])
 ep1_elise_samantha_refuse.quip_function = ep1_elise_samantha_refuse_qf
 ep1_elise_samantha_refuse.children = [ep1_elise_dress_small, ep1_elise_dress_wonderful]
 ep1_elise_samantha_accept.comment = '''"Yes'm."'''
 def ep1_elise_samantha_accept_qf():
     ep1_elise_samantha_accept.quip = universal.format_text([[name(), '''morosely pulls herself out of the tub, her bottom anxiously clenching and unclenching''',
-        '''as she considers the irate Sister's tawse. She picks up the towel and wraps the towel around herself. Then, she follows after Sister Samantha's angry strides. The woman leads her through several twisty''',
+        '''as she considers the irate Sister's tawse. She picks up the towel and wraps it around herself. Then, she follows after Sister Samantha's angry strides. The woman leads her through several twisty''',
             '''corridors and a large mess hall. The mess hall is scattered with various Brothers and Sisters, all slumped at the tables and''',
             '''enjoying a small bit of calm, now that the majority of the rambunctious orphans living here have been put to bed.''', name(), 
             '''blushes as the men and women turn to watch her scurry after the Sister like a naughty child. The fact that she's wearing just a''',
@@ -9627,14 +9631,14 @@ def ep1_elise_samantha_accept_qf():
 ep1_elise_samantha_accept.quip_function =ep1_elise_samantha_accept_qf
 ep1_elise_samantha_accept.children = [ep1_elise_dress_small, ep1_elise_dress_wonderful]
 
-def ep1_trouble_with_samantha():
+def ep1_trouble_with_samantha(carried=False):
     increment_spankings_taken()
     add_keyword('Samantha_saw_Carries_dress')
     quip = universal.format_text([['''Elise's hands fly from her dress as if they had been burned. She begins to speak in a quiet, hesitant voice, while at the''',
         '''same time smoothing her twisted dress. She explains everything, from the decision to get''', name(), '''ready, to Carrie just stripping''',
         '''and tossing''', name(), '''into the bath, to Carrie's spanking at Elise's hand over the whole thing, to the shove in the tub, to Carrie's''',
         '''and''', names(), '''fight.'''],
-        ['''"I see," says Sister Samantha, once Elise is finished. She turns to''', name(), '''and taps her on the small of her back. "You, what is your''',
+        ['''"I see," says Sister Samantha, once Elise is finished. She turns to''', name() + (''' and taps her on the small of her back.''' if carried else '''.'''), '''"You, what is your''',
             '''name?"'''],
         ['"' + name() + ",", '''ma'am," says''', name() + ".", '''For the briefest of moments, she considers saying something sarcastic, but her''',
             '''tawse-inflamed bottom flares up at the mere thought.'''],
@@ -9714,10 +9718,9 @@ def ep1_trouble_with_samantha():
         '''bucking and yowling, a blow to''', names(), '''bottom. Then, another blow to Carrie's bum while''', name(), '''is dancing.''',
         '''As the hard paddling continues, the two girls can't help but cling to each other, the hot pain in their bottoms, and their need for comfort''',
         '''burning away all previous animosity.'''],
-        ['''Sister Samantha administers the promised ten blows to the bums of both girls in this manner, the heavy paddle reducing both of them to sniveling''',
-            '''wrecks. "Alright, we're done here. You can get up when you're ready."'''],
+        ['''Once Sister Samantha has delivered the last of the promised ten blows, she lightly touches the two sniveling girls' scalded bums. "Alright, we're done here. You can get up when you're ready."'''],
         ['''The two remain bent over the desk a moment more, rubbing their blistered bums, and trying to work up the courage to move. Eventually, the''',
-            '''two straighten, hissing and gingerly rubbing their bottoms.'''],
+            '''two straighten with matching hisses.'''],
         ['''"Elise, get''', name(), '''covered, and take her back to the bathing room. You can help her get ready for your night out, while I talk''',
             '''to Carrie about her chosen wardrobe."'''],
         ['''Elise throws Carrie a sympathetic look, before wrapping a towel around''', names(), '''shivering body, and leading her back to the warm,''',
@@ -9969,7 +9972,7 @@ def ep1_elise_take_spanking_qf():
     increment_spankings_taken()
     ep1_elise_take_spanking.quip = universal.format_text([[name(), '''grimaces, but obediently pushes her bottom up. She had tried to goad them into a fight''',
         '''simply for her own pleasure, after all. If there was ever a time in which she deserved a solid spanking, it'd be now. "I'm sorry."'''],
-        ['''"Good girl," says Carrie, smacking''', names(), '''right cheek. "Nothing wrong with being a jerk every now and then, so long as you own up''',
+        ['''"Good girl," says Carrie, smacking''', names(), '''left cheek. "Nothing wrong with being a jerk every now and then, so long as you own up''',
             '''to it."'''],
         ['''"My goodness, look at her bottom wobble," says Elise, spanking''', names(), '''right cheek. "Are we sure she's an adventurer?"'''],
             [universal.format_line(['''"Oh shut up," mutters''', name() + ",", '''wincing. "I'm working on it."''']) if 'mai_squat_thrusts' in keywords() else 
@@ -10305,7 +10308,7 @@ def ep1_tavern_shy_female(node):
             [name(), '''grimaces. "If you need to be drunk to enjoy something, it's not enjoyable."'''],
             ['''"Oh pffsh," says Carrie, waving her hand. "Come on. Let's have some fun."'''],
             ['''"No."'''],
-            ['''Carrie frowns. "Why not?"''']
+            ['''Carrie frowns. "Why not?"'''],
             [name(), '''shrugs. "I don't do crowded, noisy places very well."'''],
             ['''"And yet you're an adventurer," says Carrie. "I'm pretty sure adventuring involves fighting, which often involves crowds, and definitely''',
                 '''noise."'''],
@@ -10743,11 +10746,11 @@ def ep1_elise_sing(node):
     ['''Elise smiles innocently as the two walk off the stage, followed by Carrie.'''],
     ['''\mThe three make their way towards''', names(), '''table. Carrie slides in next to''', name() + ",", universal.format_line(['''her foot beginning to play with''', hishers()
         + "."]) if 'flirting_with_Carrie' in keywords() else universal.format_line(['''flashing''', himher(), '''a smile in the process.'''])],
-    ['"' + name(), '''this is my fiance, Sir Roland Silverstone. Roland, this is''', name() + ".", HeShe(), '''is a childhood friend of Maria's, who just arrived''',
+    ['"' + name(), '''this is my fiance, Sir Roland Silverstone," says Elise. "Roland, this is''', name() + ".", HeShe(), '''is a childhood friend of Maria's, who just arrived''',
         '''in Avaricum."'''],
     ['''"Yes, the new adventurer," says Roland. He sits down in a nearby chair, and pulls Elise into his lap. Elise leans back against him, one hand idly fiddling with his beard. "Adrian told me you fought well at the Guild today. Said he hasn't''',
         '''been this impressed by someone since Maria walked through his door."'''],
-    [name(), '''shrugs, not quite sure how to handle this man, Captain of the Guard, leader of the mind-controlling Puppeteers, the one man in the city ever Taironan''',
+    [name(), '''shrugs, not quite sure how to handle this man, Captain of the Guard, leader of the mind-controlling Puppeteers, the one man in the city every Taironan''',
         '''with a brain stayed well away from. Now, here he was, sitting with''', names(), '''new friend Elise in his lap, complimenting the young adventurer.'''],
     ['''"We may have to hire you at some point," says Roland. "Hired Maria a few times, and she's always performed admirably."''']])
     node.children = [ep1_roland_despite_taironan, ep1_roland_how_meet_elise, ep1_taironan_no]
@@ -11065,77 +11068,147 @@ def ep1_sister_samantha(node):
     elif 'slapped_Maria' in keywords() or 'disowned_Maria' in keywords():
         quip = universal.format_text([quip, maria_slap(node)])
     else:
-        quip = universal.format_text([quip, maria_no_problems(node)])
+        quip = universal.format_text([quip, maria_no_problems_function(node)])
     return quip
 
 
-def maria_no_problems_qf(node):
+def maria_no_problems_function(node):
     quip = universal.format_text([['''"Hey,''', name() + ",", '''says Maria, smiling broadly. She glances at''', names(), '''companions: Carrie, gnawing anxiously on a strand''',
-        '''of hair, Elise anxiously twsting her skirts while Roland keeps a firm grip on her arms, and Roland's grim expression. "I see you three had fun."'''],
-        ['''"Oh yes," says Roland flatly. "A wonderful night filled to bursting with irreverent songs, lewd dancing, and stable references."'''],
-        ['''Sister Samantha sighs and rolls her eyes. "I swear, I could spank the both of you until you're fifty and you still wouldn't learn."'''],
-        ['''"So, maybe you should try a different strategy?" suggests Carrie hopefully.'''],
-        ['''Sister Samantha raises an eyebrow. "And what strategy would that be?"'''],
-        ['''"Sending us to bed without supper?" suggests Carrie.'''],
-        ['''"Making us clean the stables," pipes in Elise.'''],
-        ['''"Making us write lines?" says Elise.'''],
-        ['''Sister Samantha raises her other eyebrow. "So you're saying you want to be treated like children? An adult Sister on the verge of becoming a noblewoman''',
-        '''would rather be cleaning out the stables like a pre-teen student caught putting a pinecone on her sister's chair. An equally adult student on the verge''',
-        '''of becoming a Sister going to bed without supper, or writing lines, like a five year old calling her mothera butthead. That's what you want?"'''],
-        ['''The two women exchange uneasy glances.'''],
-        ['''"Well, no," says Carrie at last. "But aren't there other adult punishments that don't hurt quite so bad?"'''],
-        ['''"I shouldn't be punishing you at all!" cries Sister Samantha. "You're an adult. Start acting like it!"'''],
-        ['''Carrie shrinks away from Sister Samantha's sharp words. "Sorry, Sister."'''],
-        ['''"If you're truly sorry, then you're going to march over there, raise your skirt, and bend over my knee," says Sister Samantha sharply, pointing towards''',
-            '''the far corner. "Now, march young lady."'''],
-        ['''Carrie nods morosely, and walks towards the corner, slipping another strand of hair in her mouth.'''],
-        ['''Roland gives Elise a meaningful look, who sighs, and follows him towards a different corner, her hands drifting back to her soon-to-be-exposed bum.'''],
-        ['''Maria's lips quirk. "Those two are quite a handful aren't they? Glad I'm neither Roland nor Sister Samantha." She takes''', names(), '''hand. "Come on.''',
-            '''Let's step outside and give them some privacy. I heard you've had quite an interesting day. Why don't you tell me about it?"'''],
-        ['''Maria leads''', name(), '''outside into the chilly evening air, pulling the door closed as the first sounds of two solid spankings begin to assault''',
-            names(), '''ears. "So, I hear a group of Taironans attacked the guild not thirty seconds after you signed up."'''],
-        ['''"Pretty much," says''', name() + ".", universal.format_line([HeShe(), '''considers sitting down. A twinge of pain from''', hisher(), '''aching bottom encourages''',
-            himher(), '''to lean against the door instead.''']) if p.PC.numSpankings > 0 else universal.format_line([name(), '''plops down on one of the stairs, and sighs.'''])],
-        ['''"So tell me about it," says Maria, half-sitting, half-leaning on the large stone railing.'''],
-        [name(), '''launches into a brief outline of the events, focusing in particular on the swordswoman who originally attacked''', himher() + ",", 
-            '''the young girl''', heshe(), '''beat at the very beginning, and the woman''', heshe(), '''fought in the armory.'''],
-        ['''Maria shakes her head. "Ballsy move. Never imagined they'd attack the armory."'''],
-        ['''"You know about them?" says''', name(), '''sharply.'''],
-        ['''"Every Taironan in the city knows about them," says Maria. "You could hear the rumblings for months now. A strange, secretive group recruiting anyone with''',
-            '''two arms, two legs, and a grudge against both the Carnutians, and the Potion Lords. Drug mules deserting, grown children vanishing, only to reappear a''',
-            '''few weeks later armed to the teeth, and full of revolutionary zeal. Older folk growing worried, not letting their kids go out at night, reminiscing about''',
-            '''the Riots. Skilled, eloquent men and women making speeches on street corners, deep in the slums and far away from the guards. A powerful slinger taking''',
-            '''down dozens of Potion Lord lackeys."'''],
-        ['''"So, what they were saying, about 'freeing us.' They were telling the truth?" asks''', name() + "."],
-        ['''"As near as I can tell, they're sincere," says Maria uneasily. "Though I fail to see how sparking a two-front war with Avaricum and the Potion''',
-        '''Lords 'frees' anybody."'''],
-        ['''Before''', name(), '''can respond, the door opens up, and Elise and Roland come out. Elise's face is streaked with tears. She is holding Roland's hand''',
-            '''with her right, while her left is clutching gingerly at her bottom.'''],
-        ['''"Hey," says Maria, smiling. "Get through your spanking ok?"'''],
-        ['''"Well, I'm still breathing," says Elise. "Hurts like a curse though. Roland's such a jerk."'''],
-        ['''Roland rolls his eyes. "Oh please. Just be glad I let you seduce me into comforting you tonight."'''],
-        ['''Elise grins, despite the hint of tears in her eyes. "Oh I am. I am."'''],
-        ['''Maria chuckles as Roland Elise make their down the steps and towards the Inner Circle.''']])
+            '''of hair, Elise anxiously twsting her skirts while Roland keeps a firm grip on her arms, and Roland's grim expression. "I see you three had fun."'''],
+            ['''"Oh yes," says Roland flatly. "A wonderful night filled to bursting with irreverent songs, lewd dancing, and stable references."'''],
+            ['''Sister Samantha sighs and rolls her eyes. "I swear, I could spank the both of you until you're fifty and you still wouldn't learn."'''],
+            ['''"So, maybe you should try a different strategy?" suggests Carrie hopefully.'''],
+            ['''Sister Samantha raises an eyebrow. "And what strategy would that be?"'''],
+            ['''"Sending us to bed without supper?" suggests Carrie.'''],
+            ['''"Making us clean the stables," pipes in Elise.'''],
+            ['''"Making us write lines?" says Elise.'''],
+            ['''Sister Samantha raises her other eyebrow. "So you're saying you want to be treated like children? An adult Sister on the verge of becoming a noblewoman''',
+            '''would rather be cleaning out the stables like a pre-teen student caught putting a pinecone on her sister's chair. An equally adult student on the verge''',
+            '''of becoming a Sister going to bed without supper, or writing lines, like a five year old calling her mothera butthead. That's what you want?"'''],
+            ['''The two women exchange uneasy glances.'''],
+            ['''"Well, no," says Carrie at last. "But aren't there other adult punishments that don't hurt quite so bad?"'''],
+            ['''"I shouldn't be punishing you at all!" cries Sister Samantha. "You're an adult. Start acting like it!"'''],
+            ['''Carrie shrinks away from Sister Samantha's sharp words. "Sorry, Sister."'''],
+            ['''"If you're truly sorry, then you're going to march over there, raise your skirt, and bend over my knee," says Sister Samantha sharply, pointing towards''',
+                '''the far corner. "Now, march young lady."'''],
+            ['''Carrie nods morosely, and walks towards the corner, slipping another strand of hair in her mouth.'''],
+            ['''Roland gives Elise a meaningful look, who sighs, and follows him towards a different corner, her hands drifting back to her soon-to-be-exposed bum.'''],
+            ['''Maria's lips quirk. "Those two are quite a handful aren't they? Glad I'm neither Roland nor Sister Samantha." She takes''', names(), '''hand. "Come on.''',
+                '''Let's step outside and give them some privacy. I heard you've had quite an interesting day. Why don't you tell me about it?"'''],
+            ['''Maria leads''', name(), '''outside into the chilly evening air, pulling the door closed as the first sounds of two solid spankings begin to assault''',
+                names(), '''ears. "So, I hear a group of Taironans attacked the guild not thirty seconds after you signed up."'''],
+            ['''"Pretty much," says''', name() + ".", universal.format_line([HeShe(), '''considers sitting down. A twinge of pain from''', hisher(), '''aching bottom encourages''',
+                himher(), '''to lean against the door instead.''']) if p.PC.numSpankings > 0 else universal.format_line([name(), '''plops down on one of the stairs, and sighs.'''])],
+            ['''"So tell me about it," says Maria, half-sitting, half-leaning on the large stone railing.'''],
+            [name(), '''launches into a brief outline of the events, focusing in particular on the swordswoman who originally attacked''', himher() + ",", 
+                '''the young girl''', heshe(), '''beat at the very beginning, and the woman''', heshe(), '''fought in the armory.'''],
+            ['''Maria shakes her head. "Ballsy move. Never imagined they'd attack the armory."'''],
+            ['''"You know about them?" says''', name(), '''sharply.'''],
+            ['''"Every Taironan in the city knows about them," says Maria. "You could hear the rumblings for months now. A strange, secretive group recruiting anyone with''',
+                '''two arms, two legs, and a grudge against both the Carnutians, and the Potion Lords. Drug mules deserting, grown children vanishing, only to reappear a''',
+                '''few weeks later armed to the teeth, and full of revolutionary zeal. Older folk growing worried, not letting their kids go out at night, reminiscing about''',
+                '''the Riots. Skilled, eloquent men and women making speeches on street corners, deep in the slums and far away from the guards. A powerful slinger taking''',
+                '''down dozens of Potion Lord lackeys."'''],
+            ['''"So, what they were saying, about 'freeing us.' They were telling the truth?" asks''', name() + "."],
+            ['''"As near as I can tell, they're sincere," says Maria uneasily. "Though I fail to see how sparking a two-front war with Avaricum and the Potion''',
+            '''Lords 'frees' anybody."'''],
+            ['''Before''', name(), '''can respond, the door opens up, and Elise and Roland come out. Elise's face is streaked with tears. She is holding Roland's hand''',
+                '''with her right, while her left is clutching gingerly at her bottom.'''],
+            ['''"Hey," says Maria, smiling. "Get through your spanking ok?"'''],
+            ['''"Well, I'm still breathing," says Elise. "Hurts like a curse though. Roland's such a jerk."'''],
+            ['''Roland rolls his eyes. "Oh please. Just be glad I let you seduce me into comforting you tonight."'''],
+            ['''Elise grins, despite the hint of tears in her eyes. "Oh I am. I am."'''],
+            ['''Maria chuckles as Roland Elise make their down the steps and towards the Inner Circle.''']])
     if 'taking_Carrie_home' in keywords():
-        quip = universal.format_text([quip, ['''Carrie limps out a few seconds later. Her eyes light up when she sees''', name() + ".", '''"Hey''', name() + "!", '''Good news.''',
-        '''Sister''',
-            '''Samantha is letting you take me home. Just so long as we use protection, have a safeword if things get rough, and she told me to tell you that if I''',
-            '''tell you to stop, and you don't, she will rob you of your manhood in the most violent manner imaginable. Also, Maria needs to be nearby, in case''',
-            '''you turn out a bit less pleasant, and a bit more violent than I thought."'''],
-            ['''"Good to know," says''', name() + ".", '''"Shall we go?"'''],
-            ['''"Do you even have a place to sleep?" asks Maria. "Because you can come live with me, if you'd like. I live in a bit of a hole, on the edge of the slums.''',
-            '''But if we live together, we can upgrade a bit and still only pay fifty coins a month each. For now, the place will be a bit crowded, but I can''',
-            '''go for a walk, and give you two some privacy for a while."'''],
-            ['''"Isn't that a little bit dangerous?" asks Carrie.'''],
-            ['''"I'm not actually in the slums," says Maria. "Plus, I've been a successful adventurer for ten years. People know not to mess with me."''']])
-        if 'boarding_with_Adrian' in keywords():
-            quip = universal.format_text([['''"Actually, I've already got a room with Adrian," says''', name() + "."],
-                ['''"Oh." Maria's smile slips a little bit. "I guess that's probably better anyway. Rooms are nicer, and all. I'll see you around."''']])
-            ep1_maria_live.comment = '''"Eh, you know? I think I'd rather live with you. I'm sure Adrian won't mind."'''
-            ep1_maria_dont_live.comment = '''"Yeah. But we'll see a lot of each other, still right? What with you working for Adrian, and all."'''
+            quip = universal.format_text([quip, ['''Carrie limps out a few seconds later. Her eyes light up when she sees''', name() + ".", '''"Hey''', name() + "!", '''Good news.''',
+            '''Sister''',
+                '''Samantha is letting you take me home. Just so long as we use protection, have a safeword if things get rough, and she told me to tell you that if I''',
+                '''tell you to stop, and you don't, she will rob you of your manhood in the most violent manner imaginable. Also, Maria needs to be nearby, in case''',
+                '''you turn out a bit less pleasant, and a bit more violent than I thought."'''],
+                ['''"Good to know," says''', name() + ".", '''"Shall we go?"'''],
+                ['''"Do you even have a place to sleep?" asks Maria. "Because you can come live with me, if you'd like. I live in a bit of a hole, on the edge of the slums.''',
+                '''But if we live together, we can upgrade a bit and still only pay fifty coins a month each. For now, the place will be a bit crowded, but I can''',
+                '''go for a walk, and give you two some privacy for a while."'''],
+                ['''"Isn't that a little bit dangerous?" asks Carrie.'''],
+                ['''"I'm not actually in the slums," says Maria. "Plus, I've been a successful adventurer for ten years. People know not to mess with me."''']])
+            if 'boarding_with_Adrian' in keywords():
+                quip = universal.format_text([['''"Actually, I've already got a room with Adrian," says''', name() + "."],
+                    ['''"Oh." Maria's smile slips a little bit. "I guess that's probably better anyway. Rooms are nicer, and all. I'll see you around."''']])
+                ep1_maria_live.comment = '''"Eh, you know? I think I'd rather live with you. I'm sure Adrian won't mind."'''
+                ep1_maria_dont_live.comment = '''"Yeah. But we'll see a lot of each other, still right? What with you working for Adrian, and all."'''
     else:
-        quip = universal.format_text([['''"They're a cute couple," says Maria.'''],
-            [name(), '''shrugs.'''], ep1_maria_live_question()])
+            quip = universal.format_text([quip, ['''"They're a cute couple," says Maria.'''],
+                [name(), '''shrugs.'''], '"' + ep1_maria_live_question()])
+    node.children = [ep1_maria_live, ep1_maria_dont_live]
+    return quip
+def maria_no_problems_qf(node):
+        quip = universal.format_text([['''"Hey,''', name() + ",", '''says Maria, smiling broadly. She glances at''', names(), '''companions: Carrie, gnawing anxiously on a strand''',
+            '''of hair, Elise anxiously twsting her skirts while Roland keeps a firm grip on her arms, and Roland's grim expression. "I see you three had fun."'''],
+            ['''"Oh yes," says Roland flatly. "A wonderful night filled to bursting with irreverent songs, lewd dancing, and stable references."'''],
+            ['''Sister Samantha sighs and rolls her eyes. "I swear, I could spank the both of you until you're fifty and you still wouldn't learn."'''],
+            ['''"So, maybe you should try a different strategy?" suggests Carrie hopefully.'''],
+            ['''Sister Samantha raises an eyebrow. "And what strategy would that be?"'''],
+            ['''"Sending us to bed without supper?" suggests Carrie.'''],
+            ['''"Making us clean the stables," pipes in Elise.'''],
+            ['''"Making us write lines?" says Carrie.'''],
+            ['''Sister Samantha raises her other eyebrow. "So you're saying you want to be treated like children? An adult Sister on the verge of becoming a noblewoman''',
+            '''would rather be cleaning out the stables like a pre-teen student caught putting a pinecone on her sister's chair. An equally adult student on the verge''',
+            '''of becoming a Sister going to bed without supper, or writing lines, like a five year old calling her mothera butthead. That's what you want?"'''],
+            ['''The two women exchange uneasy glances.'''],
+            ['''"Well, no," says Carrie at last. "But aren't there other adult punishments that don't hurt quite so bad?"'''],
+            ['''"I shouldn't be punishing you at all!" cries Sister Samantha. "You're an adult. Start acting like it!"'''],
+            ['''Carrie shrinks away from Sister Samantha's sharp words. "Sorry, Sister."'''],
+            ['''"If you're truly sorry, then you're going to march over there, raise your skirt, and bend over my knee," says Sister Samantha sharply, pointing towards''',
+                '''the far corner. "Now, march young lady."'''],
+            ['''Carrie nods morosely, and walks towards the corner, slipping another strand of hair in her mouth.'''],
+            ['''Roland gives Elise a meaningful look, who sighs, and follows him towards a different corner, her hands drifting back to her soon-to-be-exposed bum.'''],
+            ['''Maria's lips quirk. "Those two are quite a handful aren't they? Glad I'm neither Roland nor Sister Samantha." She takes''', names(), '''hand. "Come on.''',
+                '''Let's step outside and give them some privacy. I heard you've had quite an interesting day. Why don't you tell me about it?"'''],
+            ['''Maria leads''', name(), '''outside into the chilly evening air, pulling the door closed as the first sounds of two solid spankings begin to assault''',
+                names(), '''ears. "So, I hear a group of Taironans attacked the guild not thirty seconds after you signed up."'''],
+            ['''"Pretty much," says''', name() + ".", universal.format_line([HeShe(), '''considers sitting down. A twinge of pain from''', hisher(), '''aching bottom encourages''',
+                himher(), '''to lean against the door instead.''']) if p.PC.numSpankings > 0 else universal.format_line([name(), '''plops down on one of the stairs, and sighs.'''])],
+            ['''"So tell me about it," says Maria, half-sitting, half-leaning on the large stone railing.'''],
+            [name(), '''launches into a brief outline of the events, focusing in particular on the swordswoman who originally attacked''', himher() + ",", 
+                '''the young girl''', heshe(), '''beat at the very beginning, and the woman''', heshe(), '''fought in the armory.'''],
+            ['''Maria shakes her head. "Ballsy move. Never imagined they'd attack the armory."'''],
+            ['''"You know about them?" says''', name(), '''sharply.'''],
+            ['''"Every Taironan in the city knows about them," says Maria. "You could hear the rumblings for months now. A strange, secretive group recruiting anyone with''',
+                '''two arms, two legs, and a grudge against both the Carnutians, and the Potion Lords. Drug mules deserting, grown children vanishing, only to reappear a''',
+                '''few weeks later armed to the teeth, and full of revolutionary zeal. Older folk growing worried, not letting their kids go out at night, reminiscing about''',
+                '''the Riots. Skilled, eloquent men and women making speeches on street corners, deep in the slums and far away from the guards. A powerful slinger taking''',
+                '''down dozens of Potion Lord lackeys."'''],
+            ['''"So, what they were saying, about 'freeing us.' They were telling the truth?" asks''', name() + "."],
+            ['''"As near as I can tell, they're sincere," says Maria uneasily. "Though I fail to see how sparking a two-front war with Avaricum and the Potion''',
+            '''Lords 'frees' anybody."'''],
+            ['''Before''', name(), '''can respond, the door opens up, and Elise and Roland come out. Elise's face is streaked with tears. She is holding Roland's hand''',
+                '''with her right, while her left is clutching gingerly at her bottom.'''],
+            ['''"Hey," says Maria, smiling. "Get through your spanking ok?"'''],
+            ['''"Well, I'm still breathing," says Elise. "Hurts like a curse though. Roland's such a jerk."'''],
+            ['''Roland rolls his eyes. "Oh please. Just be glad I let you seduce me into comforting you tonight."'''],
+            ['''Elise grins, despite the hint of tears in her eyes. "Oh I am. I am."'''],
+            ['''Maria chuckles as Roland Elise make their down the steps and towards the Inner Circle.''']])
+        if 'taking_Carrie_home' in keywords():
+            quip = universal.format_text([quip, ['''Carrie limps out a few seconds later. Her eyes light up when she sees''', name() + ".", '''"Hey''', name() + "!", '''Good news.''',
+            '''Sister''',
+                '''Samantha is letting you take me home. Just so long as we use protection, have a safeword if things get rough, and she told me to tell you that if I''',
+                '''tell you to stop, and you don't, she will rob you of your manhood in the most violent manner imaginable. Also, Maria needs to be nearby, in case''',
+                '''you turn out a bit less pleasant, and a bit more violent than I thought."'''],
+                ['''"Good to know," says''', name() + ".", '''"Shall we go?"'''],
+                ['''"Do you even have a place to sleep?" asks Maria. "Because you can come live with me, if you'd like. I live in a bit of a hole, on the edge of the slums.''',
+                '''But if we live together, we can upgrade a bit and still only pay fifty coins a month each. For now, the place will be a bit crowded, but I can''',
+                '''go for a walk, and give you two some privacy for a while."'''],
+                ['''"Isn't that a little bit dangerous?" asks Carrie.'''],
+                ['''"I'm not actually in the slums," says Maria. "Plus, I've been a successful adventurer for ten years. People know not to mess with me."''']])
+            if 'boarding_with_Adrian' in keywords():
+                quip = universal.format_text([['''"Actually, I've already got a room with Adrian," says''', name() + "."],
+                    ['''"Oh." Maria's smile slips a little bit. "I guess that's probably better anyway. Rooms are nicer, and all. I'll see you around."''']])
+                ep1_maria_live.comment = '''"Eh, you know? I think I'd rather live with you. I'm sure Adrian won't mind."'''
+                ep1_maria_dont_live.comment = '''"Yeah. But we'll see a lot of each other, still right? What with you working for Adrian, and all."'''
+        else:
+            quip = universal.format_text([quip, ['''"They're a cute couple," says Maria.'''],
+                [name(), '''shrugs.'''], '"' + ep1_maria_live_question()])
+        maria_no_problems.quip = quip
 
 maria_no_problems = Node(314)
 maria_no_problems.quip_function = maria_no_problems_qf
