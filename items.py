@@ -161,13 +161,12 @@ class Weapon(Item):
     def display(self):
         displayString = super(Weapon, self).display()
         return '\n'.join([displayString, 
-            'Damage:  ' + str(self.minDamage) + ' -> ' + str(self.maxDamage), 
-            'grapple attempt: ' + str(self.grappleAttempt), 
-            'grapple attempt defense: ' + str(self.grappleAttemptDefense), 
-            'grapple bonus: ' + str(self.grappleBonus), 
-            'armslength bonus: ' + str(self.armslengthBonus),
-            'generic bonus: ' + str(self.genericBonus)
-            ])
+            'Damage:  ' + str(self.minDamage + self.genericBonus) + ' -> ' + str(self.maxDamage + self.genericBonus), 
+            'grapple attempt: ' + str(self.grappleAttempt + self.genericBonus), 
+            'grapple attempt defense: ' + str(self.grappleAttemptDefense + self.genericBonus), 
+            'grapple bonus: ' + str(self.grappleBonus + self.genericBonus), 
+            'armslength bonus: ' + str(self.armslengthBonus + self.genericBonus)])
+            
 
     def grapple_bonus(self):
         return self.grappleBonus + self.genericBonus

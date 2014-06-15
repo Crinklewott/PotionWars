@@ -1489,7 +1489,7 @@ class Party(universal.RPGObject):
             return '\n'.join(partyTxt)
         else:
             return '\t'.join([target(n, arrow(n, allyIndex), targetedIndices) + '. ' + 
-                memberName for (n, member, memberName) in 
+                '\n' + memberName for (n, member, memberName) in 
                 zip([i for i in range(1, len(self.members)+1)], self.members, memberNames)])
     def display(self):
         return display_party(self)

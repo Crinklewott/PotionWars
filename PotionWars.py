@@ -77,8 +77,10 @@ def add_keyword(keyword):
     p.PC.add_keyword(keyword)
 
 def remove_keyword(keyword):
-    if keyword in keywords():
+    try:
         keywords().remove(keyword)
+    except ValueError:
+        return
 
 def keywords():
     return p.PC.keywords
@@ -230,7 +232,7 @@ orphanage = Room('Orphanage', universal.format_line(["The orphanage is a dizzyin
 
 orphanage.add_adjacent(shrine)
 
-hospital = Room('Hospital', "The hospital is a busy, but somber place. People aflicted with various diseases and injuries (crookedly healed bones appearing to be the most common) sit waiting to be treated. Brothers and Sisters in white walk back and forth, some disappearing into the patient rooms in the back, others speaking with those waiting, still others handing off paperwork to each other. Sitting behind a large desk at the back of the room is a woman about Elise's age. She is wearing the light grey robes of a student, and is hunched over some parchment, her forehead wrinkled in thought.", bgMusic=CHURCH)
+hospital = Room('Hospital', "The hospital is a busy, but somber place. People afflicted with various diseases and injuries (crookedly healed bones appearing to be the most common) sit waiting to be treated. Brothers and Sisters in white walk back and forth, some disappearing into the patient rooms in the back, others speaking with those waiting, still others handing off paperwork to each other. Sitting behind a large desk at the back of the room is a woman about Elise's age. She is wearing the light grey robes of a student, and is hunched over some parchment, her forehead wrinkled in thought.", bgMusic=CHURCH)
 
 hospital.add_adjacent(shrine)
 hospital.add_adjacent(orphanage)
@@ -418,7 +420,7 @@ carol.inventory = [itemspotionwars.thong, itemspotionwars.lacyUnderwear, itemspo
 
 
 restfulRoad = Room("Restful Road", "Place holder")
-avaricumSquare.add_adjacent(restfulRoad)
+#avaricumSquare.add_adjacent(restfulRoad)
 
 slums = Room("Slums", "", bgMusic=TAIRONAN)
 
@@ -1560,7 +1562,7 @@ maria_1_1_1.playerComments = ['''"Really? I never imagined... but Armando was al
 
 def maria_1p1p1_1_1_quip():
     maria_1p1p1_1_1.quip = universal.format_text([['''\mMaria risks a quick glance at Elise, who is cleaning underneath the altar, and whistling some merry tune or other. She leans in close to''', p.PC.name, '''and takes''', hisher(p.PC), '''hand. Her voice is barely audible. "Whatever you do, don't tell anyone else. Don't even think about it."''']])
-    maria_1p1_1_1.music = [MARIA]
+    maria_1p1p1_1_1.music = [MARIA]
 
 maria_1p1p1_1_1.quip_function = maria_1p1p1_1_1_quip
 maria_1p1p1p1_1_1 = Node(35) 
@@ -1580,7 +1582,7 @@ maria_1p1p1p2_1_1.children = [maria_1p1p1p2p1_1_1, maria_1p1p1p2p2_1_1]
 maria_1p1p1p2_1_1.playerComments = ['''"So I'll tell everyone. Just get up on a box and shout it to the masses. Make them see what the guards have done to me."''', '''"Ok...but is there really nothing we can do?"''']
 
 def maria_1p1p1p2p1_1_1_quip():
-    maria_1p1p1p2p1_1_1.quip = universal.format_text([['''Maria leans in close,''', '''her hand tightening over''', p.PC.name + "'s", '''wrist.''', '''"''' + p.PC.name + ",", '''there's something you need to learn about the masses. Out of a hundred people, sixty of them don't give a cursed about you, and just want you to stop bothering them. Thirty-five think you're probably an addict, and deserved it. Four will actually care enough to be apalled, and one will be apalled enough to do something about it. So, you can get up there on your little box and shout until you're blue in the face, and all you'll do is ostracize yourself. You're better off just burying it and moving on. Long as you don't do anything stupid, the guards'll leave you alone. Mostly."''']])
+    maria_1p1p1p2p1_1_1.quip = universal.format_text([['''Maria leans in close,''', '''her hand tightening over''', p.PC.name + "'s", '''wrist.''', '''"''' + p.PC.name + ",", '''there's something you need to learn about the masses. Out of a hundred people, sixty of them don't care about you. They just want you to stop bothering them. Thirty-five think you're probably an addict, and deserved it. Four will actually care enough to be apalled, and one will be apalled enough to do something about it. So, you can get up there on your little box and shout until you're blue in the face, and all you'll do is ostracize yourself. You're better off just burying it and moving on. Long as you don't do anything stupid, the guards'll leave you alone. Mostly."''']])
 maria_1p1p1p2p1_1_1.quip_function = maria_1p1p1p2p1_1_1_quip
 maria_1p1p1p2p1p1_1_1 = Node(40)  
 maria_1p1p1p2p1p2_1_1 = Node(41)
@@ -1738,7 +1740,7 @@ maria_1p1p1p2p1p2_1_1.quip_function = maria_1p1p1p2p1p2_1_1_quip
 maria_1p1p1p2p1p3_1_1 = Node(50)
 maria_1p1p1p2p1p4_1_1 = Node(51)
 maria_1p1p1p2p1p2_1_1.children = [maria_1p1p1p2p1p3_1_1, maria_1p1p1p2p1p4_1_1]
-maria_1p1p1p2p1p2_1_1.playerComments = ['''"Dammit, I just want to live my life. I don't want to deal with any of this."''', '''"Fine. If that's the best way to deal with it, that's the best way to deal with it."''']
+maria_1p1p1p2p1p2_1_1.playerComments = ['''"Curse it, I just want to live my life. I don't want to deal with any of this."''', '''"Fine. If that's the best way to deal with it, that's the best way to deal with it."''']
 
 def maria_1p1p1p2p1p3_1_1_quip():
     maria_1p1p1p2p1p3_1_1.quip = '''"Then it should be a no-brainer," says Maria. "Let it go. I know it rankles, and it's nowhere near just, but what else can you do? You have no money, no friends with money, and therefore no power. All you can do is live, and hope the people who do have power don't screw you over too hard."'''
@@ -2146,7 +2148,10 @@ def elise_show_you_around_quip_function():
         elise_show_you_around.quip = '''"It is a bit of a mess, isn't it?" says Elise ruefully. "But there are nice things out there as well. Look, my friend Carrie and I are going out tonight, to celebrate my ordination. How about you join us? You could use some cheering up, I think."'''
     else:
         elise_show_you_around.quip = '''"Well I think I know how to keep you from feeling quite so overwhelmed," says Elise. "My friend Carrie and I are going out tonight to celebrate my ascension to Sisterhood. How about you join us? It'll be fun, I promise, and you look like you could use some fun."'''
-    eliseRootChildren.remove(elise_show_you_around)
+    try:
+        eliseRootChildren.remove(elise_show_you_around)
+    except ValueError:
+        pass
 
 elise_show_you_around.quip_function = elise_show_you_around_quip_function
 
@@ -2248,7 +2253,7 @@ elise_1p1p1p3_1_1 = Node(91)
 elise_1p1p1_1_1.children = [elise_1p1p1p1_1_1, elise_1p1p1p2_1_1, elise_1p1p1p3_1_1]
 elise_1p1p1_1_1.quip = '''"Perhaps she was scared you'd make some terrible mistake," says Elise.'''
 
-elise_1p1p1p1_1_1.comment = '''"I just want justice, dammit! How could that possibly be a mistake?"'''
+elise_1p1p1p1_1_1.comment = '''"I just want justice, curse it! How could that possibly be a mistake?"'''
 def elise_1p1p1p1_1_1_quip_function(): 
     elise_1p1p1p1_1_1.quip = universal.format_text([['''"I guess that depends on what you want to do in life," says Elise, shrugging. "If you just want to live a quiet, comfortable life, which is what Maria wants, then pursuing justice can be a massive mistake. Especially in times like these. If instead you want a life of principle, where you fight for whatever you believe is right, then it's not a mistake." Elise gives''', p.PC.name, '''a warning look. "Be careful, though. Sister Samantha tells me all the time that it's not always clear which is the right principle, let alone how to stand by it. Before you even try to commit to anything, try to get a full understanding of the situation."'''],
         [p.PC.name, '''nods a touch reluctantly. Nana had often told''', himher(p.PC), '''a similar thing. Perhaps it would be best if''', heshe(p.PC), '''took that to heart, for now.'''],
@@ -2800,7 +2805,10 @@ def elise_cathedral_history_quip_function():
         ['''"He really paid for a building this large, and this nice, for an orphanage and hospital?" asks''', p.PC.name + "."],
         ['''"I know, right?" says Elise sardonically. "Mother forbid a King pay for anything that actually, you know, helps people. Well, legend has it that King Wesleyan wanted the entire Cathedral to be a huge worship space.  It was supposed to be big enough to house half the city's population. However, when the Mother heard of this ridiculous ostentation, she came and spanked both him and the Eldest Sister, and insisted that the actual shrine be only as large as the smallest shrine in the City. The rest of the Cathedral should then be converted to a hospital on one side and an orphanage on the other. That way, the Sisters could more easily do the true work of the Church: helping those who need it."'''],
         ['''"But wait a minute. If your Mother is willing to intervene on such a minor thing, why doesn't She intervene over major things, like wars or famine?"''']])
-    eliseRootChildren.remove(elise_cathedral_history)
+    try:
+        eliseRootChildren.remove(elise_cathedral_history)
+    except ValueError:
+        pass
     return (universal.acknowledge, [conversation.say_node, elise_interference_belief])
 elise_cathedral_history.quip_function = elise_cathedral_history_quip_function
 elise_interference_belief = Node(137)  
@@ -2872,9 +2880,15 @@ def peter_greeting_quip_function():
         peter_greeting.quip = universal.format_line(['''"Ah, good to see you again,' says Peter,''',
             '''smiling. "What can I do for you?'"'''])
         if 'asked_Peter_about_work' in p.PC.keywords:
-            peterRootChildren.remove(peter_1_1_1)
+            try:
+                peterRootChildren.remove(peter_1_1_1)
+            except ValueError:
+                pass
         if 'asked_Peter_about_bikini' in p.PC.keywords:
-            peterRootChildren.remove(peter_2_1_1)
+            try:
+                peterRootChildren.remove(peter_2_1_1)
+            except ValueError:
+                pass
         peter_greeting.children = peterRootChildren 
 peter_greeting.quip_function = peter_greeting_quip_function
 
@@ -2898,7 +2912,10 @@ def peter_1_1_1_qf():
         '''work nor enough money to take on any kind of help at all. I can provide for my''',
         '''family, but that's about it."'''])
     p.PC.add_keyword('asked_Peter_about_work')
-    peterRootChildren.remove(peter_1_1_1)
+    try:
+        peterRootChildren.remove(peter_1_1_1)
+    except ValueError:
+        pass
 peter_1_1_1.quip_function = peter_1_1_1_qf
 peter_1_1_1.children = peterRootChildren
 
@@ -2931,14 +2948,17 @@ def peter_2_1_1qf():
 '''his chin. "You interested in purchasing it? 5000 coins."'''],
 '''"Eh, little bit outside my price range."''',
 '''"Thought so," says Peter. "Ah well. What else can I do for you?"'''])
-    peterRootChildren.remove(peter_2_1_1)
+    try:
+        peterRootChildren.remove(peter_2_1_1)
+    except ValueError:
+        pass
 peter_2_1_1.quip_function = peter_2_1_1qf
 peter_2_1_1.children = peterRootChildren
 
 peter_3_1_1.comment = '''"Could I see your wares?"'''
 def peter_3_1_1_qf():
-    if p.PC.is_male() and chainmailBikini in peter.inventory:
-        peter.inventory[peter.inventory.index(chainmailBikini)] = chainmailThong
+    if p.PC.is_male() and itemspotionwars.chainmailBikini in peter.inventory:
+        peter.inventory[peter.inventory.index(itemspotionwars.chainmailBikini)] = itemspotionwars.chainmailThong
     return(shop_mode, [peter, peter_return_from_shopping])
 peter_3_1_1.quip_function = peter_3_1_1_qf
 #peter_3_1_1.children = peterRootChildren
@@ -3531,7 +3551,10 @@ def adrian_6_1_1_qf():
     ['''"Why the shortage of adventurers?" asks''', p.PC.name + "."],
     ['''"The discovery of the Dale Ruins to the far north," says Adrian. "A lot of''',
     '''adventurers have been going north to explore those."''']])
-    adrianRootChildren.remove(adrian_6_1_1)
+    try:
+        adrianRootChildren.remove(adrian_6_1_1)
+    except ValueError:
+        pass
 adrian_6_1_1.children = adrianRootChildren
 adrian_6_1_1.quip_function = adrian_6_1_1_qf
 
@@ -3546,7 +3569,10 @@ def adrian_7_1_1_qf():
     '''get your hopes up, though, there aren't usually that many. One or two, when''',
     '''there are any at all. Completing the primary objective gets you an extra 50''',
     '''coins."''']])
-    adrianRootChildren.remove(adrian_7_1_1) 
+    try:
+        adrianRootChildren.remove(adrian_7_1_1) 
+    except ValueError:
+        pass
 adrian_7_1_1.children = adrianRootChildren
 adrian_7_1_1.quip_function = adrian_7_1_1_qf
 
@@ -4120,6 +4146,7 @@ def start_scene_2_episode_1(loading=False):
     if not loading:
         music.play_music(INTENSE, 500)
     if not loading:
+        universal.say_title('Adrian')
         universal.say(universal.format_text([['''The door bursts open and over a dozen heavily armed, masked warriors''',
         '''in ragged clothing charge into the guild. Only their dark eyes, and a bit of brown skin''',
         '''are exposed.''', 
@@ -5601,6 +5628,8 @@ def e0_8_7():
                     '''See me, standing here not attacking you? Can't that be enough to convince you I'm not your enemy?''']]), justification=0)
                 universal.set_commands('(#) Select a number.')
                 universal.set_command_interpreter(cosima_noRibbon_interpreter)
+    else:
+        backOfGuild.display()
 
 def cosima_failedPaloma_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
@@ -5944,7 +5973,7 @@ def cosima_noRibbon_interpreter(keyEvent):
                 '''sorry. I'm probably being a bit unfair, so let's just focus on protecting our Guild. First, my name is Cosima. Second, do you have any idea''',
                 '''what these people are after?"'''],
                 ['''"The equipment in the armory," says''', name() + "."],
-                ['''Cosima grimaces. "Dammit, I told Adrian someone was going to attack us for that crap eventually. Look, I need you to get your ass up to''',
+                ['''Cosima grimaces. "Curse it, I told Adrian someone was going to attack us for that crap eventually. Look, I need you to get your ass up to''',
                     '''Paloma and convince her to give you a ribbon. Then, I need you to go see the other instructors. Get them to either join the fight''',
                     '''at the entranceway or help me down in the armory. Then, you should join me as well. Meanwhile, I'm going to take a quick look around before''',
                     '''heading to the armory as well."'''],
@@ -6241,8 +6270,7 @@ def e0_5_8():
             [name(), '''nods, sniffing miserably.'''],
             ['''"Good." Cosima stands, and gives Mai a glare. "And you. Come on. We've got an armory to defend."'''],
             ['''"Yes ma'am," mutters the elf, meekly following Cosima into the maze.''']]), justification=0)
-        universal.set_command_interpreter(mai_apologizes_intepreter)
-        universal.set_commands(['(#) Select a number'])
+        return (universal.acknowledge, [backOfGuild.display])
 
 def mai_apologizes_intepreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
@@ -8034,7 +8062,7 @@ def adrian_recap_interpreter(keyEvent):
         if len(summaryOfFailure) > 1:
             summaryOfFailure[-1] = 'and ' + summaryOfFailure[-1]
         if summaryOfFailure != []:
-            universal.say('However, you failed to mention ' + ', '.join(summaryOfFailure) + '.', justification=0)
+            universal.say(' However, you failed to mention ' + ', '.join(summaryOfFailure) + '.', justification=0)
             if 'failed_to_help_Paloma' in keywords() and 'talk_with_Mai' in keywords() and 'talk_with_Cosima' in keywords() and 'talk_with_Morey' in keywords() and 'talk_with_Airell' in keywords():
                 universal.say(universal.format_text([[''' Mother's love, it's almost like you want your bottom lashed to ribbons. It'll take a month to work through the backlog''',
                     '''of punishments you've earned yourself."'''],
@@ -8334,7 +8362,10 @@ ep1_peter_apologize_flirt_lesbian.children = [ep1_peter_apologize_flirt_accept, 
 ep1_peter_apologize_flirt_spank_lesbian.comment = '''"OK, but I still feel kind of bad. Are you sure you won't spank me? It'd make me feel better."'''
 def ep1_peter_apologize_flirt_spank_lesbian_qf():
     increment_spankings_taken()
-    ep1EndPeterRootChildren.remove(ep1_peter_flirt)
+    try:
+        ep1EndPeterRootChildren.remove(ep1_peter_flirt)
+    except ValueError:
+        pass
     ep1EndPeterRootChildren.insert(0, ep1_peter_flirt_lesbian)
     ep1_peter_apologize_flirt_spank_lesbian.quip = universal.format_text([['''Peter raises an eyebrow. "You want to be spanked."'''],
         ['''"Well, I wouldn't go that far," says''', name() + ".", '''"Just, whenever I did something inconsiderate, I always felt better after Nana''',
@@ -11036,7 +11067,7 @@ ep1_carrie_home.comment = '''"Yes. Yes, Elise tell Sister Samantha Carrie will s
 
 def ep1_carrie_home_qf():
     add_keyword('taking_Carrie_home')
-    person.get_party().add_member(carrie)
+    p.get_party().add_member(carrie)
     ep1_carrie_home.quip = universal.format_text([['''"You can go home with''', name(), '''after we've spoken to Sister Samantha."'''],
         ['''"But Roland-"'''],
         ['''"Alternatively," says Roland curtly. "I can drag you back to my place, and have my Master Servant spank you. I can assure you he is much stronger''',
@@ -11393,7 +11424,7 @@ def ep1_maria_temper(node):
                 [name(), '''backs up a step, as if distance can lessen the heat of the dangerous look Sister Samantha gives him. "Sister Samantha, I would never..."'''],
                 ['''"Good," says Sister Samantha. She smiles. "Regardless, I want Maria relatively close by, close enough to detect a Spectral Signal from Carrie."'''],
                 ['''Maria nods. "Yes ma'am."'''],
-                ['''The other tow chime in their own "Yes ma'ams."''']]) if 
+                ['''The other two chime in their own "Yes ma'ams."''']]) if 
                     'taking_Carrie_home' in keywords() else universal.format_line(['''"Yes ma'am," says Carrie, yawning. She rubs her bottom. "Assuming I can fall''',
                     '''asleep,''',
                     '''considering how much my butt hurts."'''])],
@@ -11501,7 +11532,7 @@ def ep1_maria_chase_qf():
     if 'Elise_shows_you_around' in keywords():
         ep1_maria_chase.quip = universal.format_text([ep1_maria_chase.quip, ['''Elise breathes a sigh of relief as the two return. "Thank the Mother. I was bit worried there. Is everything OK?"'''],
         ['''"Well, I don't know that everything is completely ok," says''', name() + ",", '''rubbing''', hisher(), '''ravaged bottom. "But I want it to be."'''],
-        ep1_maria_live_question()])
+        '''Maria nods in agreement. She turns her attention to''', name() + ".", '"' + ep1_maria_live_question()])
         
 ep1_maria_chase.quip_function = ep1_maria_chase_qf
 ep1_maria_chase.children = [ep1_maria_live, ep1_maria_dont_live]
@@ -12011,8 +12042,9 @@ def ep1_catalin():
             ['''Catalin grimaces. "I'd really rather she doesn't see me, or even learn I'm here, alright?"'''],
             [name(), '''frowns. "Cat, what's this about?"''']]), justification=0)
     universal.say(universal.format_text([['''\n\n"So, I hear you had an interesting day," says Catalin, sitting down on''', names(), '''bed.''' if 'boarding_with_Adrian' in keywords() else '''blankets.''',
-        '''"Fighting Vengadores,''', '''lying to guards,''' if 'lied_about_Bonda' in keywords() or 'lied_about_name' in keywords() else '''getting interrogated by''',
-        '''guards,''',
+        '''"Fighting Vengadores,''', '''lying to guards,''' if 'lied_about_Bonda' in keywords() or 'lied_about_name' in keywords() else 
+        format_line(['''getting interrogated by''',
+        '''guards,''']),
         '''partying with Sisters, and meeting the Captain of the Guard himself."''' if 'Elise_shows_you_around' in keywords() else 
         universal.format_line(['''getting a close up look at the Captain of the Guard himself."'''])],
         ['''"Indeed," says''', name(), '''suddenly wary. "You seem to know quite a bit about my day, even though we haven't seen each other at all."'''],
