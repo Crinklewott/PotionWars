@@ -257,6 +257,7 @@ loadingGame = True
 
 def title_screen(episode=None):
     global firstEpisode, loadingGame
+    townmode.clear_rooms()
     textSurface = None
     titleImage = None
     try:

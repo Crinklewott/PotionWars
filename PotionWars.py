@@ -4389,7 +4389,8 @@ def e1_2_7():
                     '''those two left. Alright, give me a minute."'''],
                 ['''The healer goes to the back of the room, and pulls out a long white ribbon. She concentrates on it for a moment, then brings it''',
                     '''back to''', name() + ".", '''"Here you go. Also, might as well heal you while you're here."''']]), justification=0)
-            p.PC.get_item(itemspotionwars.whiteRibbon)
+            p.PC.take_item(itemspotionwars.whiteRibbon)
+            remove_keyword('get_ribbon')
         else:
             universal.say(universal.format_text([['''"What do you want?" snaps Paloma. She moves gingerly amongst the wounded, binding an arm here, checking a dagger wound there.'''],
                 ['''"Well, you're a healer-" begins''', name() + "."],
@@ -6169,7 +6170,7 @@ def e0_5_8():
                             '''switching on bare." Fingers sneak into the waistband of''', names(), p.underwearpanties(), '''and slip them down to just below''', 
                             hisher(),'''bottom.''']) if not p.PC.underwear().baring and not no_pants()
                             else universal.format_line(['''"Hmm. Nice, leaves bottom exposed, and such impressive stripes. But why hide them beneath''', 
-                                p.PC.clothing_below_the_waist.armorType + "?", '''Stripes should be worn proudly. Not shamefully hidden. But one layer of hiding''',
+                                p.PC.clothing_below_the_waist().armorType + "?", '''Stripes should be worn proudly. Not shamefully hidden. But one layer of hiding''',
                                 '''better than two.''']) if p.PC.underwear().baring and 
                                 one_in_keywords(['Ildri_spanked_you_unjustly', 'spanked_by_Airell', 'spanked_by_Cosima', 'Maria_spanked_you'])
                                 else universal.format_line(['''"Hmm. Hiding behind one layer of cloth, not two. Better than many humans. Perhaps because you have no stripes''',
@@ -7035,6 +7036,7 @@ def necia_wimpy_lost_interpreter(keyEvent):
     if picked:
         universal.say(necia_wimpy_spanked(), justification=0)
         add_keyword('spanked_by_Necia')
+    p.PC.currentEpisode.next_scene()
 
 def necia_wimpy_spanked():
     spankText = ''
@@ -11483,6 +11485,7 @@ def ep1_maria_live_qf():
         return (universal.acknowledge, [townmode.go, avaricumSquare])
     else:
         return (universal.acknowledge, [townmode.go, mariasHome])
+    exitLeft(maria)
 ep1_maria_live.quip_function = ep1_maria_live_qf        
 
 ep1_maria_dont_live.comment = '''"Sorry, but I think I'll look for something else. Something a bit safer."'''
@@ -11508,6 +11511,7 @@ def ep1_maria_dont_live_qf():
             ['''"Good to know," says''', name() + ".", '''"Shall we go?"''']])
     if 'Elise_shows_you_around' in keywords():
         return (universal.acknowledge, [townmode.go, avaricumSquare])
+    exitLeft(maria)
 ep1_maria_dont_live.quip_function = ep1_maria_dont_live_qf
 
 ep1_maria_temper_refuse = Node(308)
@@ -12162,6 +12166,6 @@ with open("errors.log", 'w') as f:
 errorLog.addHandler(logging.FileHandler("errors.log"))
 try:
     eng.begin_game(episode1)
-except Exception, e:
+except Exception:
     errorLog.exception("My life is pain!")
     raise

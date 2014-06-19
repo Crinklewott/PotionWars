@@ -81,6 +81,14 @@ actionsEndured = {}
 optional = False
 ambush = 0
 boss = False
+def end_fight():
+    global allies, enemies, actionsInflicted, actionsEndured, activeAlly, chosenActions 
+    allies = None
+    enemies = None
+    actionsInflicted = {}
+    actionsEndured = {}
+    activeAlly = None
+    chosenActions = []
 def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon_mode, runnableIn=True, bossFight=False, optionalIn=False, additionalAllies=None, 
         ambushIn=0):
     global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface, enemySurface, commandSurface, clearScreen, previousMode, origAllies, origEnemies, \
@@ -405,6 +413,9 @@ def begin_round_interpreter(keyEvent):
 
 def confirm_to_title_interpreter(keyEvent):
     if keyEvent.key == K_y:
+        for ally in allies:
+            ally.break_grapple()
+        end_fight()
         titleScreen.title_screen()
     elif keyEvent.key == K_n:
         display_combat_status(printAllies=False, printEnemies=False)
@@ -457,10 +468,11 @@ def select_spell(tier):
     """
     print_command('Spell')
     global possibleSpells
+    possibleSpells = [spell for spell in activeAlly.spellList[chosenTier] if activeAlly.current_mana() >= spell.cost]
     if activeAlly.is_grappling():
-        possibleSpells = [spell for spell in activeAlly.spellList[chosenTier] if spell.grappleStatus != combatAction.NOT_WHEN_GRAPPLED]
+        possibleSpells = [spell for spell in possibleSpells if spell.grappleStatus != combatAction.NOT_WHEN_GRAPPLED]
     else:
-        possibleSpells = [spell for spell in activeAlly.spellList[chosenTier] if spell.grappleStatus != combatAction.ONLY_WHEN_GRAPPLED and 
+        possibleSpells = [spell for spell in possibleSpells if spell.grappleStatus != combatAction.ONLY_WHEN_GRAPPLED and 
                 spell.grappleStatus != combatAction.ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY]
     commandList = numbered_list([spell.name for spell in possibleSpells if activeAlly.mana() >= spell.cost])
     if len(commandList) < 9:
@@ -874,8 +886,8 @@ def strap_cane_ai(enemy):
             else:
                 activeCompanions.append(enemy)
                 defendTargets = [comp for comp in activeCompanions if not comp.is_grappling()]
-                defendTargets.extend([comp for statName in activeCompanions.status_names() if statusEffects.is_negative(comp.get_status(statName))])
-                for companion in activeCompanions:
+                for comp in activeCompanions:
+                    defendTargets.extend([companion for statName in companion.status_names() if statusEffects.is_negative(companion.get_status(statName))])
                     #We want to defend the magic users above all else.
                     defendTargets.extend([companion for i in range(max(0, companion.magic()) // 3)])
                     defendTargets.extend([companion for i in range(companion.health() - companion.current_health()) if companion.current_health() <= avg_damage(opponents)])
@@ -1225,10 +1237,9 @@ def start_round(chosenActions):
                 action.defenders = [attacker.grapplingPartner]
             elif attacker.is_grappling() and action.grappleStatus == combatAction.NOT_WHEN_GRAPPLED:
                 action = combatAction.DefendAction(attacker, [attacker])
-            actionEffect = action.effect(True, activeAllies, activeEnemies)
+            actionEffect = action.effect(inCombat=True, allies=activeAllies, enemies=activeEnemies)
             count = 0
             print(action)
-            print(actionEffect[1])
             if isinstance(actionEffect[2], combatAction.RunAction) and actionEffect[1][0]:
                 end_combat()
                 return
@@ -1358,6 +1369,7 @@ def game_over_interpreter(keyEvent):
             afterCombatEvent([ally for ally in allies if ally.current_health() <= 0], [enemy for enemy in enemies if enemy.current_health() <= 0], False)
             allies.members += defeatedAllies    
         else:
+            end_fight()
             titleScreen.title_screen()
         return
 
@@ -1383,6 +1395,7 @@ def victory():
     for ally in allies:
         ally.break_grapple()
     improve_characters(afterCombatEvent, activeAllies, activeEnemies, True)
+    end_fight()
     """
     global enemies, chosenActions, actionResults, actionsEndured, actionsInflicted
     enemies = person.Party(origEnemies)
@@ -1437,7 +1450,7 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
             except TypeError:
                 print('spell school: ' + str(i))
             #If your character already has a significantly higher stat than your opponent, the chances of increasing that stat drop off drastically
-            statChance = ally.chanceIncrease[i]
+            statChance = ally.chanceIncrease[i] + (100 if universal.DEBUG else 0)
             #print('chance to increase:' + str(statChance))
             success = random.randint(1, 100)
             #print('success:' + str(success))
@@ -1451,14 +1464,15 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
                     gainedPoint = True
                     #print('increasing stat: ' + person.stat_name(i))
                     gain = 1
-                    if i != HEALTH and i != MANA:
+                    if i != HEALTH and i != MANA and i != CURRENT_HEALTH and i != CURRENT_MANA:
                         ally.increase_stat(i, 1)
-                    else:
+                    elif i != CURRENT_HEALTH and i != CURRENT_MANA:
                         gain = random.randint(1, 10)    
                         print(ally)
                         print(person.PC)
                         ally.improve_stat(i, gain)
-                    universal.say(format_line([ally.name, 'has gained', str(gain), person.stat_name(i) + '.\n']))
+                    if i != CURRENT_HEALTH and i != CURRENT_MANA:
+                        universal.say(format_line([ally.name, 'has gained', str(gain), person.stat_name(i) + '.\n']))
                 else:
                     #print('learning a spell.')
                     learn_spell(ally, i)
@@ -1478,14 +1492,18 @@ def learn_spell(ally, spellSchool):
         #print(i)
         #print(spellIndex)
         #print(ally.tier)
-        if not ally.knows_spell(person.allSpells[i][spellIndex][0]):
-                #We weight the spells based on their tier level. Spells have tier 0 have 1 weight, spells of tier 1 have 2 weight and so on. This increases the chances
+        print(i)
+        try:
+            if not ally.knows_spell(person.allSpells[i][spellIndex][0]):
+                #We weight the spells based on their tier level. Spells that have tier 0 have 1 weight, spells of tier 1 have 2 weight and so on. This increases the chances
                 #of a character learning a more powerful spell sooner.
-            unknownSpells.append(person.allSpells[i][spellIndex][0])    
-        elif not ally.knows_spell(person.allSpells[i][spellIndex][1]):
-            unknownSpells.append(person.allSpells[i][spellIndex][1])    
-        elif ally.specialization == spellSchool and not ally.knows_spell(Person.allSpells[i][spellIndex][2]):
-            unknownSpells.append(person.allSpells[i][spellIndex][2])    
+                unknownSpells.append(person.allSpells[i][spellIndex][0])    
+            elif not ally.knows_spell(person.allSpells[i][spellIndex][1]):
+                unknownSpells.append(person.allSpells[i][spellIndex][1])    
+            elif ally.specialization == spellSchool and not ally.knows_spell(Person.allSpells[i][spellIndex][2]):
+                unknownSpells.append(person.allSpells[i][spellIndex][2])    
+        except TypeError:
+            continue
     if len(unknownSpells) > 0:
         learnedSpell = unknownSpells[random.randint(0, len(unknownSpells)-1)]
         ally.learn_spell(learnedSpell)

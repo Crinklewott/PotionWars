@@ -26,6 +26,7 @@ import copy
 
 checkWillpower = True
 
+
 def flip_willpower_check():
     global checkWillpower
     checkWillpower = not checkWillpower
@@ -61,6 +62,8 @@ MANA_SCALE = 5
 
 XP_INCREASE_PER_LEVEL = 100
 
+STATUS_OBJ = 0
+DURATION = 1
 #This is used for saving purposes
 allCharacters = {}
 
@@ -238,6 +241,7 @@ class Person(universal.RPGObject):
             self.description = description
         else:
             self.description = [description]
+        #A mapping from the name of the status, to the actual status, and the duration.     
         self.statusList = {}
         if rawName is None:
             self.rawName = name
@@ -422,9 +426,14 @@ class Person(universal.RPGObject):
             self.inventory.append(item)
 
     def drop_item(self, item):
+        successfulUnequip = True
         if not item in self.inventory:
-            self.unequip(item)
-        self.inventory.remove(item)
+            successfulUnequip = self.unequip(item)
+        try:
+            self.inventory.remove(item)
+        except ValueError:
+            pass
+        return successfulUnequip
 
     def set_spanking_positions(self, spankingPositions):
         self.spankingPositions = spankingPositions
@@ -583,7 +592,7 @@ class Person(universal.RPGObject):
                 acknowledge(self.character_sheet, None)
                 return
         elif equipment == SHIRT and self.equipmentList[SHIRT] != items.emptyUpperArmor:
-            empty = item.emptyUpperArmor
+            empty = items.emptyUpperArmor
         if empty is not None:
             self.inventory.append(self.equipmentList[equipment])
             self.equipmentList[equipment] = empty
@@ -781,7 +790,10 @@ class Person(universal.RPGObject):
             return ', '.join(spellList)
         else:
             tier = self.spellList[tierNum]
-            return '\n'.join([str(n) + '. ' + s.name for (n,s) in zip([i for i in range(1, len(tier)+1)], tier)])
+            try:
+                return '\n'.join([str(n) + '. ' + s.name for (n,s) in zip([i for i in range(1, len(tier)+1)], tier)])
+            except TypeError:
+                return ' '.join([self.printedName, 'does not know any spells of this tier.'])
 
     #The following functions take another person as argument. The first is used when this person failed to spank the arguent.
     #The second is used when the argument failed to spank this person.
@@ -851,13 +863,13 @@ class Person(universal.RPGObject):
     def magic_defense_bonus(self):
         defenseBonus = 0
         if statusEffects.LoweredMagicDefense.name in self.statusList:
-            defenseBonus = loweredMagicDefense.inflict_status(self)
+            defenseBonus = self.statusList[statusEffects.LoweredMagicDefense.name][0].inflict_status(self)
         if statusEffects.MagicShielded.name in self.statusList: 
-            defenseBonus = magicShielded.inflict_status(self)
+            defenseBonus = self.statusList[statusEffects.MagicShielded.name][0].inflict_status(self)
+            print(self.statusList[statusEffects.MagicShielded.name][0])
+        print(defenseBonus)
         return self.weapon().magicDefense + self.shirt().magicDefense + self.lower_clothing().magicDefense + self.underwear().magicDefense + defenseBonus
 
-    STATUS = 0
-    DURATION = 1
     def inflict_status(self, status, originalList=None, newList=None):
         if originalList is not None and newList is not None:
             status.inflict_status(self, originalList, newList)
@@ -868,9 +880,9 @@ class Person(universal.RPGObject):
     def reverse_status(self, statusName, originalList=None, newList=None):
         if self.is_inflicted_with(statusName):
             if originalList is not None and newList is not None:
-                self.statusList[statusName][Person.STATUS].reverse_status(self, originalList, newList)
+                self.statusList[statusName][STATUS_OBJ].reverse_status(self, originalList, newList)
             else:
-                self.statusList[statusName][Person.STATUS].reverse_status(self)
+                self.statusList[statusName][STATUS_OBJ].reverse_status(self)
             del self.statusList[statusName] 
 
     def is_inflicted_with(self, statusName):
@@ -882,15 +894,15 @@ class Person(universal.RPGObject):
     def decrement_statuses(self, amount=1):
         expiredStatuses = []
         for statusName in self.statusList.keys():
-            self.statusList[statusName][Person.STATUS].every_round(self)
-            self.statusList[statusName][Person.DURATION] -= amount
-            if self.statusList[statusName][Person.DURATION] <= 0:
+            self.statusList[statusName][STATUS_OBJ].every_round(self)
+            self.statusList[statusName][DURATION] -= amount
+            if self.statusList[statusName][DURATION] <= 0:
                 expiredStatuses.append(statusName)
         for statusName in expiredStatuses:
             self.reverse_status(statusName)
 
     def get_status(self, statusName):
-        return self.statusList[statusName][Person.STATUS]
+        return self.statusList[statusName][STATUS_OBJ]
 
     def status_names(self):
         return self.statusList.keys()
@@ -978,6 +990,9 @@ class Person(universal.RPGObject):
                 characterInformation.append('tier ' + str(tierNum))
                 characterInformation.extend([s._save() for s in tier if s is not None])
                 characterInformation.append('end_tier ' + str(tierNum))
+        characterInformation.append('statusList:')
+        for statusName in self.statusList:
+            characterInformation.append(' '.join(['status=', statusName, str(self.statusList[statusName][DURATION])]))
         characterInformation.append('end_person')
         return '\n'.join(characterInformation)  
 
@@ -1005,12 +1020,14 @@ class Person(universal.RPGObject):
         emerits = 0
         demerits = 0
         spellList = [None for i in range(NUM_TIERS)]
-        statusList = []
+        statusList = {}
         rawName = ''
         while lineNum < len(data):
             line = str.strip(data[lineNum]).split()
             if line[0] == 'person_name=':
                 name = ' '.join(line[1:])
+            elif line[0] == 'status=':
+                statusList[line[1]] = [statusEffects.build_status(line[1], int(line[2])), int(line[2])]
             elif line[0] == 'gender=':
                 gender = int(line[1])
             elif line[0] == 'experience=':
@@ -1038,7 +1055,10 @@ class Person(universal.RPGObject):
             elif line[0] == 'stats:':
                 lineNum += 1
                 while data[lineNum] != 'end_stats':
-                    stats.append(int(str.strip(data[lineNum])))
+                    try:
+                        stats.append(int(str.strip(data[lineNum])))
+                    except ValueError:
+                        stats.append(int(float(str.strip(data[lineNum])))) 
                     lineNum += 1
             elif line[0] == 'litany=':
                 litany = conversation.Node._load([line[1]])     
@@ -1076,13 +1096,6 @@ class Person(universal.RPGObject):
                         spells.append(Spell._load(data[lineNum]))
                     lineNum += 1
                 spellList[tierNum] = spells
-            elif line[0] == 'begin_status':
-                lineNum += 1
-                statusData = []
-                while line[0] != 'end_status':
-                    statusData.append(data[lineNum])
-                    lineNum += 1
-                statusList.append(StatusEffects._load(statusData))
             lineNum += 1
         #person = eval(personType)(name, description, gender)
         person = allCharacters.get(rawName + "." + personType)
@@ -1107,7 +1120,7 @@ class Person(universal.RPGObject):
         person.emerits = emerits
         person.demerits = demerits
         for status in statusList:
-            person.inflict_status(status)
+            person.statusList = statusList
         person.set_copy()
         return person
 
@@ -1150,7 +1163,7 @@ class Person(universal.RPGObject):
         if self.statusList == {}:
             return 'Healthy'
         else:
-            return ', '.join([status.name + ": " + str(duration) for status, duration in self.statusList.iteritems()])
+            return ', '.join([status + ": " + str(statusDurationPair[DURATION]) for status, statusDurationPair in self.statusList.iteritems()])
 
     def equip_menu(self):
         set_commands(['(#) Select item to equip:_', 'Unequip (W)eapon', 'Unequip (C)hest', 'Unequip (L)egs', 'Unequip (U)nderwear', '<==Back', '(Esc) Return to menu'])
@@ -1990,8 +2003,9 @@ class Buff(Spell):
             if self.statusInflicted is not None:
                 recipient.inflict_status(statusEffects.build_status(self.statusInflicted, duration))
             resultStatement.append(self.effect_statement(recipient))
-            resultStatement.append('\n')
-            resultStatement.append(success_statement(defender))
+            defender = self.defenders[0]
+            resultStatement.append(self.success_statement(defender))
+            print(resultStatement)
             effects.append(True)
         return (universal.format_text(resultStatement, False), effects, self)
 

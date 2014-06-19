@@ -163,7 +163,8 @@ class MagicShielded(StatusEffect):
         self.defenseBonus = defenseBonus
 
         def inflict_status(self, person):
-            return defenseBonus
+            print(self.defenseBonus)
+            return self.defenseBonus
 
         def reverse_status(self, person):
             """ 
@@ -406,30 +407,32 @@ def build_status(status, duration=0, numSmacks=0, allies=None, enemies=None):
         A factory function. Given an enum representing a status, returns the associated status. Raises a ValueError if the passed integer does not correspond to a particular
         status. Note: The numSmacks argument should only be used for the Humiliated status, since the severity of that status depends on how many blows the spanker managed
         to land on the spankee.
+
+        status can also be the status' name.
     """
-    if status == HUMILIATED:
+    if status == HUMILIATED or status == Humiliated.name:
         return Humiliated(duration, numSmacks)
-    elif status == WEAKENED:
+    elif status == WEAKENED or status == Weakened.name:
         return Weakened(duration)
-    elif status == MAGIC_DISTORTED:
+    elif status == MAGIC_DISTORTED or status == MagicDistorted.name:
         return MagicDistorted(duration)
-    elif status == SHIELDED:
+    elif status == SHIELDED or status == Shielded.name:
         return Shielded(duration)
-    elif status == MAGIC_SHIELDED:
+    elif status == MAGIC_SHIELDED or status == MagicShielded.name:
         return MagicShielded(duration)
-    elif status == LOWERED_DEFENSE:
+    elif status == LOWERED_DEFENSE or status == LoweredDefense.name:
         return LoweredDefense(duration)
-    elif status == LOWERED_MAGIC_DEFENSE:
+    elif status == LOWERED_MAGIC_DEFENSE or status == LoweredMagicDefense.name:
         return LoweredMagicDefense(duration)
-    elif status == CHARMED:
+    elif status == CHARMED or status == Charmed.name:
         return Charmed(duration, allies, enemies)
-    elif status == FIRST_ORDER:
+    elif status == FIRST_ORDER or status == FirstOrder.name:
         return FirstOrder()
-    elif status == SECOND_ORDER:
+    elif status == SECOND_ORDER or status == SecondOrder.name:
         return SecondOrder()
-    elif status == THIRD_ORDER:
+    elif status == THIRD_ORDER or status == ThirdOrder.name:
         return ThirdOrder()
-    elif status == FOURTH_ORDER:
+    elif status == FOURTH_ORDER or status == FourthOrder.name:
         return FourthOrder()
     else:
         if status == None:

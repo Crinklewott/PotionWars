@@ -98,6 +98,7 @@ class CombatAction(universal.RPGObject):
         defined right away. So they need to be defined in the concrete version of this method, and then you can invoke this abstract version to get a random choice.
         It's not the most elegant implementation ever, and I may come back someday and rework it.
         """
+        print(self.effectStatements)
         return random.choice(self.effectStatements)
 
     @abc.abstractmethod
@@ -247,10 +248,10 @@ class GrappleAction(CombatAction):
         """
         defender = self.defenders[0]
         opponents = enemies if self.attacker in allies else allies
+        attacker = self.attacker
         if not defender in opponents:
             return AttackAction(attacker, opponents[randrange(0, len(opponents))]).effect(inCombat, allies, enemies)
         resultString = ''
-        attacker = self.attacker
         if attacker.is_grappling() and not attacker.is_grappling(defender):
             return BreakGrappleAction(attacker, attacker.grapplingPartner).effect(inCombat, allies, enemies)
         elif defender.guardian is not None and not defender.is_grappling(attacker):
@@ -486,7 +487,7 @@ class ThrowAction(CombatAction):
             failure = rand(grappleGBonus)
             if failure <= success:
                 betterStat = attacker.warfare() if attacker.warfare() >= attacker.grapple() else attacker.grapple()
-                dam = math.floor(rand(damRange[1] + betterStat - defender.defense()) + damRange[0])
+                dam = int(math.floor(rand(damRange[1] + betterStat - defender.defense()) + damRange[0]))
                 if dam < 1:
                     dam = 1
                 grappler.receives_damage(dam)   

@@ -58,6 +58,24 @@ fontSize = pygame.font.SysFont(universal.FONT_LIST, universal.TITLE_SIZE).size('
 directionSurface = pygame.Surface((fontSize[0] + (fontSize[1] - fontSize[0]), fontSize[1] + 5))
 directionSurface.fill(universal.DARK_GREY)
 
+def set_dungeon_commands(dungeon=None):
+    import traceback
+    traceback.print_stack()   
+    set_commands(['(P)arty', '(S)ave', '(Q)uick Save', '(L)oad', 't(I)tle Screen', '(Esc)Quit'])
+    if dungeon is not None:
+        floor = dungeon.coordinates[0]
+        row = dungeon.coordinates[1]
+        column = dungeon.coordinates[2]
+        square = dungeon[floor][row][column][HERE]
+        if has_char('e', square):
+            set_commands(['(E)xit'] + get_commands())
+        if has_char('u', square):
+            changingFloors = True
+            set_commands(['(U)p'] + get_commands())
+        if has_char('d', square):
+            print('Going down.')
+            changingFloors = True
+            set_commands(['(D)own'] + get_commands())
 def print_dir(direction):
     if direction == NORTH:
         return "N"
@@ -332,6 +350,7 @@ class Dungeon(townmode.Room):
             elif line[0] == 'dungeon=':
                 global dungeon
                 dungeon = townmode.allRooms[line[1]]
+        set_dungeon_commands()
         return thisDungeon
 
     def __getitem__(self, key):
@@ -377,8 +396,7 @@ class Dungeon(townmode.Room):
         """
         set_command_interpreter(dungeon_interpreter)
         clear_screen()
-        if not '(P)arty' in get_commands():
-            set_commands(['(P)arty', '(S)ave', '(Q)uick Save', '(L)oad', 't(I)tle Screen', '(Esc)Quit'])
+        set_dungeon_commands(self)
         #First, we build a 3 x visibility grid of all the potentially visible squares.
         visibleArea = ([], [], [])
         floor = self.coordinates[0]
@@ -657,8 +675,10 @@ class Dungeon(townmode.Room):
         column = self.coordinates[2]
         square = self[floor][row][column][HERE]
         event = False
-        set_commands(['(P)arty', '(S)ave', '(Q)uick Save', '(L)oad', 't(I)tle Screen', '(Esc)Quit'])
         universal.clear_world_view()
+        global changingFloors
+        changingFloors = False
+        set_dungeon_commands(self)
         if (has_char('*', square) or has_char('s', square)) and self.dungeonEvents[floor][row][column] is not None:
             event = True
             self.dungeonEvents[floor][row][column]()
@@ -671,9 +691,11 @@ class Dungeon(townmode.Room):
                 event = True
                 self.dungeonEvents[floor][row][column]()
         if has_char('u', square):
+            changingFloors = True
             set_commands(['(U)p'] + get_commands())
         if has_char('d', square):
             print('Going down.')
+            changingFloors = True
             set_commands(['(D)own'] + get_commands())
         if not event and random.randint(0, 99) < self[floor].encounterRate:
             self.encounter()
@@ -710,6 +732,9 @@ class Dungeon(townmode.Room):
         
         then the player moved backwards (i.e. pressed the "Down" key).
         """
+        party = person.get_party()
+        for char in party:
+            char.decrement_statuses()
         if down:
             self.coordinates = (self.coordinates[0]-1, self.coordinates[1], self.coordinates[2])
         elif up:
@@ -772,7 +797,7 @@ def set_dungeon(dungeonIn):
     global dungeon
     dungeon = dungeonIn
 
-
+changingFloors = False
 def dungeon_interpreter(keyEvent):
     global dungeon
     if keyEvent.key == K_ESCAPE:
@@ -792,9 +817,9 @@ def dungeon_interpreter(keyEvent):
         universal.say('\t'.join(['Name:', 'Health:', 'Mana:\n\t',]), columnNum=3)
         universal.say(person.party.display_party(), columnNum=3)
         set_command_interpreter(select_character_interpreter)
-    elif keyEvent.key == K_d:
+    elif keyEvent.key == K_d and changingFloors:
         dungeon.move(down=True)
-    elif keyEvent.key == K_u:
+    elif keyEvent.key == K_u and changingFloors:
         dungeon.move(up=True)
     elif keyEvent.key == K_UP:
         dungeon.move(True)

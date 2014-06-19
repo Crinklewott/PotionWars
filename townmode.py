@@ -161,6 +161,9 @@ class Room(universal.RPGObject):
         thisRoom.add_characters(characters)
         return thisRoom
 
+def clear_rooms():
+    for room in allRooms:
+        allRooms[room].clear_characters()
 offStage = Room('offStage', "If you're seeing this, it means you've reached the end of the content.")
 
 def load_initial_room():

@@ -322,11 +322,12 @@ def confirm_sell():
 
 def confirm_sell_interpreter(keyEvent):
     if keyEvent.key == K_y:
-        chosenPerson.coins += chosenGood.price // 2
         universal.say([chosenPerson.name, 'has sold', chosenGood.name, 'for', str(chosenGood.price // 2), 
                 'coins.'])
-        chosenPerson.drop_item(chosenGood)
-        shopkeeper.take_item(chosenGood)
+        success = chosenPerson.drop_item(chosenGood)
+        if success:
+            chosenPerson.coins += chosenGood.price // 2
+            shopkeeper.take_item(chosenGood)
         set_goods()
         acknowledge(window_sell_person_chosen, ())
     elif keyEvent.key == K_n:

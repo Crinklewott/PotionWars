@@ -332,7 +332,7 @@ class Fortify(p.Healing):
         caster = self.attacker
         C = caster.printedName
         D = defender.printedName
-        self.effectStatements = [[C, 'casts', self.name, 'on', D + '!']]
+        self.effectStatements = [[C, 'casts', self.name, 'on', D + '!\n']]
         #self.effectStatements = [[C, 'takes a deep breath.', He_She(caster), 'breathes out, and sweeps', his_her(caster), 'hands towards', D, '.']]
         return super(Fortify, self).effect_statement(defender)
 
@@ -366,12 +366,13 @@ class SuperFortify(p.Healing):
         D = defender.printedName
         self.effectStatements = [[C, 'casts', self.name, 'on', D + '!']]
         #self.effectStatements = [[C, 'takes a deep breath.', He_She(caster), 'breathes out, and sweeps', his_her(caster), 'hands towards', D, '.']]
-        return super(Fortify, self).effect_statement(defender)
+        return super(SuperFortify, self).effect_statement(defender)
 
 heal = Heal(None, None)
 fortify = Fortify(None, None)
 superFortify = SuperFortify(None, None)
 p.allSpells[0].append((heal, fortify, superFortify))
+print(p.allSpells[0])
 
 #-------------------------------------------------------------------------Tier 0 Spectral--------------------------------------------------------------
 
@@ -410,6 +411,10 @@ class SpectralPush(p.Spectral):
         3. This action
         """
         super(SpectralPush, self).effect(inCombat)
+        attacker = self.attacker
+        if not attacker.is_grappling():
+            attacker.increase_stat(universal.MANA, self.cost)
+            return combatAction.DefendAction(attacker, attacker)
         opponents = enemies if self.attacker in allies else allies
         effects = []
         currentDefenders = list(self.defenders)
@@ -501,6 +506,8 @@ class SpectralPull(p.Spectral):
         3. This action
         """
         super(SpectralPull, self).effect(inCombat)
+        attacker  = self.attacker
+        defenders = self.defenders
         opponents = enemies if attacker in allies else opponents
         currentDefenders = list(defenders)
         effects = []
@@ -518,7 +525,7 @@ class SpectralPull(p.Spectral):
         success = random.randint(1, 100)
         resultStatement = []
         damageStatement = [attacker.printedName, 'does', damage, 'damage to', defender.printedName]
-        resultStatement.append(self.effect_statement(defender))
+        resultStatement.append(self.effect_statement(defender, damage))
         if defender.ignores_spell(self):
             resultStatement.extend(self.immune_statement(defender, damage))
             effects.append((0, False))
@@ -541,7 +548,7 @@ class SpectralPull(p.Spectral):
         attacker = self.attacker
         D = defender.printedName
         self.effectStatements = [format_line([A, 'casts Spectral Pull on', D, 'for', str(dam), 'damage!'])]
-        return super(Spectral, self).effect_statement(defender)
+        return super(SpectralPull, self).effect_statement(defender)
 
     def success_statement(self, defender):
         A = self.attacker.printedName
@@ -586,6 +593,11 @@ class SpectralShove(p.Spectral):
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(SpectralShove, self).effect(inCombat)
+        attacker = self.attacker
+        if not attacker.is_grappling():
+            attacker.increase_stat(universal.MANA, self.cost)
+            return DefendAction(attacker, attacker)
+        defenders = self.defenders
         opponents = enemies if attacker in allies else opponents
         currentDefenders = list(defenders)
         for defender in defenders:
@@ -603,18 +615,18 @@ class SpectralShove(p.Spectral):
         resultStatement = []
         effects = []
         damageStatement = [attacker.printedName, 'does', damage, 'damage to', defender.printedName]
-        resultStatement.extend(self.effect_statement(defender))
+        resultStatement.append(self.effect_statement(defender, damage))
         if defender.ignores_spell(self):
             resultStatement.extend(self.immune_statement(defender))
             effects.append((0, False))
         elif success <= successProbability:
-            self.attacker.grapple(defender)
+            self.attacker.break_grapple()
             defender.receives_damage(damage)
-            resultStatement.extend(self.success_statement(defender, damage))
+            resultStatement.extend(self.success_statement(defender))
             effects.append((damage, True))
         else:
             defender.receives_damage(damage)
-            resultStatement.extend(self.failure_statement(defender, damage))
+            resultStatement.extend(self.failure_statement(defender))
             effects.append((damage, False))
             if defender.current_health() <= 0:
                 resultStatement[-1] = '\n'.join([resultStatement[-1], ' '.join([defender.printedName, 'collapses!'])])
@@ -625,8 +637,7 @@ class SpectralShove(p.Spectral):
         attacker = self.attacker
         D = defender.printedName
         self.effectStatements = [format_line([A, 'casts Spectral Shove on', D, 'for', str(dam), 'damage!'])]
-        #self.effectStatements = [['With a primal screen,', A, 'arches', his_her(attacker), 'back, then snaps forward,', his_her(attacker), 'hands snap out in front of', him_her(attacker), '. A battering ram of pure magic erupts from', A, '\'s body and slams into', D, '.']]
-        return super(Spectral, self).effect_statement(defender)
+        return format_line([A, 'casts Spectral Shove on', D, 'for', str(dam), 'damage!'])
 
     def success_statement(self, defender):
         A = self.attacker.printedName
@@ -776,7 +787,7 @@ class DistortMagic(p.Status):
         A = attacker.printedName
         D = defender.printedName
         self.effectStatements = [[A, 'casts Distort Magic on', D + "!"]]
-        #self.effectStatements = [[A, 'sweeps', hisher(attacker), 'arm in an arc in front of', himselfherself(attacker), 'as if', heshe(attacker),
+        #self.effectStatements = [[A, 'sweeps', hisher(attacker), 'arm in an arc in front of', himselfherself(attacker), 'as if', p.heshe(attacker),
         #   'were scattering birdseed. Half a dozen small red robs fly from', A, 'and strike', E,'.']]
         return super(DistortMagic, self).effect_statement(defender)
 
@@ -810,6 +821,7 @@ class MassDistortMagic(p.Status):
         self.effectFormula = 'EFFECT: -3 penalty to magic\nSUCCESS CHANCE (%): 50 | 30 * (willpower - enemy willpower) | 95\n DURATION: 4 | 4 *(magic - enemy magic)'
         self.numTargets = 3
         self.rawMagic = True
+        self.magicMultiplier = 4
         self.tier = MassDistortMagic.tier
         self.statusInflicted = statusEffects.MAGIC_DISTORTED
         self.effectClass = combatAction.SPELL_SLINGERS
@@ -817,6 +829,8 @@ class MassDistortMagic(p.Status):
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.willpowerMultiplier = 30
         self.expertise = ADVANCED
+        self.maxProbability = 95
+        self.minProbability = 50
 
     
     def effect_statement(self, defender):
@@ -824,7 +838,7 @@ class MassDistortMagic(p.Status):
         A = attacker.printedName
         D = defender.printedName
         self.effectStatements = [[A, 'casts Mass Distort Magic on', D + "!"]]
-        #self.effectStatements = [[A, 'sweeps', hisher(attacker), 'arm in an arc in front of', himselfherself(attacker), 'as if', heshe(attacker),
+        #self.effectStatements = [[A, 'sweeps', hisher(attacker), 'arm in an arc in front of', himselfherself(attacker), 'as if', p.heshe(attacker),
         #   'were scattering birdseed. Half a dozen small red robs fly from', A, 'and strike', E,'.']]
         return super(MassDistortMagic, self).effect_statement(defender)
 
@@ -916,14 +930,18 @@ class Shield(p.Buff):
         self.effectClass = combatAction.SPELL_SLINGERS
 
 
-        def effect_statement(self, defender):
-            caster = self.attacker
-            C = caster.printedName
-            D = defender.printedName
-            self.effectStatements = [[C, 'casts Shield on', D + "!"]] 
-            #self.effectStatements = [[C, 'presses hisher(caster) fist against', hisher(caster), 'chest. Then,', heshe(caster), 'holds out', hisher(caster), 'hand towards', D, 
-            #',palm up. A curtain of magic flows from', hisher(caster), 'palm and wraps itself around', D, '.\n', D, 'is protected from physical attacks!']]
-            return super(Shield, self).effect_statement(defender)
+    def effect_statement(self, defender):
+        caster = self.attacker
+        C = caster.printedName
+        D = defender.printedName
+        #self.effectStatements = [format_line([C, 'casts Shield on', D + "!"])]
+        return format_line([C, 'casts Shield on', D + "!"])
+        #self.effectStatements = [[C, 'presses hisher(caster) fist against', hisher(caster), 'chest. Then,', p.heshe(caster), 'holds out', hisher(caster), 'hand towards', D, 
+        #',palm up. A curtain of magic flows from', hisher(caster), 'palm and wraps itself around', D, '.\n', D, 'is protected from physical attacks!']]
+        #return super(Shield, self).effect_statement(defender)
+
+    def success_statement(self, defender):
+        return [defender.printedName, 'is protected!']
 
 
 class MagicShield(p.Buff):
@@ -950,17 +968,17 @@ class MagicShield(p.Buff):
         self.effectClass = combatAction.WARRIORS_GRAPPLERS
         self.expertise = ADVANCED
 
-        def effect_statement(self, defender):
-            caster = self.attacker
-            C = caster.printedName
-            D = defender.printedName
-            self.effectStatements = [[C, 'casts Magic Shield on', D + '!\n']]
-            #self.effectStatements = [[C, 'presses hisher(caster) fist against', hisher(caster), 'chest. Then,', heshe(caster), 'holds out', hisher(caster), 'hand towards', D, 
-            #',palm up. A curtain of magic flows from', hisher(caster), 'palm and wraps itself around', D, '.\n', D, 'is protected from magical attacks!']]
-            return super(Shield, self).effect_statement(defender)
+    def effect_statement(self, defender):
+        caster = self.attacker
+        C = caster.printedName
+        D = defender.printedName
+        self.effectStatements = [[C, 'casts Magic Shield on', D + '!']]
+        #self.effectStatements = [[C, 'presses hisher(caster) fist against', hisher(caster), 'chest. Then,', p.heshe(caster), 'holds out', hisher(caster), 'hand towards', D, 
+        #',palm up. A curtain of magic flows from', hisher(caster), 'palm and wraps itself around', D, '.\n', D, 'is protected from magical attacks!']]
+        return super(MagicShield, self).effect_statement(defender)
 
-        def success_statement(self, defender):
-            return [defender.printedName, 'is protected!']
+    def success_statement(self, defender):
+        return [defender.printedName, 'is protected!']
 
 class SuperShield(p.Buff):
     targetType = ALLY
@@ -991,9 +1009,9 @@ class SuperShield(p.Buff):
         C = caster.printedName
         D = defender.printedName
         self.effectStatements = [[C, 'casts Super Shield on', D + "!"]]
-        #self.effectStatements = [[C, 'presses hisher(caster) fist against', hisher(caster), 'chest. Then,', heshe(caster), 'holds out', hisher(caster), 'hand towards', D, 
+        #self.effectStatements = [[C, 'presses hisher(caster) fist against', hisher(caster), 'chest. Then,', p.heshe(caster), 'holds out', hisher(caster), 'hand towards', D, 
         #',palm up. A curtain of magic flows from', hisher(caster), 'palm and wraps itself around', D, '.\n', D, 'is protected from physical and magical attacks!']]
-        return super(Shield, self).effect_statement(defender)
+        return super(SuperShield, self).effect_statement(defender)
 
 
     def effect(self, inCombat=True, allies=None, enemies=None):
@@ -1093,20 +1111,20 @@ class SpectralStrapping(p.SpectralSpanking):
                 """
 
     def failure_statement(self, defender):
-        A = attacker.printedName
-        D = defender.printedName
-        return [D, 'just barely manages to slip through the hand\'s fingers.', A, 'tries to catch', D, ', but', heshe(defender), 'manages to stay one step ahead of the',
+        A = self.attacker.printedName
+        D = self.defenders[0].printedName
+        return [D, 'just barely manages to slip through the hand\'s fingers.', A, 'tries to catch', D, ', but', p.heshe(defender), 'manages to stay one step ahead of the',
                 'ghostly fingers until the hand finally fades.']
 
     def effect_statement(self, defender):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        self.effectStatements = [[A, 'holds up', hisher(attacker), 'hands. A ghostly shape that vaguely resembles a hand and a shape that resembles a strap form above',
-            himher(attacker), '.', 
-            HeShe(attacker), 'throws out', hisher(attacker), 'hands in the direction of', D, '. Noticing this,', D, 
+        self.effectStatements = [[A, 'holds up', p.hisher(attacker), 'hands. A ghostly shape that vaguely resembles a hand and a shape that resembles a strap form above',
+            p.himher(attacker), '.', 
+            p.HeShe(attacker), 'throws out', p.hisher(attacker), 'hands in the direction of', D, '. Noticing this,', D, 
             'backs up rapidly and tries to find a way to avoid the spectral hand and strap. Then,', A, 
-            '\'s left hand snaps down and closes into a fist. The ghostly hand snaps down and grabs the back of', E,'\'s', defender.lower_clothing()]]
+            '\'s left hand snaps down and closes into a fist. The ghostly hand snaps down and grabs the back of', D + '\'s', defender.lower_clothing()]]
         return super(SpectralStrapping, self).effect_statement(defender)    
     
     def immune_statement(self, defender):
@@ -1116,12 +1134,12 @@ class SpectralStrapping(p.SpectralSpanking):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        return [A, 'lifts', hisher(attacker), 'into the air, and the spectral hand lifts', D, 'off the ground.', D, 'struggles desperately.', A, 'draws back', hiser(A), 
+        return [A, 'lifts', p.hisher(attacker), 'into the air, and the spectral hand lifts', D, 'off the ground.', D, 'struggles desperately.', A, 'draws back', p.hisher(attacker), 
                 'right hand, and then snaps it forward. In perfect sync, the strap draws back, and then cracks against', defender.clad_bottom(), '.', D, 
-                'yelps as a fiery sting spreads through', hisher(defender), 'bottom. The spectral strap proceeds to give', D, 'a solid strapping, making', D, 
+                'yelps as a fiery sting spreads through', p.hisher(defender), 'bottom. The spectral strap proceeds to give', D, 'a solid strapping, making', D, 
                 '\'s bottom bounce vigorously, and eliciting several howls of pain from', 
-                D, '.\nEventually, the strap fades.', A, 'raises', hisher(A), 
-                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', himher(D), 'into the ground.'] 
+                D, '.\nEventually, the strap fades.', A, 'raises', p.hisher(attacker), 
+                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', p.himher(defender), 'into the ground.'] 
         
 class SpectralCaning(p.SpectralSpanking):
     targetType = ENEMY
@@ -1155,7 +1173,7 @@ class SpectralCaning(p.SpectralSpanking):
 
 
     def effect(self, inCombat=True, allies=None, enemies=None, severity=spanking.CANE_SEVERITY):
-        return super(SpectralStrapping, self).effect(inCombat, allies, enemies, severity)
+        return super(SpectralCaning, self).effect(inCombat, allies, enemies, severity)
         """
         opponents = enemies if attacker in allies else opponents
         currentDefenders = list(defenders)
@@ -1197,12 +1215,12 @@ class SpectralCaning(p.SpectralSpanking):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        self.effectStatements = [[A, 'holds up', hisher(attacker), 'hands. A ghostly shape that vaguely resembles a hand and a shape that resembles a cane form above',
-            himher(attacker), '.', 
-            HeShe(attacker), 'throws out', hisher(attacker), 'hands in the direction of', D, '. Noticing this,', D, 
+        self.effectStatements = [[A, 'holds up', p.hisher(attacker), 'hands. A ghostly shape that vaguely resembles a hand and a shape that resembles a cane form above',
+            p.himher(attacker), '.', 
+            p.HeShe(attacker), 'throws out', p.hisher(attacker), 'hands in the direction of', D, '. Noticing this,', D, 
             'backs up rapidly and tries to find a way to avoid the spectral hand and cane. Then,', A, 
-            '\'s left hand snaps down and closes into a fist. The ghostly hand snaps down and grabs the back of', E,'\'s', defender.lower_clothing()]]
-        return super(SpectralStrapping, self).effect_statement(defender)    
+            '\'s left hand snaps down and closes into a fist. The ghostly hand snaps down and grabs the back of', D + '\'s', defender.lower_clothing()]]
+        return super(SpectralCaning, self).effect_statement(defender)    
     
     def immune_statement(self, defender):
         return ['The hand dissipates as soon as it touches', defender.printedName]
@@ -1210,19 +1228,19 @@ class SpectralCaning(p.SpectralSpanking):
     def failure_statement(self, defender):
         A = attacker.printedName
         D = defender.printedName
-        return [D, 'just barely manages to slip through the hand\'s fingers.', A, 'tries to catch', D, ', but', heshe(defender), 'manages to stay one step ahead of the',
+        return [D, 'just barely manages to slip through the hand\'s fingers.', A, 'tries to catch', D, ', but', p.heshe(defender), 'manages to stay one step ahead of the',
                 'ghostly fingers until the hand finally fades.']
 
     def success_statement(self, defender):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        return [A, 'lifts', hisher(attacker), 'into the air, and the spectral hand lifts', D, 'off the ground.', D, 'struggles desperately.', A, 'draws back', hiser(A), 
+        return [A, 'lifts', p.hisher(attacker), 'into the air, and the spectral hand lifts', D, 'off the ground.', D, 'struggles desperately.', A, 'draws back', p.hisher(attacker), 
                 'right hand, and then snaps it forward. In perfect sync, the cane draws back, and then cracks against', defender.clad_bottom(), '.', D, 
-                'howls as a thin, deep sting burns through', hisher(defender), 'bottom. The spectral cane proceeds to give', D, 'a hard caning, making', D, 
+                'howls as a thin, deep sting burns through', p.hisher(defender), 'bottom. The spectral cane proceeds to give', D, 'a hard caning, making', D, 
                 '\'s bottom bounce vigorously, and reducing', 
-                D, 'to tears.\nEventually, the strap fades.', A, 'raises', hisher(A), 
-                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', himher(D), 'into the ground.'] 
+                D, 'to tears.\nEventually, the strap fades.', A, 'raises', p.hisher(attacker), 
+                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', p.himher(defender), 'into the ground.'] 
         
 spectralSpanking = p.SpectralSpanking(None, None) 
 spectralStrapping = SpectralStrapping(None, None) 
