@@ -122,6 +122,12 @@ class Pants(LowerArmor):
         super(Pants, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, statBonuses)
         self.armorType = 'pants'
 
+class Shorts(Pants):
+    armorType = 'shorts'
+    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, statBonuses=None):
+        super(Shorts, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, statBonuses)
+        self.armorType = Shorts.armorType
+
 class Skirt(LowerArmor):
     armorType = 'skirt'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, statBonuses=None):
@@ -190,10 +196,6 @@ class Weapon(Item):
 
 class Knife(Weapon):
     """
-    Knives do 1-3 damage, and give a bonus to attempting to grapple someone. 
-    However, they're not particularly useful in defending against a grapple. 
-    Furthermore, when grappling, knives receive a bonus of 2. When not grappling, 
-    knives receive a penalty of 2.
     Knives are exceptionally dangerous in close quarters, but all but useless if a 
     combatant is forced to keep their distance.
     """
@@ -242,7 +244,7 @@ class Spear(Weapon):
 def liftlower(armor):
     if armor.armorType == Dress.armorType or armor.armorType == Skirt.armorType or armor.armorType == Robe.armorType:
         return 'lift'
-    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType:
+    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Shorts.armorType:
         return 'lower'
 
 def restore_liftlower(armor):
@@ -254,34 +256,34 @@ def restore_liftlower(armor):
 def lowerlift(armor):
     if armor.armorType == Dress.armorType:
         return 'lift'
-    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Skirt.armorType:
+    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Skirt.armorType or armor.armorType == Shorts.armorType:
         return 'lower'
 def restore_lowerlift(armor):
     if armor.armorType == Dress.armorType:
         return 'lower'
-    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Skirt.armorType:
+    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Skirt.armorType or armor.armorType == Shorts.armorType:
         return 'lift'
 
 def itthem(armor):
-    if armor.armorType == Pants.armorType:
+    if armor.armorType == Pants.armorType or armor.armorType == Shorts.armorType:
         return "them"
     else:
         return "it"
 
 def isare(armor):
-    if armor.armorType == Pants.armorType:
+    if armor.armorType == Pants.armorType or armor.armorType == Shorts.armorType:
         return "are"
     else:
         return "is"
 
 def waistbandhem(armor):
-    if armor.armorType == Pants.armorType or armor.armorType == Skirt.armorType or armor.armorType == Underwear.armorType:
+    if armor.armorType == Pants.armorType or armor.armorType == Skirt.armorType or armor.armorType == Underwear.armorType or armor.armorType == Shorts.armorType:
         return 'waistband'
     else:
         return 'hem'
 
 def hemwaistband(armor):    
-    if armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType:
+    if armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Shorts.armorType:
         return 'waistband'
     else:
         return 'hem'

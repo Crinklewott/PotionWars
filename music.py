@@ -86,8 +86,7 @@ DEFEATED = None
 COMBAT = None
 BOSS = None
 import threading
-import mutex
-m = mutex.mutex()
+lock = threading.Lock()
 def play_music(fileObject, fadeoutTime=250, wait=False):
     """
     This function assumes we only have one (open) file object for each music file.
@@ -96,8 +95,8 @@ def play_music(fileObject, fadeoutTime=250, wait=False):
     global currentMusic
     if fileObject is not None:
         if currentMusic != fileObject:
+            fadeoutThread = threading.Thread(target=fadeout_thread, args=(fadeoutTime, fileObject))
             if currentMusic is not None:
-                fadeoutThread = threading.Thread(target=fadeout_thread, args=(fadeoutTime, fileObject))
                 fadeoutThread.start()
                 if wait:
                     fadeoutThread.join()
@@ -107,8 +106,9 @@ def play_music(fileObject, fadeoutTime=250, wait=False):
             currentMusic = fileObject
 
 def fadeout_thread(fadeoutTime, fileObject):
-    m.lock(end_music, [fadeoutTime, fileObject])
-    m.unlock()
+    lock.acquire()
+    end_music([fadeoutTime, fileObject])
+    lock.release()
     
 def end_music(arglist):
     pygame.mixer.music.fadeout(arglist[0])

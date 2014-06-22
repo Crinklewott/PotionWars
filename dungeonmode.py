@@ -59,9 +59,9 @@ directionSurface = pygame.Surface((fontSize[0] + (fontSize[1] - fontSize[0]), fo
 directionSurface.fill(universal.DARK_GREY)
 
 def set_dungeon_commands(dungeon=None):
-    import traceback
-    traceback.print_stack()   
-    set_commands(['(P)arty', '(S)ave', '(Q)uick Save', '(L)oad', 't(I)tle Screen', '(Esc)Quit'])
+    #import traceback
+    #traceback.print_stack()   
+    set_commands(['(P)arty', '(S)ave', '(Q)uick Save', '(L)oad', 't(I)tle Screen', '(C)ast', '(Esc)Quit'])
     if dungeon is not None:
         floor = dungeon.coordinates[0]
         row = dungeon.coordinates[1]
@@ -677,7 +677,7 @@ class Dungeon(townmode.Room):
         event = False
         universal.clear_world_view()
         global changingFloors
-        changingFloors = False
+        changingFloors = 0
         set_dungeon_commands(self)
         if (has_char('*', square) or has_char('s', square)) and self.dungeonEvents[floor][row][column] is not None:
             event = True
@@ -691,11 +691,11 @@ class Dungeon(townmode.Room):
                 event = True
                 self.dungeonEvents[floor][row][column]()
         if has_char('u', square):
-            changingFloors = True
+            changingFloors = 1
             set_commands(['(U)p'] + get_commands())
         if has_char('d', square):
             print('Going down.')
-            changingFloors = True
+            changingFloors = -1
             set_commands(['(D)own'] + get_commands())
         if not event and random.randint(0, 99) < self[floor].encounterRate:
             self.encounter()
@@ -733,8 +733,6 @@ class Dungeon(townmode.Room):
         then the player moved backwards (i.e. pressed the "Down" key).
         """
         party = person.get_party()
-        for char in party:
-            char.decrement_statuses()
         if down:
             self.coordinates = (self.coordinates[0]-1, self.coordinates[1], self.coordinates[2])
         elif up:
@@ -750,6 +748,7 @@ class Dungeon(townmode.Room):
             elif (direction == EAST or direction == WEST) and not has_char('|', self.current_square()[direction]) and not has_char('^', self.current_square()[direction]):
                 self.coordinates = (self.coordinates[0], self.coordinates[1], self.coordinates[2] + movement)
             #stepEffect.play()      
+        complete_dungeon_action()
         self.display()
         self.display_event()
 
@@ -761,6 +760,14 @@ class Dungeon(townmode.Room):
 
     def current_square(self):
         return self.get_square(self.coordinates)
+
+def complete_dungeon_action():
+    """
+    This function should be called after each complete dungeon action (walking or casting spells).
+    """
+    party = person.get_party()
+    for char in party:
+        char.decrement_statuses()
 
 def mean(listNums):
     total = 0
@@ -797,7 +804,7 @@ def set_dungeon(dungeonIn):
     global dungeon
     dungeon = dungeonIn
 
-changingFloors = False
+changingFloors = 0
 def dungeon_interpreter(keyEvent):
     global dungeon
     if keyEvent.key == K_ESCAPE:
@@ -810,16 +817,19 @@ def dungeon_interpreter(keyEvent):
         townmode.save_game('quick', dungeon_mode)
     elif keyEvent.key == K_i:
         townmode.confirm_title_screen(dungeon_mode)
+    elif keyEvent.key == K_c:
+        clear_screen()
+        select_character_to_cast()
     elif keyEvent.key == K_p:
         set_commands(['(#)Character', '<==Back'])
         clear_screen()
-        say_title('Characters:')
+        say_title('Party:')
         universal.say('\t'.join(['Name:', 'Health:', 'Mana:\n\t',]), columnNum=3)
         universal.say(person.party.display_party(), columnNum=3)
         set_command_interpreter(select_character_interpreter)
-    elif keyEvent.key == K_d and changingFloors:
+    elif keyEvent.key == K_d and changingFloors == -1:
         dungeon.move(down=True)
-    elif keyEvent.key == K_u and changingFloors:
+    elif keyEvent.key == K_u and changingFloors == 1:
         dungeon.move(up=True)
     elif keyEvent.key == K_UP:
         dungeon.move(True)
@@ -841,6 +851,105 @@ def select_character_interpreter(keyEvent):
         per = party.members[num-1]
         clear_screen()
         per.character_sheet(dungeon_mode)
+
+def select_character_to_cast():
+    set_commands(['(#)Character', '<==Back'])
+    clear_screen()
+    say_title('Select Character to Cast Spell:')
+    universal.say('\t'.join(['Name:', 'Health:', 'Mana:\n\t',]), columnNum=3)
+    universal.say(person.party.display_party(), columnNum=3)
+    set_command_interpreter(select_character_to_cast_interpreter)
+
+selectedSlinger= None
+def select_character_to_cast_interpreter(keyEvent):
+    party = person.get_party()
+    if keyEvent.key == K_BACKSPACE:
+        dungeon_mode()
+    elif keyEvent.key in NUMBER_KEYS:
+        num = int(pygame.key.name(keyEvent.key))
+        if num > 0:
+            char = party.members[num-1]
+            clear_screen()
+            global selectedSlinger
+            selectedSlinger = char
+            char.display_tiers(display_tiers_interpreter_dungeon)
+
+def display_tiers_interpreter_dungeon(keyEvent):
+    if keyEvent.key == K_BACKSPACE:
+        select_character_to_cast()
+    if keyEvent.key in NUMBER_KEYS:
+        playerInput = int(pygame.key.name(keyEvent.key))
+        display_spells(playerInput)
+
+availableSpells = None
+chosenTier = None
+def display_spells(tier):
+    global chosenTier
+    chosenTier = tier
+    say_title('Available Spells')
+    global availableSpells
+    availableSpells = [spell for spell in selectedSlinger.spellList[tier] if spell.castableOutsideCombat and spell.cost <= selectedSlinger.current_mana()]
+    print([spell.name for spell in availableSpells])
+    say('\n'.join(universal.numbered_list([spell.name for spell in availableSpells])))
+    set_commands(['(#) Select a spell.', '<==Back'])
+    set_command_interpreter(select_spell_interpreter)
+
+chosenSpell = None
+def select_spell_interpreter(keyEvent):
+    global chosenSpell
+    if keyEvent.key == K_BACKSPACE:
+        char.display_tiers(display_tiers_interpreter_dungeon)
+    elif keyEvent.key in NUMBER_KEYS:
+        playerInput = int(pygame.key.name(keyEvent.key)) - 1
+        try:
+            chosenSpell = availableSpells[playerInput]
+        except IndexError:
+            return
+        say_title(chosenSpell.name)
+        say(person.get_party().display_party())
+        set_commands([ ' '.join(['(#) Select', str(chosenSpell.numTargets), 'target' + ('s.' if chosenSpell.numTargets > 1 else '.')]), '<==Back'])
+        set_command_interpreter(select_targets_interpreter)
+
+targetList = []
+def select_targets_interpreter(keyEvent):
+    party = person.get_party()
+    global targetList
+    if keyEvent.key == K_BACKSPACE:
+        if targetList == []:
+            display_spells(chosenTier)
+            return
+        else:
+            targetList = targetList[:-1]
+            numTargets = chosenSpell.numTargets - len(targetList)
+            set_commands([ ' '.join(['(#) Select', str(numTargets), 'target' + ('s.' if numTargets > 1 else '.')]), '<==Back'])
+    elif keyEvent.key in NUMBER_KEYS:
+        playerInput = int(pygame.key.name(keyEvent.key)) - 1
+        try:
+            targetList.append(party[playerInput])
+        except IndexError:
+            return
+        numTargets = chosenSpell.numTargets - len(targetList)
+        set_commands([ ' '.join(['(#) Select', str(numTargets), 'target' + ('s.' if numTargets > 1 else '.')]), '<==Back'])
+    if chosenSpell.numTargets == len(targetList):
+        set_commands([' (Y/N) Cast spell?'])
+        set_command_interpreter(confirm_cast_interpreter)
+        return
+    say(person.get_party().display_party(targeted=targetList))
+
+def confirm_cast_interpreter(keyEvent):
+    #Cast spell if "y". Remove last target if "n."
+    global targetList, selectedSlinger
+    if keyEvent.key == K_y:
+        spellResult = chosenSpell.__class__(selectedSlinger, targetList).effect(inCombat=False, allies=person.get_party())
+        selectedSlinger.uses_mana(chosenSpell.cost)
+        say(spellResult[0])
+        targetList = []
+        acknowledge(dungeon_mode, ())
+    elif keyEvent.key == K_n:
+        targetList = targetList[:-1]
+        numTargets = chosenSpell.numTargets - len(targetList)
+        set_commands([ ' '.join(['(#) Select', str(numTargets), 'target' + ('s.' if numTargets > 1 else '.')]), '<==Back'])
+        set_command_interpreter(select_targets_interpreter)
 
 def start_coordinate(dungeon):
     dungeonMap = dungeon.dungeonMap

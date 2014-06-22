@@ -241,7 +241,7 @@ def confirm_quit_interpreter(keyEvent):
     elif keyEvent.key == K_n:
         quit()
     elif keyEvent.key == K_ESCAPE:
-        town_mode()
+        previousMode()
 
 showTitleScreen = False
 def confirm_title_screen_interpreter(keyEvent):
@@ -253,7 +253,7 @@ def confirm_title_screen_interpreter(keyEvent):
         import titleScreen
         titleScreen.title_screen()
     elif keyEvent.key == K_ESCAPE:
-        town_mode()
+        previousMode()
 
 saveName = ''
 previousMode = None
@@ -284,7 +284,7 @@ def save_interpreter(keyEvent):
     global saveName, saveNum, numLastInput
     playerInput = pygame.key.name(keyEvent.key)
     if keyEvent.key == K_BACKSPACE:
-        if numLastInput:
+        if numLastInput and saveNum == '':
             saveNum = saveNum[:-1] 
         else:
             saveName = saveName[:-1]
@@ -292,15 +292,15 @@ def save_interpreter(keyEvent):
         if numLastInput:
             try:
                 saveName = saveFiles[int(playerInput)-1]
-            except IndexError:
+            except IndexError, ValueError:
                 return
         confirm_save(saveName)
         return
     elif keyEvent.key == K_ESCAPE:
         previousMode()
         return
-    elif keyEvent.key in NUMBER_KEYS:
-        if len(saveFiles) < 10:
+    elif keyEvent.key in NUMBER_KEYS and saveName == '':
+        if len(saveFiles) < 10 and saveName == '':
             try:
                 saveName = saveFiles[int(playerInput)-1]
             except IndexError:
@@ -340,6 +340,8 @@ def confirm_save_interpreter(keyEvent):
 saveDirectory = os.path.join(os.getcwd(), 'save')
 print(saveDirectory)
 def save_game(saveName, previousModeIn=None, preserveSaveName=True):
+    import traceback
+    traceback.print_stack()
     global previousMode
     if previousModeIn is not None:
         previousMode = previousModeIn
@@ -368,6 +370,7 @@ def save_game(saveName, previousModeIn=None, preserveSaveName=True):
         quit()
     elif showTitleScreen:
         import titleScreen
+        showTitleScreen = False
         titleScreen.title_screen()
     else:
         if previousMode is not None:

@@ -38,11 +38,11 @@ class Firebolt(p.Combat):
         super(Firebolt, self).__init__(attacker, defenders)
         self.name = 'Firebolt'
         self.description = 'Flings a small bolt of fire at a single opponent.' 
-        self.effectFormula = 'DAMAGE: 2 | 3 * (magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 2 | 4 * (magic - enemy magic)'
         self.numTargets = 1
         self.tier = Firebolt.tier
         self.minDamage = 2 
-        self.magicMultiplier = 3
+        self.magicMultiplier = 4
         self.cost = Firebolt.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.expertise = BASIC
@@ -68,12 +68,12 @@ class Icebolt(p.Combat):
         super(Icebolt, self).__init__(attacker, defenders)
         self.name = 'Icebolt'
         self.description = 'Flings a small icicle at a single opponent.' 
-        self.effectFormula = 'DAMAGE: 4 | 4 * (magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 4 | 6 * (magic - enemy magic)'
         self.numTargets = 1
         self.tier = Icebolt.tier
         self.minDamage = 4 
         self.cost = Icebolt.cost
-        self.magicMultiplier = 4
+        self.magicMultiplier = 6
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.expertise = ADVANCED
     
@@ -97,11 +97,11 @@ class Magicbolt(p.Combat):
         super(Magicbolt, self).__init__(attacker, defenders)
         self.name = 'Magicbolt'
         self.description = 'Flings a small bolt of raw magic at a single opponent.' 
-        self.effectFormula = 'DAMAGE: 5 | 5 * (magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 5 | 8 * (magic - enemy magic)'
         self.numTargets = 1
         self.tier = Magicbolt.tier
         self.minDamage = 5 
-        self.magicMultiplier = 5
+        self.magicMultiplier = 8
         self.rawMagic = True
         self.cost = Magicbolt.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
@@ -399,9 +399,10 @@ class SpectralPush(p.Spectral):
         self.successMultiplier = 40
         self.minProbability = 40
         self.maxProbability = 95
+        self.magicMultiplier = 2
         self.expertise = BASIC
         self.description = 'Unleashes a battering ram of raw magical power into an enemy\'s body, potentially flinging them backwards several feet. Has a chance of breaking a grapple. The greater the caster\'s magic compared to the target, the better the chance.'
-        self.effectFormula = 'DAMAGE: 1 | magic - enemy magic\nSUCCESS CHANCE (%): 40 | 40*(magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 1 | 2 * (magic - enemy magic)\nSUCCESS CHANCE (%): 40 | 40*(magic - enemy magic)'
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
@@ -489,12 +490,13 @@ class SpectralPull(p.Spectral):
         self.tier = SpectralPull.tier
         self.effectClass = combatAction.ALL
         self.minDamage = 1
+        self.magicMultiplier = 2
         self.successMultiplier = 40
         self.numTargets = 1
         self.minProbability = 40
         self.maxProbability = 95
         self.description = 'Wraps the target in a cord of pure magic. In addition to disrupting the target\'s health, the cord can be used to yank the target into a grapple. The chances of successfully grappling the target depends on the relative levels of the caster\'s and target\'s magic.'
-        self.effectFormula = 'DAMAGE: 1 | magic - enemy magic\nSUCCESS CHANCE (%): 40 | 40 *(magic - enemy magic) | 95'
+        self.effectFormula = 'DAMAGE: 1 | 2 * (magic - enemy magic)\nSUCCESS CHANCE (%): 40 | 40 *(magic - enemy magic) | 95'
         self.expertise = ADVANCED
 
 
@@ -587,7 +589,7 @@ class SpectralShove(p.Spectral):
         self.expertise = EXPERT
         self.maxProbability = 100
         self.description = 'A spectral specialist has spent years studying sophisticated techniques for more efficiently and powerfully shaping raw magical energy. Their hard work pays off in the ability to cast spectral shove. Spectral shove is twice as powerful as spectral push, has a significantly higher chance of breaking a grapple, and is cheaper to boot.'
-        self.effectFormula = 'DAMAGE: 2 | 2* (magic - enemy magic)\nSUCCESS CHANCE (%): 50 | 50*(magic - enemy magic) | 95'
+        self.effectFormula = 'DAMAGE: 2 | 4* (magic - enemy magic)\nSUCCESS CHANCE (%): 50 | 50*(magic - enemy magic) | 95'
 
 
 
@@ -671,11 +673,11 @@ class Lightningbolt(p.Combat):
         super(Lightningbolt, self).__init__(attacker, defenders)
         self.name = 'Lightningbolt'
         self.description = 'Unleashes a trio of lightning bolts from the caster\'s fingertips. Does as much damage as firebolt, but affects up to 3 enemies at once. Unfortunately, casting this spell while grappling would hurt the caster as much as the target, so it can\'t be cast when the caster is grappling.' 
-        self.effectFormula = 'DAMAGE: 2 | 3 * (magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 2 | 4 * (magic - enemy magic)'
         self.numTargets = 3
         self.tier = Lightningbolt.tier
         self.minDamage = 2 
-        self.magicMultiplier = 3
+        self.magicMultiplier = 4
         self.cost = Lightningbolt.cost
         self.expertise = BASIC
         self.grappleStatus = combatAction.NOT_WHEN_GRAPPLED
@@ -702,11 +704,11 @@ class Thunderbolt(p.Combat):
         super(Thunderbolt, self).__init__(attacker, defenders)
         self.name = 'Thunderbolt'
         self.description = 'A more powerful version of Lightningbolt. Does as much damage as Icebolt to up to 3 enemies.' 
-        self.effectFormula = 'DAMAGE: 4 | 4 * (magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 4 | 6 * (magic - enemy magic)'
         self.numTargets = 3
         self.tier = Thunderbolt.tier
         self.minDamage = 4 
-        self.magicMultiplier = 4
+        self.magicMultiplier = 6
         self.cost = Thunderbolt.cost
         self.grappleStatus = combatAction.NOT_WHEN_GRAPPLED
         self.expertise = ADVANCED
@@ -732,11 +734,11 @@ class Magicstrike(p.Combat):
         super(Magicstrike, self).__init__(attacker, defenders)
         self.name = 'Magic Strike'
         self.description = 'What the average spellcaster can do with lightning, a specialist can do with far more powerful (but volatile) raw magical energy. In addition to being more powerful and more efficient then Thunderbolt, this spell can be cast when grappled. Unfortunately, iron provides protection against this spell.' 
-        self.effectFormula = 'DAMAGE: 5 | 5 * (magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 5 | 8 * (magic - enemy magic)'
         self.numTargets = 3
         self.tier = Magicstrike.tier
         self.minDamage = 4 
-        self.magicMultiplier = 4
+        self.magicMultiplier = 8
         self.cost = Magicstrike.cost
         self.expertise = EXPERT
         self.rawMagic = True
@@ -1072,6 +1074,7 @@ class SpectralStrapping(p.SpectralSpanking):
         self.probModifier = 32
         self.minProbability = 40
         self.maxProbability = 96
+        self.minDamage = 4
         
 
     def effect(self, inCombat=True, allies=None, enemies=None, severity=spanking.LEATHER_STRAP_SEVERITY):
@@ -1170,6 +1173,7 @@ class SpectralCaning(p.SpectralSpanking):
         self.probModifier = 35
         self.minProbability = 40
         self.maxProbability = 97
+        self.minDamage = 4
 
 
     def effect(self, inCombat=True, allies=None, enemies=None, severity=spanking.CANE_SEVERITY):

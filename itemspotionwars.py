@@ -25,15 +25,15 @@ import person
 
 #-----------------------------------Upper Armor----------------------------
 leatherCuirass = items.UpperArmor('leather cuirass', 'A leather breastplate. Often worn by foot soldiers, when they can afford any armor at all. The leather is very hard ' +  
-'and rigid, and makes it slightly harder to breathe. However, because it does not contain much (if any) iron, it does not interfere with spellcasting.', attackDefense=2,
+'and rigid, and makes it slightly harder to breathe. However, because it does not contain much (if any) iron, it does not interfere with spellcasting.', attackDefense=4,
 attackPenalty=1, price=70)
 
 chainCuirass = items.UpperArmor('chain cuirass', 'A rigid shirt of interlocking links of metal. Though it provides better protection than the leather cuirass, the fact that the majority ' +
-'of the weight rests on your shoulders makes a chain cuirass much harder to move around in. Furthermore, the iron in the cuirass interferes with magical currents, making it harder to cast spells. On the plus side, the iron protects against spells that involve pure magic.', price=120, attackDefense=4, attackPenalty=4, castingPenalty=4, 
+'of the weight rests on your shoulders makes a chain cuirass much harder to move around in. Furthermore, the iron in the cuirass interferes with magical currents, making it harder to cast spells. On the plus side, the iron protects against spells that involve pure magic.', price=120, attackDefense=8, attackPenalty=4, castingPenalty=4, 
 magicDefense=4)
 
 plateCuirass = items.UpperArmor('plate cuirass', 'A breastplate made of steel and chain. It provides much better protection than the chain cuirass, and surprisingly enough is ' + 
-'even easier to move around in. This is because the weight of the armor is more evenly distributed about your body than a chain cuirass. However, it contains much more iron than the chain cuirass, making it significantly more difficult to cast spells in. Though on the flip side, it provides better protection from spells that rely on raw magical power.', price=220, attackDefense=9, attackPenalty=3, castingPenalty=7, 
+'even easier to move around in. This is because the weight of the armor is more evenly distributed about your body than a chain cuirass. However, it contains much more iron than the chain cuirass, making it significantly more difficult to cast spells in. Though on the flip side, it provides better protection from spells that rely on raw magical power.', price=220, attackDefense=18, attackPenalty=3, castingPenalty=7, 
     magicDefense=7)
 
 batteredLeatherBreastplate = items.UpperArmor('battered leather breastplate', 'An old, dented leather breastplate.', attackDefense=2, attackPenalty=1, price=40)
@@ -43,25 +43,25 @@ batteredLeatherBreastplate = items.UpperArmor('battered leather breastplate', 'A
 tunic = items.UpperArmor('tunic', 'A fairly common, loose fitting tunic. A bit worn, but otherwise in good shape.', price=5) 
 
 qualityTunic = items.UpperArmor('quality tunic', 'A heavy tunic made from high quality leathers. The tunic also has the smallest hint of magic about it, providing ' +
-'a little bit of protection from enemy blows.', attackDefense=1, price=10)
+'a little bit of protection from enemy blows.', attackDefense=2, price=10)
 
 vNeckTunic = items.UpperArmor('V-neck tunic', 'A cotton tunic with a deep v-shaped slit down the front, revealing a fair amount of the upper chest.', price=5)
 
-qualityVNeckTunic = items.UpperArmor('quality V-neck tunic', 'A high quality v-neck tunic. There\'s even a little bit of magic woven into it, providing a bit of protection.', price=10, attackDefense=1)
+qualityVNeckTunic = items.UpperArmor('quality V-neck tunic', 'A high quality v-neck tunic. There\'s even a little bit of magic woven into it, providing a bit of protection.', price=10, attackDefense=2)
 
 #--------------------------------------Lower Armor--------------------------------
 
 #--------------------------------------items.Pants-------------------------------------
 trousers = items.Pants('trousers', 'Simple loose-fitting trousers. They are a bit ragged, but more or less in one piece.', price=5)
 
-shorts = items.Pants('shorts', 'A pair of knee-length cotton shorts.', price=5)
+shorts = items.Shorts('shorts', 'A pair of knee-length cotton shorts.', price=5)
 
-shortShorts = items.Pants('short shorts', "A pair of skintight shorts that barely cover one's bottom.", price=10)
+shortShorts = items.Shorts('short shorts', "A pair of skintight shorts that barely cover one's bottom.", price=10)
 
 holeyTrousers = items.Pants('holey Trousers', 'A pair of ragged, borderline unwearable trousers. There is a massive hole in the left knee, the right leg stops in a frayed mess just pass the knee, and the waist is held up with a threadbare rope.')
 
 #---------------------------------------items.Skirts------------------------------------
-combatSkirt = items.Skirt('combat skirt', 'A skirt that extends down to just shy of the knees. There is the faintest hint of magic. Not much, but enough that the skirt likely provides some limited combat protection, despite being made of cloth.', price=5, attackDefense=1)
+combatSkirt = items.Skirt('combat skirt', 'A skirt that extends down to just shy of the knees. There is the faintest hint of magic. Not much, but enough that the skirt likely provides some limited combat protection, despite being made of cloth.', price=5, attackDefense=2)
 
 plainSkirt = items.Skirt('skirt', 'A simple cotton skirt that extends down to just past the knees.', 
         price=5)
@@ -90,18 +90,18 @@ boyShorts = items.Underwear('boyshorts', 'A pair of dark red boyshorts that comp
 
 stealthThongBonus = [0 for i in range(universal.NUM_STATS)]
 stealthThongBonus[universal.STEALTH] = 1
-stealthThong = items.Thong('loincloth of stealth', ' '.join(["A dark red loincloth that leaves the majority of the wearer's cheeks exposed. It is lightly imbued with magic. The magic provides the wearer with improved fine motor",
-    '''control over their legs, improving the wearer's ability to move stealthily. Provides a +1 bonus to Stealth.''']), price=200, 
+stealthThong = items.Thong('loincloth of stealth', ' '.join(["A brown loincloth that leaves the majority of the wearer's cheeks exposed. It is lightly imbued with magic. The magic provides the wearer with improved fine motor",
+    '''control over their legs, improving the wearer's ability to move stealthily. Provides a +1 bonus to Stealth.''']), price=50, 
     statBonuses=stealthThongBonus)
 
-chainmailBikini = items.Thong('chainmail bikini', "A two piece set of chainmail. The top piece covers a woman's breasts, but nothing else. The bottom is a chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's almost as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of one's body, the armor has a negligible impact on magic.",price=5000, attackDefense=8) 
+chainmailBikini = items.Thong('chainmail bikini', "A two piece set of chainmail. The top piece covers a woman's breasts, but nothing else. The bottom is a chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's almost as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of one's body, the armor has a negligible impact on magic.",price=5000, attackDefense=16) 
 
-chainmailThong = items.Thong('chainmail thong', "A chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's just as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of your body, the armor only has a much smaller penalty to magic than a chain (or plate) cuirass.", price=5000, attackDefense=4)
+chainmailThong = items.Thong('chainmail thong', "A chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's just as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of your body, the armor only has a much smaller penalty to magic than a chain (or plate) cuirass.", price=5000, attackDefense=16)
 
 
 #--------------------------Full Armor---------------------------------------
 fullPlate = items.FullArmor('full plate', "A full suit of plate mail, that completely covers your body. It provides excellent protection, and is surprisingly light. However, it takes up both the upper and lower armor slots. Furthermore, because it covers your body from head to toe, casting magic out of it is all but impossible.", price=1000, 
-        attackDefense=18, attackPenalty=4, castingPenalty=10, magicDefense=10)
+        attackDefense=36, attackPenalty=4, castingPenalty=10, magicDefense=10)
 
 #------------------------Dresses---------------------------------------
 wornDress = items.Dress('worn dress', "An old, ragged wool dress.")
@@ -113,7 +113,7 @@ blackDress = items.Dress('black dress', "A long, slinky black dress that extends
 sunDress = items.Dress('sun dress', 'A low-cut cotton dress  that extends to just above the knees.', price=20)
 
 deidresDress = items.Dress("Deidre's dress", "A black dress with red trim made from high quality cotton. The dress is floor-length on Deidre, and is cut to balance professionalism with showing off Deidre's average bust, shapely hips and long legs. Though an elegant dress, it can interfere with combat and other highly physical activities.", 
-        attackDefense=2, attackPenalty=1)
+        attackDefense=4, attackPenalty=1)
 
 
 #------------------------Robes----------------------------------------
@@ -137,7 +137,7 @@ longsword = items.Sword('longsword', "A standard, one-handed, double-edged sword
 #-----------------------------Spears-------------------------------------
 warspear = items.Spear('warspear', "A heavy wooden pole with a thick metal spike on one end, and an iron band on the other for balance. Very dangerous when you can keep your opponents at arms length.", price=50)
 
-staff = items.Spear('staff', "A heavy wooden staff. Staff-wielders are specially trained in defensive combat. Therefore, although not as dangerous as a spear, a staff provides better protection against being grappled, and has a smaller penalty while grappled. A favorite weapon of spellslingers.", price=20, minDamage=1, maxDamage=1, 
+staff = items.Spear('staff', "A heavy wooden staff. Staff-wielders are specially trained in defensive combat. Therefore, although not as dangerous as a spear, a staff provides better protection against being grappled, and has a smaller penalty while grappled. A favorite weapon of spellslingers.", price=30, minDamage=1, maxDamage=3, 
         grappleAttempt=-3, grappleAttemptDefense=4, grappleBonus=-1,
         armslengthBonus=1)
 

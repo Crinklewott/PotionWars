@@ -11,7 +11,7 @@ import Queue
 from pygame.locals import *
 import os
 
-DEBUG = True
+DEBUG = False
 
 NUM_TIERS = 9
 

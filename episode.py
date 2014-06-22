@@ -23,6 +23,8 @@ import music
 import person
 
 allEpisodes = {}
+postTitleCardFunction = None
+postTitleCardFuncArgs = None
 class Episode(universal.RPGObject):
     def __init__(self, num, name, nextEpisode=None, scenes=None, currentSceneIndex=0, titleTheme=None):
         self.num = num
@@ -33,7 +35,10 @@ class Episode(universal.RPGObject):
         self.titleTheme = titleTheme
         allEpisodes[num] = self
 
-    def start_episode(self, *startingSceneArgs):
+    def start_episode(self, postTitleCardFunctionAndArgs=None, *startingSceneArgs):
+        global postTitleCardFunction, postTitleCardFuncArgs
+        postTitleCardFunction = postTitleCardFunctionAndArgs[0]
+        postTitleCardFuncArgs = postTitleCardFunctionAndArgs[1] 
         universal.get_screen().fill(universal.DARK_GREY)
         music.play_music(self.titleTheme)
         universal.display_text('Episode ' + str(self.num) + ':\n' + self.name, universal.get_world_view(), universal.get_world_view().midleft, isTitle=True)
@@ -52,6 +57,13 @@ class Episode(universal.RPGObject):
             self.scenes[self.currentSceneIndex].startScene()
         else:
             self.scenes[self.currentSceneIndex].startScene(*startingSceneArgs)
+        try:
+            postTitleCardFunction(*postTitleCardFuncArgs)
+        except TypeError:
+            try:
+                postTitleCardFunction() 
+            except TypeError:
+                pass
 
     def end_episode(self, endingSceneArgs=()):
         if endingSceneArgs is ():

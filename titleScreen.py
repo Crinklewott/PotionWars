@@ -245,7 +245,7 @@ def opening_crawl():
             "escape."])
     display_crawl()
     delay_long()
-    universal.say_replace("Twenty years have passed. Now, Tairona and Carnute teeter on the edge of a")
+    universal.say_replace("A little over twenty years have passed. Now, Tairona and Carnute teeter on the edge of a")
     display_crawl()
     if not skip:
         music.play_music(music.THEME, DELAY_TIME / 3, wait=True)
@@ -271,6 +271,7 @@ def title_screen(episode=None):
                 font, worldView, LIGHT_GREY, DARK_GREY, 1)
     titleImages = []
     if os.path.exists(os.path.join(os.getcwd(), 'save')) and '.init.sav' in os.listdir(os.path.join(os.getcwd(), 'save')):
+        print('loading .init.sav')
         townmode.previousMode = None
         townmode.load_game('.init.sav', preserveLoadName=False)
     assert(episode is not None or firstEpisode is not None)
@@ -535,8 +536,7 @@ def final_confirmation_interpreter(keyEvent):
     #person.PC = person.get_person.PC()
     if keyEvent.key == K_y:
         person.PC.currentEpisode = firstEpisode
-        person.PC.currentEpisode.start_episode()
-        townmode.save_game('.init', preserveSaveName=False)
+        person.PC.currentEpisode.start_episode(postTitleCardFunctionAndArgs=(townmode.save_game, ['.init', townmode.town_mode, False]))
         townmode.saveName = ''
     elif keyEvent.key == K_n:
         global spellPoints

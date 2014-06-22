@@ -80,7 +80,7 @@ def set_PC(playerCharacter):
     from townmode import go
     global PC
     PC = playerCharacter
-    go(offStage, [PC], False)
+    #go(offStage, [PC], False)
 
 class InvalidEquipmentError(Exception):
     pass
@@ -292,6 +292,11 @@ class Person(universal.RPGObject):
 
     def get_core_stats(self):
         return self.statList[:-2]
+
+    def get_battle_stats(self):
+        """Returns all the stats except for health, mana, current health, current mana
+        """
+        return self.statList[:-4]
 
     def set_default_stats(self):
         self.set_all_stats(warfare=1, grapple=1, willpower=1, magic=1, stealth=1, health=10, mana=10)
@@ -940,9 +945,9 @@ class Person(universal.RPGObject):
     def defense_bonus(self):
         defenseBonus = 0
         if self.is_inflicted_with(statusEffects.LoweredDefense.name):
-            defenseBonus = self.statusList[statusEffects.LoweredDefense.name].inflict_status(self)
+            defenseBonus = self.statusList[statusEffects.LoweredDefense.name][STATUS_OBJ].inflict_status(self)
         if self.is_inflicted_with(statusEffects.Shielded.name):
-            defenseBonus += self.statusList[statusEffects.Shielded.name].inflict_status(self)
+            defenseBonus += self.statusList[statusEffects.Shielded.name][STATUS_OBJ].inflict_status(self)
         return self.shirt().attackDefense + self.lower_clothing().attackDefense + self.underwear().attackDefense + defenseBonus
     
     def _save(self, personType='person'):
@@ -1154,10 +1159,17 @@ class Person(universal.RPGObject):
             return '\n'.join(['', 'Inventory:', ' '.join(str(n) + '. ' + item.name for 
                 (n, item) in zip([i for i in range(1, len(self.inventory)+1)], self.inventory))])
 
-    def display_tiers(self):
+    def display_tiers(self, interpreter=None):
         universal.say('Tiers: ' + ', '.join(str(i) for i in range(self.tier + 1)))
         set_commands(['(#)select tier', '<==Back'])
-        set_command_interpreter(display_tiers_interpreter)
+        if interpreter == None:
+            print('interpreter is none.')
+            set_command_interpreter(display_tiers_interpreter)
+        else:
+            print('interpreter is not none. interpreter:')
+            print(interpreter)
+            set_command_interpreter(interpreter)
+        print(universal.commandInterpreter)
 
     def display_statusList(self):
         if self.statusList == {}:
@@ -1613,7 +1625,6 @@ class Spell(combatAction.CombatAction):
     defenders = []
 
     """
-    #A list of strings that represents a single statement for when a particular enemy is immune to a spell.
     def __init__(self, attacker, defenders):
         super(Spell, self).__init__(attacker, defenders, universal.MAGIC)
         self.name = None
@@ -1623,11 +1634,12 @@ class Spell(combatAction.CombatAction):
         self.numTargets = None
         self.spellType = None
         self.expertise = None
+        #A list of strings that represents a single statement for when a particular enemy is immune to a spell.
         self.immuneStatement = []
         self.rawMagic = False
         self.tier = None
         self.magicMultiplier = None
-        global allSpells
+        self.castableOutsideCombat = False
 
     def _save(self):
         return self.name
@@ -1812,7 +1824,8 @@ class Status(Spell):
     grappleStatus = None
     effectClass = None
     statusInflicted = None
-    secondaryStat = universal.WILLPOWER
+    primaryStat = universal.WILLPOWER
+    secondaryStat = universal.MAGIC
     actionType = 'status'
     def __init__(self, attacker, defenders):
         super(Status, self).__init__(attacker, defenders)
@@ -1829,6 +1842,7 @@ class Status(Spell):
         self.spellSchool = universal.STATUS_MAGIC
         self.targetType = combatAction.ENEMY
         self.secondaryStat = Status.secondaryStat
+        self.primaryStat = Status.primaryStat
         self.actionType = 'status'
 
     def effect(self, inCombat=True, allies=None, enemies=None):
@@ -1975,6 +1989,7 @@ class Buff(Spell):
         self.statusInflicted = None
         self.minDuration = None
         self.actionType = 'buff'
+        self.castableOutsideCombat = True
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(Buff, self).effect(inCombat, allies, enemies)
@@ -2030,7 +2045,11 @@ class Healing(Buff):
         caster = self.attacker
         resultStatement = []
         effects = []
-        companions = allies if caster in allies else enemies
+        companions = []
+        if inCombat:
+            companions = allies if caster in allies else enemies
+        else:
+            companions = allies
         currentRecipients = list(recipients)
         for recipient in recipients:
             if recipient not in companions:
@@ -2112,6 +2131,7 @@ class SpectralSpanking(Spectral):
         self.minProbability = 40
         self.probModifier = 30
         self.secondaryStat = SpectralSpanking.secondaryStat
+        self.minDamage = 2
 
 
     def effect(self, inCombat=True, allies=None, enemies=None, severity=0):

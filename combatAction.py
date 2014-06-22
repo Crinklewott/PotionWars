@@ -43,6 +43,10 @@ SMACKS_MULTIPLIER = 1
 DURATION_MULTIPLIER = 2
 MIN_DURATION = 3
 
+RESULT = 0
+EFFECTS = 1
+ACTION = 2
+
 #Chance range is used for providing a range for random number generation when performing the attack, defend, grappling, etc. calculations. 
 #Increasing this would lessen the impact of the modifiers, decreasing it would increase the impact.
 CHANCE_RANGE = 5 
@@ -165,6 +169,11 @@ class AttackAction(CombatAction):
         if not defender in opponents:
             return AttackAction(attacker, opponents[randrange(0, len(opponents))]).effect(inCombat, allies, enemies)
         resultString = ''
+        try:
+            if defender.guardian.current_health() == 0:
+                defender.guardian = None
+        except AttributeError:
+            pass
         if defender.guardian is not None:
             success = rand(CHANCE_RANGE + defender.guardian.stat(AttackAction.primaryStat))
             failure = rand(CHANCE_RANGE + attacker.stat(AttackAction.primaryStat))
@@ -181,20 +190,16 @@ class AttackAction(CombatAction):
             wa = attacker.weapon()
             wd = defender.weapon()
             attackBonus = wa.attack_bonus(attacker.is_grappling())
-            print('attackBonus:')
-            print(attackBonus)
             defendBonus = wd.parry_bonus(defender.is_grappling())
-            print('defendBonus:')
-            print(defendBonus)
-            if attacker.is_grappling(defender):
-                attackBonus += attacker.grapple()
-                defendBonus += (defender.grapple() // 2)
-            else:
-                attackBonus += attacker.warfare()
-                defendBonus += (defender.warfare() // 2)
+            attackBonus += attacker.warfare()
+            defendBonus += (defender.warfare() // 2)
             #assert attacker.attack_penalty() >= 0, '%s attack penalty: %s' % (attacker.name, attacker.attack_penalty())
             attackBonus += attacker.attack_penalty()
             defendBonus += defender.attack_penalty()
+            print('attackBonus:')
+            print(attackBonus)
+            print('defendBonus:')
+            print(defendBonus)
             print('attack success:')
             success = rand(attackBonus) 
             print('attack failure:')
@@ -253,7 +258,7 @@ class GrappleAction(CombatAction):
             return AttackAction(attacker, opponents[randrange(0, len(opponents))]).effect(inCombat, allies, enemies)
         resultString = ''
         if attacker.is_grappling() and not attacker.is_grappling(defender):
-            return BreakGrappleAction(attacker, attacker.grapplingPartner).effect(inCombat, allies, enemies)
+            return AttackAction(attacker, attacker.grapplingPartner).effect(inCombat, allies, enemies)
         elif defender.guardian is not None and not defender.is_grappling(attacker):
             success = rand(CHANCE_RANGE + defender.guardian.grapple())
             failure = rand(CHANCE_RANGE + attacker.grapple())
@@ -272,7 +277,7 @@ class GrappleAction(CombatAction):
             return AttackAction(attacker, defender).effect(True, allies, enemies)
         if defender.guardian is None:               
             if defender.is_grappling() and not defender.is_grappling(attacker):
-                return BreakGrappleAction(attacker, defender).effect(inCombat, allies, enemies)
+                return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
             wa = attacker.weapon()
             wd = defender.weapon()
             grappleABonus = wa.grappleAttempt + attacker.grapple() - attacker.attack_penalty()
@@ -562,7 +567,7 @@ class BreakAllysGrappleAction(CombatAction):
             failure = rand(grappleDBonus)
             if failure <= success:
                 resultStmt = ' '.join([attacker.printedName, 'breaks', defender.printedName + "'s", '''hold on''', defender.grapplingPartner.printedName + '!'])
-                defender.break_grapple(defender.grapplingPartner)
+                defender.break_grapple()
                 attacker.grapple(defender)
             else:
                 resultStmt = ' '.join([attacker.printedName, "doesn't break", defender.printedName + "'s", 'hold on', defender.grapplingPartner.printedName + '!'])

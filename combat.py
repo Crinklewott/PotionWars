@@ -146,14 +146,14 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
     global runnable
     runnable = runnableIn
     activeAlly = allies[0]
-    maxAllyLevel = max([sum(ally.get_core_stats()) for ally in allies]) 
-    print([sum(ally.get_core_stats()) for ally in allies])
-    print([ally.get_core_stats() for ally in allies])
-    maxEnemyLevel = max([sum(enemy.get_core_stats()) for enemy in enemies])
+    maxAllyLevel = max([sum(ally.get_battle_stats()) for ally in allies]) 
+    print([sum(ally.get_battle_stats()) for ally in allies])
+    print([ally.get_battle_stats() for ally in allies])
+    maxEnemyLevel = max([sum(enemy.get_battle_stats()) for enemy in enemies])
     print('maxAllyLevel: ' + str(maxAllyLevel))
     print('maxEnemyLevel: ' + str(maxEnemyLevel))
     for ally in allies:
-        if sum(ally.get_core_stats()) <= maxEnemyLevel:
+        if sum(ally.get_battle_stats()) <= maxEnemyLevel:
             orderResult = ally.order(ally, allies, enemies)
             if orderResult is not '':
                 say_delay(orderResult)
@@ -161,7 +161,7 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
                     delaySplit = delay // 5
                     pygame.time.delay(delaySplit)
     for enemy in enemies:
-        if sum(enemy.get_core_stats()) <= maxAllyLevel:
+        if sum(enemy.get_battle_stats()) <= maxAllyLevel:
             orderResult = enemy.order(enemy, enemies, allies)
             if orderResult is not '':
                 say_delay(orderResult)
@@ -374,9 +374,9 @@ def increase_stat_chance():
     for action in chosenActions:
         increaseStat = action.attacker.chanceIncrease
         if action.attacker in allies:
-                increaseStat[action.primaryStat] += 8 if increaseStat[action.primaryStat] == 0 else 4
+                increaseStat[action.primaryStat] += 8 if increaseStat[action.primaryStat] < 16 else 4
                 try:
-                    increaseStat[action.spellType] += 16 if increaseStat[action.spellType] == 0 else 8
+                    increaseStat[action.spellType] += 8 if increaseStat[action.spellType] < 16 else 4
                 except AttributeError:
                     continue
                 try:
@@ -387,9 +387,9 @@ def increase_stat_chance():
             print('----------------defenders of action: ' + str(action) + '-------------------')
             print(action.defenders)
             for defender in action.defenders:
-                defender.chanceIncrease[action.primaryStat] += 4 if increaseStat[action.primaryStat] == 0 else 2
+                defender.chanceIncrease[action.primaryStat] += 2
                 try:    
-                    increaseStat[action.secondaryStat] += 2 if increaseStat[action.primaryStat] == 0 else 1
+                    increaseStat[action.secondaryStat] += 1
                 except AttributeError:
                     continue
 
@@ -716,13 +716,14 @@ def select_action(enemy):
     if enemy.is_grappling():
         #allActions.extend([combatAction.SpankAction, combatAction.ThrowAction, combatAction.BreakGrappleAction])
         allActions.extend([combatAction.ThrowAction, combatAction.BreakGrappleAction])
-        allActions.extend([spell.__class__ for spell in enemy.flattened_spell_list() if spell.grappleStatus != combatAction.NOT_WHEN_GRAPPLED])
+        allActions.extend([spell.__class__ for spell in enemy.flattened_spell_list() if spell.grappleStatus != combatAction.NOT_WHEN_GRAPPLED and 
+            spell.cost <= enemy.current_mana()])
     else:
         allActions.append(combatAction.GrappleAction)
         if filter(lambda x : x.is_grappling(), enemies) != []:
             allActions.append(combatAction.BreakAllysGrappleAction)
         allActions.extend([spell.__class__ for spell in enemy.flattened_spell_list() if spell.grappleStatus != combatAction.ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY and 
-            spell.grappleStatus != combatAction.ONLY_WHEN_GRAPPLED])
+            spell.grappleStatus != combatAction.ONLY_WHEN_GRAPPLED and spell.cost <= enemy.current_mana()])
     if get_difficulty() == HAND:
         return hand_ai(enemy, allActions)
     elif get_difficulty() == STRAP or get_difficulty() == CANE:
@@ -839,7 +840,8 @@ def strap_cane_ai(enemy):
     if get_difficulty() == CANE:
         defenders = []
         while defenders == []:
-            assert(chosenActionClass != [])
+            if chosenActionClass == []:
+                return strap_cane_ai(enemy)
             chosenAction = chosenActionClass.pop(random.randrange(0, len(chosenActionClass)))
             defenders = select_targets(chosenAction, enemy)
             chosenActionClass = [actionClass for actionClass in chosenActionClass if actionClass.actionType != chosenAction.actionType]
@@ -886,7 +888,7 @@ def strap_cane_ai(enemy):
             else:
                 activeCompanions.append(enemy)
                 defendTargets = [comp for comp in activeCompanions if not comp.is_grappling()]
-                for comp in activeCompanions:
+                for companion in activeCompanions:
                     defendTargets.extend([companion for statName in companion.status_names() if statusEffects.is_negative(companion.get_status(statName))])
                     #We want to defend the magic users above all else.
                     defendTargets.extend([companion for i in range(max(0, companion.magic()) // 3)])
@@ -1032,11 +1034,11 @@ def select_targets(chosenAction, enemy):
     elif chosenAction == combatAction.BreakGrappleAction:
         return [enemy.grapplingPartner]
     elif chosenAction == combatAction.BreakAllysGrappleAction:
-        targets = [target for target in targets if target.is_grappling()]
+        targets = [target for target in targets if target.is_grappling() and target.grapple() < enemy.grapple()]
         for target in list(targets):
             #The idea here that if this character has a much higher grapple than his ally, then not only is this character good for breaking a grapple, but 
             #it's likely that his ally has a low grapple, in which case the ally needs all the help he can get.
-            targets.extend([target for i in range(max(0, enemy.grapple() - target.grapple()))])
+            targets.extend([target for i in range(enemy.grapple() - target.grapple())])
     elif isCombat:
         avgdam = avg_damage(targets, chosenAction)
         #we'll be modifying the original targets list
@@ -1240,7 +1242,7 @@ def start_round(chosenActions):
             actionEffect = action.effect(inCombat=True, allies=activeAllies, enemies=activeEnemies)
             count = 0
             print(action)
-            if isinstance(actionEffect[2], combatAction.RunAction) and actionEffect[1][0]:
+            if actionEffect[combatAction.ACTION].actionType == combatAction.RunAction.actionType and actionEffect[1][0]:
                 end_combat()
                 return
             else:
@@ -1268,8 +1270,7 @@ resultIndex = 0
 COMBAT_DELAY = 1000
 delay = COMBAT_DELAY
 def print_round_results():
-    set_commands([('(Enter) to skip')])
-    set_command_interpreter(print_round_results_interpreter)
+    set_commands([('None')])
     global resultIndex
     if resultIndex == len(actionResults):
         end_round()
@@ -1278,6 +1279,8 @@ def print_round_results():
         say_title('Combat!')
         actionResultSplit = [actionResult[2]] if actionResult[3] else actionResult[2].split('\n')
         for result in actionResultSplit:
+            if result.strip() == '':
+                continue
             print('result: ' + result)
             if actionResult[3]:
                 say_delay(result + "\n", overwritePrevious=True)
@@ -1336,7 +1339,7 @@ def game_over():
 
 def game_over_interpreter(keyEvent):
     if keyEvent.key == K_y:
-        global allies, enemies, chosenActions, actionResults, actionsEndured, actionsInflicted, defeatedAllies, defeatedEnemies
+        global allies, enemies, chosenActions, actionResults, actionsEndured, actionsInflicted, defeatedAllies, defeatedEnemies, origEnemies, origAllies
         enemies.members += defeatedEnemies
         allies.members += defeatedAllies
         defeatedAllies = []
@@ -1345,6 +1348,7 @@ def game_over_interpreter(keyEvent):
         #enemies[i].set_state(origEnemies[i])
         #allies[i].set_state(origAllies[i])
         allies = person.Party(copy.deepcopy(origAllies))
+        person.set_party(allies)
         for i in range(len(allies)):
             allies[i].chanceIncrease = [0 for j in range(len(allies[i].chanceIncrease))]
         chosenActions = []
@@ -1364,9 +1368,14 @@ def game_over_interpreter(keyEvent):
             music.play_music(music.BOSS)
         else:
             music.play_music(music.COMBAT)
-    else:
+    elif keyEvent.key == K_n:
         if optional:
-            afterCombatEvent([ally for ally in allies if ally.current_health() <= 0], [enemy for enemy in enemies if enemy.current_health() <= 0], False)
+            print(allies.members)
+            print([ally for ally in allies if ally.current_health() <= 0])
+            print(enemies.members)
+            print([enemy for enemy in enemies if enemy.current_health() <= 0])
+            afterCombatEvent([ally for ally in allies if ally.current_health() <= 0] + defeatedAllies, 
+                    [enemy for enemy in enemies if enemy.current_health() <= 0] + defeatedEnemies, False)
             allies.members += defeatedAllies    
         else:
             end_fight()
@@ -1412,11 +1421,11 @@ XP_RATE = 5
 
 def specialization_bonus(ally, i):
     if ally.is_bonus(i):
-        bonus = 2 * person.HEALTH_SCALE if i == HEALTH or i == MANA else 2
+        bonus = 4 * person.HEALTH_SCALE if i == HEALTH or i == MANA else 4
     elif ally.is_penalty(i):
         bonus = -1 * person.HEALTH_SCALE if i == HEALTH or i == MANA else -1
     else:
-        bonus = person.HEALTH_SCALE if i == HEALTH or i == MANA else 1
+        bonus = 3 * person.HEALTH_SCALE if i == HEALTH or i == MANA else 3
     return bonus
 
 HIGH_STAT_PENALTY = .25
@@ -1447,6 +1456,7 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
                 #print(ally.chanceIncrease)
             try:
                 print('stat:' + person.stat_name(i)) 
+                print(ally.chanceIncrease[i])
             except TypeError:
                 print('spell school: ' + str(i))
             #If your character already has a significantly higher stat than your opponent, the chances of increasing that stat drop off drastically
@@ -1456,13 +1466,15 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
             #print('success:' + str(success))
             #print(success <= statChance)
             gainedPoint = False
+            print('success:' + str(success))
+            print('statChance: ' + str(statChance))
             if success <= statChance:
                 if i < COMBAT_MAGIC:
                     #print(maxStats[i])
                     #print(ally.get_stat(i))
                     #print(specialization_bonus(ally, i))
                     gainedPoint = True
-                    #print('increasing stat: ' + person.stat_name(i))
+                    print('increasing stat: ' + person.stat_name(i))
                     gain = 1
                     if i != HEALTH and i != MANA and i != CURRENT_HEALTH and i != CURRENT_MANA:
                         ally.increase_stat(i, 1)
