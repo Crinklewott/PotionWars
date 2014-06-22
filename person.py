@@ -577,7 +577,7 @@ class Person(universal.RPGObject):
             equipment = self.equipmentList.index(equipment)
         if equipment == WEAPON and self.equipmentList[WEAPON] != items.emptyWeapon:
             empty = items.emptyWeapon
-        if equipment == LOWER_CLOTHING and self.equipmentList[LOWER_CLOTHING] != items.emptyLowerArmor:
+        elif equipment == LOWER_CLOTHING and self.equipmentList[LOWER_CLOTHING] != items.emptyLowerArmor:
             empty = items.emptyLowerArmor
             if self.underwear() == items.emptyUnderwear:
                 universal.say(universal.format_text([self.printedName, 'begins to remove', hisher(self), self.lower_clothing().armorType + ",", 'but then', heshe(self), 
@@ -598,6 +598,7 @@ class Person(universal.RPGObject):
         if empty is not None:
             self.inventory.append(self.equipmentList[equipment])
             self.equipmentList[equipment] = empty
+        return empty is not None
 
     def display_equipment(self, slot):
         universal.say(self.equipmentList[slot].display())
