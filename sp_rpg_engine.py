@@ -21,7 +21,6 @@ from universal import *
 import pygame
 import sys
 from pygame.locals import *
-from person import PC
 import titleScreen
 import music
 """

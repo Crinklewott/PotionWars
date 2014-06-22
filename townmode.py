@@ -162,9 +162,21 @@ class Room(universal.RPGObject):
         return thisRoom
 
 def clear_rooms():
+    print('calling clear rooms')
+    import traceback
+    traceback.print_stack()
     for room in allRooms:
         allRooms[room].clear_characters()
 offStage = Room('offStage', "If you're seeing this, it means you've reached the end of the content.")
+person.set_PC(person.PlayerCharacter("DEFAULT", person.FEMALE))
+print('printing PC gender')
+print(person.FEMALE)
+print(person.PC.gender)
+person.set_party(person.Party([person.PC]))
+offStage.add_character(person.get_PC())
+print(offStage.characters)
+print(person.get_PC().get_id())
+print(person.get_PC().get_id() in offStage.characters)
 
 def load_initial_room():
     town_mode()
@@ -352,10 +364,14 @@ def save_game(saveName, previousModeIn=None, preserveSaveName=True):
     saveData = [] 
     saveData.append('willpower_check= ' + str(person.get_willpower_check()) + '\n')
     saveData.append('difficulty= ' + str(universal.get_difficulty()) + '\n')
-    saveData.append(person.PC.currentEpisode._save() + '\n')
+    try:
+        saveData.append(person.PC.currentEpisode._save() + '\n')
+    except AttributeError:
+        pass
+    print(offStage.characters)
     startRoom = [room for roomName, room in allRooms.iteritems() 
             if room.characters is not None and room.characters is not [] and 
-            person.PC.get_id() in room.characters][0]
+            person.get_PC().get_id() in room.characters][0]
     otherRooms = [room for roomName, room in allRooms.iteritems() 
             if (room.characters is None or not person.PC.get_id() in room.characters)]
     saveData.append(startRoom._save())

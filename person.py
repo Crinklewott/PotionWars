@@ -71,13 +71,10 @@ def remove_character(person):
     if person.name in allCharacters:
         del allCharacters[person.name]
 
-PC = None
 def get_PC():
     return PC
 
 def set_PC(playerCharacter):
-    from townmode import offStage
-    from townmode import go
     global PC
     PC = playerCharacter
     #go(offStage, [PC], False)
@@ -1247,7 +1244,7 @@ class PlayerCharacter(Person):
     the entire game, so long as the two never fight each other).
     """
     def __init__(self, name, gender, description="", currentEpisode=None, order=sixth_order, nickname=""):
-        super(PlayerCharacter, self).__init__(name, description, gender, None, order=zeroth_order, rawName='$$$PC$$$')
+        super(PlayerCharacter, self).__init__(name, gender, None, None, description=description, order=zeroth_order, rawName='$$$PC$$$')
         self.keywords = []
         self.currentEpisode = currentEpisode
         self.numSpankings = 0
@@ -2449,5 +2446,3 @@ def LadLass(person=None):
     return choose_string(person, 'Lad', 'Lass')
 
 #PC.set_all_stats(2, 2, 2, 2, 2, 10, 10)
-#set_party(Party([PC]))
-

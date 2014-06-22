@@ -9,6 +9,7 @@ import pygame
 from pygame.locals import *
 import music
 import os
+import episode
 
 """ Note: This file will have to be modified if we ever decide to have multiple person.PC's. Not quite sure what the best way of handling the case of multiple person.PC's is. We'll have
     to see.
@@ -257,7 +258,6 @@ loadingGame = True
 
 def title_screen(episode=None):
     global firstEpisode, loadingGame
-    townmode.clear_rooms()
     textSurface = None
     titleImage = None
     try:
@@ -271,9 +271,12 @@ def title_screen(episode=None):
                 font, worldView, LIGHT_GREY, DARK_GREY, 1)
     titleImages = []
     if os.path.exists(os.path.join(os.getcwd(), 'save')) and '.init.sav' in os.listdir(os.path.join(os.getcwd(), 'save')):
+        townmode.clear_rooms()
         print('loading .init.sav')
         townmode.previousMode = None
         townmode.load_game('.init.sav', preserveLoadName=False)
+    else:
+        townmode.save_game('.init.sav', preserveSaveName=False)
     assert(episode is not None or firstEpisode is not None)
     if episode is not None:
         firstEpisode = episode
@@ -349,7 +352,7 @@ requestNameString = 'Please provide a name, and hit enter when done. Note: The b
 
 partialName = ''
 def request_name():
-    global partialName
+    global partialName, gender
     universal.say(requestNameString)
     universal.set_commands(['Esc'])
     if gender == person.MALE:
@@ -364,7 +367,7 @@ def request_name():
 def request_name_interpreter(keyEvent):
     global partialName
     if keyEvent.key == K_RETURN:
-        person.set_PC(person.PlayerCharacter(partialName, 'You are a 23 year old Taironan noble. Unfortunately the vast majority of your family\'s fortunes were destroyed during the Wasting Wail and its fallout about twenty years ago, so you\'re a noble in name only. You have dark, rich caramel skin. You and your sister Catalin were raised by Reyna, a close friend of your parents, in her home city of Chengue. She taught you everything you know about combat and adventuring. At her insistence, you have traveled to Avaricum to seek out an old friend of yours (and an old student of hers): Maria of Chengue.', gender))
+        person.set_PC(person.PlayerCharacter(partialName, gender))
         person.get_PC().set_all_stats(2, 2, 2, 2, 2, 10, 10)
         person.set_party(person.Party([person.get_PC()]))
         person.PC.currentEpisode = firstEpisode
@@ -391,6 +394,8 @@ def request_nickname():
     global partialName
     universal.say('Provide a nickname for your character:\n')
     universal.set_commands(['Esc'])
+    print(person.PC)
+    print(person.PC.gender)
     if person.PC.is_male():
         partialName = 'Juli'
     elif person.PC.is_female():
@@ -536,7 +541,9 @@ def final_confirmation_interpreter(keyEvent):
     #person.PC = person.get_person.PC()
     if keyEvent.key == K_y:
         person.PC.currentEpisode = firstEpisode
-        person.PC.currentEpisode.start_episode(postTitleCardFunctionAndArgs=(townmode.save_game, ['.init', townmode.town_mode, False]))
+        person.PC.currentEpisode.currentSceneIndex = 0
+        #episode.set_post_title_card(townmode.save_game, ['.init', townmode.town_mode, False])
+        person.PC.currentEpisode.start_episode(False)
         townmode.saveName = ''
     elif keyEvent.key == K_n:
         global spellPoints

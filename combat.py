@@ -1349,6 +1349,9 @@ def game_over_interpreter(keyEvent):
         #allies[i].set_state(origAllies[i])
         allies = person.Party(copy.deepcopy(origAllies))
         person.set_party(allies)
+        person.set_PC(allies[0])
+        #Making sure we're actually setting the player character to the player character.
+        assert(allies[0].rawName == '$$$PC$$$')
         for i in range(len(allies)):
             allies[i].chanceIncrease = [0 for j in range(len(allies[i].chanceIncrease))]
         chosenActions = []
