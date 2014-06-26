@@ -174,7 +174,9 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
         for i in range(0, 5):
             delaySplit = delay // 5
             pygame.time.delay(delaySplit)
+        increase_stat_chance()    
         choose_enemy_actions()
+        start_round([])
     else:
         if ambush > 0:
             say_delay('The party has ambushed their enemies!')
@@ -1313,11 +1315,12 @@ def end_round():
     activeEnemies = [enemy for enemy in enemies if enemy.current_health() > 0]
     defeatedEnemies.extend([enemy for enemy in enemies if enemy.current_health() <= 0])
     enemies = person.Party(activeEnemies)
-    for ally in activeAllies:
+    for ally in allies:
         ally.decrement_statuses()
-    for enemy in activeEnemies:
+    for enemy in enemies:
         enemy.decrement_statuses()
-    if len(activeAllies) == 0 : game_over()
+    if len(activeAllies) == 0 : 
+        game_over()
     elif len(activeEnemies) == 0:
         victory()
     else:

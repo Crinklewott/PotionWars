@@ -77,7 +77,7 @@ class StatusEffect(universal.RPGObject):
         status.reverseStatus(person)
         the state of the person should be unchanged
         """
-        return
+        pass
 
     def every_round(self, person):
         """
@@ -147,30 +147,33 @@ class Shielded(StatusEffect):
         super(Shielded, self).__init__(Shielded.name, duration, False, isNegative=False)
         self.defenseBonus = defenseBonus
 
-        def inflict_status(self, person):
-            return defenseBonus
+    def inflict_status(self, person):
+        assert(self.defenseBonus is not None)
+        print("calling shield's inflict_status")
+        return self.defenseBonus
 
-        def reverse_status(self, person):
-            """ 
-            Since Shielded doesn't actually do anything to the person, it doesn't need to do anything.
-            """
-            return 0
+    def reverse_status(self, person):
+        """ 
+        Since Shielded doesn't actually do anything to the person, it doesn't need to do anything.
+        """
+        return 0
 
 class MagicShielded(StatusEffect):
     name = 'Magic Shield'
-    def __init__(self, duration, defenseBonus=4):
+    def __init__(self, duration, defenseBonus=2):
         super(MagicShielded, self).__init__(MagicShielded.name, duration, False, isNegative=False)
         self.defenseBonus = defenseBonus
 
-        def inflict_status(self, person):
-            print(self.defenseBonus)
-            return self.defenseBonus
+    def inflict_status(self, person):
+        print("calling magic shield's inflict_status")
+        assert(self.defenseBonus is not None)
+        return self.defenseBonus
 
-        def reverse_status(self, person):
-            """ 
-            Since MagicShielded doesn't actually do anything to the person, it doesn't need to do anything.
-            """
-            return 0
+    def reverse_status(self, person):
+        """ 
+        Since MagicShielded doesn't actually do anything to the person, it doesn't need to do anything.
+        """
+        return 0
 
 
 class MagicDistorted(StatusEffect):
@@ -439,7 +442,3 @@ def build_status(status, duration=0, numSmacks=0, allies=None, enemies=None):
             raise ValueError(' '.join(['None is not a status effect.'])) 
         else:
             raise ValueError(' '.join([str(status), 'is not a status effect.'])) 
-
-
-    def __init__(self, duration):
-        super(LoweredDefense, self).__init__(LoweredDefense.name, duration, False)

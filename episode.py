@@ -94,7 +94,8 @@ class Episode(universal.RPGObject):
 
     def _save(self):
         episodeData = ['begin_episode']
-        episodeData.extend(['episode_number= ' + str(self.num), 'episode_name= ' + self.name, 'current_scene= ' + str(self.currentSceneIndex)])
+        episodeData.extend(['episode_number=' + universal.SAVE_DELIMITER + str(self.num), 'episode_name=' + universal.SAVE_DELIMITER + self.name, 
+            'current_scene=' + universal.SAVE_DELIMITER + str(self.currentSceneIndex)])
         episodeData.append('end_episode')
         return '\n'.join(episodeData)
 
@@ -104,7 +105,7 @@ class Episode(universal.RPGObject):
         name = ''
         currentScene = 0
         for line in loadData:
-            splitLine = line.split()
+            splitLine = line.split(universal.SAVE_DELIMITER)
             if splitLine[0] == 'episode_number=':
                 num = int(splitLine[1])
             elif splitLine[0] == 'episode_name=':

@@ -333,18 +333,24 @@ class Dungeon(townmode.Room):
         global dungeon
         saveText = super(Dungeon, self)._save()
         saveText = saveText.split('\n')
-        saveText.insert(-2, 'coordinate= ' + ''.join(['(', ','.join([str(coord) for coord in self.coordinates]), ')']))
-        saveText.insert(-2, 'direction= ' + str(self.direction))
-        saveText.insert(-2, 'dungeon= ' + str(dungeon.name))
+        saveText.insert(-2, 'coordinate=' + universal.SAVE_DELIMITER + ''.join(['(', ','.join([str(coord) for coord in self.coordinates]), ')']))
+        saveText.insert(-2, 'direction=' + universal.SAVE_DELIMITER + str(self.direction))
+        saveText.insert(-2, 'dungeon=' + universal.SAVE_DELIMITER + str(dungeon.name))
         return '\n'.join(saveText)
 
     @staticmethod
     def _load(saveText):
+        print('calling _load for dungeon')
         thisDungeon = townmode.Room._load(saveText)
         for line in saveText:
-            line = line.split()
+            line = line.split(universal.SAVE_DELIMITER)
+            print('loading dungeon')
+            print(line)
             if line[0] == 'coordinate=':
+                print('loading coordinates')
                 thisDungeon.coordinates = ast.literal_eval(line[1])
+                print('dungeon coordinates:')
+                print(thisDungeon.coordinates)
             elif line[0] == 'direction=':
                 thisDungeon.direction = int(line[1])
             elif line[0] == 'dungeon=':
@@ -886,19 +892,29 @@ chosenTier = None
 def display_spells(tier):
     global chosenTier
     chosenTier = tier
+    if chosenTier > selectedSlinger.tier:
+        return
     say_title('Available Spells')
     global availableSpells
-    availableSpells = [spell for spell in selectedSlinger.spellList[tier] if spell.castableOutsideCombat and spell.cost <= selectedSlinger.current_mana()]
-    print([spell.name for spell in availableSpells])
-    say('\n'.join(universal.numbered_list([spell.name for spell in availableSpells])))
-    set_commands(['(#) Select a spell.', '<==Back'])
-    set_command_interpreter(select_spell_interpreter)
+    try:
+        availableSpells = [spell for spell in selectedSlinger.spellList[tier] if spell.castableOutsideCombat and spell.cost <= selectedSlinger.current_mana()]
+    except TypeError:
+        availableSpells = [' '.join([selectedSlinger.printedName, 'does not know any spells of this tier.'])]
+    try:
+        print([spell.name for spell in availableSpells])
+        say('\n'.join(universal.numbered_list([spell.name for spell in availableSpells])))
+    except AttributeError:
+        say(availableSpells[0])
+        acknowledge(selectedSlinger.display_tiers, display_tiers_interpreter_dungeon)
+    else:
+        set_commands(['(#) Select a spell.', '<==Back'])
+        set_command_interpreter(select_spell_interpreter)
 
 chosenSpell = None
 def select_spell_interpreter(keyEvent):
     global chosenSpell
     if keyEvent.key == K_BACKSPACE:
-        char.display_tiers(display_tiers_interpreter_dungeon)
+        selectedSlinger.display_tiers(display_tiers_interpreter_dungeon)
     elif keyEvent.key in NUMBER_KEYS:
         playerInput = int(pygame.key.name(keyEvent.key)) - 1
         try:

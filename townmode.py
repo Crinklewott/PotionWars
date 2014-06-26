@@ -25,6 +25,28 @@ def town_mode(sayDescription=True):
     universal.set_command_interpreter(town_mode_interpreter)
     music.play_music(currentRoom.bgMusic)
 
+def rest_mode(sayDescription=True):
+    town_mode(sayDescription)
+    universal.set_commands(['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', '(C)lean', '(R)est'])
+    universal.set_command_interpreter(bedroom_interpreter)
+
+bedroom = None
+def set_bedroom(bedroomIn):
+    global bedroom
+    bedroom = bedroomIn
+
+def bedroom_interpreter(keyEvent):
+    global bedroom
+    global previousMode
+    previousMode = rest_mode
+    if keyEvent.key == K_c:
+        bedroom.clean()
+    elif keyEvent.key == K_r:
+        print('calling bedroom.sleep')
+        bedroom.sleep()
+    else:
+        town_mode_interpreter(keyEvent, rest_mode)
+
 class Room(universal.RPGObject):
     """
     before_arrival does any necessary processing before entering a room. It is expected to return a value of True or False. If before_arrival returns True, then the
@@ -115,7 +137,7 @@ class Room(universal.RPGObject):
         self.add_adjacent(adjacent)
 
     def _save(self):
-        saveText = ['begin_room:', 'room_name= ' + self.name]
+        saveText = ['begin_room:', 'room_name='+ universal.SAVE_DELIMITER + self.name]
         if self.characters is not None:
             saveText.append('characters:')
             if person.PC.get_id() in self.characters.keys():
@@ -129,12 +151,13 @@ class Room(universal.RPGObject):
 
     @staticmethod
     def _load(dataList):
+        print('calling load for regular room')
         lineNum = 0
         name = ''
         adjacent = None
         characters = []
         while lineNum < len(dataList):
-            line = dataList[lineNum].split()
+            line = dataList[lineNum].split(universal.SAVE_DELIMITER)
             if line[0][0] == '%':
                 continue
             if line[0] == 'room_name=':
@@ -161,6 +184,118 @@ class Room(universal.RPGObject):
         thisRoom.add_characters(characters)
         return thisRoom
 
+class Bedroom(Room):
+    def __init__(self, name, description="", adjacent=None, characters=None, before_arrival=None, bgMusic=None, punishment=None, punisher=None, weeklyTasks=None,
+            after_arrival=None):
+        super(Bedroom, self).__init__(name, description, adjacent, characters, self.after_arrival, bgMusic, before_arrival)
+        self.dayNum = 1
+        self.dirtiness = 0
+        self.numTransgressions = 0
+        self.punisher = punisher
+        #punishment is the function that should be invoked if the player's space is too dirty.
+        self.punishment = punishment
+        self.weeklyTasks = weeklyTasks
+        self.after_after_arrival = after_arrival
+        self.boarding = False
+
+    def mode(self, sayDescription=True):
+        return rest_mode(sayDescription)
+
+    def after_arrival(self):
+        universal.say_title('Bedroom')
+        print('calling after arrival')
+        if self.after_after_arrival is not None:
+            self.after_after_arrival()
+        universal.say(self.description)
+        print('boarding:')
+        print(self.boarding)
+        if self.boarding:
+            rest_mode()
+        else:
+            town_mode()
+
+    def _save(self):
+        saveText = super(Bedroom, self)._save()
+        saveText = saveText.split('\n')
+        saveText.insert(-2, universal.SAVE_DELIMITER.join(['boarding=', str(self.boarding)]))
+        return '\n'.join(saveText)
+
+    @staticmethod
+    def _load(saveText):
+        bRoom = Room._load(saveText)
+        for line in saveText:
+            line = line.split(universal.SAVE_DELIMITER)
+            if line[0] == 'boarding=':
+                bRoom.boarding = line[1] == 'True'
+        print(bRoom.name)
+        print(bRoom.boarding)
+        if bRoom.boarding:
+            global bedroom
+            bedroom = bRoom
+        return bRoom
+
+    def sleep(self):
+        try:
+            #I don't know what this is doing, or why it's here but I'm not going to mess with it.
+            self.punisher = self.punisher()
+        except TypeError:
+            pass
+        #This is such a horrible, quick and dirty hack. I really need to make a function that allows one to modify this
+        #kind of thing without having to dig into this code, but I'm too lazy. I'll rework this the next time I need to have some episode-specific event trigger on
+        #rest.
+        print('called sleep')
+        try:
+            import PotionWars
+        except ImportError, e:
+            print('-------------------ImportError!--------------------')
+            print(e)
+            self.clean_check()
+        else:
+            print('checking episode!')
+            if person.PC.currentEpisode.name == PotionWars.episode1.name:
+                if 'taking_Carrie_home' in person.PC.keywords:
+                    PotionWars.ep1_carrie_sex()
+                else:
+                    print('calling ep1_catalin')
+                    PotionWars.ep1_catalin()
+            else:
+                self.clean_check()
+                universal.say(universal.format_text([[person.PC.name, '''plops down in''', person.hisher(), '''nice bed, and sleeps the night away.''']]), justification=0)
+        person.PC.restores()
+        self.dayNum += 1
+        self.dirtiness += 1
+        
+    def clean_check(self):
+        if self.dayNum % 7 == 0:
+            if self.tooDirty():
+                self.numTransgressions += 1
+                self.punishment()
+            else:
+                universal.say(universal.format_text([['''"Inspection time," says''', self.punisher.name, '''appearing besides''', person.PC.name + "."],
+                    [person.PC.name, '''looks up groggily. "Hmm. Is it Chiday already?"'''],
+                    ['''"Yup," says''', self.punisher.name + ".", person.HeShe(), '''walks around''', person.PC.name + "'s", 
+                        '''space for a moment, checking the ground underneath the bedding, checking''', person.PC.name + "'s",
+                        '''bedding, and studying the floor.'''],
+                    [person.HeShe(), '''nods in satisfaction.''', '''"Excellent," says''', punisher.name + "."],
+                    [person.PC.name, '''nods. "Can I go to bed now?"'''],
+                    ['''"Of course," says''', punisher.name + " with a smile."]]), justification=0)
+        if self.dayNum % 7 == 0:
+            self.weeklyTasks()
+
+    def tooDirty(self):
+        return self.dirtiness > 3
+
+    def clean(self):
+        if person.PC.current_health() < person.PC.health() // 2 or person.PC.current_mana() < person.PC.mana() // 2:
+            universal.say(universal.format_text([[name(), '''considers taking some time to clean, but plops down on''', person.hisher(), '''bed instead.''', person.HeShe(), 
+                '''is too darn tired to clean.''']]), justification=0)
+        else:
+            universal.say(universal.format_text([[person.PC.name, '''takes some time to do some cleaning.''', person.HeShe(), 
+                '''cleans dirty clothing, scrapes the mud off''', person.hisher(), '''boots, washes''', person.hisher(), 
+                '''linens, and makes sure''', person.hisher(), '''equipment is in good condition.''']]), justification=0)
+            self.dirtiness = 0
+
+
 def clear_rooms():
     print('calling clear rooms')
     import traceback
@@ -181,7 +316,7 @@ print(person.get_PC().get_id() in offStage.characters)
 def load_initial_room():
     town_mode()
 
-currentRoom = None
+currentRoom = offStage
 
 def set_current_room(room):
     global currentRoom
@@ -200,23 +335,25 @@ def get_current_room(room):
     return currentRoom
 
 
-def town_mode_interpreter(keyEvent):
+def town_mode_interpreter(keyEvent, previousModeIn=town_mode):
     party = person.get_party()
+    global previousMode
     if keyEvent.key == K_ESCAPE:
-        confirm_quit(town_mode)
+        confirm_quit(previousMode)
     elif keyEvent.key == K_i:
-        confirm_title_screen(town_mode)
+        confirm_title_screen(previousMode)
     elif keyEvent.key == K_s:
-        save(town_mode)
+        save(previousMode)
     elif keyEvent.key == K_l:
-        load()
+        load(previousMode)
     elif keyEvent.key == K_q:
-        save_game('quick', town_mode)
+        save_game('quick', previousMode)
     elif keyEvent.key == K_t:
-        talk()
+        talk(previousMode)
     elif keyEvent.key == K_g:
-        select_destination()
+        select_destination(previousMode)
     elif keyEvent.key == K_p:
+        previousMode = previousModeIn
         universal.set_commands(['(#)Character', '<==Back'])
         universal.say_title('Characters:')
         universal.say('\t'.join(['Name:', 'Health:', 'Mana:\n\t',]), columnNum=3)
@@ -226,11 +363,11 @@ def town_mode_interpreter(keyEvent):
 def select_character_interpreter(keyEvent):
     party = person.get_party()
     if keyEvent.key == K_BACKSPACE:
-        town_mode()
+        previousMode()
     elif keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
         per = party.members[num-1]
-        per.character_sheet(town_mode)
+        per.character_sheet(previousMode)
 
 def confirm_quit(previousModeIn):
     global previousMode
@@ -293,7 +430,7 @@ def save(previousModeIn):
 numLastInput = False
 saveNum = ''
 def save_interpreter(keyEvent):
-    global saveName, saveNum, numLastInput
+    global saveName, saveNum, numLastInput, previousMode
     playerInput = pygame.key.name(keyEvent.key)
     if keyEvent.key == K_BACKSPACE:
         if numLastInput and saveNum == '':
@@ -303,13 +440,16 @@ def save_interpreter(keyEvent):
     elif keyEvent.key == K_RETURN:
         if numLastInput:
             try:
-                saveName = saveFiles[int(playerInput)-1]
+                saveName = saveFiles[int(saveNum)-1]
             except IndexError, ValueError:
                 return
         confirm_save(saveName)
         return
     elif keyEvent.key == K_ESCAPE:
-        previousMode()
+        if previousMode is not None:
+            previousMode()
+        else:
+            town_mode()
         return
     elif keyEvent.key in NUMBER_KEYS and saveName == '':
         if len(saveFiles) < 10 and saveName == '':
@@ -341,7 +481,7 @@ def confirm_save(saveName):
 
 def confirm_save_interpreter(keyEvent):
     if keyEvent.key == K_y:
-        global possibleSave, saveName, saveNum
+        global possibleSave, saveName, saveNum, previousMode
         save_game(possibleSave)
         possibleSave = ''
         saveName = ''
@@ -362,8 +502,8 @@ def save_game(saveName, previousModeIn=None, preserveSaveName=True):
     if saveName.split('.')[-1] != 'sav':
         saveName += '.sav'
     saveData = [] 
-    saveData.append('willpower_check= ' + str(person.get_willpower_check()) + '\n')
-    saveData.append('difficulty= ' + str(universal.get_difficulty()) + '\n')
+    saveData.append('willpower_check=' + universal.SAVE_DELIMITER + str(person.get_willpower_check()) + '\n')
+    saveData.append('difficulty=' + universal.SAVE_DELIMITER + str(universal.get_difficulty()) + '\n')
     try:
         saveData.append(person.PC.currentEpisode._save() + '\n')
     except AttributeError:
@@ -391,6 +531,8 @@ def save_game(saveName, previousModeIn=None, preserveSaveName=True):
     else:
         if previousMode is not None:
             previousMode()
+        else:
+            town_mode()
 
 
 returnTo = None
@@ -478,7 +620,7 @@ def load_game(loadNameIn=None, preserveLoadName=True):
         loadName = ''
         lineNum = 0
         while lineNum < len(loadData):
-            line = loadData[lineNum].split()
+            line = loadData[lineNum].split(universal.SAVE_DELIMITER)
             if line[0] == 'willpower_check=':
                 flag = int(line[1])
                 if flag == 1:
@@ -500,14 +642,19 @@ def load_game(loadNameIn=None, preserveLoadName=True):
                 roomData = []
                 lineNum += 1
                 isDungeon = False
+                isBedroom = False
                 while loadData[lineNum] != 'end_room':
-                    if loadData[lineNum].split()[0] == 'dungeon=':
+                    if loadData[lineNum].split(universal.SAVE_DELIMITER)[0] == 'dungeon=':
                         isDungeon = True
+                    elif loadData[lineNum].split(universal.SAVE_DELIMITER)[0] == 'boarding=':
+                        isBedroom = True
                     roomData.append(loadData[lineNum])  
                     lineNum += 1
                 if isDungeon:
                     import dungeonmode
                     newRoom = dungeonmode.Dungeon._load(roomData)
+                elif isBedroom:
+                    newRoom = Bedroom._load(roomData)
                 else:
                     newRoom = Room._load(roomData)
                 allRooms[newRoom.name] = newRoom
@@ -531,7 +678,7 @@ def load_game(loadNameIn=None, preserveLoadName=True):
             go(currentRoom)
 
 
-def select_destination():
+def select_destination(previousModeIn):
     global adjacentList
     adjacent = currentRoom.adjacent
     if currentRoom.adjacent is not None:
@@ -539,11 +686,13 @@ def select_destination():
         universal.set_commands(['(#) Select destination', '<==Back'])
     else:
         universal.set_commands(['<==Back'])
+    global previousMode
+    previousMode = previousModeIn
     universal.set_command_interpreter(select_destination_interpreter)
 
-def select_destination_interpreter(keyEvent):
+def select_destination_interpreter(keyEvent, previousMode=town_mode):
     if keyEvent.key == K_BACKSPACE:
-        town_mode()
+        previousMode()
     elif keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
         if currentRoom.adjacent is not None and 0 < num and num <= len(currentRoom.adjacent):
@@ -564,13 +713,14 @@ def perform_go(room, party=None, sayDescription=True):
         currentRoom.remove_characters(party)
     room.add_characters(party)
     currentRoom = room
+    print(currentRoom.characters)
     if currentRoom.after_arrival is None:
         currentRoom.mode(sayDescription)
     else:
         currentRoom.after_arrival()
         #currentRoom.mode()
 
-def talk():
+def talk(previousModeIn):
     party = person.get_party()
     universal.say('Who would you like to speak to?\n')
     talkableCharacters = [c for cName, c in currentRoom.characters.iteritems() if 
@@ -581,11 +731,13 @@ def talk():
         [str(i) + '. ' for i in range(1, len(talkableCharacters)+1)],
         [c.printedName for c in talkableCharacters])]))
     universal.set_commands(['(#) Select person', '<==Back'])
+    global previousMode
+    previousMode = previousModeIn
     universal.set_command_interpreter(talk_interpreter)
 
 def talk_interpreter(keyEvent):
     if keyEvent.key == K_BACKSPACE:
-        town_mode()
+        previousMode()
     elif keyEvent.key in NUMBER_KEYS:
         chosenNum = int(pygame.key.name(keyEvent.key)) - 1
         talkableCharacters = [c for cName, c in currentRoom.characters.iteritems() if c not in person.get_party().members]

@@ -930,6 +930,7 @@ class Shield(p.Buff):
         self.numTargets = 1
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.effectClass = combatAction.SPELL_SLINGERS
+        print(defenders)
 
 
     def effect_statement(self, defender):
@@ -943,6 +944,7 @@ class Shield(p.Buff):
         #return super(Shield, self).effect_statement(defender)
 
     def success_statement(self, defender):
+        print(defender)
         return [defender.printedName, 'is protected!']
 
 

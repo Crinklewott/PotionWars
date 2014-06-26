@@ -12,6 +12,8 @@ from pygame.locals import *
 import os
 
 DEBUG = False
+SAVE_DELIMITER = '%%%'
+
 
 NUM_TIERS = 9
 

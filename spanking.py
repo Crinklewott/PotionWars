@@ -33,7 +33,7 @@ class SpankingPosition(object):
         allSpankingPositions[name] = self
 
     def _save():
-        return 'Name= ' + str(self.name)
+        return 'Name=' + universal.SAVE_DELIMITER + str(self.name)
 
     def _load(dataList):
         positionName = dataList[0]

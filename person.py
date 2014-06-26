@@ -868,9 +868,17 @@ class Person(universal.RPGObject):
         if statusEffects.LoweredMagicDefense.name in self.statusList:
             defenseBonus = self.statusList[statusEffects.LoweredMagicDefense.name][0].inflict_status(self)
         if statusEffects.MagicShielded.name in self.statusList: 
-            defenseBonus = self.statusList[statusEffects.MagicShielded.name][0].inflict_status(self)
-            print(self.statusList[statusEffects.MagicShielded.name][0])
-        print(defenseBonus)
+            print('magic defense bonus:')
+            print(self.weapon().magicDefense)
+            print(self.shirt().magicDefense)
+            print(self.lower_clothing().magicDefense)
+            print(self.underwear().magicDefense)
+            print(defenseBonus)
+            print(self.statusList[statusEffects.MagicShielded.name][STATUS_OBJ])
+            print(self.statusList[statusEffects.MagicShielded.name][STATUS_OBJ])
+            print(self.statusList[statusEffects.MagicShielded.name][STATUS_OBJ].inflict_status(self))
+            print(self.statusList[statusEffects.MagicShielded.name][STATUS_OBJ].inflict_status)
+            defenseBonus += self.statusList[statusEffects.MagicShielded.name][STATUS_OBJ].inflict_status(self)
         return self.weapon().magicDefense + self.shirt().magicDefense + self.lower_clothing().magicDefense + self.underwear().magicDefense + defenseBonus
 
     def inflict_status(self, status, originalList=None, newList=None):
@@ -945,6 +953,15 @@ class Person(universal.RPGObject):
         if self.is_inflicted_with(statusEffects.LoweredDefense.name):
             defenseBonus = self.statusList[statusEffects.LoweredDefense.name][STATUS_OBJ].inflict_status(self)
         if self.is_inflicted_with(statusEffects.Shielded.name):
+            print('defense bonus:')
+            print(self.shirt().attackDefense)
+            print(self.lower_clothing().attackDefense)
+            print(self.underwear().attackDefense)
+            print(defenseBonus)
+            print(self.statusList)
+            print(self.statusList[statusEffects.Shielded.name][STATUS_OBJ])
+            print(self.statusList[statusEffects.Shielded.name][STATUS_OBJ].inflict_status(self))
+            print(self.statusList[statusEffects.Shielded.name][STATUS_OBJ].inflict_status)
             defenseBonus += self.statusList[statusEffects.Shielded.name][STATUS_OBJ].inflict_status(self)
         return self.shirt().attackDefense + self.lower_clothing().attackDefense + self.underwear().attackDefense + defenseBonus
     
@@ -956,18 +973,22 @@ class Person(universal.RPGObject):
             overriden. Otherwise that information will not be saved.
             TODO: Need to save (and load) status effects.
         """
-        characterInformation = [personType, 'person_name= ' + self.name, 'gender= ' + 
-                str(self.gender), 'level= ' + 
-                str(self.level), 'tier= ' + str(self.tier), 'experience= ' + str(self.experience), 
-                'spellPoints= ' + str(self.spellPoints), 'specialization= ' + 
-                str(self.specialization), 'combatType= ' + str(self.combatType), 
-                'emerits= ' + str(self.emerits), 'demerits= ' + str(self.demerits), 
-                'rawName= ' + self.rawName]
+        characterInformation = [personType, universal.SAVE_DELIMITER.join(['person_name=', self.name]), 
+                universal.SAVE_DELIMITER.join(['gender=', str(self.gender)]),
+                universal.SAVE_DELIMITER.join(['level=', str(self.level)]),
+                universal.SAVE_DELIMITER.join(['tier=', str(self.tier)]),
+                universal.SAVE_DELIMITER.join(['experience=', str(self.experience)]),
+                universal.SAVE_DELIMITER.join(['spellPoints=', str(self.spellPoints)]), 
+                universal.SAVE_DELIMITER.join(['specialization=', str(self.specialization)]),
+                universal.SAVE_DELIMITER.join(['combatType=', str(self.combatType)]),
+                universal.SAVE_DELIMITER.join(['emerits=', str(self.emerits)]), 
+                universal.SAVE_DELIMITER.join(['demerits=', str(self.demerits)]),
+                universal.SAVE_DELIMITER.join(['rawName=', self.rawName])]
         characterInformation.append('stats:')
         characterInformation.extend([str(stat) for stat in self.statList])
         characterInformation.append('end_stats')
         if self.litany is not None:
-            characterInformation.append('litany= ' + self.litany._save())
+            characterInformation.append(universal.SAVE_DELIMITER.join(['litany=', self.litany._save()]))
         if self.inventory is not None:
             characterInformation.append('inventory:')
             characterInformation.extend(['\n'.join(['begin_item', item.name, 'end_item']) for 
@@ -990,12 +1011,12 @@ class Person(universal.RPGObject):
         for tierNum in range(len(self.spellList)):
             tier = self.spellList[tierNum]
             if tier is not None:
-                characterInformation.append('tier ' + str(tierNum))
+                characterInformation.append('tier' + universal.SAVE_DELIMITER + str(tierNum))
                 characterInformation.extend([s._save() for s in tier if s is not None])
-                characterInformation.append('end_tier ' + str(tierNum))
+                characterInformation.append('end_tier' + universal.SAVE_DELIMITER + str(tierNum))
         characterInformation.append('statusList:')
         for statusName in self.statusList:
-            characterInformation.append(' '.join(['status=', statusName, str(self.statusList[statusName][DURATION])]))
+            characterInformation.append(universal.SAVE_DELIMITER.join(['status=', statusName, str(self.statusList[statusName][DURATION])]))
         characterInformation.append('end_person')
         return '\n'.join(characterInformation)  
 
@@ -1026,10 +1047,11 @@ class Person(universal.RPGObject):
         statusList = {}
         rawName = ''
         while lineNum < len(data):
-            line = str.strip(data[lineNum]).split()
+            line = str.strip(data[lineNum]).split(universal.SAVE_DELIMITER)
             if line[0] == 'person_name=':
                 name = ' '.join(line[1:])
             elif line[0] == 'status=':
+                print(line)
                 statusList[line[1]] = [statusEffects.build_status(line[1], int(line[2])), int(line[2])]
             elif line[0] == 'gender=':
                 gender = int(line[1])
@@ -1092,7 +1114,7 @@ class Person(universal.RPGObject):
                 tierNum = int(line[1])
                 spells = []
                 lineNum += 1
-                while data[lineNum] != 'end_tier ' + str(tierNum):
+                while data[lineNum] != 'end_tier' + universal.SAVE_DELIMITER + str(tierNum):
                     if spells is None:
                         spells = [Spell._load(data[lineNum])]
                     else:
@@ -1293,10 +1315,10 @@ class PlayerCharacter(Person):
         #Since we are adding additional information, we need to remove the self.end_text() that is appended by _save above. 
         saveInformation = super(PlayerCharacter, self)._save('player_character').split('\n')[:-1]
         #saveInformation.append(self.currentEpisode._save())
-        saveInformation.append('num_spankings= ' + str(self.numSpankings))
-        saveInformation.append('num_spankings_given= ' + str(self.numSpankingsGiven))
-        saveInformation.append('coins= ' + str(self.coins))
-        saveInformation.append('nickname= ' + self.nickname)
+        saveInformation.append('num_spankings=' + universal.SAVE_DELIMITER + str(self.numSpankings))
+        saveInformation.append('num_spankings_given=' + universal.SAVE_DELIMITER + str(self.numSpankingsGiven))
+        saveInformation.append('coins=' + universal.SAVE_DELIMITER + str(self.coins))
+        saveInformation.append('nickname=' + universal.SAVE_DELIMITER + self.nickname)
         if self.keywords is not None:
             saveInformation.append('keywords:')
             saveInformation.extend(self.keywords)
@@ -1318,22 +1340,23 @@ class PlayerCharacter(Person):
         nickname = ''
         rawName = ''
         for line in dataList:
-            if line.split()[0] == 'person_name=':
-                name = ' '.join(line.split()[1:])
-            elif line.split()[0] == 'nickname=':
-                nickname = ' '.join(line.split()[1:])
-            elif line.split()[0] == 'rawName=':
-                rawName = ' '.join(line.split()[1:])
-            elif line.split()[0] == 'gender=':
-                gender = int(str.strip(line.split()[1]))
-            elif line.split()[0] == 'person_description=':
-                description = [' '.join(line.split()[1:])]
-            elif line.split()[0] == 'num_spankings=':
-                numSpankings = int(line.split()[1])
-            elif line.split()[0] == 'coins=':
-                coins = int(line.split()[1])
-            elif line.split()[0] == 'num_spankings_given':
-                numSpankingsGiven = int(line.split()[1])
+            line = line.split(universal.SAVE_DELIMITER)
+            if line[0] == 'person_name=':
+                name = ' '.join(line[1:])
+            elif line[0] == 'nickname=':
+                nickname = ' '.join(line[1:])
+            elif line[0] == 'rawName=':
+                rawName = ' '.join(line[1:])
+            elif line[0] == 'gender=':
+                gender = int(str.strip(line[1]))
+            elif line[0] == 'person_description=':
+                description = [' '.join(line[1:])]
+            elif line[0] == 'num_spankings=':
+                numSpankings = int(line[1])
+            elif line[0] == 'coins=':
+                coins = int(line[1])
+            elif line[0] == 'num_spankings_given':
+                numSpankingsGiven = int(line[1])
         allCharacters[rawName + ".playerCharacter"] = allCharacters.pop(PC.get_id())
         PC.name = name
         PC.rawName = rawName
@@ -1863,6 +1886,13 @@ class Status(Spell):
                     defender = availableOpponents[random.randrange(0, len(availableOpponents))]
                     currentDefenders.append(defender)
             successProbability = self.willpowerMultiplier * (attacker.willpower() - attacker.magic_penalty() - defender.willpower())
+            print('casing weaken')
+            print("caster's willpower:")
+            print(attacker.willpower())
+            print("recipient's willpower:")
+            print(defender.willpower())
+            print('success probability:')
+            print(successProbability)
             assert attacker.willpower() is not None, 'attacker has no willpower'
             assert attacker.magic_penalty() is not None, 'attacker has no magic penalty'
             assert defender.willpower() is not None, 'defender has no willpower'
@@ -1889,6 +1919,11 @@ class Status(Spell):
                 #print('attacker magic penalty: ' + str(attacker.magic_penalty()))
                 #print('defender willpower: ' + str(defender.willpower()))
                 #print('defender magic defense: ' + str(defender.magic_defense(self.rawMagic)))
+                print('success probability:')
+                print(successProbability)
+                print('success:')
+                print(success)
+                print(success <= successProbability)
                 if defender.ignores_spell(self):
                     resultString.append(self.immune_statement(defender))
                     effects.append(False)
@@ -2016,8 +2051,7 @@ class Buff(Spell):
             if self.statusInflicted is not None:
                 recipient.inflict_status(statusEffects.build_status(self.statusInflicted, duration))
             resultStatement.append(self.effect_statement(recipient))
-            defender = self.defenders[0]
-            resultStatement.append(self.success_statement(defender))
+            resultStatement.append(self.success_statement(recipient))
             print(resultStatement)
             effects.append(True)
         return (universal.format_text(resultStatement, False), effects, self)

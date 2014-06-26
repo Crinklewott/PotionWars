@@ -70,7 +70,7 @@ class Item(universal.RPGObject):
 
     @staticmethod
     def _load(dataList):
-        return allItems[' '.join(dataList[1:])]
+        return allItems[''.join(dataList[1:])]
 
 class Armor(Item):
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, statBonuses=None):
