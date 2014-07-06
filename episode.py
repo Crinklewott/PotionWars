@@ -82,10 +82,10 @@ class Episode(universal.RPGObject):
 
     def next_scene(self, previousSceneArgs=(), startingSceneArgs=()):
         if self.scenes[self.currentSceneIndex].endScene is not None:
-            if endingSceneArgs is ():
-                self.scenes[self.currentSceneIndex].endScene()      
+            if previousSceneArgs is ():
+                self.scenes[self.currentSceneIndex].previousSceneArgs()      
             else:
-                self.scenes[currentSceneIndex].endScene(*endingSceneArgs)
+                self.scenes[currentSceneIndex].endScene(*previousSceneArgs)
         self.currentSceneIndex += 1
         if startingSceneArgs is ():
             self.scenes[self.currentSceneIndex].startScene()

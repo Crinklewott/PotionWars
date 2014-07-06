@@ -11,7 +11,7 @@ import Queue
 from pygame.locals import *
 import os
 
-DEBUG = False
+DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 
@@ -24,6 +24,12 @@ def resource_path(relative):
     except Exception:
         base_path = os.path.abspath(".")
     return os.path.join(base_path, 'data', relative)
+
+def key_name(keyEvent):
+    return pygame.key.name(keyEvent.key)
+
+def response(keyEvent):
+    return int(key_name(keyEvent))
 
 author = 'AKA'
 programmer = 'AKA'

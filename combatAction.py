@@ -49,7 +49,7 @@ ACTION = 2
 
 #Chance range is used for providing a range for random number generation when performing the attack, defend, grappling, etc. calculations. 
 #Increasing this would lessen the impact of the modifiers, decreasing it would increase the impact.
-CHANCE_RANGE = 5 
+CHANCE_RANGE = 5
 def rand(bonus):
     print('range:' + str(bonus) + ' to ' + str(bonus + CHANCE_RANGE))
     #If we do this, then the bonus will have a HUGE impact, because it essentially moves your random number range up. So if your bonus is greater than the other 
@@ -77,7 +77,7 @@ class CombatAction(universal.RPGObject):
     grappleStatus = None
     effectClass = None
     numTargets = None
-    def __init__(self, attacker, defenders, primaryStat):
+    def __init__(self, attacker, defenders, primaryStat, secondaryStat):
         if type(defenders) != list:
             defenders = [defenders]
         self.attacker = attacker
@@ -87,6 +87,7 @@ class CombatAction(universal.RPGObject):
         self.grappleStatus = None
         self.targetType = None
         self.primaryStat = primaryStat
+        self.secondaryStat = secondaryStat
 
     def __eq__(self, other):
         """
@@ -151,8 +152,8 @@ class AttackAction(CombatAction):
     numTargets = 1
     primaryStat = universal.WARFARE
     actionType = 'attack'
-    def __init__(self, attacker, defenders):
-        super(AttackAction, self).__init__(attacker, defenders, WARFARE)
+    def __init__(self, attacker, defenders, secondaryStat=None):
+        super(AttackAction, self).__init__(attacker, defenders, WARFARE, secondaryStat)
         self.targetType = ENEMY
     #Spell slingers tend to have lower defense, so attacks are more effective.
         self.effectClass = SPELL_SLINGERS
@@ -234,8 +235,8 @@ class GrappleAction(CombatAction):
     numTargets = 1
     primaryStat = universal.GRAPPLE
     actionType = 'GrappleAction'
-    def __init__(self, attacker, defenders, enemyInitiated=False):
-        super(GrappleAction, self).__init__(attacker, defenders, GRAPPLE)
+    def __init__(self, attacker, defenders, enemyInitiated=False, secondaryStat=None):
+        super(GrappleAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
         self.targetType = ENEMY
         #Spell slingers can have their effectiveness grossly decreased by being grappled.
         self.effectClass = SPELL_SLINGERS
@@ -281,7 +282,11 @@ class GrappleAction(CombatAction):
             wa = attacker.weapon()
             wd = defender.weapon()
             grappleABonus = wa.grappleAttempt + attacker.grapple() - attacker.attack_penalty()
+            print('grappleABonus:')
+            print(grappleABonus)
             grappleDBonus = wd.grappleAttemptDefense + max(defender.grapple(), defender.warfare()) // 2 - defender.attack_penalty()
+            print('grappleDBonus:')
+            print(grappleDBonus)
             success = rand(CHANCE_RANGE + grappleABonus)
             failure = rand(CHANCE_RANGE + grappleDBonus)
             if failure <= success:
@@ -300,8 +305,8 @@ class BreakGrappleAction(CombatAction):
     numTargets = 1
     primaryStat = universal.GRAPPLE
     actionType = 'breakGrappleAction'
-    def __init__(self, attacker, defenders):
-        super(BreakGrappleAction, self).__init__(attacker, defenders, GRAPPLE)
+    def __init__(self, attacker, defenders, secondaryStat=None):
+        super(BreakGrappleAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
         self.targetType = ENEMY
         self.grappleStatus = ONLY_WHEN_GRAPPLED
         self.effectClass = ALL
@@ -339,8 +344,8 @@ class RunAction(CombatAction):
     numTargets = 0
     primaryStat = universal.STEALTH
     actionType = 'run'
-    def __init__(self, attacker, defenders):
-        super(RunAction, self).__init__(attacker, defenders, STEALTH)
+    def __init__(self, attacker, defenders, secondaryStat=None):
+        super(RunAction, self).__init__(attacker, defenders, STEALTH, secondaryStat)
         self.targetType = ALLY
         self.grappleStatus = NOT_WHEN_GRAPPLED
         self.effectClass = ALL
@@ -369,8 +374,8 @@ class SpankAction(CombatAction):
     numTargets = 1
     primaryStat = universal.GRAPPLE
     actionType = 'spank'
-    def __init__(self, attacker, defenders, position):
-        super(SpankAction, self).__init__(attacker, defenders, GRAPPLE)
+    def __init__(self, attacker, defenders, position, secondaryStat=None):
+        super(SpankAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
         self.position = position
         self.targetType = ENEMY
         self.grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
@@ -463,8 +468,8 @@ class ThrowAction(CombatAction):
     numTargets = 2
     primaryStat = universal.GRAPPLE
     actionType = 'throw'
-    def __init__(self, attacker, defenders):
-        super(ThrowAction, self).__init__(attacker, defenders, GRAPPLE)
+    def __init__(self, attacker, defenders, secondaryStat=universal.WARFARE):
+        super(ThrowAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
         self.targetType = ENEMY
         self.grappleStatus = ONLY_WHEN_GRAPPLED
         self.effectClass = ALL
@@ -537,8 +542,8 @@ class BreakAllysGrappleAction(CombatAction):
     numTargets = 1
     primaryStat = universal.GRAPPLE
     actionType = 'breakAllysGrappleAction'
-    def __init__(self, attacker, defenders):
-        super(BreakAllysGrappleAction, self).__init__(attacker, defenders, GRAPPLE)
+    def __init__(self, attacker, defenders, secondaryStat=None):
+        super(BreakAllysGrappleAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
         self.targetType = ALLY
         self.grappleStatus = NOT_WHEN_GRAPPLED
         #Need to make sure to break the grapple if it's one of your spell slingers that's been grappled.
@@ -581,8 +586,8 @@ class DefendAction(CombatAction):
     numTargets = 1
     primaryStat = universal.WILLPOWER
     actionType = 'defend'
-    def __init__(self, attacker, defenders):
-        super(DefendAction, self).__init__(attacker, defenders, WILLPOWER)
+    def __init__(self, attacker, defenders, secondaryStat=None):
+        super(DefendAction, self).__init__(attacker, defenders, WILLPOWER, secondaryStat)
         self.targetType = ALLY
         self.grappleStatus = GRAPPLER_ONLY
         #Want to make sure to defend your spell slingers

@@ -335,7 +335,9 @@ def get_current_room(room):
     return currentRoom
 
 
-def town_mode_interpreter(keyEvent, previousModeIn=town_mode):
+def town_mode_interpreter(keyEvent, previousModeIn=None):
+    if previousModeIn is None:
+        previousModeIn = town_mode
     party = person.get_party()
     global previousMode
     if keyEvent.key == K_ESCAPE:
@@ -362,7 +364,10 @@ def town_mode_interpreter(keyEvent, previousModeIn=town_mode):
 
 def select_character_interpreter(keyEvent):
     party = person.get_party()
+    global previousMode
     if keyEvent.key == K_BACKSPACE:
+        if previousMode is None:
+            previousMode = town_mode
         previousMode()
     elif keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
@@ -372,28 +377,32 @@ def select_character_interpreter(keyEvent):
 def confirm_quit(previousModeIn):
     global previousMode
     previousMode = previousModeIn
-    universal.set_commands(['Would you like to save before quitting? Y/N', '(Esc)Back'])
+    universal.set_commands(['Would you like to save before quitting? Y/N', '<==Back'])
     universal.set_command_interpreter(confirm_quit_interpreter)
 
 def confirm_title_screen(previousModeIn):
     global previousMode
     previousMode = previousModeIn
-    universal.set_commands(['Would you like to save before returning to the title screen? Y/N', '(Esc)Back'])
+    universal.set_commands(['Would you like to save before returning to the title screen? Y/N', '<==Back'])
     universal.set_command_interpreter(confirm_title_screen_interpreter)
 
 quitting = False
 def confirm_quit_interpreter(keyEvent):
+    global previousMode
     if keyEvent.key == K_y: 
         global quitting
         quitting = True
         save(previousMode)
     elif keyEvent.key == K_n:
         quit()
-    elif keyEvent.key == K_ESCAPE:
+    elif keyEvent.key == K_BACKSPACE:
+        if previousMode is None:
+            previousMode = town_mode
         previousMode()
 
 showTitleScreen = False
 def confirm_title_screen_interpreter(keyEvent):
+    global previousMode
     if keyEvent.key == K_y: 
         global showTitleScreen
         showTitleScreen = True
@@ -401,7 +410,9 @@ def confirm_title_screen_interpreter(keyEvent):
     elif keyEvent.key == K_n:
         import titleScreen
         titleScreen.title_screen()
-    elif keyEvent.key == K_ESCAPE:
+    elif keyEvent.key == K_BACKSPACE:
+        if previousMode is None:
+            previousMode = town_mode
         previousMode()
 
 saveName = ''
@@ -521,7 +532,7 @@ def save_game(saveName, previousModeIn=None, preserveSaveName=True):
     with open(os.path.join(saveDirectory, saveName), 'w') as saveFile:
         saveFile.write(''.join(saveData))
         saveFile.flush()
-    global showTitleScreen
+    global showTitleScreen, previousMode
     if quitting:
         quit()
     elif showTitleScreen:
@@ -537,9 +548,12 @@ def save_game(saveName, previousModeIn=None, preserveSaveName=True):
 
 returnTo = None
 saveFiles = []
-def load(returnMode=town_mode):
+def load(returnMode=None):
     global returnTo, loadName, saveFiles
-    returnTo = returnMode
+    if returnMode is not None:
+        returnTo = returnMode
+    else:
+        returnTo = town_mode
     saveFiles = [fileName for fileName in os.listdir('save') if fileName[0] != '.']
     try:
         saveFiles.insert(0, saveFiles.pop(saveFiles.index('quick.sav')))
@@ -680,6 +694,11 @@ def load_game(loadNameIn=None, preserveLoadName=True):
 
 def select_destination(previousModeIn):
     global adjacentList
+    global previousMode
+    if previousModeIn is None:
+        previousMode = town_mode
+    else:
+        previousMode = previousModeIn
     adjacent = currentRoom.adjacent
     if currentRoom.adjacent is not None:
         universal.say('\n'.join([str(i) + '. ' + adj.name for i, adj in zip([j for j in range(1, len(adjacent) + 1)], adjacent)]))
@@ -690,8 +709,11 @@ def select_destination(previousModeIn):
     previousMode = previousModeIn
     universal.set_command_interpreter(select_destination_interpreter)
 
-def select_destination_interpreter(keyEvent, previousMode=town_mode):
+def select_destination_interpreter(keyEvent):
+    global previousMode
     if keyEvent.key == K_BACKSPACE:
+        if previousMode is None:
+            previousMode = town_mode
         previousMode()
     elif keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
@@ -722,21 +744,25 @@ def perform_go(room, party=None, sayDescription=True):
 
 def talk(previousModeIn):
     party = person.get_party()
-    universal.say('Who would you like to speak to?\n')
     talkableCharacters = [c for cName, c in currentRoom.characters.iteritems() if 
             not party.inParty(c)]
-    for c in talkableCharacters:
-        print(c.printedName)
-    universal.say('\n'.join([j + name for j, name in zip(
-        [str(i) + '. ' for i in range(1, len(talkableCharacters)+1)],
-        [c.printedName for c in talkableCharacters])]))
-    universal.set_commands(['(#) Select person', '<==Back'])
-    global previousMode
-    previousMode = previousModeIn
-    universal.set_command_interpreter(talk_interpreter)
+    if talkableCharacters:
+        universal.say('Who would you like to speak to?\n')
+        for c in talkableCharacters:
+            print(c.printedName)
+        universal.say('\n'.join([j + name for j, name in zip(
+            [str(i) + '. ' for i in range(1, len(talkableCharacters)+1)],
+            [c.printedName for c in talkableCharacters])]))
+        universal.set_commands(['(#) Select person', '<==Back'])
+        global previousMode
+        previousMode = previousModeIn
+        universal.set_command_interpreter(talk_interpreter)
 
 def talk_interpreter(keyEvent):
+    global previousMode
     if keyEvent.key == K_BACKSPACE:
+        if previousMode is None:
+            previousMode = town_mode
         previousMode()
     elif keyEvent.key in NUMBER_KEYS:
         chosenNum = int(pygame.key.name(keyEvent.key)) - 1

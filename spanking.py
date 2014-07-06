@@ -23,7 +23,7 @@ CANE_SEVERITY = 6
 
 allSpankingPositions = {}
 class SpankingPosition(object):
-    def __init__(name, description, difficulty=1, maintainability=1, reversalRate=1):
+    def __init__(self, name, description, difficulty=1, maintainability=1, reversalRate=1):
         self.name = name
         self.description = description
         self.difficulty = difficulty

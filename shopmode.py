@@ -120,7 +120,10 @@ def window_shop_interpreter(keyEvent):
     elif keyEvent.key == K_ESCAPE:
         shop_mode(doneShoppingLitany=litany)
     elif keyEvent.key == K_RETURN:
-        num = int(partialNum)
+        try:
+            num = int(partialNum)
+        except ValueError:
+            return
         partialNum = ''
         if 0 < num and num <= len(shopGoods)+1:
             buy(num)
@@ -200,7 +203,7 @@ def choose_character_to_equip_item():
         set_command_interpreter(choose_character_to_equip_item_interpreter)
 
 def choose_character_to_equip_item_interpreter(keyEvent):
-    global chosenPerson
+    global chosenPerson, partialNum
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key)) - 1
         if len(person.get_party()) < 10:

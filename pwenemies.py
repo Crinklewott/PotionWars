@@ -102,7 +102,7 @@ class VengadorWarrior(Enemy):
         self.equip(copy.copy(itemspotionwars.warspear))
         self.description = universal.format_line(['''A tall, broad-shouldered''', person.manwoman(self) + ".", person.HeShe(self), '''is wielding a''', self.weapon().name, 
         '''and is wearing''', self.shirt().name, '''and''', self.lower_clothing().name + "."])
-        self.set_all_stats(warfare=2, grapple=0, willpower=0, magic=0, health=14, mana=0, stealth=1)
+        self.set_all_stats(warfare=3, grapple=0, willpower=0, magic=0, health=10, mana=0, stealth=1)
         self.spankingPositions = [positions.headBetweenLegs, positions.frontalOverLap]
 
     def default_stats(self):
@@ -235,7 +235,7 @@ class VengadorSpellslinger(Enemy):
     def __init__(self, gender, level=0):
         super(VengadorSpellslinger, self).__init__('Vengador', gender, None, specialization=universal.COMBAT_MAGIC)
         self.level = level
-        self.set_all_stats(warfare=0, grapple=1, willpower=1, magic=2, health=10, mana=10, stealth=0)
+        self.set_all_stats(warfare=0, grapple=1, willpower=1, magic=3, health=7, mana=10, stealth=0)
         if gender == person.FEMALE:
             self.equip(copy.copy(itemspotionwars.wornDress))
         else:
@@ -408,7 +408,7 @@ class VengadorScout(Enemy):
         self.equip(copy.copy(itemspotionwars.dagger))
         self.description = format_line(['''A short, thin Taironan''', person.manwoman(self), '''dresssed in a''', self.shirt().name + "," ''' and''', 
             self.lower_clothing().name + ".", person.HeShe(self), '''carries a''', self.weapon().name + "."])
-        self.set_all_stats(warfare=1, grapple=2, willpower=2, magic=1, health=10, mana=7, stealth=2)
+        self.set_all_stats(warfare=1, grapple=3, willpower=2, magic=1, health=7, mana=7, stealth=2)
         self.spankingPositions = [positions.diaper, positions.underarm]
         self.learn_spell(spells_PotionWars.heal)
         self.learn_spell(spells_PotionWars.weaken)

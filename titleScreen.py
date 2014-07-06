@@ -368,7 +368,7 @@ def request_name_interpreter(keyEvent):
     global partialName
     if keyEvent.key == K_RETURN:
         person.set_PC(person.PlayerCharacter(partialName, gender))
-        person.get_PC().set_all_stats(2, 2, 2, 2, 2, 10, 10)
+        person.get_PC().set_all_stats(2, 2, 2, 2, 2, 12, 10)
         person.set_party(person.Party([person.get_PC()]))
         person.PC.currentEpisode = firstEpisode
         person.PC.name = partialName

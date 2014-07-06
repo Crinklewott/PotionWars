@@ -1,0 +1,53 @@
+% truncate.sty  ver 2.0   Donald Arseneau
+% Truncate text to a specified width.  If text must be cut, then a
+% sontinuation marker is shown at the end (the default is "\,\dots").
+%
+%       \truncate {width}{text}
+% or
+%       \truncate [marker]{width}{text}
+%
+% The text (whether truncated or not) is printed flush-left in a box 
+% with exactly the width specified.
+% The text will not normally be truncated in the middle of a word, nor 
+% at a space specified by the tie "~".  For example:
+% "\truncate{122pt}{This text has been~truncated}" -->
+% "This text has...      "
+%
+% You can give the package option "hyphenate" or "breakwords" 
+% ("\usepackage[breakwords]{truncate}") to allow breaking in the middle 
+% of words (but only at hyphenation points).  The difference is that 
+% "breakwords" suppresses the hyphen character.  For example:
+% "\truncate{122pt}{This text has been~truncated}" -->
+% "This text has been trun... " (breakwords)
+% "This text has been trun-..." (hyphenate)
+
+\ProvidesPackage{truncate}[1996/03/18 \space ver 2.0]
+\DeclareOption{breakwords}{
+   \def\@TruncHyph{\hyphenpenalty10 
+   \hyphenchar\font \ifx\@TruncEnc\f@encoding 23\else 223\fi\relax}
+   \def\@TruncEnc{T1}
+}
+\DeclareOption{hyphenate}{% takes precedence over breakwords
+   \def\@TruncHyph{\hyphenpenalty10 }
+}
+\def\@TruncHyph{\hyphenpenalty\@M}
+\ProcessOptions
+
+\newcommand{\truncate}[3][\,\dots]{%% #1=continuation marker #2=width #3=text
+  \parbox[b]{#2}{\setbox\z@\vbox\bgroup
+    \settowidth\rightskip{#1}%
+    \parfillskip-\@ne\rightskip \@plus\@ne fil 
+    \advance\rightskip\z@\@plus\@ne\rightskip
+    \parshape \tw@ \z@\hsize \z@\maxdimen \linepenalty60
+    \noindent\vadjust{\penalty-\@MM}%
+    {\ignorespaces#3 \@TruncHyph\@\par}%
+    \expandafter\egroup
+   \ifnum\prevgraf>\@ne 
+     \vbadness\maxdimen \vfuzz\baselineskip
+     \setbox\@tempboxa\vsplit\z@ to\z@ \unvbox\@tempboxa
+     \unpenalty
+     \setbox\z@\lastbox
+     \nointerlineskip\hbox to\hsize{\unhbox\z@\unskip#1\hfil}%
+   \else 
+     \box\z@
+   \fi}}

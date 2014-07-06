@@ -575,25 +575,25 @@ class Person(universal.RPGObject):
             equipment == WEAPON
         except AttributeError:
             equipment = self.equipmentList.index(equipment)
-        if equipment == WEAPON and self.equipmentList[WEAPON] != items.emptyWeapon:
+        if equipment == WEAPON and self.equipmentList[WEAPON].name != items.emptyWeapon.name:
             empty = items.emptyWeapon
-        elif equipment == LOWER_CLOTHING and self.equipmentList[LOWER_CLOTHING] != items.emptyLowerArmor:
+        elif equipment == LOWER_CLOTHING and self.equipmentList[LOWER_CLOTHING].name != items.emptyLowerArmor.name:
             empty = items.emptyLowerArmor
-            if self.underwear() == items.emptyUnderwear:
-                universal.say(universal.format_text([self.printedName, 'begins to remove', hisher(self), self.lower_clothing().armorType + ",", 'but then', heshe(self), 
-                'realizes that', heshe(self), "isn't wearing any underwear. In the interests of modesty,", self.name, "decides to keep", hisher(self), 
-                self.lower_clothing().armorType, "on."]))
+            if self.underwear().name == items.emptyUnderwear.name:
+                universal.clear_screen()
+                universal.say(universal.format_line([self.printedName, '''begins to remove''', hisher(), self.lower_clothing().name, '''only to realize that''', heshe(),
+                    '''is not wearing any underwear. In the interests of modesty,''', heshe(), '''decides to keep''', hisher(), self.lower_clothing().name, '''on.''']))
                 acknowledge(self.character_sheet, None)
-                return
-        elif equipment == UNDERWEAR and self.equipmentList[UNDERWEAR] != items.emptyUnderwear:
+                return None
+        elif equipment == UNDERWEAR and self.equipmentList[UNDERWEAR].name != items.emptyUnderwear.name:
             empty = items.emptyUnderwear
-            if self.lower_clothing() == items.emptyLowerArmor:
-                universal.say(universal.format_text([self.printedName, 'begins to remove', hisher(self), self.underwear().armorType + ",", 'but then', heshe(self), 
-                'realizes that', heshe(self), "isn't wearing any pants. In the interests of modesty,", self.name, "decides to keep", hisher(self), 
-                self.underwear().armorType, "on."]))
+            if self.lower_clothing().name == items.emptyLowerArmor.name:
+                universal.clear_screen()
+                universal.say(universal.format_line([self.printedName, '''begins to remove''', hisher(), self.underwear().name, '''only to realize that''', heshe(),
+                    '''is not wearing any pants. In the interests of modesty,''', heshe(), '''decides to keep''', hisher(), self.underwear().name, '''on.''']))
                 acknowledge(self.character_sheet, None)
-                return
-        elif equipment == SHIRT and self.equipmentList[SHIRT] != items.emptyUpperArmor:
+                return None
+        elif equipment == SHIRT and self.equipmentList[SHIRT].name != items.emptyUpperArmor.name:
             empty = items.emptyUpperArmor
         if empty is not None:
             self.inventory.append(self.equipmentList[equipment])
@@ -853,9 +853,9 @@ class Person(universal.RPGObject):
 
     def defense(self):
         if self.is_grappling():
-            return self.grapple() + self.defense_bonus()
+            return self.grapple() // 2 + self.defense_bonus()
         else:
-            return self.warfare() + self.defense_bonus()
+            return self.warfare() // 2 + self.defense_bonus()
 
     def magic_penalty(self, rawMagic=True):
         return self.weapon().castingPenalty + self.shirt().castingPenalty + self.lower_clothing().castingPenalty + self.underwear().castingPenalty
@@ -1220,7 +1220,12 @@ def equip_interpreter(keyEvent):
         num = int(pygame.key.name(keyEvent.key)) - 1
         if 0 < num and num <= len(selectedPerson.inventory): 
             if len(selectedPerson.inventory) < 10:
-                selectedPerson.equip(selectedPerson.inventory[num])
+                try:
+                    selectedPerson.equip(selectedPerson.inventory[num])
+                except InvalidEquipmentError:
+                    universal.say('''That cannot be equipped!''')
+                    acknowledge(selectedPerson.equip_menu, ())
+                    return
             else:
                 equipNum += pygame.key.name(playerInput)
                 set_command_interpreter(['(#) Select input to equip: ' + equipNum + '_', '<==Back', '(Esc) Return to menu'])
@@ -1236,23 +1241,26 @@ def equip_interpreter(keyEvent):
     elif keyEvent.key == K_RETURN and equipNum != '':
         num = int(equipNum)
         if 0 < num and num <= len(selectedPerson.inventory):
-            selectedPerson.equip(selectedPerson.inventory[num])
+            try:
+                selectedPerson.equip(selectedPerson.inventory[num])
+            except InvalidEquipmentError:
+                say('''That cannot be equipppe!''')
+                acknowledge(selectedPerson.equip_menu, ())
+                return
     elif keyEvent.key == K_w:
-        selectedPerson.equip(items.emptyWeapon)
-        selectedPerson.character_sheet()
-        selectedPerson.equip_menu()
+        result = selectedPerson.unequip(WEAPON)
     elif keyEvent.key == K_c:
-        selectedPerson.equip(items.emptyUpperArmor)
-        selectedPerson.character_sheet()
-        selectedPerson.equip_menu()
+        result = selectedPerson.unequip(SHIRT)
     elif keyEvent.key == K_l:
-        selectedPerson.equip(items.emptyLowerArmor)
-        selectedPerson.character_sheet()
-        selectedPerson.equip_menu()
+        result = selectedPerson.unequip(LOWER_CLOTHING)
     elif keyEvent.key == K_u:
-        selectedPerson.equip(items.emptyUnderwear)
-        selectedPerson.character_sheet()
-        selectedPerson.equip_menu()
+        result = selectedPerson.unequip(UNDERWEAR)
+    try:
+        if result is not None:
+            selectedPerson.character_sheet()
+            selectedPerson.equip_menu()
+    except UnboundLocalError:
+        pass
 
                 
 
@@ -1421,6 +1429,7 @@ currentMode = None
 currentPerson = None
 partialNum = ''
 def character_viewer_interpreter(keyEvent):     
+    global partialNum
     #set_commands(['(S)pells, (E)quip, (#)View Item, (W)eapon, S(H)irt, (L)ower Clothing, (U)nderwear, <==Back']) 
     if keyEvent.key == K_BACKSPACE:
         currentMode()
@@ -1646,8 +1655,8 @@ class Spell(combatAction.CombatAction):
     defenders = []
 
     """
-    def __init__(self, attacker, defenders):
-        super(Spell, self).__init__(attacker, defenders, universal.MAGIC)
+    def __init__(self, attacker, defenders, secondaryStat=None):
+        super(Spell, self).__init__(attacker, defenders, universal.MAGIC, secondaryStat)
         self.name = None
         self.description = None
         self.effectFormula = None
@@ -1792,8 +1801,8 @@ class Combat(Spell):
     grappleStatus = None
     effectClass = None
     actionType = 'combat'
-    def __init__(self, attacker, defenders):
-        super(Combat, self).__init__(attacker, defenders)
+    def __init__(self, attacker, defenders, secondaryStat=None):
+        super(Combat, self).__init__(attacker, defenders, secondaryStat)
         self.minDamage = None
         #Deprecated. Do not use.
         self.spellType = COMBAT
@@ -1848,8 +1857,8 @@ class Status(Spell):
     primaryStat = universal.WILLPOWER
     secondaryStat = universal.MAGIC
     actionType = 'status'
-    def __init__(self, attacker, defenders):
-        super(Status, self).__init__(attacker, defenders)
+    def __init__(self, attacker, defenders, secondaryStat=universal.MAGIC):
+        super(Status, self).__init__(attacker, defenders, secondaryStat)
         self.statusInflicted = None
         #This way, if we forget to set these values, we'll get an exception.
         self.minDuration = None
@@ -1862,7 +1871,6 @@ class Status(Spell):
         self.spellType = STATUS #Deprecated. Do not use.
         self.spellSchool = universal.STATUS_MAGIC
         self.targetType = combatAction.ENEMY
-        self.secondaryStat = Status.secondaryStat
         self.primaryStat = Status.primaryStat
         self.actionType = 'status'
 
@@ -1956,6 +1964,7 @@ class CharmMagic(Status):
     grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
     effectClass = ALL
     def effect(self, inCombat=True, allies=None, enemies=None):
+        super(CharmMagic, self).effect(inCombat, allies, enemies)
         if not inCombat:
             return ['You can\'t cast', self.name, 'outside of combat.']
         if self.attacker in allies:
@@ -2013,8 +2022,8 @@ class Buff(Spell):
     effectClass = None
     statusInflicted = None
     actionType = 'buff'
-    def __init__(self, attacker, defenders):
-        super(Buff, self).__init__(attacker, defenders)
+    def __init__(self, attacker, defenders, secondaryStat=None):
+        super(Buff, self).__init__(attacker, defenders, secondaryStat)
         self.targetType = combatAction.ALLY
         self.effectClass = None
         self.spellType  = BUFF #Deprecated. Do not use.
@@ -2063,8 +2072,8 @@ class Buff(Spell):
         return
 
 class Healing(Buff):
-    def __init__(self, attacker, defenders):
-        super(Healing, self).__init__(attacker, defenders)
+    def __init__(self, attacker, defenders, secondaryStat=None):
+        super(Healing, self).__init__(attacker, defenders, secondaryStat)
         self.minHealedHealth = None
         #If fortify is true, then this healing spell can heal health past the character's maximum health.
         self.fortify = False
@@ -2108,8 +2117,8 @@ class Healing(Buff):
         return (universal.format_text(resultStatement, False), effects, self)
 
 class Resurrection(Healing):
-    def __init__(self, attacker, defenders):
-        super(Resurrection, self).__init__(attacker, defenders)
+    def __init__(self, attacker, defenders, secondaryStat=None):
+        super(Resurrection, self).__init__(attacker, defenders, secondaryStat)
         self.fortify = False
         self.fortifyCap = None
 
@@ -2124,8 +2133,8 @@ class Spectral(Spell):
     """
     Note: Because Spectral spells are so varied, we can't implement a generic effect function. Each spectral spell will have to implement its own.
     """
-    def __init__(self, attacker, defenders):
-        super(Spectral, self).__init__(attacker, defenders)
+    def __init__(self, attacker, defenders, secondaryStat=None):
+        super(Spectral, self).__init__(attacker, defenders, secondaryStat)
         self.targetType = combatAction.ENEMY
         self.effectClass = None
         self.spellType = SPECTRAL #Deprecated. Do not use.

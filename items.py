@@ -234,7 +234,7 @@ class Spear(Weapon):
     """
     weaponType = 'spear'
     def __init__(self, name, description, price=0, minDamage=1, maxDamage=5, 
-            grappleAttempt=-1, grappleAttemptDefense=1, grappleBonus=-2,
+            grappleAttempt=-1, grappleAttemptDefense=2, grappleBonus=-2,
             armslengthBonus=2, genericBonus=0, statBonuses=None):
         super(Spear, self).__init__(name, description, price, minDamage, maxDamage, 
                 grappleAttempt, grappleAttemptDefense, grappleBonus,

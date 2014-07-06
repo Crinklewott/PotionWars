@@ -383,7 +383,7 @@ def increase_stat_chance():
                     continue
                 try:
                     increaseStat[action.secondaryStat] += 4 if increaseStat[action.secondaryStat] == 0 else 2
-                except AttributeError:
+                except (AttributeError, TypeError):
                     continue
         elif action.attacker in enemies:
             print('----------------defenders of action: ' + str(action) + '-------------------')
@@ -392,7 +392,7 @@ def increase_stat_chance():
                 defender.chanceIncrease[action.primaryStat] += 2
                 try:    
                     increaseStat[action.secondaryStat] += 1
-                except AttributeError:
+                except (AttributeError, TypeError):
                     continue
 
 def begin_round_interpreter(keyEvent):
@@ -435,7 +435,7 @@ def attack_interpreter(keyEvent):
     if keyEvent.key == K_BACKSPACE:
         display_combat_status(printAllies=False, printEnemies=False)
     elif activeAlly.is_grappling() and keyEvent.key == K_RETURN:
-        chosenActions.append(combatAction.AttackAction(activeAlly, activeAlly.grapplingPartner))
+        chosenActions.append(combatAction.AttackAction(activeAlly, activeAlly.grapplingPartner, secondaryStat=universal.GRAPPLE))
         next_character()
     elif not activeAlly.is_grappling() and keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key)) - 1
@@ -1214,22 +1214,23 @@ def max_damage(companions, chosenAction=None):
 
 
 actionResults = []
-RANDOM_ORDER_MULTIPLIER = 2
+RANDOM_ORDER_MULTIPLIER = 4
 def start_round(chosenActions):
     global actionResults, resultIndex, delay
     delay = COMBAT_DELAY
     actionResults = []
     resultIndex = 0
-    #First, we shuffle the actions.
-    #We order the actions based on the stat that each action depends on. For example, a character with a high warfare attacking is going to go first than a character with
+    #We order the actions based on the stat that each action depends on. For example, a character with a high warfare attacking is more likely to go first than a 
+    #character with
     #a low grapple who is grappling. Because we shuffled the actions first, there's no guarantee on who goes first if two characters have the same values for the 
     #primary stat of their action.
     defendActions = [action for action in chosenActions if isinstance(action, combatAction.DefendAction)]
     nonDefendActions = [action for action in chosenActions if action not in defendActions]
-    random.shuffle(nonDefendActions)
     #nonDefendActions.sort(key=lambda x : x.attacker.stat(x.primaryStat) + random.randrange(0, RANDOM_ORDER_MULTIPLIER))
     #We push all the defend actions to the beginning, so that every defending character is guaranteed to defend at the beginning.
     chosenActions = defendActions + sorted(nonDefendActions, key=lambda x : x.attacker.stat(x.primaryStat) + random.randrange(0, RANDOM_ORDER_MULTIPLIER), reverse=True) 
+    print('sorted actions:')
+    print(chosenActions)
     for action in chosenActions:
         activeAllies = [ally for ally in allies if ally.current_health() > 0]
         activeEnemies = [enemy for enemy in enemies if enemy.current_health() > 0]

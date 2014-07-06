@@ -1,0 +1,21 @@
+\contentsline {chapter}{\numberline {1}Introduction}{3}{chapter.1}
+\contentsline {chapter}{\numberline {2}The Game Window}{5}{chapter.2}
+\contentsline {section}{\numberline {2.1}Townmode}{7}{section.2.1}
+\contentsline {section}{\numberline {2.2}Conversation}{9}{section.2.2}
+\contentsline {chapter}{\numberline {3}Character Screen}{11}{chapter.3}
+\contentsline {chapter}{\numberline {4}Dungeon}{15}{chapter.4}
+\contentsline {section}{\numberline {4.1}Dungeon View}{17}{section.4.1}
+\contentsline {section}{\numberline {4.2}Dungeon Commands}{18}{section.4.2}
+\contentsline {section}{\numberline {4.3}Mapping}{19}{section.4.3}
+\contentsline {chapter}{\numberline {5}Combat}{20}{chapter.5}
+\contentsline {section}{\numberline {5.1}Armslength vs. Grappling}{21}{section.5.1}
+\contentsline {section}{\numberline {5.2}Combat Options}{22}{section.5.2}
+\contentsline {section}{\numberline {5.3}Victory and Character Improvements}{25}{section.5.3}
+\contentsline {subsection}{\numberline {5.3.1}Stat Improvements}{25}{subsection.5.3.1}
+\contentsline {subsection}{\numberline {5.3.2}Learning Spells}{26}{subsection.5.3.2}
+\contentsline {subsubsection}{\numberline {5.3.2.1}Tiers}{26}{subsubsection.5.3.2.1}
+\contentsline {section}{\numberline {5.4}Defeat and Second Chances}{28}{section.5.4}
+\contentsline {chapter}{\numberline {6}Spells}{29}{chapter.6}
+\contentsline {section}{\numberline {6.1}Spell Schools}{31}{section.6.1}
+\contentsline {section}{\numberline {6.2}Spell Information}{32}{section.6.2}
+\contentsline {chapter}{\numberline {7}Acknowledgements}{35}{chapter.7}

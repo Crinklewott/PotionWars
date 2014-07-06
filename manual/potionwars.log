@@ -1,0 +1,1028 @@
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.5.8)  5 JUL 2014 20:52
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**potionwars.tex
+(./potionwars.tex
+LaTeX2e <2011/06/27>
+Babel <3.9h> and hyphenation patterns for 2 languages loaded.
+(/usr/share/texlive/texmf-dist/tex/latex/base/report.cls
+Document Class: report 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/share/texmf/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2007/01/21 v2.11 LaTeX color extensions (UK)
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+
+(/usr/share/texlive/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count88
+)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1337.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1341.
+Package xcolor Info: Model `RGB' extended on input line 1353.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1355.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1356.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1357.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1358.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1359.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/epigraph/epigraph.sty
+Package: epigraph 2009/09/02 v1.5c typesetting epigraphs
+\beforeepigraphskip=\skip43
+\afterepigraphskip=\skip44
+\epigraphwidth=\skip45
+\epigraphrule=\skip46
+)
+(/usr/share/texlive/texmf-dist/tex/generic/ulem/ulem.sty
+\UL@box=\box26
+\UL@hyphenbox=\box27
+\UL@skip=\skip47
+\UL@hook=\toks14
+\UL@height=\dimen103
+\UL@pe=\count89
+\UL@pixel=\dimen104
+\ULC@box=\box28
+Package: ulem 2012/05/18
+\ULdepth=\dimen105
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks15
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+)
+\Gin@req@height=\dimen106
+\Gin@req@width=\dimen107
+)
+(./pdfscreen.sty
+Package: pdfscreen 2000/07/07 v.1.5 screen PDF design (CVR)
+ (/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2007/08/22 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count90
+\calc@Bcount=\count91
+\calc@Adimen=\dimen108
+\calc@Bdimen=\dimen109
+\calc@Askip=\skip48
+\calc@Bskip=\skip49
+LaTeX Info: Redefining \setlength on input line 76.
+LaTeX Info: Redefining \addtolength on input line 77.
+\calc@Ccount=\count92
+\calc@Cskip=\skip50
+)
+(./comment.sty Excluding comment 'comment')
+\c@panel=\count93
+\c@driver=\count94
+\c@scheme=\count95
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2012/11/06 v6.83m Hypertext links for LaTeX
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+Package: hobsub-hyperref 2012/05/28 v1.13 Bundle oberdiek, subset hyperref (HO)
+
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty
+Package: hobsub-generic 2012/05/28 v1.13 Bundle oberdiek, subset generic (HO)
+Package: hobsub 2012/05/28 v1.13 Construct package bundles (HO)
+Package hobsub Info: Skipping package `infwarerr' (already loaded).
+Package hobsub Info: Skipping package `ltxcmds' (already loaded).
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+Package: ifvtex 2010/03/01 v1.5 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+Package: intcalc 2007/09/27 v1.1 Expandable calculations with integers (HO)
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
+Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+Package: pdfescape 2011/11/25 v1.13 Implements pdfTeX's escape features (HO)
+Package: bigintcalc 2012/04/08 v1.3 Expandable calculations on big integers (HO
+)
+Package: bitset 2011/01/30 v1.1 Handle bit-vector datatype (HO)
+Package: uniquecounter 2011/01/30 v1.2 Provide unlimited unique counter (HO)
+)
+Package hobsub Info: Skipping package `hobsub' (already loaded).
+Package: letltxmacro 2010/09/02 v1.4 Let assignment for LaTeX macros (HO)
+Package: hopatch 2012/05/28 v1.2 Wrapper for package hooks (HO)
+Package: xcolor-patch 2011/01/30 xcolor patch
+Package: atveryend 2011/06/30 v1.8 Hooks at the very end of document (HO)
+Package atveryend Info: \enddocument detected (standard20110627).
+Package: atbegshi 2011/10/05 v1.16 At begin shipout hook (HO)
+Package: refcount 2011/10/16 v3.4 Data extraction from label references (HO)
+Package: hycolor 2011/01/30 v1.7 Color options for hyperref/bookmark (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/auxhook.sty
+Package: auxhook 2011/03/04 v1.3 Hooks for auxiliary files (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+)
+\@linkdim=\dimen110
+\Hy@linkcounter=\count96
+\Hy@pagecounter=\count97
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2012/11/06 v6.83m Hyperref: PDFDocEncoding definition (HO)
+)
+\Hy@SavedSpaceFactor=\count98
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/hyperref.cfg
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Hyper figures OFF on input line 4443.
+Package hyperref Info: Link nesting OFF on input line 4448.
+Package hyperref Info: Hyper index ON on input line 4451.
+Package hyperref Info: Plain pages OFF on input line 4458.
+Package hyperref Info: Backreferencing OFF on input line 4463.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4688.
+\c@Hy@tempcnt=\count99
+
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip10
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 5041.
+\XeTeXLinkMargin=\dimen111
+\Fld@menulength=\count100
+\Field@Width=\dimen112
+\Fld@charsize=\dimen113
+Package hyperref Info: Hyper figures OFF on input line 6295.
+Package hyperref Info: Link nesting OFF on input line 6300.
+Package hyperref Info: Hyper index ON on input line 6303.
+Package hyperref Info: backreferencing OFF on input line 6310.
+Package hyperref Info: Link coloring OFF on input line 6315.
+Package hyperref Info: Link coloring with OCG OFF on input line 6320.
+Package hyperref Info: PDF/A mode OFF on input line 6325.
+LaTeX Info: Redefining \ref on input line 6365.
+LaTeX Info: Redefining \pageref on input line 6369.
+\Hy@abspage=\count101
+\c@Item=\count102
+\c@Hfootnote=\count103
+)
+
+Package hyperref Message: Driver: hpdftex.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2012/11/06 v6.83m Hyperref driver for pdfTeX
+\Fld@listcount=\count104
+\c@bookmark@seq@number=\count105
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
+Package: rerunfilecheck 2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+82.
+)
+\Hy@SectionHShift=\skip51
+)
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 337.
+
+
+Package hyperref Warning: Values of option `pdfpagemode':
+(hyperref)                * `UseNone'
+(hyperref)                * `UseOutlines'
+(hyperref)                * `UseThumbs'
+(hyperref)                * `FullScreen'
+(hyperref)                * `UseOC' (PDF 1.5)
+(hyperref)                * `UseAttachments' (PDF 1.6)
+(hyperref)                * An empty value disables the option.
+(hyperref)                Unknown value `none' on input line 337.
+
+Package hyperref Info: Option `colorlinks' set `true' on input line 337.
+Package hyperref Info: Option `pdfmenubar' set `false' on input line 337.
+Package hyperref Info: Option `pdftoolbar' set `false' on input line 337.
+Package hyperref Info: Option `pdffitwindow' set `true' on input line 337.
+Package hyperref Info: Option `pdfcenterwindow' set `true' on input line 337.
+Package hyperref Info: Option `pdfwindowui' set `false' on input line 337.
+
+Package hyperref Warning: Option `backref' has already been used,
+(hyperref)                setting the option has no effect on input line 337.
+
+Including comment 'screen' Excluding comment 'print'
+Package pdfscreen Info: Default options loaded on input line 362.
+Package pdfscreen Info: Color scheme 'gray' loaded on input line 425.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/shortvrb.sty
+Package: shortvrb 2010/02/04 v2.1e Standard LaTeX documentation package (FMi)
+)
+Package shortvrb Info: Made | a short reference for \verb on input line 504.
+\@PDFbox=\box29
+\shadowsize=\dimen114
+\do@PDFBox=\toks16
+\panelwidth=\skip52
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\@emptytoks=\toks17
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks18
+\ex@=\dimen115
+)
+\pmbraise@=\dimen116
+)
+\buttonwidth=\dimen117
+\smallbuttonwidth=\dimen118
+\@PDFspaceleft=\dimen119
+\@Leftmargin=\dimen120
+\@Rightmargin=\dimen121
+\@Topmargin=\dimen122
+\@Bottommargin=\dimen123
+\Textmarginright=\dimen124
+\Textmarginleft=\dimen125
+\Textmargintop=\dimen126
+\Textmarginbottom=\dimen127
+\marginright=\dimen128
+\marginleft=\dimen129
+\margintop=\dimen130
+\marginbottom=\dimen131
+\panelheight=\dimen132
+\LLX=\dimen133
+\LLY=\dimen134
+\URX=\dimen135
+\URY=\dimen136
+\calfactor=\dimen137
+\overlayheight=\dimen138
+\overlaywidth=\dimen139
+\c@panel@section=\count106
+\c@slide=\count107
+\c@slideoverlay=\count108
+\c@overlay=\count109
+)
+Package pdfscreen Info: right panel options loaded on input line 11.
+Package pdfscreen Info: LLX=0.0pt
+(pdfscreen)             LLY=0.0pt
+(pdfscreen)             URX=486.0195pt
+(pdfscreen)             URY=451.6875pt
+(pdfscreen)             panelwidth=92.14049pt
+(pdfscreen)             overlaywidth=486.0195pt
+(pdfscreen)             textwidth=392.0694pt
+(pdfscreen)             textheight=357.7374pt
+(pdfscreen)             paperwidth=578.15999pt
+(pdfscreen)             paperheight=451.6875pt
+(pdfscreen)             calfactor=0.0pt
+(pdfscreen)             Panel=2 on input line 11.
+
+(./potionwars.aux)
+\openout1 = `potionwars.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+
+(/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count110
+\scratchdimen=\dimen140
+\scratchbox=\box30
+\nofMPsegments=\count111
+\nofMParguments=\count112
+\everyMPshowfont=\toks19
+\MPscratchCnt=\count113
+\MPscratchDim=\dimen141
+\MPnumerator=\count114
+\makeMPintoPDFobject=\count115
+\everyMPtoPDFconversion=\toks20
+) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
+)
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+\AtBeginShipoutBox=\box31
+Package hyperref Info: Link coloring ON on input line 21.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
+Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
+)
+\c@section@level=\count116
+)
+LaTeX Info: Redefining \ref on input line 21.
+LaTeX Info: Redefining \pageref on input line 21.
+LaTeX Info: Redefining \nameref on input line 21.
+
+(./potionwars.out) (./potionwars.out)
+\@outlinefile=\write3
+\openout3 = `potionwars.out'.
+
+
+<overlay2.pdf, id=88, 614.295pt x 450.68375pt>
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 29.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+
+<overlay4.pdf, id=89, 614.295pt x 451.6875pt>
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 29.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+
+
+LaTeX Font Warning: Font shape `OT1/cmss/m/it' in size <7> not available
+(Font)              Font shape `OT1/cmss/m/sl' tried instead on input line 29.
+
+LaTeX Font Info:    Try loading font information for U+msa on input line 29.
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 29.
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+
+ <./overlay2.pdf> <./overlay4.pdf>]
+File: overlay2.pdf Graphic file (type pdf)
+
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 48.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 48.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [2
+
+]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 81.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 81.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [3]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 121.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 121.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [4]
+File: overlay2.pdf Graphic file (type pdf)
+
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 152.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 152.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [5]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 191.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 191.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [6]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 223.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 223.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [7]
+File: overlay2.pdf Graphic file (type pdf)
+
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 239.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 239.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [8]
+<images/title.png, id=230, 169.1118pt x 33.4851pt>
+File: images/title.png Graphic file (type png)
+ <use images/title.png>
+Package pdftex.def Info: images/title.png used on input line 239.
+(pdftex.def)             Requested size: 169.11137pt x 33.48502pt.
+File: overlay2.pdf Graphic file (type pdf)
+
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 239.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 239.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.239 \tableofcontents
+                       [1 <./images/title.png (PNG copy)>] (./potionwars.toc
+File: overlay2.pdf Graphic file (type pdf)
+
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 16.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 16.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.16 ...{5.3.2.1}Tiers}{26}{subsubsection.5.3.2.1}
+                                                   [1
+
+])
+\tf@toc=\write4
+\openout4 = `potionwars.toc'.
+
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 241.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 241.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.241 \chapter
+              {Introduction} [2]
+Chapter 1.
+File: overlay2.pdf Graphic file (type pdf)
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 258.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 258.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+pdfTeX warning (ext4): destination with the same identifier (name{page.3}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.258 
+       [3
+
+]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 264.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 264.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+pdfTeX warning (ext4): destination with the same identifier (name{page.4}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.264 \chapter
+              {The Game Window} [4]
+Chapter 2.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 270.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 270.
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 277.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 277.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+pdfTeX warning (ext4): destination with the same identifier (name{page.5}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.277             \item {
+                         \color{green!50!black}\texttt{<==}} - represents ba...
+[5
+
+]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 284.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 284.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+pdfTeX warning (ext4): destination with the same identifier (name{page.6}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.284 \section
+              {Townmode} [6]
+<images/townmode.png, id=367, 1621.05624pt x 1053.9375pt>
+File: images/townmode.png Graphic file (type png)
+
+<use images/townmode.png>
+Package pdftex.def Info: images/townmode.png used on input line 290.
+(pdftex.def)             Requested size: 392.0694pt x 254.89606pt.
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 298.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 298.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+pdfTeX warning (ext4): destination with the same identifier (name{page.7}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.298     \item \verb
+                     |(G)o| - Selected by pressing \verb|G|, allows the play...
+[7
+
+ <./images/townmode.png>]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 313.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 313.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+pdfTeX warning (ext4): destination with the same identifier (name{page.8}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.313 \section
+              {Conversation} [8]
+<images/talking.png, id=402, 1621.05624pt x 1053.9375pt>
+File: images/talking.png Graphic file (type png)
+
+<use images/talking.png>
+Package pdftex.def Info: images/talking.png used on input line 323.
+(pdftex.def)             Requested size: 392.0694pt x 254.89606pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+File: overlay2.pdf Graphic file (type pdf)
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 332.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 332.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [9
+
+]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 332.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 332.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [10 <./images/talking.png>]
+Chapter 3.
+<images/character_sheet.png, id=439, 1621.05624pt x 1053.9375pt>
+File: images/character_sheet.png Graphic file (type png)
+
+<use images/character_sheet.png>
+Package pdftex.def Info: images/character_sheet.png used on input line 343.
+(pdftex.def)             Requested size: 392.0694pt x 254.89606pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+File: overlay2.pdf Graphic file (type pdf)
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 359.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 359.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [11
+
+]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 362.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 362.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [12 <./images/character_sheet.png>]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 393.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 393.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [13]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 416.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 416.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [14]
+Chapter 4.
+<images/dungeon.png, id=517, 1621.05624pt x 1053.9375pt>
+File: images/dungeon.png Graphic file (type png)
+
+<use images/dungeon.png>
+Package pdftex.def Info: images/dungeon.png used on input line 424.
+(pdftex.def)             Requested size: 392.0694pt x 254.89606pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+File: overlay2.pdf Graphic file (type pdf)
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 429.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 429.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [15
+
+]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 429.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 429.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [16 <./images/dungeon.png>]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 453.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 453.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [17
+
+]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 474.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 474.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [18
+
+]
+File: overlay2.pdf Graphic file (type pdf)
+
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 492.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 492.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [19
+
+]
+Chapter 5.
+File: overlay2.pdf Graphic file (type pdf)
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 506.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 506.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [20
+
+]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 536.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 536.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [21
+
+]
+<images/combat.png, id=645, 1621.05624pt x 1053.9375pt>
+File: images/combat.png Graphic file (type png)
+
+<use images/combat.png>
+Package pdftex.def Info: images/combat.png used on input line 542.
+(pdftex.def)             Requested size: 392.0694pt x 254.89606pt.
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 552.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 552.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [22
+
+ <./images/combat.png>]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 578.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 578.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [23]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 598.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 598.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [24]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 629.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 629.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [25
+
+]
+File: overlay2.pdf Graphic file (type pdf)
+
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 644.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 644.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [26]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 645.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 645.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [27]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 668.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 668.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [28
+
+]
+Chapter 6.
+File: overlay2.pdf Graphic file (type pdf)
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 678.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 678.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [29
+
+]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 679.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 679.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [30]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 691.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 691.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [31
+
+]
+<images/spell.png, id=826, 1621.05624pt x 1053.9375pt>
+File: images/spell.png Graphic file (type png)
+ <use images/spell.png>
+Package pdftex.def Info: images/spell.png used on input line 697.
+(pdftex.def)             Requested size: 392.0694pt x 254.89606pt.
+File: overlay2.pdf Graphic file (type pdf)
+
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 705.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 705.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [32
+
+ <./images/spell.png>]
+File: overlay2.pdf Graphic file (type pdf)
+
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 740.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 740.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [33]
+File: overlay2.pdf Graphic file (type pdf)
+ <use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 761.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+
+<use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 761.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [34]
+Chapter 7.
+File: overlay2.pdf Graphic file (type pdf)
+<use overlay2.pdf>
+Package pdftex.def Info: overlay2.pdf used on input line 772.
+(pdftex.def)             Requested size: 486.02821pt x 451.70728pt.
+File: overlay4.pdf Graphic file (type pdf)
+ <use overlay4.pdf>
+Package pdftex.def Info: overlay4.pdf used on input line 772.
+(pdftex.def)             Requested size: 92.14026pt x 451.71394pt.
+ [35
+
+]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 772.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 772.
+ (./potionwars.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 772.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 772.
+Package rerunfilecheck Info: File `potionwars.out' has not changed.
+(rerunfilecheck)             Checksum: 5331B1BF3F95C49C4E6CE56D933B81AF;1229.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 772.
+ ) 
+Here is how much of TeX's memory you used:
+ 6668 strings out of 495028
+ 94110 string characters out of 6181498
+ 186691 words of memory out of 5000000
+ 9707 multiletter control sequences out of 15000+600000
+ 16401 words of font info for 63 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 41i,17n,42p,675b,484s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmssi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb><
+/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/s
+hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/share/te
+xlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam7.pfb>
+Output written on potionwars.pdf (44 pages, 691894 bytes).
+PDF statistics:
+ 969 PDF objects out of 1000 (max. 8388607)
+ 884 compressed objects within 9 object streams
+ 76 named destinations out of 1000 (max. 500000)
+ 214 words of extra memory for PDF output out of 10000 (max. 10000000)
+

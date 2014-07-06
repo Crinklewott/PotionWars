@@ -287,6 +287,10 @@ def armor_shop_before_arrival():
     if 'flirting_with_Peter' in keywords() and p.PC.currentEpisode == episode1:
         universal.say('''Peter's shop is currently closed.''', justification=0)
         return False
+    elif (('refused_to_leave_Peters_shop' in keywords() or 'insulted_Peters_kid' in keywords()) and p.PC.currentEpisode != episode1 and 
+        p.PC.currentEpisode.currentSceneIndex != 0):
+        universal.say('''Probably wise not to go back just yet.''', justification=0)
+        return False
     return True
 wesleyAndAnnesArmorShop.before_arrival = armor_shop_before_arrival
 wesleyAndAnnesArmorShop.after_arrival = armor_shop_after_arrival
@@ -2481,9 +2485,9 @@ elise_3p2p1p1_1_1.comment  = '''"That's how Maria, my sister Catalin, and I were
 elise_3p2p1p1_1_1.children = eliseRootChildren
 def elise_3p2p1p1_1_1_quip_function():
     elise_3p2p1p1_1_1.quip = universal.format_text(['''"Yes," says Elise. "Maria's told me a few of those stories. Apparently, she was a bit of a hellion, though apparently you had your moments too."''',
-        [p.PC.name, '''smiles sheepishly. "Catalin and I were much better behaved after Maria left."'''],
+        [p.PC.name, '''smiles sheepishly. "I was much better behaved after Maria and Catalin left."'''],
         '''"So, what happened to Catalin?" asks Elise. "Maria has no idea."''',
-        [p.PC.name, '''shrugs. "Dunno. She came to Avaricum about eight years ago, much like I'm doing now, but I haven't heard anything. I was kind of hoping she'd be with Maria to meet me."'''],
+        [p.PC.name, '''shrugs. "Dunno. She left home with Maria, about ten years ago. I was kind of hoping she'd be with Maria to meet me."'''],
     '''"Well, I'm sure you'll run into her eventually," says Elise.''',
     [p.PC.name, '''nods. "I hope so."'''],
     '''"So, is there anything else you need?" asks Elise. She glances down at her wash rag, her lips twisting. "Because if not, I should probably get back to cleaning. If I slack today like I did yesterday, Sister Samantha will not be pleased."'''])
@@ -2748,7 +2752,7 @@ def elise_4p2p2_1_1_quip_function():
 elise_4p2p2_1_1.quip_function = elise_4p2p2_1_1_quip_function
 elise_4p2p2_1_1.children = eliseRootChildren
 
-elise_cathedral_history.comment = "Why exactly is this shrine so small? The actual building is huge!"
+elise_cathedral_history.comment = '''"Why exactly is this shrine so small? The actual building is huge!"'''
 def elise_cathedral_history_quip_function():
     elise_cathedral_history.quip = universal.format_text(['''"That's because it's mostly a hospital and orphanage," says Elise.''',
         [p.PC.name, '''scratches''', hisher(p.PC), '''head. "But, who paid for it?"'''],
@@ -3067,7 +3071,7 @@ def peter_8_1_1qf():
     ['''Peter scowls, and puts a protective arm around her shoulders. "I neither asked''',
         '''for nor need your opinion."'''],
     ['''"I'm just being honest," says''', p.PC.name, ''' defensively.'''],
-    ['''"I really don't care,' says Peter, standing and towering over''', p.PC.name + ".",
+    ['''"I really don't care," says Peter, standing and towering over''', p.PC.name + ".",
         '''"Now unless there's something you want to purchase, get out."''']])
 peter_8_1_1.quip_function = peter_8_1_1qf
 peter_8p1_1_1 = Node(173) 
@@ -3958,7 +3962,7 @@ def niceHand_qf():
         [name(), '''hesitates,''', hisher(), '''hand flexing uneasily.''', '''Then,''', heshe(), '''gives the girl's bottom a soothing rub. "You know? For all I''',
         '''know, my mother could be dead, too. She left when I was very young. Almost too young''',
             '''to remember."'''],
-        '''For a moment, the girl doesn't respond. Then, she looks over her shoulder at''', name() + ".", '''"Was she an addict too?"''',
+        ['''For a moment, the girl doesn't respond. Then, she looks over her shoulder at''', name() + ".", '''"Was she an addict too?"'''],
         ['''"Of course not!" snaps''', name() + ".", '''The girl tenses.''', '''"Actually, I don't know. Maybe. I mean, I didn't know what''',
             '''Potions were when she left. How would I have known if she were addicted? Maybe she was hiding it. Maybe that's why she left."'''],
         ['''Adrian stumbles into the room. His shirt is in tatters, and smears of blood criss-cross his chest. His own blade is practially coated in the stuff. He''',
@@ -4289,19 +4293,24 @@ def e1_2_1():
             ['''Ildri helps''', name(), '''get off the counter, and gives the young Taironan's bottom an apologetic rub. She also helps''', himher(), '''fix''', 
                 hisher(),'''clothing. "Sorry. Guess I got overeager."'''],
             [name(), '''scowls at the cook as''', heshe(), '''rubs''', hisher(), '''scalding bottom. "Whatever, I need to go."'''],
-            ['''"Err, yes, you do that," says Ildri.'''],
+            ['''"Err, yes, you do that," says Ildri. She points towards the door. "Make sure to stop by and see Paloma right across the hall. She can give you a''',
+                '''ribbon that marks you as a member of the guild."'''],
             ['''"Wait, don't leave me!" cries the raider, reaching out to''', name() + "."],
             ['''"Relax," says Ildri. She gives the girl's bruised bottom a gentle rub. "I'm done spanking you. Now, you and I are just going to have a little talk''',
                 '''about what you're doing attacking a group that's done you no wrong."''']])
+            add_keyword('get_ribbon')
+            if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+                add_keyword('Ildri_before_Paloma')
     universal.say(cookText, justification=0)
     universal.acknowledge(backOfGuild.display, ())
+
 def e1_2_5():
     universal.say_title('Infirmary')
     healerText = universal.format_text([['''The infirmary is a large open space with about half a dozen cots scattered about it. Many of them have been upturned, and a few have''',
     '''holes in them. There are several Taironans slumped against one wall. A few have leaned their heads back against the wall, with their eyes closed. Others have''',
     '''curled into the fetal position, and still others sit with their heads hanging between their knees. All of them look on the verge of passing out (those who''',
     '''haven't already).''']]) 
-    if not itemspotionwars.whiteRibbon in inventory() and not 'failed_to_help_Paloma' in keywords():
+    if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
         healerText = universal.format_text([healerText, ['''Tied up on the opposite side of the room are people of a variety of descent, likely adventurers, who are also''',
         '''suffering from health fatigue.'''],
             ['''In the center of the room are three Taironan women, only two of whom are wearing masks. The unmasked one is bent over the edge of a cot, while the''',
@@ -4323,35 +4332,619 @@ def e1_2_5():
     universal.acknowledge(backOfGuild.display, ())
 
 def e1_2_7():
-    if itemspotionwars.whiteRibbon in inventory():
+    universal.say_title('Paloma')
+    if 'failed_to_help_Paloma' in keywords() and 'get_ribbon' in keywords():
+        universal.say(universal.format_text([['''"What do you want?" snaps Paloma.'''],
+            ['\p'],
+            ['''1. "Well, I was sent to get a white ribbon-"'''],
+            ['''2. "Well, you're a healer-"''']]))
+        set_command_interpreter(paloma_question_interpreter)
+        set_commands(['(#) Select a number.'])
+    elif 'failed_to_help_Paloma' in keywords():
+            universal.say(universal.format_text([
+                            ['''"Well, you are a healer-"'''],
+                            ['''"And you want me to heal you?" snaps Paloma. "Fine. Come here."'''],
+                            [name(), '''approachs, and the healer touches''', names(), '''forehead. A burst of strength flows through''', himher() + "."],
+                            ['''"Now get out of here," says the healer.'''],
+                            [names(), '''health and mana have been fully restored.''']]))
+            p.PC.restores()
+            universal.acknowledge(dungeonmode.dungeon_mode, ())
+    elif 'helped_Paloma' in keywords() and 'get_ribbon' in keywords():
+        universal.say(universal.format_text([['''Paloma smiles as''', name(), '''approaches. "Need a bit of healing? Guess I can spare a bit of energy for you."'''],
+            ['\p'],
+            ['''1. "Thanks!"'''],
+            ['''2. "Before that, apparently you're supposed to give me a ribbon, or something, to prove I'm a guild member?"''']]), justification=0)
+        set_command_interpreter(request_ribbon_interpreter)
+        set_commands(['(#) Select a number.'])
+    elif 'helped_Paloma' in keywords():
         universal.say_title('Paloma')
-        universal.say(universal.format_text([['''Paloma smiles when''', name(), '''approaches. "Need a bit of healing? Guess I can spare a bit of energy for you." Paloma touches''',
+        universal.say(universal.format_text([
+            ['''Paloma smiles when''', name(), '''approaches. "Need a bit of healing? Guess I can spare a bit of energy for you." Paloma touches''',
             names(), '''forehead, and''', heshe(), '''feels an invigorating burst of power flow through''', himher() + "."],
         [names(), '''health and mana have been fully restored.''']]))
         p.PC.restores()
         universal.acknowledge(dungeonmode.dungeon_mode, ())
-    elif 'failed_to_help_Paloma' in keywords():
-        universal.say_title('Paloma')
-        if 'get_ribbon' in keywords() and not itemspotionwars.whiteRibbon in inventory():
-            universal.say(universal.format_text([['''"Well, I was sent to get a white ribbon-"'''],
+    else:
+        paloma.litany = helpPaloma
+        conversation.converse_with(paloma, dungeonmode.dungeon_mode)
+
+responseMap = {}
+def request_ribbon_interpreter(keyEvent):
+    try:
+        num = int(pygame.key.name(keyEvent.key))
+    except ValueError:
+        return
+    else:
+        global responseMap
+        responseMap = {}
+        if num == 1:
+            universal.say(format_text([['''"Least I can do," says Paloma. She touches''', names(), '''forehead, who feels an invogorating burst of power flow through''', himher()
+                + '.'], [names(), '''health and mana have been fully restored.''']]), justification=0)
+            p.PC.restores()
+            universal.acknowledge(dungeonmode.dungeon_mode, ())
+        elif num == 2:
+            universal.say(format_text([['''Paloma's eyes widened, and she put a hand over her mouth. "Oh dear, I'm so sorry, in all the chaos I completely forgot. I hope you weren't''',
+                '''hurt, were you?"''']]), justification=0)
+            universal.say('\p')
+            responseList = []
+            responseList.append('''"Oh, don't worry about it. I understand. Things were kind of crazy. If you could just give me one now..."''')
+            if 'switched_by_Airell' in keywords() and not 'Airell_before_Paloma' in keywords():
+                responseList.append('''"Airell switched me, because I didn't have one of those cursed ribbons."''')
+                responseMap[len(responseList)] = 'switched_by_Airell'
+            if 'spanked_by_Airell' in keywords() and not 'Airell_before_Paloma' in keywords():
+                responseList.append('''"Airell spanked me with a pair of spectral hands, because I didn't have one of those cursed ribbons."''')
+                responseMap[len(responseList)] = 'spanked_by_Airell'
+            if 'punched_Airell' in keywords() and not 'Airell_before_Paloma' in keywords():
+                responseList.append('''"Morey spanked me bare because I didn't have one of those cursed ribbons."''')
+                responseMap[len(responseList)] = 'punched_Airell'
+            if ('spanked_by_Cosima' in keywords() and not 'Cosima_before_Paloma' in keywords()) or 'mai_and_you_chastised' in keywords():
+                responseList.append('''"Cosima paddled me because I didn't have one of those cursed ribbons."''')
+                responseMap[len(responseList)] = 'spanked_by_Cosima'
+            if 'Ildri_spanked_you_unjustly' in keywords() and not 'Ildri_before_Paloma' in keywords():
+                responseList.append('''"Ildri swatted me with a spatula because I didn't have one of those cursed ribbons."''')
+                responseMap[len(responseList)] = 'Ildri_spanked_you_unjustly'
+            say('\n'.join(universal.numbered_list(responseList)), justification=0)
+            set_commands(['(#) Select a number.'])
+            set_command_interpreter(ribbon_punished_interpreter)
+                
+def ribbon_punished_interpreter(keyEvent):
+    try:
+        num = int(pygame.key.name(keyEvent.key))
+    except ValueError:
+        return
+    else:
+        if num == 1:
+            say(format_text([['''"Oh, that's good," says Paloma. She hurries over and gets the ribbon. She concentrates on it for a moment, and it begins to glow with''',
+            '''a soft, golden''',
+            '''light (to the mind's eye. It still looks like a plain ribbon to the naked eye). Then, she hands it over to''', name() + ",", '''who slips it into''',
+            hisher(), '''pack.'''],
+            ['''"Now, let me heal you..." Paloma touches''', names(), '''forehead. "And good luck!"''']]), justification=0)
+            p.PC.take_item(itemspotionwars.whiteRibbon)
+            p.PC.restores()
+            remove_keyword('get_ribbon')
+            acknowledge(dungeonmode.dungeon_mode, ())
+            return
+        if responseMap[num] == 'switched_by_Airell':
+            say(format_text([['''Paloma winces. "Oh. And Airell switches hard too."'''],
+                ['''"Yes. Yes he does," says''', name(), '''tightly, reaching back and gingerly rubbing''', hisher(), '''stinging bottom.''']]), justification=0)
+        elif responseMap[num] == 'spanked_by_Airell':
+            say(format_text([['''Paloma hisses, and reaches back to clutch her own bottom. "Oh, and those hands feel like they're made of steel."'''],
+                ['''"Indeed," says''', name(), '''flatly.''']]), justification=0)
+        elif responseMap[num] == 'punched_Airell':
+            say(format_text([['''"Oh." Paloma bites her lower lip. "Umm. Oops?"'''],
+                [names(), '''lips tighten.''']]), justification=0)
+        elif responseMap[num] == 'spanked_by_Cosima':
+            say(format_text([['''"Oooh..." says Paloma, reaching back to clutch her own bottom. "I've seen some of the marks Cosima's paddle leaves. That couldn't have''',
+                '''pleasant.'''],
+                ['''"It wasn't."''']]), justification=0)
+        elif responseMap[num] == 'Ildri_spanked_you_unjustly':
+            say(format_text([['''Paloma hisses. "Ildri paddled me with a spatula once, for sneaking a bit of melted chocolate from Adrian's birthday cake. I erm, never''',
+                '''did that again."'''],
+                ['''"Really? I can't imagine why," says''', name(), '''flatly,''', hisher(), '''hands reaching back and rubbing''', hisher(), '''still burning bottom.''']]),
+                justification=0)
+        p.PC.take_item(itemspotionwars.whiteRibbon)
+        remove_keyword('get_ribbon')
+        say(format_text([['''\n\n"I'm really, very very sorry," says Paloma. "Let me get that ribbon right away."'''],
+            ['''The Taironan healer rushes to the back of the room, and opens up a small cabinet. She pulls out a ribbon and focuses on it for a minute. After a second,''',
+                '''the ribbon begins to give off a faint warm glow (to one's magical senses, it still looks like a plain ribbon to the naked eye). Then, she hurries back''',
+                '''over and gives the ribbon to''', name() + ".", '''While doing so, she also lets a bit of her magic flow into''', name() + ",", '''restoring the''',
+                '''Taironan.'''],
+            ['''Paloma bites her lip, as she watches''', name(), '''put the ribbon in''', hisher(), '''pack. "Again, I'm so, so sorry. If, if you'd like, you can''',
+            ''''sp-spank me for being so careless."''']]), justification=0)
+        say('\p')
+        say(format_text([['''1. "Oh, don't worry about it, it's perfectly understandable. You were after all, getting strapped unfairly by a pair of Vengadores, tends''',
+            '''to make anyone forgetful."'''],
+            ['''2. "Your bottom's pretty welted from that Vengador's belt, right? How about we hold off a few days? Give you a chance to heal."'''],
+            ['''3. "Sounds like a great idea. Get over my knee."''']]), justification=0)
+        p.PC.restores()
+        set_commands('(#) Select a number')
+        set_command_interpreter(ep1_spank_paloma)
+            
+def ep1_spank_paloma(keyEvent):
+    try:
+        num = int(pygame.key.name(keyEvent.key))
+    except ValueError:
+        return
+    else:
+        if num == 1:
+            universal.say(format_text([['''Paloma sighs in relief. "Thank you, so much. I was not looking forward to that. You'd better get back into the fight,''',
+            '''but be careful.''', '''These Vengadores are inexperienced, but they're still dangerous."''']]), justification=0)
+            acknowledge(dungeonmode.dungeon_mode, ())
+        elif num == 2:
+            increment_spankings_given()
+            universal.say(format_text([['''Paloma's lips twist. "Not sure if I should be pleased to hear that or not. On the one hand, adding another layer of welts was''',
+                '''not something I was looking forward to. On the other, I'd rather just get it over with."'''],
+                ['''"Look, I just think spanking you when you're already sore is a bit excessive," says''', name() + "."],
+                ['''"I know, and I'm not complaining that much," says Paloma. "Anyway, you'd better get back into the fight. Be careful."''']]), justification=0)
+            acknowledge(dungeonmode.dungeon_mode, ())
+        elif num == 3:
+            increment_spankings_given()
+            universal.say(format_text([[name(), '''sits down on a nearby cot. An instant later,''', heshe(), '''is back on''', hisher(), '''feet, dancing and rubbing''',
+                hisher(), '''smarting bottom.'''],
+                ['''Paloma's lips quirk. "Are you sure you want to do it OTK?"'''],
+                ['''"I'm fine," huffs''', name() + ",", '''easing''', himselfherself(), '''more gingerly onto the cot. "I just sat down too fast is all. Now come on."'''],
+                ['''Paloma sighs, and lowers herself onto''', names(), '''lap, her full bottom rounding into an easy target.''', name(), '''grimaces as Paloma's added''',
+                    '''weight puts more pressure on''', hisher(), '''tender bum, though fortunately most of Paloma's weight is on''', hisher(), '''legs.'''],
+                [HeShe(), '''clamps''', hisher(), '''left hand on the small of Paloma's back, and begins rubbing Paloma's fleshy bottom, as''', heshe(), 
+                '''considers''', hisher(), '''options.'''],
+                ['\p'],
+                ['''1. Spank her over her dress.'''],
+                ['''2. Lift her dress.''']]), justification=0)
+            set_command_interpreter(ep1_paloma_otk)
+
+def ep1_paloma_otk(keyEvent):
+    try:
+        num = int(pygame.key.name(keyEvent.key))
+    except ValueError:
+        return
+    else:
+        if num == 1:
+            universal.say(format_text([[name(), '''raises''', hisher(), '''hand, and begins slapping Paloma's clothed bottom,''', hisher(), '''blows alternating between''',
+                '''Paloma's pillowy cheeks. Paloma begins to squeak, and squirm lightly, as''', names(), '''hard hand ignites the lingering welts from Paloma's earlier''',
+                '''strapping.'''],
+                ['''"The way I understand it," says''', name(), '''as''', hisher(), '''hand continues to crack against Paloma's wide bottom. "One of your primary''',
+                    '''responsibilities to give newcomers ribbons, to help the guild identify them as new members. Is that correct?"'''],
+                ['''"Yes," says Paloma. She gasps as a particularly hard smack crashes into the peak of her right globe.'''],
+                ['''"And yet, what did you fail to do?" asks''', name() + ",", hisher(), '''hand clapping Paloma's right sitspot.'''],
+                ['''"I failed to give you a ribbon," says Paloma, her response punctuated by a sharp cry as''', names(), '''hand smashes into the lower half of her left''',
+                    '''cheek.'''],
+                ['''"Indeed. Do you have any idea how much that spanking hurt?" asks''', name() + ",", hisher(), '''hand beginning to rise and fall faster.'''],
+                ['''Paloma squeals in pain, and wiggles about on''', names(), '''lap. "Yes, I'm sorry, I'm sorry!"'''],
+                ['\p'],
+                ['''1. End the spanking.'''],
+                ['''2. Use one of her slippers.'''],
+                ['''3. Lift Paloma's dress.''']]), justification=0)
+            set_command_interpreter(ep1_paloma_otk_hand)
+        elif num == 2:
+            universal.say(format_text([[name(), '''grabs the hem of Paloma's dress, and lifts it up over the woman's round hips, exposing her shapely, quivering''',
+                '''bottom. A pair of plain white, modest (though rather thin) panties cover her expansive cheeks.'''],
+                [name(), '''lands a few light warm up slaps to the healer's bottom, making the woman twitch.'''],
+                ['\p'],
+                ['''1. Spank her over panties.'''],
+                ['''2. Pull down her panties.''']]), justification=0)
+            set_command_interpreter(ep1_paloma_otk_lift)
+
+def ep1_paloma_otk_hand(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent))
+    except ValueError:
+        return
+    else:
+        if num == 1:
+            ep1_paloma_spanking_end()
+        elif num == 2:
+            universal.say(format_text([[name(), '''takes Paloma's right ankle, and slips the healer's wool slipper off her foot.''', HeShe(),  '''experimentally slaps''',
+            '''the slipper''',
+                '''against''', hisher(), '''hand. A thin strip of leather runs along the bottom of the slipper, adding a bit of sting to the slip, and making a very''',
+                '''intimidating slapping sound.'''],
+                ['''"Oh no," moans Paloma, squirming on''', names(), '''lap. "Please, not my slipper. That's so embarassing."'''],
+                ['''"Well, a little humiliation can go a lont way," says''', name() + ",", '''slapping the leather against Paloma's bottom. The hard leather creates''',
+                '''a muffled thump as it smacks her dress-covered bottom.'''],
+                ['''"Oww!" Paloma begins to squirm frantically on''', names(), '''lap.''', name(), '''shifts Paloma a bit more onto''', hisher(), '''left thigh, and''',
+                    '''hooks''', hisher(), '''right leg around Paloma's. Then,''', heshe(), '''begins beating the hard-soled slipper against Paloma's flaming bottom.'''],
+                ['''"Oww, oww, oww! Stop, stop please!" wails Paloma as the hard slipper bites over and over again into her sensitive cheeks. "I'm sorry I'm sorry!''',
+                '''Oww! Stop! Oww!"'''],
+                [name(), '''rests the slipper lightly on Paloma's tender bottom, and takes a few breaths.'''],
+                ['\p'],
+                ['''1. End the spanking.'''],
+                ['''2. Raise the dress.''']]), justification=0)
+            if itemspotionwars.leatherBelt in inventory():
+                universal.say('''\n\n3. Finish with the belt.''', justification=0)
+            set_command_interpreter(ep1_paloma_otk_hand_slipper)
+        elif num == 3:
+            universal.say(format_text([[name(), '''grasps the hem of Paloma's dress, and lifts the back of it over the woman's hips and bottom.''', HeShe(), 
+                '''drapes the dress across the healer's back, exposing a large, round, upthrust bottom, clad in a modest pair of white panties.''', name(), 
+                '''can see a bit of red peeking out from underneath the woman's underwear.'''],
+                ['''Paloma sucks in a deep breath as the dress is lifted, and she squeezes her legs together anxiously.'''],
+                ['\p'],
+                ['''1. Lower her panties.'''],
+                ['''2. Spank her with the hand.'''],
+                ['''3. Spank her with the spoon.''']]), justification=0)
+            set_command_interpreter(ep1_paloma_otk_hand_lift)
+
+def ep1_paloma_otk_hand_slipper(keyEvent):
+    #&&&
+    try:
+        num = int(universal.key_name(keyEvent))
+    except ValueError:
+        return
+    if num == 1:
+        ep1_paloma_spanking_end()
+    elif num == 2:
+        say(format_text([[name(), '''takes the hem of Paloma's dress, and raises it up over her expansive hips, revealing a curvy, shivering, swollen bottom straining''',
+            '''against a pair of thin white panties.''', name(), '''can see hints of both''', hisher(), '''ministrations, and those of the Vengadores peeking out from''',
+            '''the bottom edges of the healer's panties.'''],
+            ['\p'],
+            ['''1. End the spanking.'''],
+            ['''2. Slipper her over panties.'''],
+            ['''3. Lower her panties.''']]), justification=0)
+        set_command_interpreter(ep1_paloma_otk_hand_slipper_lift)
+    elif num == 3:
+        say(format_text([[name(), '''sets the slipper down, and Paloma breaths a sigh of relief.'''],
+            ['''Then,''', name(), '''extracts''', hisher(), '''belt.'''],
+            ['''Paloma's eyes widen, and her body jerks in panic. "Wait, no please not that! Anything but that!"'''],
+            [name(), '''hesitates, as''', heshe(), '''realizes that this is the same belt used by that amazon on Paloma's innocent bum.'''],
+            ['\p'],
+            ['''1. End the spanking'''],
+            ['''2. Continue with the belt'''],
+            ['''3. Raise her dress''']]), justification=0)
+        set_command_interpreter(ep1_paloma_otk_hand_slipper_belt)
+
+def ep1_paloma_otk_hand_slipper_lift(keyEvent):
+    #&&&
+    try:
+        num = universal.response(keyEvent)
+    except ValueError:
+        return
+    if num == 1:
+        ep1_paloma_spanking_end()
+    elif num == 2:
+        universal.say(format_text([[name(), '''begins slapping the slipper against Paloma's rolling bottom. Paloma squeals. Her hips buck beneath the blows, and her''',
+            '''legs start to kick frantically. Her fingers dig into the blankets, and begin twisting, while she shakes her head. Clearly, her panties are doing far less''',
+            '''to shield her bottom than her dress was.'''],
+            ['''Paloma bucks and flails, her bottom rollling, wobbling, and clenching beneath the punishing slipper. Her cries echo about the room, punctuated by the''',
+                '''occasional sob.'''],
+            ['\p'],
+            ['''1. End the spanking'''],
+            ['''2. Lower her panties''']]), justification=0)
+        set_command_interpreter(ep1_paloma_otk_hand_slipper_lift_slipper)
+    elif num == 3:
+        universal.say(format_text([[name(), '''grabs the waistband of Paloma's panties, and with a few tugs, pulls them down to the tops of her thighs. Paloma's''',
+            '''bouncing bum springs into view. Her brown bottom has turned a dark shade of red, with welts and slipper marks criss-crossing her cheeks. The healer''',
+            '''whimpers,''',
+            '''but pushes her bum a bit higher, perhaps hoping that''', name(), '''will show mercy if she demonstrates her willingness to continue the punishment.'''],
+            ['\p'],
+            ['''1. End the spanking.'''],
+            ['''2. Finish with the hand.'''],
+            ['''3. Finish with the slipper.''']]), justification=0)
+        set_command_interpreter(ep1_paloma_otk_hand_slipper_lift_lower)
+
+def ep1_paloma_otk_hand_slipper_lift_slipper(keyEvent):
+    try:
+        num = universal.response(keyEvent)
+    except ValueError:
+        return
+    if num == 1:
+        ep1_paloma_spanking_end()
+    elif num == 2:
+        universal.say(format_text([[name(), '''grabs the waistband of Paloma's panties, and with a few tugs, pulls her panties down to the tops of her thighs, Paloma's''',
+            '''bouncing bum springing into view. Her brown bottom has turned a dark shade of red. Welts and slipper marks criss-cross her cheeks. The healer whimpers,''',
+            '''but pushes her bum a bit higher, perhaps hoping that''', name(), '''will show mercy if she demonstrates her willingness to continue the punishment.'''],
+            ['\p'],
+            ['''1. End the spanking.'''],
+            ['''2. Finish with the hand.'''],
+            ['''3. Finish with the slipper.''']]), justification=0)
+        set_command_interpreter(ep1_paloma_otk_hand_slipper_lift_slipper_lower)
+
+def ep1_paloma_otk_hand_slipper_lift_slipper_lower(keyEvent):
+    try:
+        num = universal.response(keyEvent)
+    except ValueError:
+        return
+    if num == 1:
+        ep1_paloma_spanking_end()
+    elif num == 2:
+        universal.say(format_text([[name(), '''sets the slipper down. Paloma breaths a sigh of relief, and begin to relax. Then,''', names(), '''hand cracks against''',
+            '''Paloma's left cheek. Paloma squeals, and she immediately tenses up again.''', names(), '''hard, fast, full-armed blows to Paloma's rippling cheeks.''',
+            '''Paloma squirms and bucks against''', names(), '''lap. Her legs kick and she pounds her fists against the bed. She breaks down into tears, crying and''',
+            '''apologizing as''', names(), '''hand beats a rapid, painful tattoo on Paloma's fleshy rear.'''],
+            ['''Finally,''', name(), '''stops and leans back.''', HeShe(), '''wipes a hand across''', hisher(), '''sweaty forehead, while Paloma slumps across''', 
+                hisher(), '''lap, crying and apologizing.'''],
+            [name(), '''gives Paloma a comforting pat on her thigh. "It's alright. It's over now. All is forgiven. The slate is clean."'''],
+            ['''Paloma nods, and takes a few deep breaths, as she struggles to get herself back under control.''']]), justification=0)
+        ep1_paloma_spanking_end()
+    elif num == 3:
+        universal.say(format_text([[name(), '''snaps the slipper down on the middle of Paloma's naked right cheek. Paloma shrieks, and her body begins flopping like a''',
+            '''fish.''', name(), '''presses''', hisher(), '''hand more tightly against the woman's back, and hooks''', hisher(), '''right leg over Paloma's kicking''',
+            '''limbs.''', HeShe(), '''leans over and unleashes a flurry of hard fast smacks with the slipper to Paloma's rolling backside. Paloma howls as the hard-soled''',
+            '''slipper batters her burning backside. Her entire body begins to shake with powerful, pained sobs, yet''', name(), '''continues the battering. Paloma''',
+            '''pleads and apologizes, but her pleas apparently fall on deaf ears.'''],
+            ['''Finally,''', name(), '''sets the slipper down.''', HeShe(), '''takes a few deep breaths, and wipes the sweat from''', hisher(), '''brow. Then,''', heshe(),
+                '''begins very softly rubbing the heavily chastised healer's bum.'''],
+            ['''"There, there,"''', heshe(), '''says. "It's over now. All is forgiven."'''],
+            ['''Paloma's body slowly begins to relax, though she continues to shake with sobs.''']]), justification=0)
+        ep1_paloma_spanking_end()
+
+def ep1_paloma_otk_hand_slipper_lift_lower(keyEvent):
+    try:
+        num = universal.response(keyEvent)
+    except ValueError:
+        return
+    if num == 1:
+        ep1_paloma_spanking_end()
+    elif num == 2:
+        ep1_paloma_otk_hand_slipper_lift_slipper_lower(keyEvent)
+    elif num == 3:
+        ep1_paloma_otk_hand_slipper_lift_slipper_lower(keyEvent)
+    
+def ep1_paloma_otk_hand_slipper_belt(keyEvent):
+    try:
+        num = universal.response(keyEvent)
+    except ValueError:
+        return
+    if num == 1:
+        ep1_paloma_spanking_end()
+    elif num == 2:
+        universal.say(format_text([['''"Sorry," says''', name() + ",", '''tightening''', hisher(), '''grip on the belt. "But the belt is exactly what you're going to''',
+            '''get."'''],
+            [name(), '''snaps the belt down across Paloma's quivering cheeks. Paloma howls, despite the protection of her''',
+                '''dress and panties.'''],
+            ['''Paloma begins to buck and cry. "Stop, stop please! Not that belt, not that horrible-oww!"'''],
+            [name(), '''snaps the belt three more times across Paloma's bouncing bum. Paloma shrieks and begins flailing so badly that she nearly falls off of''',
+                names(), '''lap.'''],
+            ['''"Stay still!" snaps the young Taironan, hooking''', hisher(), '''legs around Paloma's and pulling the woman tight against''', himher() + ".", 
+            '''"Or I'll bare your bottom!"'''],
+            ['''"No, no no," moans Paloma. "Not on the bare, please not on the bare!"'''],
+            ['''"Then keep yourself under control," says''', name() + ",", '''snapping the belt across both cheeks simultaneously.'''],
+            ['''Paloma howls, but aside from a few small jerks, she manages to keep her body more or less still.'''],
+            [name(), '''lands half a dozen more blows across Paloma's bottom. Paloma buries her face in the cot and howls her way through each blow, her ankles drumming''',
+                '''against the floor, and her hands twisting the sheets.'''],
+            ['''"Alright," says''', name(), '''at last.''', HeShe(), '''sets the belt down, and gives Paloma's brutalized bum a gentle rub. "It's all over now."'''],
+            ['''"I'm sorry, I'm sorry," cries Paloma. "I'm really really sorry!"'''],
+            ['''"I know," says''', name() + ",", '''gently rubbing Paloma's bottom. "I know."''']]), justification=0)
+        ep1_paloma_spanking_end()
+    elif num == 3:
+        keyEvent.key = K_2
+        universal.say(format_text([[name(), '''sets the belt down. "I suppose you're right. The belt is a little excessive."'''],
+            ['''Paloma breaths a sigh of relief.'''],
+            ['''"That doesn't mean you're getting off easy, however," says''', name(), '''sternly. "Your dress is still coming up."'''],
+            ['''Paloma whimpers a little, but nods. "OK."''']]), justification=0)
+        ep1_paloma_otk_hand_slipper(keyEvent)
+        
+
+
+def ep1_paloma_otk_hand_lift(keyEvent):
+    try:
+        num = int(universal.response(keyEvent))
+    except ValueError:
+        return
+    if num == 1:
+        universal.say(format_text([[name(), '''gathers Paloma's panties in''', hisher(), '''fist, and tugs them down to to the healer's thighs. A round, soft brown''',
+            '''bottom springs into view. Her bottom is criss-crossed wtih welts from the Vengador's belt, and handprints from''', names(), '''earlier blows.'''],
+            ['\p'],
+            ['''1. End the spanking.'''],
+            ['''2. Finish with the hand.'''],
+            ['''3. Finish with the spoon.''']]), justification=0)
+        set_command_interpreter(ep1_paloma_otk_hand_lift_lower)
+    elif num == 2:
+        universal.say(format_text([[names(), '''hand arcs through the air and cracks against Paloma's right panty-clad cheek. Paloma yelps, and her body jerks. Clearly''',
+            '''her thin panties are doing much less to protect her than her dress. Next,''', name(), '''slaps the highest point of Paloma's left cheek. Then her right''',
+            '''sitspots, then just above her left sitspots. Paloma squirms and yelps, her bottom jumping and wobbling beneath her panties. With each smack,''', names(),
+            '''blows fall a little bit harder, and a little bit faster. With each blow, Paloma yelps a little bit louder, and squirms a little bit more.'''],
+            ['''Soon,''', names(), '''hand is cracking hard and fast against Paloma's bottom, while the healer cries and flails desperately, nearly wiggling herself''',
+                '''right off of''', names(), '''lap. Every time that happens,''', name(), '''pulls Paloma more fully onto''', hisher(), '''lap, and lands two extra hard''',
+                '''and quick slaps to one of the healer's sitspots.'''],
+            ['\p'],
+            ['''1. End the spanking.'''],
+            ['''2. Pull down Paloma's panties.'''],
+            ['''3. Finish with the spoon.''']]), justification=0)
+        set_command_interpreter(ep1_paloma_otk_hand_lift_hand)
+    elif num == 3:
+        universal.say(format_text([[name(), '''pulls out''', hisher(), '''wooden spoon, and without further ado, snaps it against Paloma's left cheek.'''],
+            ['''Paloma shrieks at the fierce sting, and her entire body jumps, her panty-clad bottom bouncing vigorously.''', name(), '''peppers Paloma's cheeks''',
+                '''with the spoon, filling the room with the echo of wood on barely-clothed flesh. Paloma squeals and kicks as the spoon snaps against her cheeks. ''',
+                '''Small circular red marks begin to peak out from underneath her panties, intermingling in stinging harmony with the handmarks and belt welts.'''],
+            ['\p'],
+            ['''1. End the spanking'''],
+            ['''2. Pull down Paloma's panties and finish with the spoon.''']]), justification=0)
+        set_command_interpreter(ep1_paloma_otk_hand_lift_spoon)
+
+
+def ep1_paloma_otk_hand_lift_lower(keyEvent):
+    try:
+        num = universal.response(keyEvent)
+    except ValueError:
+        return
+    if num == 1:
+        ep1_paloma_spanking_end()
+    elif num == 2:
+        universal.say(format_text([['''"Just a little bit more, ok?" says''', name() + ",", '''raising''', hisher(), '''hand.'''],
+            ['''Paloma nods against the cot, and tightens her grip on the sheets.'''],
+            [names(), '''hand snaps down and cracks against Paloma's left cheek. Paloma yelps, as bare hand meets bare bottom.''', name(), '''proceeds to make Paloma's''',
+                '''bottom ripple and bounce,''', hisher(), '''hard hand roaming all over the woman's expansive cheeks, coloring her bottom a nice uniform shade of''',
+                '''red.'''],
+            ['''Paloma squirms and yelps beneath the blows, her yelps occasionally broken by a small sob.'''],
+            ['''Finally, once every inch of Paloma's bottom has turned red, with a few hints of handprints along the edges,''', name(), '''stops.''', HeShe(), 
+                '''gives the healer a soothing rub.'''],
+            ['''"Alright," says''', name() + ".", '''"It's over now. All's forgiven."''']]), justification=0)
+        ep1_paloma_spanking_end()
+    elif num == 3:
+        universal.say(format_text([[name(), '''removes the wooden spoon from''', hisher(), '''pack. Paloma glances over her shoulder, then buries her face in the blankets''',
+            '''and groans.'''],
+            ['''The spoon snaps down against Paloma's bare left cheek. Paloma squeals as the wood stings her bottom.''', name(), '''lands three sharp blows to the same''',
+                '''spot, making Paloma howl. Then,''', heshe(), '''shifts''', hisher(), '''attention to a spot on Paloma's right cheek, and does the same thing.'''],
+            ['''"Oww! Oww! Please! Oww!" wails Paloma, her legs kicking and fists pounding, her expansive hips wiggling about on''', names(), '''lap.'''],
+            ['''Then,''', name(), '''begins spreading out the blows, covering Paloma's bottom in a good, even sting. Paloma dissolves into tears, her shoulders bobbing''',
+                '''as she sobs into the cot.'''],
+            ['''"Alright," says''', name(), '''at last.''', HeShe(), '''puts down the spoon, and lightly rubs Paloma's aching bottom. "It's over.''',
+                '''Everything is forgiven."''']]), justification=0)
+        ep1_paloma_spanking_end()
+
+
+def ep1_paloma_otk_hand_lift_hand(keyEvent):
+    try:
+        num = universal.response(keyEvent)
+    except ValueError:
+        return
+    if num == 1:
+        ep1_paloma_spanking_end()
+    elif num == 2:
+        universal.say(format_text([[name(), '''takes Paloma's panties, and with a few gentle tugs, pulls them down off Paloma's sore-looking bottom, and pushes them down''',
+            '''to the woman's ankles. Paloma moans in dread as she feels the air brush against her naked bum. Breath hisses through her teeth when she feels''', names(),
+            '''hard, flat hand rub the top of her right globe.'''],
+            ['''"Ready?" asks''', name() + ".", '''"Just one more flurry and then we're done."'''],
+            ['''Paloma nods. She wraps her arms around the pillow and pulls it tight to her chest.'''],
+            [names(), '''hand begins to rapidly beat Paloma's writhing bum. The healer cries out as her unprotected ass is swiftly and mercilessly tenderized, the''',
+                '''sharp sound of bare hand to bare bottom echoing throughout the room.'''],
+            ['''"Please!" cries Paloma rocking back and forth on''', names(), '''lap.  "I'll never forget again, I promise, I promise, oww!"'''],
+            ['''Despite her promises,''', names(), '''hand continues to rain down on her burning bottom, deepening the red blush of her bare cheeks, focusing in''',
+                '''particular on spots''', heshe(), '''missed earlier.'''],
+            ['''Finally,''', name(), '''stops.''', HeShe(), '''gently rubs Paloma's sore cheeks. "There, not so bad, huh?"'''],
+            ['''Palom grunts. "Says the spanker."'''],
+            [name(), '''churckles.''']]), justification=0)
+        ep1_paloma_spanking_end()
+    elif num == 3:
+        universal.say(format_text([[name(), '''removes the spoon from''', hisher(), '''pack.''', HeShe(), '''rubs the spoon against Paloma's right cheek. Paloma gasps''',
+            '''as she feels the wood press against her tender flesh.'''],
+            ['''"No, wait not-Oww!" Paloma throws her head back and yowls as''', name(), '''draws back the spoon and snaps it back down, right where''', heshe(), 
+                '''was rubbing. Paloma's bottom jumps, and her legs kick a few times.''', names(), '''grip tightens on Paloma's back, and''', heshe(), 
+                '''lays into the woman with hard, stinging slaps. Paloma wiggles and bucks in a futile attempt to evade the stinging spoon. Small round red spots begin''',
+                '''to form on the healer's bum, interweaving in stinging harmony with the belt welts and handprints.''', name(), '''doesn't stop laying on the spoon''',
+                '''until the round red spots are scattered evenly across Paloma's poor cheeks.'''],
+            [name(), '''sighs, and rolls''', hisher(), '''aching shoulder. "Alright, I think that's enough. All is forgiven."'''],
+            ['''Paloma nods, and takes a few breaths, sniffing miserably.''']]), justification=0) 
+        ep1_paloma_spanking_end()
+
+
+
+def ep1_paloma_otk_hand_lift_spoon(keyEvent):
+    try:
+        num = universal.response(keyEvent)
+    except ValueError:
+        return
+    if num == 1:
+        ep1_paloma_spanking_end()
+    elif num == 2:
+        universal.say(format_text([[name(), '''takes Paloma's panties, and with a few short tugs, pulls them down to the crease where Paloma's bottom meets her''',
+            '''thighs, the woman's large red bottom springing into view.'''],
+            ['''Paloma groans, but doesn't try to cover her bottom. Instead, she wraps her arms around the pillow, pulls it tight to her chest, and waits for her''',
+                '''punishment to continue.'''],
+            [name(), '''rubs the small wooden spoon against Paloma's now bare cheeks, first the right, then the left.''', HeShe(), '''lightly taps the spoon against''',
+                '''Paloma's large bum, watching the woman's bum anxiously clench. Then,''', name(), '''snaps the spoon against Paloma's cushiony right cheek, eliciting''',
+                '''a cry of pain. The spoon rises and falls with short, sharp blows, the sharp sting making the woman buck and flail. So,''', name(), '''hooks''',
+                hisher(), '''legs around Paloma's before continuing to vigorously apply the small, flat spoon. Paloma's squeals turn to howls, and then to sobs.'''],
+            ['''As the woman dissolves into tears,''', name(), '''stops.''', HeShe(), '''sets the spoon down, and gives Paloma's soft bottom a gentle rub. "Hush. It's''',
+                '''all over. All is forgiven."'''],
+            ['''Paloma nods, sucking in deep, gasping breaths, her body shaken by sobs.''']]), justification=0)
+        ep1_paloma_spanking_end()
+
+
+
+def ep1_paloma_otk_lift(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent))
+    except ValueError:
+        return
+    if num == 1:
+        universal.say(format_text([[name(), '''rubs''', hisher(), '''flat, hard hand against Paloma's right cheek, making Paloma's bum clench anxiously.''', name(),
+            '''can see some of the welts from Paloma's earlier strapping peeking out from underneath her panties. Without further ado,''', name(), '''raises''', hisher(),
+            '''hand, and snaps it down against Paloma's right cheek. Paloma's cheek ripples beneath the hard slap, while the rapport echoes throughout the large''',
+            '''infirmary. A squeal rises and starts to fall in Paloma's throat, only to rise again as''', name(), '''hands smashes into her left cheek.''', names(), 
+            '''hand rises and falls, rises and falls, rises and falls. Paloma's legs start to kick and her breath comes in pained grunts, interwoven with the occasional''',
+            '''yelp. The bits of cheek peeking out from beneath her panties quickly turn red, her earlier welts starting to take on purple hints.'''],
+            [name(), '''stops, and begins rubbing''', hisher(), '''flat hand against Paloma's left cheek. Paloma whimpers, and buries her face deeper into the blankets.'''],
+            ['\p'],
+            ['''1. End the spanking'''],
+            ['''2. Pull down her panties.'''],
+            ['''3. Finish the spanking with a dose of the slipper.''']]), justification=0)
+        set_command_interpreter(ep1_paloma_otk_lift_spank)
+    elif num == 2:
+        universal.say(format_text([[name(), '''grabs the waistband of Paloma's panties, and tugs them down to her knees, baring her round, quivering, heavily welted''',
+            '''cheeks. Paloma bites down on her lower lip, and whimpers pitifully as she feels the air brush against her newly bare,''',
+            '''tender bottom.'''],
+            ['\p'],
+            ['''1. Spank her with hand.'''],
+            ['''2. Spank her with the spoon.''']]), justification=0)
+        set_command_interpreter(ep1_paloma_otk_lift_lower_panties)
+    
+def ep1_paloma_otk_lift_spank(keyEvent):
+    try:
+        num = universal.response(keyEvent)
+    except ValueError:
+        return
+    if num == 1:
+        ep1_paloma_spanking_end()
+    elif num == 2:
+        ep1_paloma_otk_lift(keyEvent)
+    elif num == 3:
+        universal.say(format_text([[name(), '''grabs Paloma's ankle, and removes one of her slippers.'''],
+            ['''Paloma gasps as she feels the slipper being removed. "Oh no, please not with my own slipper!"'''],
+            ['''The slipper slaps against Paloma's right cheek. She unleashes a high-pitched cry, her body jerking against''', names(), '''lap.''', name(), 
+            '''unleashes a flurry of hard, fast slaps, working the slipper mightily. Paloma bucks and howls. She kicks her feet, and pounds her fists against the''',
+            '''bed. Her bottom bounces and bobs beneath the assault. Her panties begin to slowly creep up her bottom, revealing more and more of her flaming cheeks.''',
+            name(), '''focuses''', hisher(), '''attention on this newly exposed flesh. Paloma's squeals grow louder, and her flailing more frantic as the leather-soled''',
+            '''slipper bites deeply into her lower cheeks. Sobs start to burst through her wails. Then tears begin to flow, and soon she's sobbing.'''],
+            [name(), '''stops and takes a long, deep breath. "Alright. It's over. You're forgiven."''']]), justification=0)
+        ep1_paloma_spanking_end()
+
+def ep1_paloma_otk_lift_lower_panties(keyEvent):
+    try:
+        num = universal.response(keyEvent)
+    except ValueError:
+        return
+    if num == 1:
+        universal.say(format_text([[name(), '''rubs Paloma's bare cheeks for a moment. Then,''', heshe(), '''raises''', hisher(), '''hard, cupped hand, and snaps it down across''',
+            '''Paloma's jiggling bottom. Paloma yelps and squirms beneath the hard blows. Her legs twist and jerk, and her fingers dig into the cot's blankets. Despite''',
+            '''her carrying on,''', name(), '''continues to batter her bottom without mercy, and without reprieve.'''],
+            ['''Eventually,''', name(), '''stops.''', HeShe(), '''gives Paloma's bum a few soothing rubs. "Alright, it's over. All is forgiven."'''],
+            ['''Paloma nods, as she takes deep, steadying breaths.''']]), justification=0)
+        ep1_paloma_spanking_end()
+    elif num == 2:
+        universal.say(format_text([['''Paloma shifts uneasily as she watches''', name(), '''remove''', hisher(), '''wooden spoon from''', hisher(), '''pack.''', 
+            HeShe(), '''slaps the spoon lightly against''', hisher(), '''palm. Paloma winces at the sharp sound, her bottom clenching and unclenching.'''],
+            ['''"Do you really have to use that?" asks Paloma hesitantly.'''],
+            [name(), '''raises''', hisher(), '''eyebrows. "Considering I have a fresh layer of welts with your name on them? Yeah. Yeah, I think I have to use this."'''],
+            ['''The wooden spoon snaps down and cracks against Paloma's bare right cheek. Paloma howls, and she kicks her legs.''',
+                name(), '''peppers the young woman's expansive bottom, setting her cheeks rippling and rolling. Paloma's hips jerk back and forth on''', names(), 
+                '''lap, as the healer squeals in pain.'''],
+            ['''After about two dozen sharp slaps,''', name(), '''sets the wooden spoon down, and gives Paloma's bottom a gentle pat. "Alright, we're done. All is''',
+                '''forgiven."'''],
+            ['''"Thank La Madre," says Paloma, taking slow, deep breaths.''']]), justification=0)
+        ep1_paloma_spanking_end()
+
+def ep1_paloma_spanking_end():
+    universal.say(format_text([['''\n\n"Alright," says''', name() + ",", '''giving Paloma a gentle push. "Get up. It's over."'''],
+        ['''Paloma eases off of''', names(), '''lap, and gives her bottom a rub. "So, we're good right?"'''],
+        ['''"Indeed we are," says''', name() + ",", '''standing.''', HeShe(), '''can't quite deny a sigh of relief as''', hisher(), '''weight comes off of''',
+            hisher(), '''tender bottom. "I'll see you around."'''],
+        ['''Paloma nods, and gives''', name(), '''a small smile. "Be careful, alright?"''']]), justification=0)
+    acknowledge(dungeonmode.dungeon_mode, None)
+
+
+
+def paloma_question_interpreter(keyEvent):
+    if keyEvent.key in NUMBER_KEYS:
+        num = int(pygame.key.name(keyEvent.key))
+        if num == 1:
+            universal.say(universal.format_text([
                 ['''"To mark you as one of our guild members?" says Paloma curtly. She sighs. "Well, I suppose you didn't act like a Vengador when''',
                     '''those two left. Alright, give me a minute."'''],
                 ['''The healer goes to the back of the room, and pulls out a long white ribbon. She concentrates on it for a moment, then brings it''',
                     '''back to''', name() + ".", '''"Here you go. Also, might as well heal you while you're here."''']]), justification=0)
             p.PC.take_item(itemspotionwars.whiteRibbon)
             remove_keyword('get_ribbon')
-        else:
-            universal.say(universal.format_text([['''"What do you want?" snaps Paloma. She moves gingerly amongst the wounded, binding an arm here, checking a dagger wound there.'''],
-                ['''"Well, you're a healer-" begins''', name() + "."],
-                ['''"And you want me to heal you?" snaps Paloma. "Fine. Come here."'''],
-                [name(), '''approachs, and the healer touches''', names(), '''forehead. A burst of strength flows through''', himher() + "."],
-                ['''"Now get out of here," says the healer.'''],
-                [names(), '''health and mana have been fully restored.''']]))
-        p.PC.restores()
-        universal.acknowledge(dungeonmode.dungeon_mode, ())
-    else:
-        paloma.litany = helpPaloma
-        conversation.converse_with(paloma, dungeonmode.dungeon_mode)
+            p.PC.restores()
+            universal.acknowledge(dungeonmode.dungeon_mode, ())
+        elif num == 2:
+            universal.say(universal.format_text([
+                            ['''"And you want me to heal you?" snaps Paloma. "Fine. Come here."'''],
+                            [name(), '''approachs, and the healer touches''', names(), '''forehead. A burst of strength flows through''', himher() + "."],
+                            ['''"Now get out of here," says the healer.'''],
+                            ['''"But-"'''],
+                            ['''"I said go!" cries Paloma, pointing towards the door. "And stop wasting my time."'''],
+                            [names(), '''health and mana have been fully restored.''']]))
+            p.PC.restores()
+            universal.acknowledge(dungeonmode.dungeon_mode, ())
 helpPaloma = Node(219)
 def helpPaloma_qf():
     add_keyword('met_Paloma')
@@ -4379,6 +4972,7 @@ savePaloma.comment = "Grab the amazon's wrist."
 spellSlinger = pwenemies.VengadorSpellslinger(p.FEMALE)
 warrior = pwenemies.VengadorWarrior(p.FEMALE)
 def savePaloma_qf():
+    add_keyword('helped_Paloma')
     savePaloma.quip = universal.format_text([['''The amazon looks back at''', name() + ",", '''clearly surprised and annoyed. "What are you doing? This 'Taironan' deserves''',
         '''to have her cowardly bottom soundly thrashed, and you know it!"'''],
     ['''"Coward?" says''', name(), '''in a quiet, dangerous voice. "The only cowards I see here are a couple of naughty little girls who think they have the right''',
@@ -4403,7 +4997,7 @@ def save_the_healer(allies, enemies, won):
         victoryText = universal.format_text([['''The amazon leans on her spear for a moment, then slowly slumps onto one of the cots. Her friend, the spellslinger, is on her''',
             '''hands and knees, taking deep, gasping breaths.'''],
             ['''"I told you we should have left the healer alone," gasps the spellslinger. "I told you!"'''],
-            ['''"Oh shut up," mutters the amazon. "This''', bastardbitch(), '''just got lucky, is all. Nine times out of ten, we'd have beaten''', himher() + "."],
+            ['''"Oh shut up," mutters the amazon. "This''', bastardbitch(), '''just got lucky, is all. Nine times out of ten, we'd have beaten''', himher() + '."'],
             [name(), '''rolls''', hisher(), '''eyes.'''],
             ['''Over the course of the battle, Paloma managed to get away from the cot, pull up her panties and readjust her dress. She is holding the amazon's''',
                 '''discarded belt.'''],
@@ -4463,20 +5057,16 @@ def save_the_healer(allies, enemies, won):
             ['''The two girls nod.'''],
             ['''"Alright," says the healer. She looks up at''', name(), ''', and gestures for''', himher(), '''to lean over the healer. She reaches up and touches''',
                     names(), '''forehead. An invigorating burst of energy flows through''', name() + ".", '''"Here, I'm no good in a fight, but I can heal with''', 
-                    '''the best of them. Also, if you could walk over to that cabinet over there, you'll find a couple of white ribbons. Bring one to me, and I'll''',
-                    '''mark it. It'll mark you as one of us, which might be useful considering your resemblence of our attackers, and the fact that''',
-                    '''no one in the guild knows you yet."'''],
-            [name(), '''does as she requests, and a few minutes later''', name(), '''tucks the enchanted white ribbon into''', hisher(), '''pack.'''],
+                    '''the best of them."'''],
             ['''As''', name(), '''prepares to leave''', heshe(), '''spies the discarded leather belt. Deciding that A)''', heshe(), '''could use a better belt than''',
                     '''a piece of string, and B) to the victor go the spoils,''', heshe(), '''snatches up the belt, and''', 
                     universal.format_line(['''loops it through''', hisher(), '''belt loops.''']) if lower_clothing().armorType == items.Pants.armorType else 
                     universal.format_line(['''slips it into''', hisher(), '''pack.''']), '''Paloma raises an eyebrow, but doesn't say anything.'''],
-            [name(), '''has received a white ribbon. It will make''', hisher(), '''encounters with various members of the guild run a bit more smoothly.''', name(), 
+            [name(), 
             '''has also been fully healed. Finally,''', name(), '''has received an old leather belt. This may come in handy in the future.''']])
         add_keyword('defeated_Palomas_attackers')
         universal.say(victoryText, justification=0)
         universal.acknowledge(dungeonmode.dungeon_mode, ())
-        p.PC.take_item(itemspotionwars.whiteRibbon)
         p.PC.take_item(itemspotionwars.leatherBelt)
         p.PC.restores()
 
@@ -4501,6 +5091,7 @@ hesitateToHelpPaloma.children = [palomaBravado, failedToHelpPaloma, helpPalomaCl
 
 palomaBravado.comment = '''"Sorry. I'm just trying to decide which one of you bullies I should spank first."'''
 def palomaBravado_qf():
+    add_keyword('helped_Paloma')
     palomaBravado.quip = universal.format_text([['''The amazon scowls and snatches up her spear. "Should have known you were a traitor."'''],
     ['''"Told you," says the other woman, jumping to her feet.'''],
     ['''"Shut up and take her," snaps the amazon.''']])
@@ -4547,6 +5138,7 @@ def failedToHelpPaloma_qf():
 failedToHelpPaloma.quip_function = failedToHelpPaloma_qf        
 helpPalomaClever.comment = '''"You know, we're getting spanked over at the entrance. We need all the help we could get out there."'''           
 def helpPalomaClever_qf():
+    add_keyword('helped_Paloma')
     if p.PC.willpower() > 2:
         helpPalomaClever.quip = universal.format_text([['''The amazon frowns, and looks over her shoulder at''', name() + ".", '''"I find that hard to believe. Our express''',
         '''orders were to raid the armory-"'''],
@@ -4575,18 +5167,9 @@ def helpPalomaClever_qf():
         ['''Paloma puts her fingertips on''', names(), '''forehead, and a warmth spreads throughout''', hisher(), '''body. "I'm pretty useless in battle, but I'm''',
             '''a very good healer outside of battle, if I do say so myself. So if ever you need healing, come to me and I'll fix you up right quick."'''],
         [name(), '''is fully healed!'''],
-        ['''"Also," says the healer, drawing her fingertips away from''', name() + ".", '''She stands up and hurries towards a cabinet in the back of the room.''',
-        '''Opening it reveals a small number of bright white ribbons. She takes one, and holds it for a second. To''', names(), '''magical senses, the white ribbon''',
-        '''starts to give off a warm, soothing glow very reminiscient of the woman herself. She walks back over to''', name(), '''and offers it to''', himher() + ".",
-        '''"Here. This will let the others know that you're on our side. Might be useful considering your resemblance of our attackers."'''],
-        ['''"Thank you," says''', name() + ",", '''taking the ribbon, and slipping it into''', hisher(), '''pack.'''],
         ['''"Now go get out of here and help take back our guild," says Paloma. She pulls''', name(), '''to''', hisher(), '''feet and sends''', himher(), '''on''', 
             hisher(), '''way with a light slap to the bottom.'''],
-        [name(), '''flashes a grin over''', hisher(), '''shoulder before turning''', hisher(), '''attention to plotting''', hisher(), '''next move.'''],
-        [names(), '''quick thinking and powerful personality has allowed''', himher(), '''to save Paloma without resorting to violence.''', name(), '''has earned''',
-            '''25 experience.''']])
-        p.PC.get_item(whiteRibbon)
-        p.PC.add_experience(25)
+        [name(), '''flashes a grin over''', hisher(), '''shoulder before turning''', hisher(), '''attention to plotting''', hisher(), '''next move.''']])
         p.PC.restores()
     else:
         helpPalomaClever.quip = universal.format_text([['''The amazon frowns, and looks over her shoulder at''', name() + ".", '''"I find that hard to believe."'''],
@@ -4668,16 +5251,10 @@ def palLost_qf():
         ['''"Ok, Ok," says''', name(), '''holding up''', hisher(), '''hands in a conciliatory gesture. "I just, it's been a bad day."'''],
         ['''"Indeed," says Paloma, rubbing her bottom. "What's your name again?"'''],
         ['"' + name() + '."'],
-        ['''"Well, it's a pleasure to meet you''', name() + ',"', '''says Paloma. "If you'll give me a second, I think I have something you might find useful."''',
-        '''Paloma walks to a large cabinet at the back of the room. She removes a small white ribbon. She focuses on it for a moment, and the ribbon begins to give''',
-        '''off a warm, golden glow. She returns, and hands the ribbon to''', name() + ".", '''"Here. This will probably come in handy, in case you run into any''',
-        '''other guild members. This way, they'll know you're one of us."'''],
-        ['''"Thank you," says''', name() + ',', '''taking the ribbon.'''],
-        ['''"No, thank you for helping me. Now get out there and help retake our guild. I'll be here if you need me."'''],
-        [name(), '''nods, slips the ribbon into''', hisher(), '''pack.'''],
-        [name(), '''has been healed by Paloma, and has received a white ribbon as a reward for helping her. Hopefully this should make other encounters run a bit''',
-            '''more smoothly.''']])
-    p.PC.take_item(itemspotionwars.whiteRibbon)
+        ['''"Well, it's a pleasure to meet you''', name() + ',"', '''says Paloma. "Now, if you'll excuse me, I have work to do. I imagine you've got a lot to do as''',
+        ''''well.''',
+        '''Come back if you ever need any healing."'''],
+        [name(), '''has been healed by Paloma.''']])
     p.PC.restores()
 palLost.quip_function = palLost_qf
 
@@ -4797,12 +5374,8 @@ def palLostSlingerDown_qf():
                 '''you just went through a lot worse than me. A belting isn't that big a deal, no matter how undeserved."'''],
         [name(), '''shrugs. "Not a big deal." Still, despite''', hisher(), '''bravado,''', name(), '''has a feeling that dagger will be haunting''', hisher(), 
                 '''nightmares for the next few weeks.''', name(), '''absently reaches up and rubs''', hisher(), '''throat.'''],
-        ['''"Yes, well, there is one thing I can give you," says Paloma. She returns to the back cabinet, and removes a small white ribbon. With''', names(), 
-                '''magical senses,''', heshe(), '''can see her imbue it with a touch of magic. The ribbon begins to glow (to magical senses) with a warm golden''',
-                '''hue. She returns and gives it to''', name() + ".", '''"Here. Show this to any other guild member you meet, and they'll know you're on our side."'''],
-        ['''"Thank you," says''', name() + ",", '''taking the ribbon. "Guess, I should probably get back into the fight."'''],
         ['''"Be careful,' says Paloma. "And if you need healing, come back to me."''']])
-    p.PC.get_item(itemspotionwars.whiteRibbon)
+    p.PC.restores()
 palLostSlingerDown.quip_function = palLostSlingerDown_qf
 
 palLostWarriorDown = Node(234)
@@ -4905,10 +5478,7 @@ def palLostWarriorDown_qf():
         ['"' + name() + '."'],
         ['''"Well, it's a pleasure to meet you''', name() + ',"', '''says Paloma "Now how about you get out of here, and help retake the guild?"'''],
         [name(), '''nods.'''],
-        [name(), '''has been healed by Paloma, and has received a white ribbon as a reward for helping her. Hopefully this should make other encounters run a''',
-        '''bit more smoothly.''']])
-                
-    p.PC.take_item(itemspotionwars.whiteRibbon)
+        [name(), '''has been healed by Paloma.''']])
     p.PC.restores()
 palLostWarriorDown.quip_function = palLostWarriorDown_qf
 
@@ -4943,7 +5513,7 @@ def help_Morey(allies, enemies, won):
         ['''"For helping her I take it?" The man reaches out and touches it. "Excellent. Good to know you're pulling your weight already. My name's Morey." He holds''',
         '''out his hand.''']])
     elif "Ildri_event" in keywords() and "Ildri_spanked_you_unjustly" in keywords():
-        moreyText = universal.format_text([moreyText, ['''"No I'm not an attacker," says''', name(), '''quickly,''', hisher(), '''hands flying back to''', hisher(), 
+        moreyText = universal.format_text([moreyText, ['''"Yes I'm a new recruit," says''', name(), '''quickly,''', hisher(), '''hands flying back to''', hisher(), 
         '''still tender bottom. "I promise, I promise, please don't spank me."'''],
         ['''The man stares at''', name(), '''in confusion for a moment. Then he throws his head back and laughs. Despite his small frame, he has a loud,''',
         '''booming laugh.'''],
@@ -4954,6 +5524,8 @@ def help_Morey(allies, enemies, won):
         '''to avoid that, I'd suggest going to the infirmary, back at the start of the hallway. She can give you a little ribbon that marks you as a member of the''',
         '''Guild. Might come in handy, all things considered," says the man. He holds out his hand. "Anyway, my name's Morey."''']])
         add_keyword('get_ribbon')
+        if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+            add_keyword('Morey_before_Paloma')
     else:
         moreyText = universal.format_text([moreyText, ['''"New recruit," says''', name(), '''quickly. "I promise."'''],
             ['''"Had you worried for a second there didn't I?" says the man, grinning.'''],
@@ -4963,6 +5535,8 @@ def help_Morey(allies, enemies, won):
             '''can convince her that you're one of us, she can give you a little ribbon that verifies it. It'll be quite useful for you considering your resemblence''',
             '''to our attackers. Anyway, I'm Morey." He holds out his hand.''']])
         add_keyword('get_ribbon')
+        if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+            add_keyword('Morey_before_Paloma')
     moreyText = universal.format_text([moreyText, ['''"''' + name() + ''',"''', '''says''', name() + ",", '''taking his hand.'''],
         (['''Rather than shaking''', names(), '''hand, Morey sweeps into a bow, and kisses the back of''', hisher(), '''hand. He flashes''', himher(), 
             '''a bright grin. "Pleasure to meet you miss''', name() + '."'] if p.PC.is_female() else ['''Morey gives''', name(), '''a quick, firm handshake.''']),
@@ -5165,7 +5739,7 @@ def e0_6_1_no_ribbon_interpreter(keyEvent):
                     ['''"Adrian never told me that," wails''', name() + ",", '''as''', heshe(), '''dodges a particularly fast attack by one of the hands.'''],
                     ['''"Indeed, mighty suspicious says I." Airell snaps his fingers. A translucent strap forms above his head. "Young''', manlady(), '''you have until''',
                     '''the count of three to stop and submit to your spanking, or you will get the strap."''']]), justification=0)
-            if num == 2:
+            elif num == 2:
                 universal.say(universal.format_text([['''"If you didn't want a spanking, then you shouldn't be attacking the guild," says Airell. "I have no sympathy for you."'''],
                     ['''"But I'm not attacking the guild. I'm a member, I swear," says''', name() + ".", '''A hand flies down from the roof.''', name(), '''rolls to''',
                         '''the left, then front flips away from a slanting assault by the second hand.'''],
@@ -5183,7 +5757,7 @@ def e0_6_1_no_ribbon_interpreter(keyEvent):
         elif num == 3: 
             p.PC.receives_damage(1)
             increment_spankings_taken()
-            add_keyword('spanked_by_Airell')
+            add_keyword('switched_by_Airell')
             universal.say(universal.format_text([[name(), '''lunges at the slinger,''', p.PC.weapon().name, '''leading. The slinger throws up his hand.''', name(), '''slams headfirst''',
                 '''into something very hard, and very invisible.''', HeShe(), '''staggers, clutching at''', hisher(), '''head.'''],
                 ['''The slinger grabs''', name(), '''by the arm. In one smooth, practiced motion, the slinger goes down on one knee, and hauls''', name(), '''across''',
@@ -5225,10 +5799,17 @@ def e0_6_1_no_ribbon_interpreter(keyEvent):
                             '''"Erm, Airell, you do know''', heshe(), '''is a member of the Guild, right?"'''],
                         ['''"What are you talking about?" snaps Airell.''', '"' + HeShe(), '''doesn't have a ribbon."'''],
                         ['''"Is that so? How odd." Morey's eyes narrow, and he gives''', name(), '''a stern glare.''', name(), '''returns the glare with''',
-                            '''a sheepish smile. "I distinctly remember telling''', himher(), '''to go see Paloma before''', heshe(), '''did anything else."'''],
-                        ['''"Heh heh, oops? Oww," says''', name() + ",", '''reaching back to touch the hot stripes spaced evenly up and down''', hisher(), '''bottom.'''],
-                        ['''"We'll discuss this more later," says Morey, snapping his attention back to Airell. "For now, Airell, let''', himher(), '''up, and let's''',
-                        '''go. Adrian needs us upstairs, and he needs us ten minutes ago.'''],
+                            '''a smile. "I distinctly remember telling''', himher(), '''to go see Paloma before''', heshe(), '''did anything else."''']]), 
+                        justification=0)
+            if 'helped_Paloma' in keywords() or 'failed_to_help_Paloma' in keywords():
+                universal.say(format_text([['''\n\n"I did!" protests''', name() + ".", '''"She never gave me a ribbon!"'''],
+                    ['''"Did you ask for one?" asks Morey.'''],
+                    ['''"Erm, no," admits''', name() + ".", '''"Not directly. But she should have known I was new and needed a ribbon!"''']]), justification=0)
+            else:
+                universal.say(format_text([['''"Heh heh, oops? Oww," says''', name() + ",", '''reaching back to touch the hot stripes spaced evenly up and down''', 
+                    hisher(), '''bottom.''']]), justification=0)
+            universal.say(format_text([['''\n\n"We'll discuss this more later," says Morey, snapping his attention back to Airell. "For now, Airell, let''', himher(), 
+                '''up, and let's go. Adrian needs us upstairs, and he needs us ten minutes ago.'''],
                         ['''Airell helps''', name(), '''clamber off his thigh. "Terribly sorry''', p.ladlass() + ".", '''We all make mistakes sometimes."''']]),
                         justification=0)
             if 'helped_Morey' in keywords():
@@ -5268,7 +5849,7 @@ def e0_6_1_dodge_or_submit_interpeter(keyEvent):
                 ['''"Yup," says Morey, smirking.'''],
                 ['''For a moment, Airell deflates. But then he puffs out his chest, and starts flailing his arms through the air. "Then why doesn't''', heshe(), 
                 '''have a White Ribbon?"'''],
-                ['''Morey's eyes narrow. He turns and looks at''', name() + ",", '''who grins sheepishly. "Indeed. I thought I told you to go see Paloma."'''],
+                ['''Morey's eyes narrow. He turns and looks at''', name() + ",", '''who grins sheepishly. "Indeed. I thought I told you to get a ribbon from Paloma."'''],
                 ['''"I might have forgotten?" says''', name() + ",", '''hesitantly.'''],
                 ['''"Get up and see her now," says Morey in a stern voice. "Then get your ass to the armory. We'll discuss this more later. Airell, come on we need''',
                 '''to go."'''],
@@ -5287,6 +5868,8 @@ def e0_6_1_dodge_or_submit_interpeter(keyEvent):
                 add_keyword('talk_with_Morey')
             else:
                 add_keyword('get_ribbon')
+                if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+                    add_keyword('Airell_before_Paloma')
         elif num == 1:
             increment_spankings_taken()
             add_keyword('spanked_by_Airell')
@@ -5324,7 +5907,7 @@ def e0_6_1_dodge_or_submit_interpeter(keyEvent):
                 ['''"Yup," says Morey, smirking.'''],
                 ['''For a moment, Airell deflates. But then he puffs out his chest, and starts flailing his arms through the air. "Then why doesn't''', heshe(), 
                 '''have a White Ribbon?"'''],
-                ['''Morey's eyes narrow. He turns and looks at''', name() + ",", '''who grins sheepishly. "Indeed. I thought I told you to go see Paloma."'''],
+                ['''Morey's eyes narrow. He turns and looks at''', name() + ",", '''who grins sheepishly. "Indeed. I thought I told you to get one from Paloma."'''],
                 ['''"I might have forgotten?" says''', name() + ",", '''hesitantly. The hand holding''', himher(), '''down dissipates, and''', heshe(), 
                     '''stands, rubbing''', hisher(), '''stinging bottom.'''],
                 ['''"I see. Well, get up there and see her now," says Morey in a stern voice. "Then get your ass to the armory. We'll discuss this more later. Airell,''',
@@ -5346,6 +5929,8 @@ def e0_6_1_dodge_or_submit_interpeter(keyEvent):
                 add_keyword('talk_with_Morey')
             else:
                 add_keyword('get_ribbon')
+                if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+                    add_keyword('Airell_before_Paloma')
         e0_6_1()
 def e0_6_1_attack_mage_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
@@ -5354,15 +5939,15 @@ def e0_6_1_attack_mage_interpreter(keyEvent):
             universal.say(universal.format_text([['''Airell's nose crunches most satisfactorily against''', names(), '''fist. The slinger falls flat on his back, while his nose realigns''',
                 '''itself.''', name(), '''has only an instant to savor it, however, before''', heshe(), '''finds''', himselfherself(), 
                 '''bent underneath Morey's arm,''',
-                '''with''', hisher(), universal.format_line(['''trousers around''', hisher(), '''ankles''']) if p.PC.clothing_below_the_waist().armorType == items.Pants.armorType
+                '''with''', hisher(), (universal.format_line(['''trousers around''', hisher(), '''ankles''']) if p.PC.clothing_below_the_waist().armorType == items.Pants.armorType
                     else (universal.format_line([p.PC.clothing_below_the_waist().armorType, '''scrunched up around''', hisher(), '''waist''']) if 
                     p.PC.clothing_below_the_waist().armorType == items.Skirt.armorType or p.PC.clothing_below_the_waist().armorType == items.Dress.armorType else 
-                    universal.format_line([p.underwearpanties(), '''around''', hisher(), '''thighs'''])) + (universal.format_line([''' and''', hisher(), p.underwearpanties(), 
+                    universal.format_line([p.underwearpanties(), '''around''', hisher(), '''thighs''']))) + (universal.format_line([''' and''', hisher(), p.underwearpanties(), 
                         '''around''', 
                         hisher(), '''thighs.''']) if p.PC.clothing_below_the_waist().armorType != items.Underwear.armorType and 
                         p.PC.underwear().name != items.emptyUnderwear.name else '''.''')],
-                        ['''Morey's hand beats a rapid-fire tattoo against''', names(), '''already heavily welted bottom. "You only strike an instructor like that if''',
-                            '''they threaten your safety, and only then. Do I make myself clear?"'''],
+                        ['''Morey's hand beats a rapid-fire tattoo against''', names(), '''already heavily welted bottom. "You only strike an instructor if''',
+                            '''they threaten your safety. Do I make myself clear?"'''],
                         [name(), '''squeals and kicks beneath Morey's hard, calloused hand. The man might have been a stick, but weak he wasn't.'''],
                         ['''"Do I make myself clear?" snaps Morey.'''],
                         ['''"Yes!" cries''', name() + ".", '''Between Airell's stripes, and Morey's bruising hand, any feelings of rebellion that''', name(), 
@@ -5374,8 +5959,8 @@ def e0_6_1_attack_mage_interpreter(keyEvent):
                         '''low, dangerous voice. "However, we don't have time to deal with this now. Get on with whatever you're here to do, and let Morey and I''',
                         '''get upstairs."'''],
                         [name(), '''nods and quickly covers''', himselfherself(), '''again.''', HeShe(), '''doesn't know if''', heshe(), '''should feel relief, or''',
-                        '''worry.''', '''On the one hand, any minute not spent feeling that awful switch was a moment to be cherished. On the other hand,''', heshe(),
-                        '''would have to deal with it later, and that didn't sound fun.''']]))
+                        '''worry.''', '''On the one hand, any minute not spent feeling that awful switch is a moment to be cherished. On the other hand,''', heshe(),
+                        '''would have to deal with it later, and that doesn't sound fun.''']]))
             add_keyword('punched_Airell')
             e0_6_1()
         elif num == 2:
@@ -5554,14 +6139,15 @@ def e0_8_7():
             universal.say(universal.format_text([['''"I'm a member of the Guild. I joined just before the attack," says''', name() + "."],
                 ['''"Oh?" says the woman. "That would explain why I don't recognize you. Do you have a ribbon?"''']]), justification=0)
             if 'get_ribbon' in keywords():
-                universal.say(universal.format_text([['''\n\n"Oh, right, Morey told me about that," says''', name() + ".", '''"He said I should talk to Paloma."'''],
+                universal.say(universal.format_text([['''\n\n"Oh, right,''', '''Ildri''' if 'Ildri_spanked_you_unjustly' in keywords() else '''Morey''', 
+                    '''told me about that," says''', name() + ".", '''"He said I should get one from Paloma."'''],
                     ['''"And have you?" presses the woman.''']]))
                 universal.say('\p')
-                universal.say(universal.format_text([['''1. ''' + ('''LIE: ''' if 'failed_to_help_Paloma' in keywords() else '') + '''"Well, no. Not exactly."'''], 
+                universal.say(universal.format_text([['''1. "Well, no. Not exactly."'''], 
                                  ['''2. "Of course not! We're being attacked by a gang of thugs. We don't have time for silly things like ribbons!"''']]),
                                  justification=0)
-                if 'failed_to_help_Paloma' in keywords():
-                    universal.say(universal.format_text([['''\n\n3. "Well, erm, yes, yes I did, but she didn't give me a ribbon."\n\n''']]), justification=0)
+                if 'failed_to_help_Paloma' in keywords() or 'helped_Paloma' in keywords():
+                    universal.say(universal.format_text([['''\n\n3. "Well, erm, yes, yes I did, but I didn't get a ribbon from her."\n\n''']]), justification=0)
                 universal.set_commands('(#) Select a number.')
                 universal.set_command_interpreter(cosima_failedPaloma_interpreter)
             else:
@@ -5588,12 +6174,14 @@ def e0_8_7():
 def cosima_failedPaloma_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
-        if num == 3 and 'failed_to_help_Paloma' in keywords():
+        if num == 3 and ('failed_to_help_Paloma' in keywords() or 'helped_Paloma' in keywords()):
             universal.say(universal.format_text([['''The instructor frowns. "Why not?"'''],
                 ['''\p'''],
-                ['''1. LIE: "Because she's a jerk, who refused to help me."'''],
-                ['''2. "Well, see, she was kind of getting strapped by a couple of Vengadores, and I kind of didn't help her."'''],
-                ['''3. "Oh, you know. She probably forgot what with all the craziness of the attack, and all."''']]), justification=0)
+                ['''1. "Oh, you know. She probably forgot what with all the craziness of the attack, and all."''']]), justification=0)
+            if 'failed_to_help_Paloma' in keywords():
+                universal.say(format_text([
+                ['''2. LIE: "Because she's a jerk, who refused to help me."'''],
+                ['''3. "Well, see, she was kind of getting strapped by a couple of Vengadores, and I kind of didn't help her."''']]), justification=0)
             universal.set_command_interpreter(cosima_failedPaloma_why_interpreter)
             universal.set_commands('(#) Select a number.')
         elif num == 1:
@@ -5618,8 +6206,10 @@ def cosima_failedPaloma_interpreter(keyEvent):
 def cosima_failedPaloma_why_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
-        if num == 1:
+        if num == 2:
             add_keyword('get_ribbon')
+            if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+                add_keyword('Cosima_before_Paloma')
             add_keyword('lied_to_Cosima_about_Paloma')
             add_keyword('Cosimas_task')
             universal.say(universal.format_text([['''The instructor crosses her arms over her chest, and gives''', name(), '''a skeptical look.'''],
@@ -5636,7 +6226,7 @@ def cosima_failedPaloma_why_interpreter(keyEvent):
                     if one_in_keywords(['Ildri_spanked_you_unjustly', 'Maria_spanked_you', 'spectral_caned', 'spanked_by_Airell', 'Ildri_no_pants']) else
                         '''bottom.'''],
                 ['''"Exactly," says the instructor.'''],
-                [names(), '''hands snap fly guiltily away from''', hisher(), '''bottom.'''],
+                [names(), '''hands fly guiltily away from''', hisher(), '''bottom.'''],
                 ['''The woman unfolds her arms, and she considers the Taironans scattered about the room. "By the way, what's going on?"'''],
                 ['''"We're being attacked by a gang of Taironans calling themselves the Vengadores," says''', name() + "."],
                 ['''"Why?" asks the instructor, frowning. She begins lightly slapping her paddle against her thigh.'''],
@@ -5649,7 +6239,7 @@ def cosima_failedPaloma_why_interpreter(keyEvent):
                 ['''With that, Cosima slips her paddle into a holster(?) in her belt, draws her dagger, and runs out the door.'''],
                 ['''"Madre's mercy", mutters''', name() + ".", '''"These people make Nana look downright lenient."''']]), justification=0)
             universal.acknowledge(dungeonmode.dungeon_mode, ())
-        elif num == 2:
+        elif num == 3:
             universal.say(universal.format_text([['''The instructor's eyes widen, then narrow dangerously. "Come again?"'''],
                 [name(), '''smiles nervously. "See, there were two of them, and I didn't think I could fight them, so-"'''],
                 ['''"So you just stood there and let them beat her?" asks the instructor tightly.'''],
@@ -5663,7 +6253,7 @@ def cosima_failedPaloma_why_interpreter(keyEvent):
                 ['''3. "I'm sorry."''']]), justification=0)
             universal.set_command_interpreter(cosima_failedPaloma_response_interpreter)
             universal.set_commands(['(#) Select a number.'])
-        elif num == 3:
+        elif num == 1:
             universal.say(universal.format_text([['''The instructor nods. "Understandable. Well, when we're done here, get up there and get a Ribbon. We need you fighting our''',
                 '''attackers, not our members. My name's Cosima, by the way."'''],
                 ['"' + name() + ',"', '''says''', name() + "."],
@@ -5680,6 +6270,8 @@ def cosima_failedPaloma_why_interpreter(keyEvent):
                 ['''"Good." Cosima draws her dagger, and runs out the door.''']]), justification=0)
             add_keyword('Cosimas_task')
             add_keyword('get_ribbon')
+            if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+                add_keyword('Cosima_before_Paloma')
             universal.acknowledge(dungeonmode.dungeon_mode, ())
 
 def cosima_failedPaloma_response_interpreter(keyEvent):
@@ -5699,12 +6291,16 @@ def cosima_failedPaloma_response_interpreter(keyEvent):
                 ['''"Good." Cosima slips her paddle into a holster(?), draws her dagger, and runs out the door.''']]), justification=0)
             add_keyword('Cosimas_task')
             add_keyword('get_ribbon')
+            if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+                add_keyword('Cosima_before_Paloma')
             universal.acknowledge(dungeonmode.dungeon_mode, ())
         elif num == 2:
             increment_spankings_taken()
             add_keyword('spanked_by_Cosima')
             add_keyword('Cosimas_task')
             add_keyword('get_ribbon')
+            if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+                add_keyword('Cosima_before_Paloma')
             universal.say(universal.format_text([['''The instructor nods. "Ok."'''],
                 ['''The instructor steps forward, grabs''', names(), '''arm, and yanks''', himher(), '''towards her. As''', name(), '''stumbles, she wraps her left''',
                     '''arm around''', names(), '''torso, and pivots into a lunge position, hauling''', name(), '''across her knee at the same time.'''],
@@ -5740,7 +6336,6 @@ def cosima_failedPaloma_response_interpreter(keyEvent):
                 [name(), '''sticks''', hisher(), '''tongue out after the departing warrior, and clambers to''', hisher(), '''feet.''', HeShe(), 
                     items.lowerlift(p.PC.clothing_below_the_waist()) + "s", hisher(), p.PC.clothing_below_the_waist().name, '''back over''', hisher(), 
                     '''smarting bottom.''']]), justification=0)
-                
             universal.acknowledge(dungeonmode.dungeon_mode, ())
         elif num == 3:
             universal.say(universal.format_text([['''"It's not me you should be apologizing to," says the instructor, putting her hands on her hips and giving''', name(), 
@@ -5751,7 +6346,7 @@ def cosima_failedPaloma_response_interpreter(keyEvent):
             ['''"Well,''', name(), '''I'm going to need you to do something for me, ok?" asks Cosima. She puts her fingers underneath''', names(), 
             '''chin, and gently forces''', himher(), '''to look up at him. "I'm going to need you to go to Paloma and get a Ribbon from her."'''],
             ['''"But-"'''],
-            ['''"Ah. I know it'll be awkward, but this is important, and you'll need to get deal with it anyway, if you want to be successful here," says Cosima.''',
+            ['''"Ah. I know it'll be awkward, but this is important, and you'll need to deal with it anyway, if you want to be successful here," says Cosima.''',
                 '''"Once you've gotten a Ribbon, I need you to go talk to the other instructors, and get them to either come down to the armory, or help Adrian at''',
                 '''the entranceway. Meanwhile, I'm going to take a look around, get a feel for the situation before heading to the armory. Ok?"'''],
             [name(), '''nods.'''],
@@ -5760,6 +6355,8 @@ def cosima_failedPaloma_response_interpreter(keyEvent):
                 '''going. We've got thugs to punish."''']]), justification=0)
             add_keyword('Cosimas_task')
             add_keyword('get_ribbon')
+            if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+                add_keyword('Cosima_before_Paloma')
             universal.acknowledge(dungeonmode.dungeon_mode, ())
 
 def cosima_failedPaloma_see_Paloma_interpreter(keyEvent):
@@ -5776,7 +6373,7 @@ def cosima_failedPaloma_see_Paloma_interpreter(keyEvent):
         elif num == 2:
             universal.say(universal.format_text([['''The instructor's expression goes stormy. "Excuse me?" Her voice is quiet, but dangerous.'''],
                 [name(), '''tosses''', hisher(), '''head defiantly, and crosses''', hisher(), '''arms over''', hisher(), '''chest. "I said you're not my boss-"'''],
-                ['''The instructor grabs''', names(), '''arm and jerks''', himher(), '''forward.''', name() + ",", '''caught off-guard by the woman's strength''',
+                ['''The instructor grabs''', names(), '''arm and jerks''', himher(), '''forward.''', name() + ",", '''caught off-guard by the woman's strength,''',
                     '''stumbles forward. As''', heshe(), '''stumbles forward, the instructor snakes her arm around''', names(), '''waist, and bends''', himher(),
                     '''over her hip, holding the young Taironan securely in the underarm position.'''],
                 [name(), '''yelps indignantly and pounds''', hisher(), '''fist uselessly against the woman's calf.'''],
@@ -5804,6 +6401,8 @@ def cosima_failedPaloma_see_Paloma_interpreter(keyEvent):
                 ['''Slowly, the defeated Taironans drag themselves to their feet, and begin stumbling towards the door.''']]), justification=0)
             add_keyword('Cosimas_task')
             add_keyword('get_ribbon')
+            if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+                add_keyword('Cosima_before_Paloma')
             add_keyword('talk_with_Cosima')
             universal.acknowledge(dungeonmode.dungeon_mode, ())
 def cosima_failedPaloma_time_interpreter(keyEvent):
@@ -5826,6 +6425,8 @@ def cosima_failedPaloma_time_interpreter(keyEvent):
                 ['''With that, Cosima runs out the door, leaving''', name(), '''alone to plan''', hisher(), '''next move.''']]), justification=0) 
             add_keyword('Cosimas_task')
             add_keyword('get_ribbon')
+            if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+                add_keyword('Cosima_before_Paloma')
             universal.acknowledge(dungeonmode.dungeon_mode, ())
 def cosima_sparring_acceptance(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
@@ -5838,6 +6439,8 @@ def cosima_sparring_acceptance(keyEvent):
                 ['''Cosima returns the nod, then runs out the door.''']]), justification=0)
             add_keyword('Cosimas_task')
             add_keyword('get_ribbon')
+            if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
+                add_keyword('Cosima_before_Paloma')
             universal.acknowledge(dungeonmode.dungeon_mode, ())
         elif num == 2:
             universal.say(universal.format_text([['''"Alright then," says the instructor. She grins wolfishly. "I'm looking forward to it. But for now, visit the other instructors, and''',
@@ -6051,18 +6654,21 @@ def e0_3_5():
     else:
         backOfGuild.display()
     if not 'met_Cosima' in keywords():
+        universal.say_title('Stealth Maze')
         universal.say(universal.format_text([['''Eventually,''', heshe(), '''backs away, deciding not to enter the scary looking maze. Perhaps''', heshe(), 
             '''would be better off checking out a different place for now. Like the training room to the north.''']]))
         backOfGuild.coordinates = (backOfGuild.coordinates[0], backOfGuild.coordinates[1], backOfGuild.coordinates[2] - 1)
         universal.acknowledge(dungeonmode.dungeon_mode, ())
 def e0_5_5():
     if not 'met_Mai' in keywords():
+        universal.say_title('Stealth Maze')
         universal.say(universal.format_text([[name(), '''freezes. For a second there,''', heshe(), '''thought''', heshe(), '''heard a faint scrabbling.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
     else:
         backOfGuild.display()
 def e0_1_6():
     if not 'met_Mai' in keywords():
+        universal.say_title('Stealth Maze')
         universal.say(universal.format_text([['''A dead end. As''', name(), '''turns,''', heshe(), '''catches a glimpse of something moving through the shadows.''', HeShe(), 
             '''freezes, and waits for the movement to occur again. After several minutes,''', heshe(), '''takes a deep breath and continues moving.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
@@ -6071,12 +6677,14 @@ def e0_1_6():
     
 def e0_2_9():
     if not 'met_Mai' in keywords():
+        universal.say_title('Stealth Maze')
         universal.say(universal.format_text([['''A faint, haunting giggle wafts through the air.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
     else:
         backOfGuild.display()
 def e0_5_9():
     if not 'met_Mai' in keywords():
+        universal.say_title('Stealth Maze')
         universal.say(universal.format_text([['''As''', name(), '''draws abreast of another shadowy alcove,''', heshe(), '''glances to''', hisher(), '''left. And freezes. In the alcove to''',
             hisher(), '''left is a dim figure. The figure is standing so perfectly still, that''', name(), '''almost didn't see it. Almost.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
@@ -6122,7 +6730,7 @@ def e0_5_8():
                         else universal.format_line(['''"Tsk, tsk", hisses the voice. "Two layers covered bottom. So cowardly. Hope be punished over both, perhaps? No,''',
                             '''switching on bare." Fingers sneak into the waistband of''', names(), p.underwearpanties(), '''and slip them down to just below''', 
                             hisher(),'''bottom.''']) if not p.PC.underwear().baring and not no_pants()
-                            else universal.format_line(['''"Hmm. Nice, leaves bottom exposed, and such impressive stripes. But why hide them beneath''', 
+                            else universal.format_line(['''"Hmm. Such impressive stripes. But why hide them beneath''', 
                                 p.PC.clothing_below_the_waist().armorType + "?", '''Stripes should be worn proudly. Not shamefully hidden. But one layer of hiding''',
                                 '''better than two.''']) if p.PC.underwear().baring and 
                                 one_in_keywords(['Ildri_spanked_you_unjustly', 'spanked_by_Airell', 'spanked_by_Cosima', 'Maria_spanked_you'])
@@ -6183,9 +6791,9 @@ def e0_5_8():
         add_keyword('mai_and_you_chastised')
         add_keyword('Mai_defends_armory')
         increment_spankings_taken()
-        universal.say(universal.format_text([['''The woman groans. "Nothing good. Except fancy dagger, but my dagger is better. Ah well." The woman lifts''', name(), '''and throws''',
+        universal.say(universal.format_text([[''' After a few minutes of rooting through''', names(), '''pack, the woman groans. "Nothing good. Except fancy dagger, but my dagger is better. Ah well." The woman lifts''', name(), '''and throws''',
             himher(), '''over''', hisher(), '''shoulder. "I'll dump you with others until thing is done."'''],
-            ['''Despite carrying''', name(), '''the woman easily clambers up one of the walls, and paces along the lip at the top, hunching to keep from scraping''',
+            ['''Despite carrying''', name() + ",", '''the woman easily clambers up one of the walls, and paces along the lip at the top, hunching to keep from scraping''',
                 '''both her head and''', name(), '''against the ceiling. Soon, she reaches a small alcove closed on all sides, and only accessible from the ceiling.''',
                 '''She drops down into the alcove, and gently lays''', name(), '''down next to several other equally bound Taironans. Then, she vanishes into''',
                 '''the shadows.'''],
@@ -6195,7 +6803,7 @@ def e0_5_8():
             ['''A few minutes after the paddling stops, someone lifts''', name(), '''and carries''', himher(), '''back to the alcove where''', heshe(), '''was first''',
                 '''ambushed. Standing in the alcove with her hands on her hips and a dark scowl on her face is Cosima.''', name(), '''feels the bottom drop out of''',
                 hisher(), '''stomach. This is not going to end well.'''],
-            ['''The person carrying''', name(), '''gently sets''', himher(), '''down and unties''', himher() + ".", '''"Sorry. I Didn't you were member."'''],
+            ['''The person carrying''', name(), '''gently sets''', himher(), '''down and unties''', himher() + ".", '''"Sorry. I didn't know you were member."'''],
             [name(), '''sits for a minute, rubbing feeling back into''', hisher(), '''newly freed hands and feet, before pulling''', himselfherself(), '''to''',
                 hisher(), '''feet.''', HeShe(), '''finally gets a good look at''', hisher(), '''attacker.'''], 
             [HisHer(), '''attacker is a tall, curvy woman with pale skin.'''
@@ -6204,17 +6812,14 @@ def e0_5_8():
                 '''bottom, and a scrap of cloth across her chest. An elf. Interesting.'''],
             [names(), '''observations are interrupted when Cosima grabs''', hisher(), '''arm, and hauls''', himher(), '''over her knee.'''],
             ['''"Hey-oww!" cries''', name(), '''as Cosima's paddle cracks against''', hisher(), '''bottom.'''],
-            '''"What did I tell you?" says Cosima. She rains four hard blows on''', universal.format_line(['''the seat of''', names(), 
+            ['''"What did I tell you?" says Cosima. She rains four hard blows on''', universal.format_line(['''the seat of''', names(), 
                 p.PC.clothing_below_the_waist().name + ","]) if not no_pants() or not baring_underwear() else universal.format_line([names(), '''exposed, vulnerable bottom,'''
-                    '''two blows to each cheek.''']),
+                    '''two blows to each cheek.'''])],
             [name(), '''wails and kicks''', hisher(), '''legs.'''],
             ['''"I said, what did I tell you?" says Cosima. She gives''', name(), '''another three hard licks, this time focusing on the middle of''', names(), 
                 '''right cheek.'''],
-            ['''"To go see Paloma before anyone else," cries''', name() + "."],
+            ['''"To go get a ribbon from Paloma," cries''', name() + "."],
             ['''"And you didn't, did you?"'''],
-            ['''"I-"'''],
-            ['''"And don't you dare even consider lying to me," says Cosima, cracking the paddle hard against''', names(), '''left cheek. "I already talked to''',
-            '''Paloma."'''],
             ['''"No," says''', name(), '''miserably, hanging''', hisher(), '''head.'''],
             ['''"And why not?" asks Cosima.'''],
             ['''"I dunno," mutters''', name() + "."],
@@ -6225,7 +6830,7 @@ def e0_5_8():
             [name(), '''nods, sniffing miserably.'''],
             ['''"Good." Cosima stands, and gives Mai a glare. "And you. Come on. We've got an armory to defend."'''],
             ['''"Yes ma'am," mutters the elf, meekly following Cosima into the maze.''']]), justification=0)
-        return (universal.acknowledge, [backOfGuild.display])
+        universal.acknowledge(dungeonmode.dungeon_mode, None)
 
 def mai_apologizes_intepreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
@@ -7482,7 +8087,7 @@ def necia_concern_interpreter(keyEvent):
                 '''I...ok that part wasn't so bad actually. Anyway,'''), '''I had to pay some stupid fee to join this stupid guild, and then you losers burst in and attack us. Then I have to run around fighting you people,''',
             '''getting spanked like it's my birthday,''' if spanked_episode_1() else '''desperately hoping a bunch of really scary adventurers aren't about to start spanking me like it's my birthday''', 
             '''and finally I had to fight you, little miss Axe-Crazy. So, I'm very annoyed, very tired, kinda sore, and you my dear, are going to get thoroughly paddled for helping to make my day so miserable. Oh, and''',
-            '''for attacking a guild full of innocent people and trying to take their stuff."''']]), justification=0)
+            '''for attacking a guild full of innocent people and trying to take their stuff."\n\n''']]), justification=0)
         necia_chastised_spank_interpreter()
     elif num == 2:
         universal.say(universal.format_text([['''The woman gives''', name(), '''a look of utter disbelief, as if not quite comprehending what''', name(), '''had just said. "You are a very weird person."'''],
@@ -7737,7 +8342,7 @@ def scene_3_guild():
             '''one."'''],
             [name(), '''nods. "Thanks. Still feel bad about it."'''],
             ['''"Well, it's past," says Paloma. "And we have plenty of other things to worry about."''']]) if 'failed_to_help_Paloma' in keywords() else
-            universal.format_text([[name(), '''nods gingerly. "Can say  that again."''']]),
+            universal.format_text([[name(), '''nods gingerly. "Can say that again."''']]),
             [name(), '''slowly sits up, and glances about the infirmary.'''],
             ['''The cots are filled with men and women, mostly Taironans in ragged clothing.''',
                 '''There are quite a few adventurers as well. Moving about the cots are grim-faced men and women. Some of them wear leather''',
@@ -7956,7 +8561,7 @@ def episode_1_guild_end():
     if 'Ildri_spanked_you_unjustly' in keywords() or 'Ildri_no_pants' in keywords():
         universal.say(universal.format_text([[name(), '''returns the smile warmly. Nothing like getting spanked with someone for instant bond building. "Hey. Alondra, right? I'm''',
             name() + ".", '''Nice to see you weren't dragged off by the guards."'''],
-            ['''"Yeah. Got real lucky, with Ildri." She gives her bottom a rueful rub. "Though I don't think I realized it at first."'''],
+            ['''"Yeah. Got real lucky with Ildri." She gives her bottom a rueful rub. "Though I don't think I realized it at first."'''],
             [name(), '''nods, and the two stand in silence for a moment.\n\n''']]), justification=0)
     else:
         universal.say(universal.format_text([[name(), '''returns the smile, but it's a touch wary. "You're one of the Vengadores who attacked us, right?"'''],
@@ -7993,7 +8598,8 @@ def episode_1_guild_end():
 
 def adrian_recap_interpreter(keyEvent):
     def num_omissions():
-        return len([x for x in keywords() if x in ['failed_to_help_Paloma', 'talk_with_Airell', 'talk_with_Morey', 'talk_with_Cosima', 'talk_with_Mai']])
+        return len([x for x in keywords() if x in ['failed_to_help_Paloma', 'talk_with_Airell', 'talk_with_Morey', 'talk_with_Cosima', 'talk_with_Mai', 
+        'punched_Airell']])
     try:
         num = int(pygame.key.name(keyEvent.key))
     except ValueError:
@@ -8017,9 +8623,12 @@ def adrian_recap_interpreter(keyEvent):
         if 'talk_with_Morey' in keywords():
             majorOmission = True
             summaryOfFailure.append('''your refusal to do what Morey told you to do''')
-        if 'talk_with_Airell' in keywords():
+        if 'punched_Airell' in keywords():
             majorOmission = True
             summaryOfFailure.append('''the fact that you punched Airell in the nose''')
+        if 'talk_with_Airell' in keywords():
+            majorOmission = True
+            summaryOfFailure.append('''your blatant disrespect of Airell.''')
         if len(summaryOfFailure) > 1:
             summaryOfFailure[-1] = 'and ' + summaryOfFailure[-1]
         if summaryOfFailure != []:
@@ -8027,7 +8636,16 @@ def adrian_recap_interpreter(keyEvent):
             if 'failed_to_help_Paloma' in keywords() and 'talk_with_Mai' in keywords() and 'talk_with_Cosima' in keywords() and 'talk_with_Morey' in keywords() and 'talk_with_Airell' in keywords():
                 universal.say(universal.format_text([[''' Mother's love, it's almost like you want your bottom lashed to ribbons. It'll take a month to work through the backlog''',
                     '''of punishments you've earned yourself."'''],
-                    ['''"A month?" says''', name(), '''with a small squeak. "Really?"'''],
+                    ['''"A month?" says''', name(), '''with a small squeak.''', format_text([['''"But it's not my fault-"'''], 
+                        ['''Adrian's eyes narrow. "What exactly do you mean?"'''],
+                        ['''"I went to Paloma, but she never-"'''],
+                        ['''"From what I understand, you never asked," snapped Adrian.'''],
+                        [name(), '''begins chomping on''', hisher(), '''fingernails. "I tried, but she wanted me to leave, and I didn't think she'd say yes-"'''],
+                        ['''"I'm sorry, but that's not good enough. It'd be one thing if you actually asked and she refused, but being scared of asking does not excuse''',
+                            '''you," says Adrian. "A very unpleasant month of spankings is what you've earned, and it's what you're going to''',
+                            '''get."'''],
+                        ['''"But does it really have to be-"''']])
+                        if 'get_ribbon' in keywords() else '''"Really?"'''],
                     ['''"Well, I need to give you time to heal between sessions," says Adrian curtly. "For now, we can get your caning out of the way."'''],
                     ['''"My what?" says''', name(), '''in a very small voice.''']]), justification=0)
             else:
@@ -8039,7 +8657,7 @@ def adrian_recap_interpreter(keyEvent):
                     '''with me."'''],
                     ['''"But, what did I do to you?" asks''', name() + ",", hisher(), '''eyes never leaving the flexing cane.'''],
                     ['''"You lied to me," says Adrian, his voice intense. "I don't mind if things go wrong on a job. They will go wrong, that's how life''',
-                        '''works, but you have to tell me everything. Otherwise, I can't gauge the danger of the job, and I can't gauge your skill. You''',
+                        '''works. But you have to tell me everything. Otherwise, I can't gauge the danger of the job, and I can't gauge your skill. You''',
                         '''lie to make yourself look good, and I'll send you into jobs that you can't handle, and you'll end up getting seriously hurt''',
                         '''or killed. And I will not have that!"'''],
                     [name(), '''shrinks away as Adrian's sharp voice cracks against''', hisher(), '''ears like a whip.'''],
@@ -8053,7 +8671,7 @@ def adrian_recap_interpreter(keyEvent):
                     universal.format_line(['''and''' if wearing_skirt_or_pants() else universal.format_line(['''and lowers''', hisher()]), p.PC.underwear().name, '''to''', hisher(), '''knees. Then,''', heshe(), 
                     '''bends over the counter and grips the far side.\n\n''']) if wearing_skirt_or_dress_or_pants() and  wearing_underwear() else 
                     universal.format_line(['''Then,''', heshe(), '''bends over the counter, and grips the far side.\n\n'''])]]), justification=0)
-                if p.PC.numSpankings > 2:
+                if p.PC.numSpankings > 4:
                     universal.say(universal.format_text([['''"My goodness," says Adrian, as he studies''', names(), '''bruised, welted, and angry red bottom. "You've had a''',
                         '''terrible day, haven't you?"'''],
                         [name(), '''nods, trying to fight back tears of despair.'''],
@@ -8082,8 +8700,8 @@ def adrian_recap_interpreter(keyEvent):
                                 '''vowing never to give Adrian reason to give''', himher(), '''more strokes with that horrible thing.'''],
                             ['''"Why don't you go help Ildri, now," says Adrian.''']]), justification=0)
                     else:
-                        universal.say(universal.format_text([[''' Then, the cane whips against''', hisher(), '''bottom a second time, and''', hisher(), '''attention is on nothing but the hellish sting in''', hisher(), '''bottom.''',
-                        '''In total,''', name(), '''endures''', str(num_omissions()), '''strokes. Each stroke stings worse''',
+                        universal.say(universal.format_text([[''' Then, the cane whips against''', hisher(), '''bottom a second time, and''', hisher(), '''attention is on nothing but the sudden, horrifying sting.''',
+                        '''In total,''', name(), '''endures''', str(num_omissions()), '''strokes. Each stroke burns worse''',
                             '''than the last, and by the end''', name(), '''is a sobbing wreck.'''],
                             ['''"There," says Adrian. "All done. You going to be honest with me in the future?"'''],
                             [name(), '''nods, as''', heshe(), '''straightens and fixes''', hisher(), '''clothing, sniffing miserably and wiping the tears from''', hisher(), '''face.'''],
@@ -8193,22 +8811,22 @@ peter_end_episode_1 = Node(240)
 ep1EndPeterRootChildren = [peter_3_1_1, peter_4_1_1]
 def peter_end_episode_1_qf():
     peter.defaultLitany = peter_greeting
-    if 'insulted_Peters_kid' in keywords():
+    if 'insulted_Peters_kid' in keywords() or 'refused_to_leave_Peters_shop' in keywords():
         peter_end_episode_1.quip = universal.format_text([['''Peter gives''', name(), '''a wary look. "Can I help you? And try to keep it down. My daughter is''',
         '''asleep."''']])
         peter_end_episode_1.children = [ep1_peter_apologize, peter_3_1_1, peter_4_1_1]
         if p.PC.is_female():
             peter_end_episode_1.children.insert(1, ep1_peter_apologize_flirt)
             peter_end_episode_1.children.insert(2, ep1_peter_apologize_flirt_lesbian)
-            ep1EndPeterRootChildren.insert(0, ep1_peter_flirt)
+            insert_child(ep1EndPeterRootChildren, ep1_peter_flirt)
     else:
         if 'visited_blacksmith' in keywords():
             peter_end_episode_1.quip = universal.format_text([['''Peter flashes''', name(), '''a relieved smile. "I saw some gang or other attack the Guild. Glad''',
                 '''to see you're alright. Oh, and try to be quiet, alright? I just put the munchkin to bed."''']])
             peter_end_episode_1.children = [ep1_peter_nonchalance, ep1_peter_child_alright, peter_3_1_1, peter_4_1_1]
             if p.PC.is_female():
-                ep1EndPeterRootChildren.insert(0, ep1_peter_flirt)
-                ep1EndPeterRootChildren.insert(0, ep1_peter_flirt_lesbian)
+                insert_child(ep1EndPeterRootChildren, ep1_peter_flirt)
+                insert_child(ep1EndPeterRootChildren, ep1_peter_flirt_lesbian)
         else:
             peter_greeting.quip_function()
             peter_end_episode_1.children = peter_greeting.children
@@ -8268,7 +8886,7 @@ def ep1_peter_apologize_flirt_qf():
         ['''"Because it's short," says Peter. "A few minutes of my hand smacking your bare bum, and then it's all over."'''],
         ['''"Um," says''', name() + ",", '''a bit distracted by thoughts of Peter's large hand on''', hisher(), '''bottom, nothing in between, warm''',
             '''flesh against warm flesh.'''],
-        ['''"So, instead, tomorrow, you're going to apologize to her, and then you're going to teach her how to fight, and how to use magic," says''',
+        ['''"So, instead, tomorrow, you're going to apologize to her, and then you're going to teach her how to fight," says''',
         '''Peter.'''],
         [name(), '''blinks at Peter.'''],
         ['''Peter sighs, and strokes his beard. "I know, it's an odd request. The thing is, I've been living in this city my whole life. I was a camp''',
@@ -8301,7 +8919,7 @@ def ep1_peter_apologize_flirt_lesbian_qf():
         ['''"Easy?" says''', name(), '''indignantly. "How is getting spanked easy?"'''],
         ['''"Because it's short," says Peter. "A few minutes of my hand smacking your bare bum, and then it's all over."'''],
         [name(), '''frowns, and tries to focus on that thought. Surely it should excite her. His hard, bare hand on her bare, vulnerable flesh.'''],
-        ['''"So, instead, tomorrow, you're going to apologize to her, and then you're going to teach her how to fight, and how to use magic," says''',
+        ['''"So, instead, tomorrow, you're going to apologize to her, and then you're going to teach her how to fight," says''',
         '''Peter.'''],
         [name(), '''blinks at Peter.'''],
         ['''Peter sighs, and strokes his beard. "I know, it's an odd request. The thing is, I've been living in this city my whole life. I was a camp''',
@@ -8323,13 +8941,16 @@ ep1_peter_apologize_flirt_spank_lesbian = Node(254)
 ep1_peter_apologize_flirt_lesbian.children = [ep1_peter_apologize_flirt_accept, ep1_peter_apologize_flirt_spank_lesbian]
 
 ep1_peter_apologize_flirt_spank_lesbian.comment = '''"OK, but I still feel kind of bad. Are you sure you won't spank me? It'd make me feel better."'''
+def insert_child(children, node):
+    if node not in children:
+        children.insert(0, node)
 def ep1_peter_apologize_flirt_spank_lesbian_qf():
     increment_spankings_taken()
     try:
         ep1EndPeterRootChildren.remove(ep1_peter_flirt)
     except ValueError:
         pass
-    ep1EndPeterRootChildren.insert(0, ep1_peter_flirt_lesbian)
+    insert_child(ep1EndPeterRootChildren, ep1_peter_flirt_lesbian)
     ep1_peter_apologize_flirt_spank_lesbian.quip = universal.format_text([['''Peter raises an eyebrow. "You want to be spanked."'''],
         ['''"Well, I wouldn't go that far," says''', name() + ".", '''"Just, whenever I did something inconsiderate, I always felt better after Nana''',
             '''spanked me, like the air had been cleared, or something."'''],
@@ -8831,7 +9452,7 @@ def ep1_peter_child_alright_qf():
         [universal.format_line(['''"Aside from a spanking or''', num_to_word(p.PC.numSpankings), '''not really.''']) if p.PC.numSpankings > 1 else 
             '''"Not really.''', '''They weren't really interested in hurting anyone, I think. They just wanted our stuff."'''],
         ['''"That's good," says Peter. "It'd be unfortunate if something really bad happened to you on your first day."'''],
-        ['''"Yeah, terrible," says''', name() + universal.format_line([",", hisher(), '''thoughts flitting back to the abyss.''']) if 'charmed_by_Deidre' else "."]])
+        ['''"Yeah, terrible," says''', name() + universal.format_line([",", hisher(), '''thoughts flitting back to the abyss.''']) if 'charmed_by_Deidre' in keywords() else "."]])
     if 'teaching_Anne' not in keywords():
         ep1_peter_child_alright.quip = universal.format_text([ep1_peter_child_alright.quip, ['''"Anyway, this attack has gotten me thinking," says Peter. "Things have been getting kind of ugly lately, and''',
         '''I'm worried about Anne. I've been a camp follower, I know the hell that is''',
@@ -9151,7 +9772,7 @@ def carrie_arrival():
             [name(), '''huffs indignantly. "My clothing is not ratty."'''],
             ['''"Fine," says Carrie. "Ripped to shreds. Looks like you fought a cursed army''' + 
                 (''', and that's before we even get start asking what happened to your pants."''' if not wearing_skirt_or_dress_or_pants() else '''."''')],
-            ['''"To be fair, I kind of did," says''', name() + ".", HeShe(), '''glances down at''', hisher(), '''bloody, battle damaged clothing.'''],
+            ['''"To be fair, I kind of did," says''', name() + ",", '''picking at''', hisher(), '''clothing.'''],
             ['''"Don't worry," says Carrie, taking''', names(), '''arm and leading''', himher(), '''into the back of the building. "Elise and I will get''',
                 '''you fixed up right quick. Right, Elise?"'''],
             ['''Elise nods, and takes''', names(), '''other arm. "Yup. We'll have you cleaned up and ready to hit the dancing scene in no time."'''],
@@ -9753,7 +10374,7 @@ def ep1_elise_dress_small_qf():
     ['''"Just go with it," says Elise, rolling her eyes. "There's no stopping her when she's in this mood."'''], ep1_tavern_scene(ep1_elise_dress_small)])
     else:
         ep1_elise_dress_small.quip = universal.format_text([['''"Aw, come on," says Carrie, slipping over next to''', name() + ".", '''"How are you supposed to''',
-        '''find a cute boy if you're not dressed sexy? And girl, you're dressed sexy." Carrie gives''', names(), '''tightly-clad bum a light smack.'''],
+        '''find a cute boy if you're not dressed sexy? And girl, you're dressed sexy." Carrie gives''', names(), '''tight bum a light smack.'''],
         [universal.format_line(['''"Oww! Tender! Tender!" cries''', name(), '''her hands flying back to shield her throbbing bottom.''']) if p.PC.numSpankings > 0 else
             universal.format_line(['''"Please don't spank me," says''', name() + ".", '''"I'm enjoying having a bottom that isn't throbbing, thank you''',
             '''very much."'''])],
@@ -10117,7 +10738,7 @@ def ep1_tavern_scene(node):
         ['''"Hey ladies," says the bouncer, a massive, muscle-bound man''' + (''' larger even than Peter.''' if 'visited_blacksmith' in keywords() else
             '''.'''), '''"You going to sing tonight, Miss Elise?"'''],
         ['''"She's a Sister now, Bruce," says Carrie with a grin. "We're here to celebrate her ascension!"'''],
-        ['''Bruce blushes, and bows his head in apologoy. "Apologies, Sister Elise. And congratulations. How long before you become a Sister, Miss''',
+        ['''Bruce blushes, and bows his head in apology. "Apologies, Sister Elise. And congratulations. How long before you become a Sister, Miss''',
             '''Carrie?"'''],
         ['''"As soon as she stops fantasising about boys all day, and actually focuses on her work," says Elise with a playful smirk.'''],
         ['''Carrie smacks Elise's bum. "I do not fantasize about boys all day."'''],
@@ -10201,13 +10822,13 @@ def ep1_tavern_shy_female(node):
     if 'flirting_with_Peter' in keywords() and 'flirting_spank_by_Peter' in keywords():
         quip = universal.format_text([quip, universal.format_text([['''\mInstead, she finds herself fantasizing about Peter. She squirms a little, as she imagines''',
         '''the burly''',
-        '''blacksmith entering the tavern. He'd tower over everyone else, his blue eyes would seem the room and lock on her. He'd frown slightly,''',
+        '''blacksmith entering the tavern. He'd tower over everyone else, his blue eyes would scan the room and lock on her. He'd frown slightly,''',
         '''and start to push his way through the crowd. She'd notice his gaze, and begin gnawing on her lip nervously, while alternating between''',
-        '''tugging on the top of her dress in a vain effort to make it cover more, and leaning forward, or arching her back in an effort to give''',
+        '''tugging on the top of her dress in a vain effort to make it cover more, and arching her back to give''',
         '''him a good look.'''],
         ['''"What do you think you're doing?" he'd ask in a stern voice, his hands resting lightly on his thick leather belt.'''],
         ['''"What do you care?" she'd ask curtly.''']])])
-        quip = universal.format_text([quip, universal.format_text([[universal.format_line(['''"I care, because I don't take kindly to my daughter's tutor getting shift-faced in a dress''',
+        quip = universal.format_text([quip, universal.format_text([[universal.format_line(['''"I care, because I don't take kindly to my daughter's tutor getting shit-faced in a dress''',
             '''three sizes too small."''']) if 'teaching_Anne' in keywords() else '''"I care, because I don't take kindly to a close adult, female''',
             '''Taironan friend getting shit-faced in a dress three sizes too small."'''],
             ['''"What does that have anything to do with it?" she'd ask angrily.'''],
@@ -10224,7 +10845,7 @@ def ep1_tavern_shy_female(node):
             ['''"Even though it's foul-tasting," he'd say in a flat voice.'''],
             ['''"Um, yes?" she'd say.'''],
             ['''"Right." He'd grab her by the arms, and easily lift her in the air. Then, he'd spin her around, and bend her over the table.'''],
-            ['''"Hey!" she'd squeal, as she'd feel her short dress ride up, and a blast of hot hair caresses her suddenly exposed lower buttocks.'''],
+            ['''"Hey!" she'd squeal, as she'd feel her short dress ride up, and a blast of hot hair caress her suddenly exposed lower buttocks.'''],
             ['''"You young lady have earned yourself such a spanking," he'd say, his hard hand smacking into her exposed lower cheeks.'''],
             ['''"But I didn't do anything!" she'd yelp, squirming against the table.'''],
             ['''"Your ass is peeking out from underneath your dress!" he'd roar, swatting her bottom with fast, heavy smacks. "You're drinking for the''',
@@ -10235,7 +10856,7 @@ def ep1_tavern_shy_female(node):
                 '''so publicly.'''],
             ['''Then, he'd grab the hem of her dress and start to lift it up over her bottom.'''],
             ['''"Wait, no!" she'd yelp, wiggling desperately.'''],
-            ['''"Oh hush," he'd say. "It's not like isn't already half-raised-" Then he'd see her panties. "What are these?"'''],
+            ['''"Oh hush," he'd say. "It's not like it isn't already half-raised-" Then he'd see her panties. "What are these?"'''],
             ['''"Erm, my underwear?" she'd say fearfully.'''],
             ['''"A thong," he'd say in a flat voice. "You're wearing a thong underneath a dress that only covers your ass when the stars are aligned''',
                 '''and the moon full."'''],
@@ -10252,7 +10873,7 @@ def ep1_tavern_shy_female(node):
             ['''Then, it would stop. He'd lay the belt on the table, and his hands, so hard before, now soft and gentle, would stroke her welts. He'd''',
                 '''gather the thin material of her thong in his fist, and pull it down to her knees. There'd be the faint thump of his trousers''',
                 '''hitting the floor. He'd take her hips in a firm grip, and she'd gasp as he pushes up against her, his member sliding easily inside''',
-                '''her. She'd drive her hips back, grinding her hot bottom against his waste, panting and moaning as-'''],
+                '''her. She'd drive her hips back, grinding her hot bottom against his hips, panting and moaning as-'''],
             ['''As she had sex in the middle of a crowded tavern.'''],
             ['''The fantasy bursts, and''', name(), '''rolls her eyes at herself. Yeah, that'd happen. She's pretty sure a spanking that brutal''',
             '''probably wouldn't be as fun she's imagining, either. Besides, the guy could surely find better suitors than some poor''',
@@ -10909,7 +11530,7 @@ def ep1_taironan_no_qf():
             ['''"Fine, but this isn't over," says''', name() + "."],
             ['''Roland rolls his eyes. "Indeed. I wish it was. Honey, you can stop twisting your dress. The moment of crisis is past."''']])
     ep1_taironan_no.quip = universal.format_text([ep1_taironan_no.quip, ['''Elise nods, and frees her fists from her dress.'''],
-            ['''"You really need to stop doing that," says Roland. "It is exceptionally unladylike, and it will ruin your dress."'''],
+            ['''"You really need to stop doing that," says Roland gently. "It is exceptionally unladylike, and it will ruin your dress."'''],
             ['''"Sister Samantha says the same thing," says Carrie.'''],
             ['''"Sister Samantha is an exceptionally intelligent woman," says Roland. He gives Elise a kiss on the cheek. "Seriously, honey. I really don't want to have''',
                 '''to start smacking your bottom to make you break the habit, but I will if I have to."'''],
@@ -11066,17 +11687,17 @@ def ep1_sister_samantha(node):
 
 def maria_no_problems_function(node):
     quip = universal.format_text([['''"Hey,''', name() + ",", '''says Maria, smiling broadly. She glances at''', names(), '''companions: Carrie, gnawing anxiously on a strand''',
-            '''of hair, Elise anxiously twsting her skirts while Roland keeps a firm grip on her arms, and Roland's grim expression. "I see you three had fun."'''],
+            '''of hair, Elise anxiously twisting her skirts while Roland keeps a firm grip on her arms, and Roland's grim expression. "I see you three had fun."'''],
             ['''"Oh yes," says Roland flatly. "A wonderful night filled to bursting with irreverent songs, lewd dancing, and stable references."'''],
             ['''Sister Samantha sighs and rolls her eyes. "I swear, I could spank the both of you until you're fifty and you still wouldn't learn."'''],
             ['''"So, maybe you should try a different strategy?" suggests Carrie hopefully.'''],
             ['''Sister Samantha raises an eyebrow. "And what strategy would that be?"'''],
             ['''"Sending us to bed without supper?" suggests Carrie.'''],
             ['''"Making us clean the stables," pipes in Elise.'''],
-            ['''"Making us write lines?" says Elise.'''],
+            ['''"Making us write lines?" says Carrie.'''],
             ['''Sister Samantha raises her other eyebrow. "So you're saying you want to be treated like children? An adult Sister on the verge of becoming a noblewoman''',
             '''would rather be cleaning out the stables like a pre-teen student caught putting a pinecone on her sister's chair. An equally adult student on the verge''',
-            '''of becoming a Sister going to bed without supper, or writing lines, like a five year old calling her mothera butthead. That's what you want?"'''],
+            '''of becoming a Sister going to bed without supper, or writing lines, like a five year old calling her mother a butthead. That's what you want?"'''],
             ['''The two women exchange uneasy glances.'''],
             ['''"Well, no," says Carrie at last. "But aren't there other adult punishments that don't hurt quite so bad?"'''],
             ['''"I shouldn't be punishing you at all!" cries Sister Samantha. "You're an adult. Start acting like it!"'''],
@@ -11107,10 +11728,10 @@ def maria_no_problems_function(node):
             ['''Before''', name(), '''can respond, the door opens up, and Elise and Roland come out. Elise's face is streaked with tears. She is holding Roland's hand''',
                 '''with her right, while her left is clutching gingerly at her bottom.'''],
             ['''"Hey," says Maria, smiling. "Get through your spanking ok?"'''],
-            ['''"Well, I'm still breathing," says Elise. "Hurts like a curse though. Roland's such a jerk."'''],
+            ['''"Well, I'm still breathing," says Elise. "Hurts like a curse though. Roland's such a brute."'''],
             ['''Roland rolls his eyes. "Oh please. Just be glad I let you seduce me into comforting you tonight."'''],
             ['''Elise grins, despite the hint of tears in her eyes. "Oh I am. I am."'''],
-            ['''Maria chuckles as Roland Elise make their down the steps and towards the Inner Circle.''']])
+            ['''Maria chuckles as Roland and Elise make their way down the steps and towards the Inner City.''']])
     if 'taking_Carrie_home' in keywords():
             quip = universal.format_text([quip, ['''Carrie limps out a few seconds later. Her eyes light up when she sees''', name() + ".", '''"Hey''', name() + "!", '''Good news.''',
             '''Sister''',
@@ -11135,7 +11756,7 @@ def maria_no_problems_function(node):
     return quip
 def maria_no_problems_qf(node):
         quip = universal.format_text([['''"Hey,''', name() + ",", '''says Maria, smiling broadly. She glances at''', names(), '''companions: Carrie, gnawing anxiously on a strand''',
-            '''of hair, Elise anxiously twsting her skirts while Roland keeps a firm grip on her arms, and Roland's grim expression. "I see you three had fun."'''],
+            '''of hair, Elise anxiously twisting her skirts while Roland keeps a firm grip on her arms, and Roland's grim expression. "I see you three had fun."'''],
             ['''"Oh yes," says Roland flatly. "A wonderful night filled to bursting with irreverent songs, lewd dancing, and stable references."'''],
             ['''Sister Samantha sighs and rolls her eyes. "I swear, I could spank the both of you until you're fifty and you still wouldn't learn."'''],
             ['''"So, maybe you should try a different strategy?" suggests Carrie hopefully.'''],
@@ -11145,7 +11766,7 @@ def maria_no_problems_qf(node):
             ['''"Making us write lines?" says Carrie.'''],
             ['''Sister Samantha raises her other eyebrow. "So you're saying you want to be treated like children? An adult Sister on the verge of becoming a noblewoman''',
             '''would rather be cleaning out the stables like a pre-teen student caught putting a pinecone on her sister's chair. An equally adult student on the verge''',
-            '''of becoming a Sister going to bed without supper, or writing lines, like a five year old calling her mothera butthead. That's what you want?"'''],
+            '''of becoming a Sister going to bed without supper, or writing lines, like a five year old calling her mother a butthead. That's what you want?"'''],
             ['''The two women exchange uneasy glances.'''],
             ['''"Well, no," says Carrie at last. "But aren't there other adult punishments that don't hurt quite so bad?"'''],
             ['''"I shouldn't be punishing you at all!" cries Sister Samantha. "You're an adult. Start acting like it!"'''],
@@ -11176,10 +11797,10 @@ def maria_no_problems_qf(node):
             ['''Before''', name(), '''can respond, the door opens up, and Elise and Roland come out. Elise's face is streaked with tears. She is holding Roland's hand''',
                 '''with her right, while her left is clutching gingerly at her bottom.'''],
             ['''"Hey," says Maria, smiling. "Get through your spanking ok?"'''],
-            ['''"Well, I'm still breathing," says Elise. "Hurts like a curse though. Roland's such a jerk."'''],
+            ['''"Well, I'm still breathing," says Elise. "Hurts like a curse though. Roland's such a brute."'''],
             ['''Roland rolls his eyes. "Oh please. Just be glad I let you seduce me into comforting you tonight."'''],
             ['''Elise grins, despite the hint of tears in her eyes. "Oh I am. I am."'''],
-            ['''Maria chuckles as Roland Elise make their down the steps and towards the Inner Circle.''']])
+            ['''Maria chuckles as Roland and Elise make their way down the steps and towards the Inner City.''']])
         if 'taking_Carrie_home' in keywords():
             quip = universal.format_text([quip, ['''Carrie limps out a few seconds later. Her eyes light up when she sees''', name() + ".", '''"Hey''', name() + "!", '''Good news.''',
             '''Sister''',
@@ -11434,7 +12055,7 @@ def ep1_maria_live_qf():
     mariasHome.boarding = True
     remove_keyword('boarding_with_Adrian')
     guildBedroom.boarding = False
-    ep1_maria_live.quip = universal.format_text([['''Maria grins. "Excellent."''']])
+    ep1_maria_live.quip = universal.format_text([['''Maria grins. "Excellent. Anyway, I'm going to go on ahead. I'll see you soon, alright?"''']])
     if not 'Marias_home' in keywords(): 
         ep1_maria_live.quip += format_line([''' You can find my place right on the edge of the slums, near the Adventurer's Guild."'''])
     add_keyword('Marias_home')
@@ -11978,9 +12599,9 @@ def ep1_catalin():
         ['''There's a small flare of magic, and soon a small ball of light appears in the air in front of''', name() + ",", '''making''', himher(), 
         '''squint against the sudden, harsh glare.'''],
         ['''Crouched above''', himher(), '''is a Taironan woman in her early thirties. Her black hair is cropped boy-short.''',
-        '''There is a tension in her face, particularly around her dark, bloodshot eyes, that belie the humor in her crooked smile. She is curvier than Maria, but much more''',
+        '''There is an air of tension about her, particularly around her dark, bloodshot eyes, that belie the humor in her crooked smile. She is curvier than Maria, but much more''',
         '''athletic than Elise. She is wearing a ragged bright red shirt, and''',
-            '''an equally ragged pair of pale blue trousers. A sword is strapped to her back, its naked blade gleaming in the dim light. She smiles crookedly.'''],
+            '''an equally ragged pair of pale blue trousers. A sword is strapped to her back, its naked, notched blade gleaming in the dim light. She smiles crookedly.'''],
         ['''"Cat..." says''', name(), '''in a quiet, breathless voice. "Oh, Cat!"'''],
         [name(), '''grabs''', hisher(), '''older sister Catalin in a fierce hug. "Amor de la Madre, I've missed you so much!"'''],
         ['''"I missed you too," says Catalin, returning the hug fiercely. "Oh Madre, how I've missed you. You and Nana both. Even Maria."''']]), justification=0, 
