@@ -335,7 +335,7 @@ class BreakGrappleAction(CombatAction):
             else:
                 return(' '.join([attacker.printedName, 'fails to break the grapple with', defender.printedName + '!']), [False], self)
         else:
-            return DefendAction(attacker, attacker).effect(inCombat, allies, enemies)
+            return DefendAction(attacker, attacker).effect(inCombat, allies, enemies).effect(inCombat, allies, enemies)
 
 class RunAction(CombatAction):
     targetType = ALLY

@@ -445,8 +445,8 @@ class SpectralPush(p.Spectral):
             defender.receives_damage(damage)
             resultStatement.append(self.failure_statement(defender))
             effects.append((damage, False))
-            if defender.current_health() <= 0:
-                resultStatement[-1] = '\n'.join([resultStatement[-1], ' '.join([defender.printedName, 'collapses!'])])
+        if defender.current_health() <= 0:
+            resultStatement[-1] = ['\n'.join([resultStatement[-1][0], ' '.join([defender.printedName, 'collapses!'])])]
         #print(resultStatement)
         return (universal.format_text(resultStatement, False), effects, self)
 
@@ -541,8 +541,8 @@ class SpectralPull(p.Spectral):
             defender.receives_damage(damage)
             resultStatement.extend(self.failure_statement(defender))
             effects.append((damage, False))
-            if defender.current_health() <= 0:
-                resultStatement[-1] = '\n'.join([resultStatement[-1], ' '.join([defender.printedName, 'collapses!'])])
+        if defender.current_health() <= 0:
+            resultStatement[-1] = '\n'.join([resultStatement[-1], ' '.join([defender.printedName, 'collapses!'])])
         return (universal.format_text(resultStatement, False), effects, self)
 
     def effect_statement(self, defender, dam):
@@ -630,8 +630,8 @@ class SpectralShove(p.Spectral):
             defender.receives_damage(damage)
             resultStatement.extend(self.failure_statement(defender))
             effects.append((damage, False))
-            if defender.current_health() <= 0:
-                resultStatement[-1] = '\n'.join([resultStatement[-1], ' '.join([defender.printedName, 'collapses!'])])
+        if defender.current_health() <= 0:
+            resultStatement[-1] = '\n'.join([resultStatement[-1], ' '.join([defender.printedName, 'collapses!'])])
         return (universal.format_text(resultStatement, False), effects, self)
 
     def effect_statement(self, defender, dam):
@@ -1115,12 +1115,6 @@ class SpectralStrapping(p.SpectralSpanking):
                 resultStatement.extend(success_statement(defender))
                 """
 
-    def failure_statement(self, defender):
-        A = self.attacker.printedName
-        D = self.defenders[0].printedName
-        return [D, 'just barely manages to slip through the hand\'s fingers.', A, 'tries to catch', D, ', but', p.heshe(defender), 'manages to stay one step ahead of the',
-                'ghostly fingers until the hand finally fades.']
-
     def effect_statement(self, defender):
         attacker = self.attacker
         A = attacker.printedName
@@ -1230,12 +1224,6 @@ class SpectralCaning(p.SpectralSpanking):
     
     def immune_statement(self, defender):
         return ['The hand dissipates as soon as it touches', defender.printedName]
-
-    def failure_statement(self, defender):
-        A = attacker.printedName
-        D = defender.printedName
-        return [D, 'just barely manages to slip through the hand\'s fingers.', A, 'tries to catch', D, ', but', p.heshe(defender), 'manages to stay one step ahead of the',
-                'ghostly fingers until the hand finally fades.']
 
     def success_statement(self, defender):
         attacker = self.attacker

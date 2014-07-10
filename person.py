@@ -2245,7 +2245,9 @@ class SpectralSpanking(Spectral):
         A = attacker.printedName
         D = defender.printedName
         return [D, 'just barely manages to slip through the hand\'s fingers.', A, 'tries to catch', D, ', but', heshe(defender), 'manages to stay one step ahead of the',
-                'ghostly fingers until the hand finally fades.']
+                'ghostly fingers until the hand finally fades.'] if not attacker.is_grappling(defender) else [D, '''pivots, forcing''', A, '''around so that''', A,
+                        '''is between''', D, '''and the hand.''', A, '''tries to bring the hand around to grab''', D + ",", '''but''', D, '''manages to keep''', A, 
+                        '''in the way until the hand fades.''']
 
     def success_statement(self, defender):
         attacker = self.attacker

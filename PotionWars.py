@@ -1154,7 +1154,7 @@ necia.learn_spell(spells_PotionWars.distortMagic)
 necia.equip(itemspotionwars.qualityDagger)
 necia.equip(itemspotionwars.trousers)
 necia.equip(itemspotionwars.leatherCuirass)
-necia.equip(itemspotionwars.lacyUnderwear)
+#necia.equip(itemspotionwars.lacyUnderwear)
 
 #-----------------------------------------------Scenes--------------------------------------------------------------------------------------------------------
 
@@ -3765,8 +3765,8 @@ sternSpoon.quip_function = sternSpoon_qf
 spankCarlitaCruel.comment = '''"Well, that was pathetic. The Vengadores must be pretty desperate if they recruited you for slinger fodder."'''
 def spankCarlitaCruel_qf():
     spankCarlitaCruel.quip = universal.format_text([['''The young woman shrinks away from''', name() + ",", '''her face crumpling. "You don't know what you're talking about.''',
-        '''I'm going to be a powerful warrior, and save our people from the Matirians and their Potions. Ana told me so."'''],
-    ['''"And you believed her?"''', name(), '''laughs mockingly. "Girl, this Ana was clearly just looking for expendable bodies to throw at us. If she really''',
+        '''I'm going to be a powerful warrior, and save our people from the Matirians and their Potions. Erizelda told me so."'''],
+    ['''"And you believed her?"''', name(), '''laughs mockingly. "Girl, this Erizelda was clearly just looking for expendable bodies to throw at us. If she really''',
     '''cared, she'd have given you something approximating training before throwing you into a full-fledged battle."'''],
     '''"Leave me alone," mutters the young woman, starting to drag herself away.''',
     ['''"Oh I don't think so," says''', name() + ",", '''grabbing the girl's hips. "Not until I've spanked the stupid out of you."''']])
@@ -5120,7 +5120,7 @@ def failedToHelpPaloma_qf():
     '''the''',
         '''strapping. At first, the hard, merciless blows generate a spate of kicking, screaming, and bucking from the captive healer. Before long, however, she''',
         '''collapses completely and just sobs brokenly as the amazon mercilessly beats her.'''],
-    ['''"Alright," says the amazon at last, relooping her belt. "Let's go. Ana'll thrash us for a month straight if we don't go and help empty the''',
+    ['''"Alright," says the amazon at last, relooping her belt. "Let's go. Erizelda'll thrash us for a month straight if we don't go and help empty the''',
         '''armory."'''],
     ['''The other insurgent nods and quickly stands.''', name(), '''slowly gets off of the healer.'''],
     ['''"You coming?" asks the amazon.'''],
@@ -5201,7 +5201,7 @@ def palLost_qf():
         ['''Paloma rushes past the two Vengadores, and crouches next to''', name() + ".", '''Her fingers fly across the young''', manwoman() + "'s", 
             '''chest, then touch''', names(), '''forehead.'''],
         ['''"I...I..." mutters the spellslinger. She threads her thumb through the wrappings of her mask, and begins gnawing furiously on her thumbnail. "I didn't-"'''],
-        ['''The amazon lands a sharp slap to her friend's round derrier. "How many times did Ana tell you to pay attention when you're fighting? You never know when''',
+        ['''The amazon lands a sharp slap to her friend's round derrier. "How many times did Erizelda tell you to pay attention when you're fighting? You never know when''',
             '''your enemy-!"'''],
         ['''"You," snaps Paloma, turning and pointing a finger at the amazon. "Shut up, and get to that cabinet over there. Inside you'll find several vials. Bring''',
             '''one to me. Now!"'''],
@@ -5648,10 +5648,29 @@ def e0_6_1():
     if 'met_Airell' in keywords():
         universal.say_title('Punished Taironans')
         if 'spectral_caned' in keywords():
-            universal.say([name(), '''glares up at the Taironans, who studiously ignore''', himher() + ".", HisHer(), 
-                '''bottom still burns like the Dickens from that wretched caning. Wonder if Adrian would let''',himher(), 
-                '''cane the lot of them when this was done?'''], justification=0)
-            universal.acknowledge(dungeonmode.dungeon_mode, ())
+            if p.PC.knows_spell(p.SpectralSpanking) and not 'spectral_spanked_Taironans' in keywords():
+                universal.say([name(), '''glares up at the Taironans, who studiously ignore''', himher() + ".", HisHer(), 
+                    '''bottom still burns like the dickens from that wretched caning. Wonder if Adrian would let''',himher(), 
+                    '''cane the lot of them when this was done?'''], justification=0)
+                universal.say(format_text([['''Or,''', heshe(), '''could cast Spectral Spanking now. Why wait until the attack was done?''', HeShe(), 
+                '''would probably forget anyway.'''],
+                ['''Does''', name(), '''cast spectral spanking on the helpless Taironans?''']
+                ['\p']
+                    ['''1. Yes'''],
+                    ['''2. No.''']]), justification=0)
+                set_command_interpreter(e0_6_1_caning_revenge_interpreter)
+            elif 'spectral_spanked_Taironans' in keywords():
+                universal.say(format_text([['''One of the hanging Taironans gasps when he sees''', name() + ".", '''"Oh, no, please no more we're sorry, honest!"'''],
+                    ['''"Relax," says''', name() + ".", '''"Just coming by to see how you're doing. Hanging in there?"'''],
+                    ['''The Taironan groans.'''],
+                    ['''"Great."''']]), justification=0)
+                universal.acknowledge(dungeonmode.dungeon_mode, ())
+                return
+            else:
+                universal.say([name(), '''glares up at the Taironans, who studiously ignore''', himher() + ".", HisHer(), 
+                    '''bottom still burns like the dickens from that wretched caning. Wonder if Adrian would let''',himher(), 
+                    '''cane the lot of them when this was done?'''], justification=0)
+                universal.acknowledge(dungeonmode.dungeon_mode, ())
         else:
             universal.say(universal.format_text([['''\n\nOne of the Taironans looks down at you. "Hey, think you could help us down? If we're here when the guards show up..." The Taironan''',
                 '''shudders.'''],
@@ -6086,12 +6105,73 @@ def e0_6_1_caning_interpreter(keyEvent):
                 '''cheeks.''', HisHer(), '''howl rises again to a fever pitch, and''', heshe(), '''begins to blubber like a naughty slinger apprentice.'''],
             ['''All in all, the spectral cane gives''', name(), '''six horrible, burning stripes before fading. As soon as the spectral hand fades,''', name(), 
                 '''falls to''', hisher(), '''hands and knees and clutches at''', hisher(), '''fiery bottom.'''],
-            ['''"Sorry," says the second Taironan sheepishly. "Didn't realize there was a trap on the enchantment."'''],
-            [name(), '''scowls up at the Taironan. "You're so lucky you're out of reach right now."'''],
-            ['''The Taironan smiles uneasily. "So, uh you going to leave and do whatever you're here to do?"'''],
-            [name(), '''grumbles something less than pleasant as''', heshe(), '''regains''', hisher(), '''feet.''', HeShe(), '''winces, and gingerly rubs''', hisher(),
-                '''bottom while considering''', hisher(), '''next move.''']]), justification=0)
-            universal.acknowledge(dungeonmode.dungeon_mode, ())
+            ['''"Sorry," says the second Taironan sheepishly. "Didn't realize there was a trap on the enchantment."''']]), justification=0)
+            if p.PC.knows_spell(p.SpectralSpanking):
+                universal.say(format_text([[name(), '''scowls up at the Taironan. "You're so lucky you're out of-"'''],
+                    [name(), '''stops. An evil grin spreads across''', hisher(), '''face.'''],
+                    ['''"Umm, why are you smiling like that?" asks the Taironan.'''],
+                    ['''"Oh no reason," says''', name() + ",", hisher(), '''grin not fading.'''],
+                    ['''If''', name(), '''wants,''', heshe(), '''could cast Spectral Spanking on the dangling Taironans. Does''', heshe(), '''wish to?'''],
+                    ['\p'],
+                    ['''1. Yes'''],
+                    ['''2. No.''']]), justification=0)
+                set_command_interpreter(e0_6_1_caning_revenge_interpreter)
+            else:
+                universal.say(format_text([[name(), '''scowls up at the Taironan. "You're so lucky you're out of reach right now."'''],
+                ['''The Taironan smiles uneasily. "So, uh you going to leave and do whatever you're here to do?"'''],
+                [name(), '''grumbles something less than pleasant as''', heshe(), '''regains''', hisher(), '''feet.''', HeShe(), '''winces, and gingerly rubs''', hisher(),
+                    '''bottom while considering''', hisher(), '''next move.''']]), justification=0)
+                universal.acknowledge(dungeonmode.dungeon_mode, ())
+
+def e0_6_1_caning_revenge_interpreter(keyEvent):
+    try:
+        num = universal.response(keyEvent)
+    except ValueError:
+        return
+    if num == 1:
+        if p.PC.current_mana() < p.SpectralSpanking.cost: 
+            universal.say(format_text([['''Oops. Looks like''', name(), '''doesn't have enough mana to cast Spectral Spanking.''']]), justification=0)
+        else:
+            add_keyword('spectral_spanked_Taironans')
+            increment_spankings_given()
+            p.PC.uses_mana(p.SpectralSpanking.cost)
+            universal.say(format_text([[name(), '''holds up''', hisher(), '''hands a second time. Power flows through''', hisher(), '''body, making''', hisher(),
+                '''skin tingle, and''', hisher(), '''heart pound. Then, the power bursts from''', hisher(), '''fingertips and coalesces into a pair of evanescent''',
+                '''hands.'''],
+                ['''One of the Taironans groans. "Oh, come on, really?"'''],
+                ['''"You people got me caned!" cries''', name() + ".", HeShe(), '''waves''', hisher(), '''hands forward. The spectral hands float towards the hanging''',
+                    '''Taironans, each one taking position behind a different Taironan.'''],
+                ['''"But we didn't know!" cries one of the Taironans, his eyes going wide with panic. "And we didn't make you cast the spell!"'''],
+                ['''"Doesn't matter. You're all getting your bums spanked."''', name(), '''snaps''', hisher(), '''hands forward.'''],
+                ['''The first two Taironans howl as the spectral hands clap against their dark red bottoms.'''],
+                ['''"But we've already been spanked!" wails a girl as she watches the first two get swatted.'''],
+                ['''"Then you'll get spanked again," says''', name() + "."],
+                ['''The two kick and flail in midair as the hands batter their bums, their bottoms bouncing beneath the heavy bombardment.'''],
+                [name(), '''gives each of them about half a dozen (hard!) slaps. Then,''', name(), '''leaves them to hang and snivel, while the hands slowly float back''',
+                    '''and forth behind the remaining Taironans. The helpless Vengadores watch the two hands with wide eyes. Each Vengador hisses in fear if the hand''',
+                    '''pause behind them, then sighs in relief when the hands keep moving.'''],
+                ['''Three times,''', name(), '''makes the hands pace behind the remaining Taironans.'''],
+                ['''"Amor de la Madre!" cries a Taironan woman. "Just get it over with."'''],
+                [name(), '''smirks. "Well, looks like we have a volunteer."'''],
+                [name(), '''brings both hands around behind the woman.'''],
+                ['''"Two? Hey wait-oww!" cries the woman as the first spectral hand smacks her bottom. She howls when the second smashes into her bottom immediately''',
+                '''after.'''],
+                ['''See, they're just magic that can "harden" enough to interact with physical objects. That''',
+                '''means, if the caster so desires it, they can pass through each other. And''', name(), '''desires it. Oh yes,''', heshe(), '''does.'''],
+                ['''In other words, the right spectral hand doesn't have to wait for the left to draw back, before it spanks a naughty bottom.'''],
+                [name(), '''puts this to good use on the Vengador, each hand smacking the girl's bottom independantly of the other, literally giving the girl not one,''',
+                    '''but two spankings. The woman flails and squeals as the large hands smash into her small, tight bottom. Then, she hangs limply, sobbing as the''',
+                    '''hands further enflame her swollen bum.'''],
+                [name(), '''takes a deep breath, and glares at the rest. "Anyone else want to say anything?"'''],
+                ['''Silence.'''],
+                ['''"Good. Let's get this finished," says''', name() + "."],
+                ['''Each of the remaining Taironans gets six solid smacks from one of the hands, each howls and kicks after every smack, and each is left with fresh''',
+                    '''tears flowing.'''],
+                [name(), '''sighs, and drops''', hisher(), '''hands. The spectral hands fade. "See you around."''']]), justification=0)
+        acknowledge(dungeonmode.dungeon_mode, ())
+    elif num == 2:
+        universal.say(format_text([[name(), '''shrugs and turns away. Guess''', heshe(), '''will be merciful today.''']]), justification=0)
+        acknowledge(dungeonmode.dungeon_mode, ())
     
             
 def e0_8_5():
@@ -6137,7 +6217,7 @@ def e0_8_7():
             universal.set_command_interpreter(cosima_whiteRibbon_interpreter)
         else:
             universal.say(universal.format_text([['''"I'm a member of the Guild. I joined just before the attack," says''', name() + "."],
-                ['''"Oh?" says the woman. "That would explain why I don't recognize you. Do you have a ribbon?"''']]), justification=0)
+                ['''"Oh?" says the woman. "That would explain why I don't recognize you. Do you have a ribbon from Paloma, our resident healer?"''']]), justification=0)
             if 'get_ribbon' in keywords():
                 universal.say(universal.format_text([['''\n\n"Oh, right,''', '''Ildri''' if 'Ildri_spanked_you_unjustly' in keywords() else '''Morey''', 
                     '''told me about that," says''', name() + ".", '''"He said I should get one from Paloma."'''],
@@ -6370,6 +6450,7 @@ def cosima_failedPaloma_see_Paloma_interpreter(keyEvent):
                 [name(), '''nods.'''],
                 ['''"Good." Cosima slips her paddle into a holster(?) on her belt, draws her dagger, and runs out the door.''']]), justification=0)
             universal.acknowledge(dungeonmode.dungeon_mode, ())
+            add_keyword('get_ribbon')
         elif num == 2:
             universal.say(universal.format_text([['''The instructor's expression goes stormy. "Excuse me?" Her voice is quiet, but dangerous.'''],
                 [name(), '''tosses''', hisher(), '''head defiantly, and crosses''', hisher(), '''arms over''', hisher(), '''chest. "I said you're not my boss-"'''],
@@ -6378,7 +6459,7 @@ def cosima_failedPaloma_see_Paloma_interpreter(keyEvent):
                     '''over her hip, holding the young Taironan securely in the underarm position.'''],
                 [name(), '''yelps indignantly and pounds''', hisher(), '''fist uselessly against the woman's calf.'''],
                 ['''With a sharp crack, the instructor slaps''', universal.format_line([names(), '''exposed bottom''']) if no_pants() and 
-                    p.PC.underwear().is_baring() else universal.format_line(['''the seat of''', names(), p.PC.clothing_below_the_waist().name]), '''with her paddle.'''],
+                    p.PC.underwear().baring else universal.format_line(['''the seat of''', names(), p.PC.clothing_below_the_waist().name]), '''with her paddle.'''],
                 [name(), '''yelps as a flash of hot pain spreads across''', hisher(), '''bottom.'''],
                 ['''The paddle cracks against''', names(), '''vulnerable bottom three more times, drawing additional yelps, and more than a little squirming from''',
                 '''the young Taironan.'''],
@@ -6405,6 +6486,7 @@ def cosima_failedPaloma_see_Paloma_interpreter(keyEvent):
                 add_keyword('Cosima_before_Paloma')
             add_keyword('talk_with_Cosima')
             universal.acknowledge(dungeonmode.dungeon_mode, ())
+
 def cosima_failedPaloma_time_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
@@ -6428,6 +6510,7 @@ def cosima_failedPaloma_time_interpreter(keyEvent):
             if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
                 add_keyword('Cosima_before_Paloma')
             universal.acknowledge(dungeonmode.dungeon_mode, ())
+
 def cosima_sparring_acceptance(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
@@ -6449,7 +6532,9 @@ def cosima_sparring_acceptance(keyEvent):
                 [name(), '''nods. Cosima returns the nod, then runs out the door, dagger at the ready.''']]), justification=0)
             add_keyword('Cosimas_task')
             add_keyword('spar_with_Cosima')
+            add_keyword('get_ribbon')
             universal.acknowledge(dungeonmode.dungeon_mode, ())
+
 def cosima_noRibbon_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
@@ -6465,7 +6550,7 @@ def cosima_noRibbon_interpreter(keyEvent):
                 ['''"No no no no no no no," whines''', name() + "."],
                 ['''Three times, the paddle cracks against''', universal.format_line(['''the back of''', names(), p.PC.clothing_below_the_waist().name + '.']) if not (no_pants() 
                     and 
-                    p.PC.underwear().is_baring) else universal.format_line([names(), '''exposed butt.''']) , name(), '''yelps and rocks''', hisher(), 
+                    p.PC.underwear().baring) else universal.format_line([names(), '''exposed butt.''']) , name(), '''yelps and rocks''', hisher(), 
                 '''stinging bottom.'''],
                 ['''"I'm a member of the Guild, I swear, I swear," cries''', name() + ".", '''"Please, with the attack and all I didn't have time to get a Ribbon''',
                     '''and-"'''],
@@ -6482,13 +6567,16 @@ def cosima_noRibbon_interpreter(keyEvent):
                 ['''"Well,''', name(), '''care to tell me what's going on?" Though Cosima's smile is friendly''', name(), '''can't help but notice that she is still''',
                     '''keeping a firm grip on her paddle.'''],
                 ['''"Some Taironan gang is attacking," says''', name() + ".", '''"Say they're after our equipment."'''],
-                ['''Cosima curses. "Of course they are. Always figured Adrian's cache made too tempting a target. I'm going to and try to defend it. You  visit the''',
-                    '''other instructors, especially Paloma upstairs, then get down to the armory and help me. The armory's just down this hallway, on the left."'''],
+                ['''Cosima curses. "Of course they are. Always figured Adrian's cache made too tempting a target. I'm going to and try to defend it. You need to''',
+                '''get a ribbon from Paloma. Then, visit the''',
+                '''other instructors, and try to get them either to the entranceway, or down to help me in the armory. Then get down to the armory yourself and''',
+                '''help me. It's just down this hallway, on the left."'''],
                 ['''"Why don't I go with you now?" asks''', name() + "."],
                 ['''"Because we've never trained together," says Cosima. "I have no idea how you move, or what your fighting style is, and you have no idea what''',
                     '''mine is. Trying to fight together would be a disaster. Better for you to find the other instructors and get a few of them down to the armory. Then, if I'm defeated you can''',
                     '''serve as backup."''']]), justification=0)
             universal.say('\p', justification=0)
+            add_keyword('get_ribbon')
             universal.say(universal.format_text([['''1. "I guess that makes sense."'''], 
                              ['''2. "No way. I've been learning how to fight since I was three. Well, five. Or seven.''',
                     '''Whatever. The point is, I'm not some untrained kid with delusions of grandeur. I'm a member of this Guild, and I can help you."''']]), 
@@ -6519,6 +6607,7 @@ def cosima_noRibbon_interpreter(keyEvent):
                 '''mine is. Trying to fight together would be a disaster. Better for you to find the other instructors, people I have trained with, then to try''',
                 '''to join me directly."''']]), justification=0)
             universal.say('\p', justification=0)
+            add_keyword('get_ribbon')
             universal.say(universal.format_text([['''1. "I guess that makes sense."'''], 
                              ['''2. "No way. I've been learning how to fight since I was three. Well, five. Or seven.''',
                 '''Whatever. The point is, I'm not some untrained kid with delusions of grandeur. I'm a member of this Guild, and I can help you."''']]), 
@@ -6539,6 +6628,7 @@ def cosima_noRibbon_interpreter(keyEvent):
                 '''what mine is. Trying to fight together would be a disaster. Better for you to find the other instructors, people I have trained with,''',
                 '''then to try to join me directly."''']]), justification=0)
             universal.say('\p', justification=0)
+            add_keyword('get_ribbon')
             universal.say(universal.format_text([['''1. "I guess that makes sense."'''], 
                          ['''2. "No way. I've been learning how to fight since I was three. Well, five. Or seven.''',
                 '''Whatever. The point is, I'm not some untrained kid with delusions of grandeur. I'm a member of this Guild, and I can help you."''']]), 
@@ -6789,6 +6879,8 @@ def e0_5_8():
         universal.set_command_interpreter(mai_apologizes_intepreter)
     else:
         add_keyword('mai_and_you_chastised')
+        add_keyword('talk_with_Cosima')
+        add_keyword('get_ribbon')
         add_keyword('Mai_defends_armory')
         increment_spankings_taken()
         universal.say(universal.format_text([[''' After a few minutes of rooting through''', names(), '''pack, the woman groans. "Nothing good. Except fancy dagger, but my dagger is better. Ah well." The woman lifts''', name(), '''and throws''',
@@ -7621,7 +7713,7 @@ def necia_wimpy_spanked():
         '''absolutely nothing to protect''', hisher(), '''bottom. Seriously,''', heshe(), '''should really start wearing pants.'''])], 
         ['''"Oww!" cries''', name(), '''after a particularly hard blow. "Madre's curse, just leave me alone! I've done nothing to you."'''],
         ['''"Exactly," says the Vengador. She grabs''', names(), p.PC.clothing_below_the_waist().name, universal.format_line(['''and yanks''', items.itthem(p.PC.clothing_below_the_waist()), '''down to''', hisher(), '''knees.''']) if
-            wearing_skirt_or_pants() else universal.format_line(['''lifts it up over''', names(), '''bottom and drapes it across''', hisher(), '''back.''']), name(), '''squeals indignantly as''', hisher(),
+            wearing_skirt_or_pants() or wearing_underwear() else universal.format_line(['''lifts it up over''', names(), '''bottom and drapes it across''', hisher(), '''back.''']), name(), '''squeals indignantly as''', hisher(),
                 universal.format_line([p.PC.underwear().name, '''is exposed.''']) if (wearing_skirt_or_dress() or wearing_pants()) and wearing_underwear() else '''bare bottom is exposed. "You've done absolutely nothing.''',
                 '''"Our people are being crushed, and all you care about are a couple handfuls of coins!"'''],
         ['''"This is ridiculous," wails''', name(), '''pounding''', hisher(), '''feet against the ground as the Vengador's heavy hand crashes into''', hisher(), '''bare''' if p.PC.underwear().baring or

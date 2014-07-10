@@ -287,8 +287,8 @@ class Bedroom(Room):
 
     def clean(self):
         if person.PC.current_health() < person.PC.health() // 2 or person.PC.current_mana() < person.PC.mana() // 2:
-            universal.say(universal.format_text([[name(), '''considers taking some time to clean, but plops down on''', person.hisher(), '''bed instead.''', person.HeShe(), 
-                '''is too darn tired to clean.''']]), justification=0)
+            universal.say(universal.format_text([[person.PC.name, '''considers taking some time to clean, but plops down on''', person.hisher(), '''bed instead.''', 
+                person.HeShe(), '''is too darn tired to clean.''']]), justification=0)
         else:
             universal.say(universal.format_text([[person.PC.name, '''takes some time to do some cleaning.''', person.HeShe(), 
                 '''cleans dirty clothing, scrapes the mud off''', person.hisher(), '''boots, washes''', person.hisher(), 

@@ -11,7 +11,7 @@ import Queue
 from pygame.locals import *
 import os
 
-DEBUG = True
+DEBUG = False
 SAVE_DELIMITER = '%%%'
 
 
@@ -758,3 +758,6 @@ def numbered_list(l):
     ["1. e_1", "2. e_2", "3. e_3", ..., "n. e_n"]
     """
     return ['. '.join([str(i), e]) for (i, e) in zip([i for i in range(1, len(l)+1)], l)] 
+
+
+
