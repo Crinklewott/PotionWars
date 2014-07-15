@@ -759,5 +759,101 @@ def numbered_list(l):
     """
     return ['. '.join([str(i), e]) for (i, e) in zip([i for i in range(1, len(l)+1)], l)] 
 
+import sets
 
+class State(object):
+    def __init__(self):
+        self.player = None
+        self.bedroom = None
+        self.party = None
+        self.location = None
+        self.characters = sets.Set()
+        self.rooms = sets.Set()
+        self.nodes = sets.Set()
+        self.items = sets.Set()
+        self.episodes = sets.Set()
+        self.scenes = sets.Set()
+        self.positions = sets.Set()
 
+    def add_position(self, position):
+        return
+        self.positions.add(position)
+
+    def remove_position(self, position):
+        return
+        try:
+            self.positions.remove(position)
+        except KeyError:
+            return
+
+    def add_scene(self, scene):
+        return
+        self.scenes.add(scene)
+
+    def remove_scene(self, scene):
+        return
+        try:
+            self.scenes.remove(scene)
+        except KeyError:
+            return
+
+    def add_episode(self, episode):
+        return
+        self.episodes.add(episode)
+
+    def remove_episode(self, episode):
+        return
+        try:
+            self.episodes.remove(episode)
+        except KeyError:
+            return
+
+    def add_item(self, item):
+        return
+        self.items.add(item)
+
+    def remove_item(self, item):
+        return
+        try:
+            self.items.remove(item)
+        except KeyError:
+            return
+
+    def add_room(self, room):
+        return
+        self.rooms.add(room)
+
+    def remove_room(self, room):
+        return
+        try:
+            self.rooms.remove(room)
+        except KeyError:
+            return
+
+    def add_node(self, node):
+        return
+        self.nodes.add(node)
+
+    def remove_node(self, node):
+        return
+        try:
+            self.nodes.remove(node)
+        except KeyError:
+            return
+    def add_character(self, character):
+        self.characters.add(character)
+
+    def remove_character(self, character):
+        try:
+            self.characters.remove(character)
+        except KeyError:
+            return
+state = State()
+
+def set_initial_room(room):
+    global state
+    state.location = room
+
+def set_state(stateIn):
+    global state
+    state = stateIn

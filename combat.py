@@ -81,6 +81,7 @@ actionsEndured = {}
 optional = False
 ambush = 0
 boss = False
+initialState = None
 def end_fight():
     global allies, enemies, actionsInflicted, actionsEndured, activeAlly, chosenActions 
     allies = None
@@ -93,8 +94,8 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
         ambushIn=0):
     global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface, enemySurface, commandSurface, clearScreen, previousMode, origAllies, origEnemies, \
             actionsInflicted, actionsEndured, chosenActions, optional, defeatedEnemies, defeatedAllies
-    global ambush
-    global boss
+    global ambush, boss, initialState
+    initialState = copy.deepcopy(initialState)
     boss = bossFight
     ambush = ambushIn
     enemies = None
@@ -1344,26 +1345,6 @@ def game_over():
 def game_over_interpreter(keyEvent):
     if keyEvent.key == K_y:
         global allies, enemies, chosenActions, actionResults, actionsEndured, actionsInflicted, defeatedAllies, defeatedEnemies, origEnemies, origAllies
-        enemies.members += defeatedEnemies
-        allies.members += defeatedAllies
-        defeatedAllies = []
-        defeatedEnemies = []
-        enemies = person.Party(copy.deepcopy(origEnemies))
-        #enemies[i].set_state(origEnemies[i])
-        #allies[i].set_state(origAllies[i])
-        allies = person.Party(copy.deepcopy(origAllies))
-        person.set_party(allies)
-        person.set_PC(allies[0])
-        #Making sure we're actually setting the player character to the player character.
-        assert(allies[0].rawName == '$$$PC$$$')
-        for i in range(len(allies)):
-            allies[i].chanceIncrease = [0 for j in range(len(allies[i].chanceIncrease))]
-        chosenActions = []
-        actionResults = []
-        print('allies and enemies:')
-        print(allies)
-        print(enemies)
-        print(allies + enemies)
         actionsEndured = {combatant:[] for combatant in enemies + allies}
         actionsInflicted = {combatant:[] for combatant in enemies + allies}
         print('actionsEndured : ' + str(actionsEndured))
@@ -1406,7 +1387,7 @@ def victory():
         enemy.restores()
     clear_screen()
     say_title('Victory!')
-    universal.say(format_line([person.PC.name, 'has defeated', person.hisher(), 'enemies.\n']))
+    universal.say(format_line([universal.state.player.name, 'has defeated', person.hisher(), 'enemies.\n']))
     music.play_music(music.VICTORY)
     for ally in allies:
         ally.break_grapple()
@@ -1488,7 +1469,7 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
                     elif i != CURRENT_HEALTH and i != CURRENT_MANA:
                         gain = random.randint(1, 10)    
                         print(ally)
-                        print(person.PC)
+                        print(universal.state.player)
                         ally.improve_stat(i, gain)
                     if i != CURRENT_HEALTH and i != CURRENT_MANA:
                         universal.say(format_line([ally.name, 'has gained', str(gain), person.stat_name(i) + '.\n']))

@@ -38,9 +38,9 @@ def set_goods():
     global shopGoods, playerGoods
     shopGoods = zip([str(i) for i in range(1, len(shopkeeper.inventory)+1)], 
             shopkeeper.inventory, [str(good.price) for good in shopkeeper.inventory])
-    playerGoods = zip([str(i) for i in range(1, len(person.PC.inventory) + len(person.PC.equipmentList)+1)], 
-            person.PC.inventory + person.PC.equipmentList, 
-            [str(good.price // 2) for good in person.PC.inventory + person.PC.equipmentList])
+    playerGoods = zip([str(i) for i in range(1, len(universal.state.player.inventory) + len(universal.state.player.equipmentList)+1)], 
+            universal.state.player.inventory + universal.state.player.equipmentList, 
+            [str(good.price // 2) for good in universal.state.player.inventory + universal.state.player.equipmentList])
 
 litany = None
 def shop_mode(personIn=None, doneShoppingLitany=None):
@@ -66,13 +66,13 @@ def shop_interpreter(keyEvent):
             print("litany:")
             print(litany)
             shopkeeper.litany = litany
-            say_title(townmode.currentRoom.name)
+            say_title(universal.state.location.name)
             conversation.converse_with(shopkeeper, townmode.town_mode)
 
 def window_shop():
     global chosenPerson
     if person.get_party().len() == 1:
-        chosenPerson = person.PC
+        chosenPerson = universal.state.player
         window_shop_person_chosen()
     else:
         say_title('Please select a character to go shopping.')
@@ -154,7 +154,7 @@ def buy_interpreter(keyEvent):
             universal.say(format_text([chosenPerson.name, "doesn't have enough money.", 
                 ["The", chosenGood.name, 
                     "costs", str(chosenGood.price), "coins, but", chosenPerson.name, "only has", 
-                    str(person.PC.coins), "coins."]]))
+                    str(universal.state.player.coins), "coins."]]))
             window_shop_person_chosen()
     elif keyEvent.key == K_BACKSPACE:
         window_shop_person_chosen()
@@ -190,8 +190,8 @@ def equip_interpreter(keyEvent):
 
 def choose_character_to_equip_item():
     if len(person.get_party()) == 1:
-        universal.say([person.PC.name, 'has equipped', chosenGood.name + "."])
-        person.PC.equip(chosenGood)
+        universal.say([universal.state.player.name, 'has equipped', chosenGood.name + "."])
+        universal.state.player.equip(chosenGood)
         acknowledge(window_shop_person_chosen, ())
     else:
         say_title(['Who should equip', chosenGood.name + "?"])
@@ -233,8 +233,8 @@ def choose_character_to_equip_item_interpreter(keyEvent):
 
 def choose_character_to_carry_item():
     if len(person.get_party()) == 1:
-        universal.say([person.PC.name, 'is now carrying', chosenGood.name])
-        person.PC.take_item(chosenGood)
+        universal.say([universal.state.player.name, 'is now carrying', chosenGood.name])
+        universal.state.player.take_item(chosenGood)
         set_goods()
         acknowledge(window_shop_person_chosen, ())
     else:
@@ -258,7 +258,7 @@ def window_sell():
     say_title('Sell')
     global chosenPerson
     if person.get_party().len() == 1:
-        chosenPerson = person.PC
+        chosenPerson = universal.state.player
         window_sell_person_chosen()
     else:
         say_title('Select a party member whose inventory you would like to look at.')
@@ -292,6 +292,7 @@ def select_party_member_to_sell_interpreter(keyEvent):
         shop_mode(doneShoppingLitany=litany)
 
 def window_sell_interpreter(keyEvent):
+    global partialNum
     if keyEvent.key in NUMBER_KEYS:
         if len(playerGoods) < 10:
             num = int(pygame.key.name(keyEvent.key)) - 1

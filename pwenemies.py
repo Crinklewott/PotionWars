@@ -28,7 +28,7 @@ import spanking
 
 
 def name():
-    return person.PC.name
+    return universal.state.player.name
 
 class Enemy(person.Person):
     def __init__(self, name, gender, defaultLitany, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3):
@@ -111,13 +111,13 @@ class VengadorWarrior(Enemy):
     def post_combat_spanking(self):
         bottomAdj = "large, smooth, round" if self.is_female() else "large, rather hairy"
         warriorText = format_text([['''The warrior staggers, and falls to one knee,''', person.hisher(self), '''weapon slipping from''', person.hisher(self), '''fingers.'''],
-        [person.PC.name, '''approaches''', person.himher(self) + ',', '''kicking''', person.hisher(self), '''weapon out of reach.'''],
-        ['''"Why are the insurgents attacking the guild? Who is leading the attack?" asks''', person.PC.name + "."],
-        ['''The warrior spits at''', person.PC.name + "'s", '''face. Well, tries to. It's less spit, and more drool. Losing all your health will do that to you.'''],
-        ['''"Right then."''', person.PC.name, '''goes down on one knee, grabs the warrior's shoulders, and hauls''', person.himher(self), '''over''', person.hisher(), 
+        [universal.state.player.name, '''approaches''', person.himher(self) + ',', '''kicking''', person.hisher(self), '''weapon out of reach.'''],
+        ['''"Why are the insurgents attacking the guild? Who is leading the attack?" asks''', universal.state.player.name + "."],
+        ['''The warrior spits at''', universal.state.player.name + "'s", '''face. Well, tries to. It's less spit, and more drool. Losing all your health will do that to you.'''],
+        ['''"Right then."''', universal.state.player.name, '''goes down on one knee, grabs the warrior's shoulders, and hauls''', person.himher(self), '''over''', person.hisher(), 
             '''thigh.'''],
         ['''The warrior laughs. "You don't really think a spanking is going to make me reveal anything, do you?"'''],
-        ['''"Well, worst case is you get a much needed punishment," says''', person.PC.name + ".", person.HeShe(), '''hooks''', person.hisher(), '''fingers in''', 
+        ['''"Well, worst case is you get a much needed punishment," says''', universal.state.player.name + ".", person.HeShe(), '''hooks''', person.hisher(), '''fingers in''', 
             '''the warrior's trousers, and slides them down to''', person.hisher(self), '''ankles, baring a''', bottomAdj, '''bottom. The warrior bears''', 
             person.hisher(self), '''undressing stoically.''', name(), '''flexes''', person.hisher(), '''fingers, and gets ready to break said stoicism.'''],
         [name(), '''begins smacking the young''', person.manwoman(self) + "'s", '''bottom, setting a fast and furious pace.''', person.HisHer(self), '''bottom quickly''',
@@ -128,7 +128,7 @@ class VengadorWarrior(Enemy):
             '''hand far more than it has any right to!'''],
         [person.HeShe(self), '''laughs. "Please. Ana's reminder taps hurt more than this."'''],
         ['''For a second,''', name(), '''hesitates, and studies the red, angry looking bottom.''']])
-        if person.PC.willpower() > self.willpower():
+        if universal.state.player.willpower() > self.willpower():
             warriorText = format_text([warriorText, [name(), '''steels''', person.himselfherself() + ".", person.HeShe(), '''slips off''', person.hisher(), '''pack, and pulls''',
                 '''out''', person.hisher(), '''wooden spoon.'''],
             ['''"Right then."''', name(), '''taps the spoon against the''', person.manwoman(self) + "'s", '''bottom. "Let's see if I can change that attitude."'''],
@@ -152,7 +152,7 @@ class VengadorWarrior(Enemy):
             ['''"Not like she had a lot of time," snaps the warrior. "Besides there were a lot of us."'''],
             [name(), '''frowns, and pushes the warrior off''', person.hisher(), '''thigh.'''],
             ['''It would appear that''', name() + "'s", '''arrived in Avaricum just in time for things to get interesting. Joy.''']])
-            person.PC.add_keyword('learned_Vengadores_are_escalating')
+            universal.state.player.add_keyword('learned_Vengadores_are_escalating')
         else:
             warriorText = format_text([warriorText, [name(), '''rubs''', person.hisher(), '''hand, and considers the warrior's blazing bottom, and''',
             person.hisher(), '''stoicism. Then,''', name(), '''decides that''', person.heshe(), '''doesn't have anymore time to waste, and shoves the warrior off''',
@@ -263,10 +263,10 @@ class VengadorSpellslinger(Enemy):
         ['''"You're either lying, or the most gifted spellslinger since Ada herself," says''', name() + ".", name(), '''lands another hard slap to''', person.hisher(self), 
             '''bum. "Now. Who. Taught. You?"'''],
         ['''"Nobody-oww!" The Vengador wiggles and squeals as''', name(), '''starts to spank''', person.hisher(self), '''soft bottom.''', name(), '''doesn't stop until''', 
-            person.hisher(person.PC), '''hand is good and sore.'''],
+            person.hisher(universal.state.player), '''hand is good and sore.'''],
         ['''"Now, tell me," says''', name() + "."],
         ['''"No!" says the insurgent.''']])
-        if person.PC.willpower() > self.willpower():
+        if universal.state.player.willpower() > self.willpower():
             if self.gender == person.FEMALE:
                 bumAdj = "large, round, light brown"
             else:
@@ -274,7 +274,7 @@ class VengadorSpellslinger(Enemy):
             insurgentText = format_text([insurgentText, ['''"Fine."''', name(), '''grabs the back of''', person.hisher(self), self.lower_clothing().name + ",", 
                 '''and lifts''','''it up past''', self.name + "'s", '''waist, revealing a bare,''', bumAdj, '''bottom.'''],
                 ['''The Vengador squeals in indignity and kicks weakly at''', name() + ".", '''"No, stop, not on the bare!"'''],
-                [name(), '''pins the''', self.lower_clothing().name, '''to the Vengador's back with''', person.hisher(person.PC), '''left hand. "Tell me the name of the person who''',
+                [name(), '''pins the''', self.lower_clothing().name, '''to the Vengador's back with''', person.hisher(universal.state.player), '''left hand. "Tell me the name of the person who''',
                     '''trained you."'''],
                 ['''The insurgent doesn't say anything.'''],
                 ['''"Fine."''', name(), '''strikes the insurgent's ample, soft, right butt cheek.''', person.HisHer(self), '''cheek bounces beneath the slap. Then''', name(),
@@ -290,9 +290,9 @@ class VengadorSpellslinger(Enemy):
                 [name(), '''steps away from the wimpering Taironan, and''', person.heshe(self), '''promptly collapses into a crouch, rubbing''', person.hisher(self), 
                 '''throbbing bottom.''', name(), '''looks around, and plots''', person.hisher(self), '''next move.''']])
         else:
-            insurgentText = format_text([insurgentText, [name(), '''curses under''', person.hisher(person.PC), '''breath, and gives''', hisher(self), '''hand a shake.''', 
+            insurgentText = format_text([insurgentText, [name(), '''curses under''', person.hisher(universal.state.player), '''breath, and gives''', hisher(self), '''hand a shake.''', 
                 self.name(), '''considers giving the stubborn Taironan a bare bottom spanking. But the sounds of battle return to''', name() + "'s", '''years, a harsh''',
-                '''reminder that time is of the essence.''', name(), '''steps away from''', person.hisher(person.PC), '''beaten opponent, and plans''', person.hisher(self), 
+                '''reminder that time is of the essence.''', name(), '''steps away from''', person.hisher(universal.state.player), '''beaten opponent, and plans''', person.hisher(self), 
                 '''next move.''']])
         return insurgentText
 

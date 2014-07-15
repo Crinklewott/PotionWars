@@ -122,7 +122,7 @@ class CombatAction(universal.RPGObject):
         return
 
     def _save():
-        return self.begin_text()
+        raise NotImplementedError()
 
     def grappling_string(self):
         target = 'Grappler only' if self.targetType == ENEMY else 'Caster only'
@@ -417,7 +417,7 @@ class SpankAction(CombatAction):
                     numSmacks = defender.numSmacks
                     duration = max(MIN_DURATION, DURATION_MULTIPLIER * (max(0, rand(attacker.willpower()) - rand(defender.willpower()))))
                     defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration, defender.numSmacks))
-                if person.PC in enemies and attacker == person.PC:
+                if universal.state.player in enemies and attacker == universal.state.player:
                     #The PC is a little bit tricky, because we don't have spanking text for him/her, but he/she could still be charmed, and therefore could be in enemies.
                     #So either way, we need to use the defender's spanking text (so we'll need to give the other party members spanking text). So we need to make sure
                     #that we never invoke the spanking text for PC.
@@ -440,7 +440,7 @@ class SpankAction(CombatAction):
                         numSmacks = 0 - attacker.numSmacks
                         duration = max(MIN_DURATION, DURATION_MULTIPLIER * (max(0, rand(defender.willpower()) - rand(attacker.willpower()))))
                         attacker.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration, attacker.numSmacks))
-                    if person.PC in enemies and defender == person.PC:
+                    if universal.state.player in enemies and defender == universal.state.player:
                         #The PC is a little bit tricky, because we don't have spanking text for him/her, but he/she could still be charmed, and therefore could be in enemies.
                         #So either way, we need to use the defender's spanking text (so we'll need to give the other party members spanking text). So we need to make sure
                         #that we never invoke the spanking text for PC.
@@ -449,7 +449,7 @@ class SpankAction(CombatAction):
                         resultString = defender.reversed_spanking_of(attacker, self.position) if defender in enemies else\
                                 attacker.had_spanking_reversed_by(defender, self.position)
                 else:
-                    if person.PC in enemies and defender == person.PC:
+                    if universal.state.player in enemies and defender == universal.state.player:
                         #The PC is a little bit tricky, because we don't have spanking text for him/her, but he/she could still be charmed, and therefore could be in enemies.
                         #So either way, we need to use the defender's spanking text (so we'll need to give the other party members spanking text). So we need to make sure
                         #that we never invoke the spanking text for PC.

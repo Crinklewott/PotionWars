@@ -92,8 +92,8 @@ def dungeon_mode(sayDescription=True):
         dungeon.coordinates = start_coordinate(dungeon)
         previousRoom = [room for room in townmode.allRooms.keys() if townmode.allRooms[room].characters is not None and 
             person.get_party()[0] in townmode.allRooms[room].characters.values()][0]
-        townmode.allRooms[previousRoom].remove_characters(person.party.members)
-        dungeon.add_characters(person.party.members)
+        townmode.allRooms[previousRoom].remove_characters(universal.state.party.members)
+        dungeon.add_characters(universal.state.party.members)
         dungeon.display_event()
     else:
         dungeon.display()
@@ -330,34 +330,11 @@ class Dungeon(townmode.Room):
         return dungeon_mode()
 
     def _save(self):
-        global dungeon
-        saveText = super(Dungeon, self)._save()
-        saveText = saveText.split('\n')
-        saveText.insert(-2, 'coordinate=' + universal.SAVE_DELIMITER + ''.join(['(', ','.join([str(coord) for coord in self.coordinates]), ')']))
-        saveText.insert(-2, 'direction=' + universal.SAVE_DELIMITER + str(self.direction))
-        saveText.insert(-2, 'dungeon=' + universal.SAVE_DELIMITER + str(dungeon.name))
-        return '\n'.join(saveText)
+        raise NotImplementedError()
 
     @staticmethod
     def _load(saveText):
-        print('calling _load for dungeon')
-        thisDungeon = townmode.Room._load(saveText)
-        for line in saveText:
-            line = line.split(universal.SAVE_DELIMITER)
-            print('loading dungeon')
-            print(line)
-            if line[0] == 'coordinate=':
-                print('loading coordinates')
-                thisDungeon.coordinates = ast.literal_eval(line[1])
-                print('dungeon coordinates:')
-                print(thisDungeon.coordinates)
-            elif line[0] == 'direction=':
-                thisDungeon.direction = int(line[1])
-            elif line[0] == 'dungeon=':
-                global dungeon
-                dungeon = townmode.allRooms[line[1]]
-        set_dungeon_commands()
-        return thisDungeon
+        raise NotImplementedError()
 
     def __getitem__(self, key):
         return self.dungeonMap[key]
@@ -831,7 +808,7 @@ def dungeon_interpreter(keyEvent):
         clear_screen()
         say_title('Party:')
         universal.say('\t'.join(['Name:', 'Health:', 'Mana:\n\t',]), columnNum=3)
-        universal.say(person.party.display_party(), columnNum=3)
+        universal.say(universal.state.party.display_party(), columnNum=3)
         set_command_interpreter(select_character_interpreter)
     elif keyEvent.key == K_d and changingFloors == -1:
         dungeon.move(down=True)
@@ -863,7 +840,7 @@ def select_character_to_cast():
     clear_screen()
     say_title('Select Character to Cast Spell:')
     universal.say('\t'.join(['Name:', 'Health:', 'Mana:\n\t',]), columnNum=3)
-    universal.say(person.party.display_party(), columnNum=3)
+    universal.say(universal.state.party.display_party(), columnNum=3)
     set_command_interpreter(select_character_to_cast_interpreter)
 
 selectedSlinger= None

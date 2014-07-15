@@ -27,8 +27,6 @@ class Item(universal.RPGObject):
             statBonuses=None):
         self.name = name
         self.description = description
-        global allItems
-        allItems[name] = self
         self.price = price
         self.attackPenalty = attackPenalty
         self.attackDefense = attackDefense
@@ -38,9 +36,10 @@ class Item(universal.RPGObject):
             import person
             statBonuses = [0 for i in range(universal.NUM_STATS)]
         self.statBonuses = statBonuses
+        universal.state.add_item(self)
 
     def _save(self):
-        return '\n'.join(['begin_item', self.name, 'end_item'])
+        raise NotImplementedError()
 
     def is_equippable(self):
         return False
@@ -70,7 +69,7 @@ class Item(universal.RPGObject):
 
     @staticmethod
     def _load(dataList):
-        return allItems[''.join(dataList[1:])]
+        raise NotImplementedError()
 
 class Armor(Item):
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, statBonuses=None):

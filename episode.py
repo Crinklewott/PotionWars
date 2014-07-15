@@ -39,7 +39,7 @@ class Episode(universal.RPGObject):
         self.currentSceneIndex = 0
         self.nextEpisode = nextEpisode
         self.titleTheme = titleTheme
-        allEpisodes[num] = self
+        universal.state.add_episode(self)
 
     def start_episode(self, *startingSceneArgs):
         global postTitleCardFunction, postTitleCardFuncArgs
@@ -77,8 +77,8 @@ class Episode(universal.RPGObject):
             self.scenes[self.currentSceneIndex].endScene()
         else:
             self.scenes[self.currentSceneIndex].endScene(*endingSceneArgs)
-        person.PC.currentEpisode = self.nextEpisode
-        person.PC.currentEpisode.start_episode()
+        universal.state.player.currentEpisode = self.nextEpisode
+        universal.state.player.currentEpisode.start_episode()
 
     def next_scene(self, previousSceneArgs=(), startingSceneArgs=()):
         if self.scenes[self.currentSceneIndex].endScene is not None:
@@ -93,29 +93,11 @@ class Episode(universal.RPGObject):
             self.scenes[self.currentSceneIndex].startScene(*startingSceneArgs)
 
     def _save(self):
-        episodeData = ['begin_episode']
-        episodeData.extend(['episode_number=' + universal.SAVE_DELIMITER + str(self.num), 'episode_name=' + universal.SAVE_DELIMITER + self.name, 
-            'current_scene=' + universal.SAVE_DELIMITER + str(self.currentSceneIndex)])
-        episodeData.append('end_episode')
-        return '\n'.join(episodeData)
+        raise NotImplementedError()
 
     @staticmethod
     def _load(loadData):
-        num = 0
-        name = ''
-        currentScene = 0
-        for line in loadData:
-            splitLine = line.split(universal.SAVE_DELIMITER)
-            if splitLine[0] == 'episode_number=':
-                num = int(splitLine[1])
-            elif splitLine[0] == 'episode_name=':
-                name = ' '.join(splitLine[1:])
-            elif splitLine[0] == 'current_scene=':
-                currentSceneIndex = int(splitLine[1])
-        currentEpisode = [e for eNum, e in allEpisodes.iteritems() if e.name == name and eNum == num][0]
-        currentEpisode.currentSceneIndex = currentSceneIndex
-        currentEpisode.scenes[currentSceneIndex].startScene(True)
-        return currentEpisode
+        raise NotImplementedError()
 
 allScenes = None
 class Scene(universal.RPGObject):
@@ -130,17 +112,12 @@ class Scene(universal.RPGObject):
         self.name = name
         self.startScene = startScene
         self.endScene = endScene
-        global allScenes
-        if allScenes is None:
-            allScenes = [self]
-        else:
-            allScenes.append(self)
+        universal.state.add_scene(self)
 
     def _save(self):
-        return '\n'.join(['begin_scene', self.name, 'end_scene'])
+        raise NotImplementedError()
 
     @staticmethod
     def _load(loadData):
-        name = str.strip(loadData[1])
-        return [s for s in allScenes if s.name == name][0]
+        raise NotImplementedError()
 

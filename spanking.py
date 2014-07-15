@@ -32,12 +32,11 @@ class SpankingPosition(object):
         global allSpankingPositions
         allSpankingPositions[name] = self
 
-    def _save():
-        return 'Name=' + universal.SAVE_DELIMITER + str(self.name)
+    def _save(self):
+        return NotImplementedError()
 
     def _load(dataList):
-        positionName = dataList[0]
-        return [pos for pos in allSpankingPositions if pos.name == positionName][0]
+        return NotImplementedError()
 
 
 class Implement(items.Item):

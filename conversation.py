@@ -131,7 +131,6 @@ def converse_with_interpreter(keyEvent):
 
 
 
-allNodes = {}
 
 class Node(universal.RPGObject):
     def __init__(self, index):
@@ -142,15 +141,14 @@ class Node(universal.RPGObject):
         self.comment = None
         self.index = index
         self.music = None
-        global allNodes
-        allNodes[index] = self
+        universal.state.add_node(self)
 
     def _save(self):
-        return str(self.index)
+        raise NotImplementedError()
 
     @staticmethod
     def _load(dataList):
-        return allNodes[int(dataList[0])]
+        raise NotImplementedError()
 
     def add_song(self, song):
         try:

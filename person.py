@@ -65,19 +65,17 @@ XP_INCREASE_PER_LEVEL = 100
 STATUS_OBJ = 0
 DURATION = 1
 #This is used for saving purposes
-allCharacters = {}
 
 def remove_character(person):
-    if person.name in allCharacters:
-        del allCharacters[person.name]
+    if person.name in universal.state.characters:
+        universal.state.characters.remove(person)
 
+PC = universal.state.player
 def get_PC():
-    return PC
+    return universal.state.player
 
 def set_PC(playerCharacter):
-    global PC
-    PC = playerCharacter
-    #go(offStage, [PC], False)
+    universal.state.player = playerCharacter
 
 class InvalidEquipmentError(Exception):
     pass
@@ -118,14 +116,6 @@ def slot_Name(slot):
         return 'underwear'
 
 
-
-def load_person(personType, dataList):
-    if personType == 'person':
-        return Person._load(dataList)
-    elif personType == 'player_character':
-        return PlayerCharacter._load(dataList)
-    elif personType == 'generic_enemy':
-        return GenericEnemy._load(dataList)
 
 """
 Stats:
@@ -204,7 +194,29 @@ def sixth_order(unleasher, allies, enemies):
         return ' '.join([unleasher.printedName + "'s", 'Order has been blocked.\n\n'])
 
 
+def order_function(name):
+    """
+    Inverse of order_name
+    """
+    if name == '0':
+        return zeroth_order
+    elif name == '1':
+        return first_order
+    elif name == '2':
+        return second_order
+    elif name == '3':
+        return third_order
+    elif name == '4':
+        return fourth_order
+    elif name == '5':
+        return fifth_order
+    elif name == '6':
+        return sixth_order
+
 def order_name(order):
+    """
+    Inverse of order_function
+    """
     if order == zeroth_order:
         return str(0)
     elif order == first_order:
@@ -283,9 +295,18 @@ class Person(universal.RPGObject):
         self.statPoints = 0
         self.availableStats = None
         self.origStats = None
-        global allCharacters
-        allCharacters[self.get_id()] = self
-        self.set_copy()
+        universal.state.add_character(self)
+
+    def __getstate__(self):
+        originalOrder = self.order
+        self.order = order_name(self.order)
+        result = self.__dict__.copy()
+        self.order = originalOrder
+        return result
+
+    def __setstate__(self, dictIn):
+        self.__dict__ = dictIn
+        self.order = order_function(self.order)
 
     def get_core_stats(self):
         return self.statList[:-2]
@@ -965,189 +986,12 @@ class Person(universal.RPGObject):
             defenseBonus += self.statusList[statusEffects.Shielded.name][STATUS_OBJ].inflict_status(self)
         return self.shirt().attackDefense + self.lower_clothing().attackDefense + self.underwear().attackDefense + defenseBonus
     
-    def _save(self, personType='person'):
-        """
-            Provides the state of this person as a string, where each piece of information is on a 
-            separate line. Used for saving. Note that if a character has some
-            extra information that needs to be saved, it is VERY IMPORTANT that this function gets 
-            overriden. Otherwise that information will not be saved.
-            TODO: Need to save (and load) status effects.
-        """
-        characterInformation = [personType, universal.SAVE_DELIMITER.join(['person_name=', self.name]), 
-                universal.SAVE_DELIMITER.join(['gender=', str(self.gender)]),
-                universal.SAVE_DELIMITER.join(['level=', str(self.level)]),
-                universal.SAVE_DELIMITER.join(['tier=', str(self.tier)]),
-                universal.SAVE_DELIMITER.join(['experience=', str(self.experience)]),
-                universal.SAVE_DELIMITER.join(['spellPoints=', str(self.spellPoints)]), 
-                universal.SAVE_DELIMITER.join(['specialization=', str(self.specialization)]),
-                universal.SAVE_DELIMITER.join(['combatType=', str(self.combatType)]),
-                universal.SAVE_DELIMITER.join(['emerits=', str(self.emerits)]), 
-                universal.SAVE_DELIMITER.join(['demerits=', str(self.demerits)]),
-                universal.SAVE_DELIMITER.join(['rawName=', self.rawName])]
-        characterInformation.append('stats:')
-        characterInformation.extend([str(stat) for stat in self.statList])
-        characterInformation.append('end_stats')
-        if self.litany is not None:
-            characterInformation.append(universal.SAVE_DELIMITER.join(['litany=', self.litany._save()]))
-        if self.inventory is not None:
-            characterInformation.append('inventory:')
-            characterInformation.extend(['\n'.join(['begin_item', item.name, 'end_item']) for 
-                item in self.inventory])
-            characterInformation.append('end_inventory')
-        if self.equipmentList is not None:
-            characterInformation.append('equipment:')
-            characterInformation.extend([e._save() for e in self.equipmentList if e is not None])
-            characterInformation.append('end_equipment')
-        if self.ignoredSpells is not None:
-            characterInformation.append('ignored_spells:')
-            characterInformation.extend([str(type(s)) for s in self.ignoredSpells])
-            characterInformation.append('end_ignored_spells')
-            """
-        if self.spankingPositions is not None:
-            characterInformation.append('spanking_positions:')
-            characterInformation.extend([s._save() for s in self.spankingPositions])
-            characterInformation.append('end_spanking_positions')
-            """
-        for tierNum in range(len(self.spellList)):
-            tier = self.spellList[tierNum]
-            if tier is not None:
-                characterInformation.append('tier' + universal.SAVE_DELIMITER + str(tierNum))
-                characterInformation.extend([s._save() for s in tier if s is not None])
-                characterInformation.append('end_tier' + universal.SAVE_DELIMITER + str(tierNum))
-        characterInformation.append('statusList:')
-        for statusName in self.statusList:
-            characterInformation.append(universal.SAVE_DELIMITER.join(['status=', statusName, str(self.statusList[statusName][DURATION])]))
-        characterInformation.append('end_person')
-        return '\n'.join(characterInformation)  
 
+    def _save(self):
+        raise NotImplementedError()
     @staticmethod
     def _load(data, personType='person'):
-        """
-        """
-        lineNum = 0
-        name = ''   
-        gender = 0
-        description = ''
-        level = 0
-        tier = 0
-        spellPoints = 0
-        specialization = None
-        combatType = None
-        litany = None
-        inventory = []
-        equipment = []
-        #spankingPositions = []
-        stats = []
-        statusList = {}
-        ignoredSpells = []
-        experience = 0
-        emerits = 0
-        demerits = 0
-        spellList = [None for i in range(NUM_TIERS)]
-        statusList = {}
-        rawName = ''
-        while lineNum < len(data):
-            line = str.strip(data[lineNum]).split(universal.SAVE_DELIMITER)
-            if line[0] == 'person_name=':
-                name = ' '.join(line[1:])
-            elif line[0] == 'status=':
-                print(line)
-                statusList[line[1]] = [statusEffects.build_status(line[1], int(line[2])), int(line[2])]
-            elif line[0] == 'gender=':
-                gender = int(line[1])
-            elif line[0] == 'experience=':
-                experience = int(line[1])
-            elif line[0] == 'emerits=':
-                emerits = int(line[1])
-            elif line[0] == 'rawName=':
-                rawName = ' '.join(line[1:])
-            elif line[0] == 'demerits=':
-                demerits = int(line[1])
-            elif line[0] == 'person_description=':
-                description = ' '.join(line[1:])
-            elif line[0] == 'level=':
-                level = int(line[1])
-            elif line[0] == 'tier=':
-                tier = int(line[1])
-            elif line[0] == 'spellPoints=':
-                spellPoints = int(line[1])
-            elif line[0] == 'specialization=':
-                if line[1] != 'None':
-                    specialization = int(line[1])
-            elif line[0] == 'combatType=':
-                if line[1] != 'None':
-                    combatType = int(line[1])
-            elif line[0] == 'stats:':
-                lineNum += 1
-                while data[lineNum] != 'end_stats':
-                    try:
-                        stats.append(int(str.strip(data[lineNum])))
-                    except ValueError:
-                        stats.append(int(float(str.strip(data[lineNum])))) 
-                    lineNum += 1
-            elif line[0] == 'litany=':
-                litany = conversation.Node._load([line[1]])     
-            elif line [0] == 'inventory:':
-                lineNum += 1
-                while data[lineNum] != 'end_inventory': 
-                    inventoryData, lineNum = Person._get_load_data(data, lineNum, 'end_item')
-                    inventory.append(items.Item._load(inventoryData))
-                    lineNum += 1
-            elif line[0] == 'equipment:': 
-                lineNum += 1
-                while data[lineNum] != 'end_equipment': 
-                    line = data[lineNum].split()
-                    equipmentData, lineNum = Person._get_load_data(data, lineNum, 'end_item')
-                    equipment.append(items.Item._load(equipmentData))
-                    lineNum += 1
-            elif line[0] == 'ignored_spells:':
-                lineNum += 1
-                while data[lineNum] != 'end_ignored_spells':    
-                    ignoredSpells.append(Spell._load(data[lineNum]))
-                    lineNum += 1
-            #elif line[0] == 'spanking_positions:':
-                #lineNum += 1
-                #while data[lineNum] != 'end_spanking_positions':
-                #   spankingPositions.append(SpankingPosition._load(data[lineNum]))
-                #   lineNum += 1
-            elif line[0] == 'tier':
-                tierNum = int(line[1])
-                spells = []
-                lineNum += 1
-                while data[lineNum] != 'end_tier' + universal.SAVE_DELIMITER + str(tierNum):
-                    if spells is None:
-                        spells = [Spell._load(data[lineNum])]
-                    else:
-                        spells.append(Spell._load(data[lineNum]))
-                    lineNum += 1
-                spellList[tierNum] = spells
-            lineNum += 1
-        #person = eval(personType)(name, description, gender)
-        person = allCharacters.get(rawName + "." + personType)
-        person.rawName = rawName
-        person.gender = gender
-        person.set_level(level)
-        person.statList = stats
-        person.tier = tier
-        person.experience = experience
-        person.spellPoints = spellPoints
-        person.specialization = specialization
-        person.combatType = combatType
-        person.litany = litany
-        if person.name == 'Elise':
-            print('Elise litany:')
-            print(person.litany)
-        person.inventory = inventory
-        person.equipmentList = equipment
-        #person.spankingPositions = spankingPositions
-        person.ignoredSpells = ignoredSpells
-        person.spellList = spellList
-        person.emerits = emerits
-        person.demerits = demerits
-        for status in statusList:
-            person.statusList = statusList
-        person.set_copy()
-        return person
+        raise NotImplementedError()
 
     def character_sheet_spells(self):
         return '\n'.join(['Name: ' + self.name, 'Order: ' + order_name(self.order),  self.display_stats(), 'Spells: ', self.display_spells()])
@@ -1320,79 +1164,11 @@ class PlayerCharacter(Person):
         person.reversed_spanking_of(self)
 
     def _save(self):
-        #Since we are adding additional information, we need to remove the self.end_text() that is appended by _save above. 
-        saveInformation = super(PlayerCharacter, self)._save('player_character').split('\n')[:-1]
-        #saveInformation.append(self.currentEpisode._save())
-        saveInformation.append('num_spankings=' + universal.SAVE_DELIMITER + str(self.numSpankings))
-        saveInformation.append('num_spankings_given=' + universal.SAVE_DELIMITER + str(self.numSpankingsGiven))
-        saveInformation.append('coins=' + universal.SAVE_DELIMITER + str(self.coins))
-        saveInformation.append('nickname=' + universal.SAVE_DELIMITER + self.nickname)
-        if self.keywords is not None:
-            saveInformation.append('keywords:')
-            saveInformation.extend(self.keywords)
-            saveInformation.append('end_keywords')
-        saveInformation.append('end_player_character')
-        return '\n'.join(saveInformation)
+        raise NotImplementedError()
 
     @staticmethod
     def _load(dataList):
-        """
-        Currently, this class method assumes there is only one PC. If we ever want to have more than one PC, we will need to extend this function, and the save function
-        to handle multiple PC's. For example, I'm thinking give each PC an index, and then we can index into a global array of PC's when loading.
-        """
-        name = ''
-        gender = None
-        description = ''
-        numSpankings = 0
-        numSpankingsGiven = 0
-        nickname = ''
-        rawName = ''
-        for line in dataList:
-            line = line.split(universal.SAVE_DELIMITER)
-            if line[0] == 'person_name=':
-                name = ' '.join(line[1:])
-            elif line[0] == 'nickname=':
-                nickname = ' '.join(line[1:])
-            elif line[0] == 'rawName=':
-                rawName = ' '.join(line[1:])
-            elif line[0] == 'gender=':
-                gender = int(str.strip(line[1]))
-            elif line[0] == 'person_description=':
-                description = [' '.join(line[1:])]
-            elif line[0] == 'num_spankings=':
-                numSpankings = int(line[1])
-            elif line[0] == 'coins=':
-                coins = int(line[1])
-            elif line[0] == 'num_spankings_given':
-                numSpankingsGiven = int(line[1])
-        allCharacters[rawName + ".playerCharacter"] = allCharacters.pop(PC.get_id())
-        PC.name = name
-        PC.rawName = rawName
-        PC.printedName = name
-        PC.nickname = nickname
-        PC.gender = gender
-        PC.description = description
-        person = Person._load(dataList, 'playerCharacter')
-        person.currentEpisode = PC.currentEpisode
-        person.numSpankings = numSpankings
-        person.numSpankingsGiven = numSpankingsGiven
-        keywordsFound = False
-        keywordList = []
-        for line in dataList:
-            if line == 'keywords:':
-                keywordsFound = True
-            elif keywordsFound and line != 'end_keywords':
-                keywordList.append(line)
-            elif line == 'end_keywords':
-                break
-        person.keywords = keywordList
-        person.coins = coins
-        set_PC(person)
-        assert(PC is person)
-        PC.set_fake_name()
-        assert(PC.gender is not None)
-        PC.set_copy()
-        return PC
+        raise NotImplementedError()
 
 def display_tiers_interpreter(keyEvent):
     if keyEvent.key == K_BACKSPACE:
@@ -1567,13 +1343,11 @@ def arrow(n, allyIndex):
 def target(n, strn, targetIndices):
     return ' '.join(['X', strn]) if n-1 in targetIndices else strn
 
-party = None
 def set_party(partyIn):
-    global party
-    party = partyIn
+    universal.state.party = partyIn
 
 def get_party():
-    return party
+    return universal.state.party
 
 
 #--------------------------------------Spells----------------------------------------------------------------------
@@ -1672,19 +1446,11 @@ class Spell(combatAction.CombatAction):
         self.castableOutsideCombat = False
 
     def _save(self):
-        return self.name
+        raise NotImplementedError()
 
     @staticmethod
     def _load(spellName):
-        for tier in allSpells:
-            if tier is not None:
-                for spellTriple in tier:
-                    if spellTriple[0].name == spellName:
-                        return spellTriple[0]
-                    elif spellTriple[1].name == spellName:
-                        return spellTriple[1]
-                    elif spellTriple[2].name == spellName:
-                        return spellTriple[2]
+        raise NotImplementedError()
 
 
     def __eq__(self, other):
@@ -2491,4 +2257,3 @@ def LadLass(person=None):
         person = PC
     return choose_string(person, 'Lad', 'Lass')
 
-#PC.set_all_stats(2, 2, 2, 2, 2, 10, 10)

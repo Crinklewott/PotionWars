@@ -1,3 +1,15 @@
+""" Copyright 2014 Andrew Russell 
+
+This file is part of PotionWars.  PotionWars is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+PotionWars is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
+"""
 import sys
 import re
 import person
@@ -11,7 +23,7 @@ import music
 import os
 import episode
 
-""" Note: This file will have to be modified if we ever decide to have multiple person.PC's. Not quite sure what the best way of handling the case of multiple person.PC's is. We'll have
+""" Note: This file will have to be modified if we ever decide to have multiple universal.state.player's. Not quite sure what the best way of handling the case of multiple universal.state.player's is. We'll have
     to see.
 """
 
@@ -162,7 +174,6 @@ def display_crawl():
     pygame.display.flip()
 
 def opening_crawl():
-    music.play_music(OPENING_CRAWL, fadeoutTime=0, wait=True)
     #universal.say_replace([
     #"You've been stabbed in the stomach. Your health magic triggers."])
     #display_crawl()
@@ -170,6 +181,15 @@ def opening_crawl():
     #universal.say_replace("But there's no damage to repair.")
     #display_crawl()
     #delay_short()
+    universal.say_replace(['''Pandemonium Cycle: The Potion Wars is intended for adults only. Spanking and other erotic content depicted are fantasies and intended for''',
+    '''adults only. Nothing in this game should be interpreted as''', 
+    '''advocating any form of non-consensual spanking or the spanking of minors.''',
+    '''\n-Andrew Russell''',
+    '''\n\nTo skip the opening crawl, press Enter at any time.'''])
+    display_crawl()
+    delay()
+    if not skip:
+        music.play_music(OPENING_CRAWL, fadeoutTime=0, wait=True)
     universal.say_replace(["A sharp pain springs into life deep within your chest, as if some beast",
     "is trying to cut its way free.",
         "Your health magic surges, as your body tries to repair the damage."])
@@ -271,7 +291,7 @@ def title_screen(episode=None):
                 font, worldView, LIGHT_GREY, DARK_GREY, 1)
     titleImages = []
     if os.path.exists(os.path.join(os.getcwd(), 'save')) and '.init.sav' in os.listdir(os.path.join(os.getcwd(), 'save')):
-        townmode.clear_rooms()
+        #townmode.clear_rooms()
         print('loading .init.sav')
         townmode.previousMode = None
         townmode.load_game('.init.sav', preserveLoadName=False)
@@ -322,7 +342,6 @@ def title_screen(episode=None):
 def request_difficulty():
     universal.say_title('Character Creation')
     universal.get_screen().blit(universal.get_background(), universal.get_world_view().topleft)
-    universal.say('To skip the opening crawl when the game is first loaded, press "Enter"\n\n') 
     universal.say('Before we get started, we need to pick a difficulty level:\n\n')
     universal.say('HAND: Enemies choose their actions purely at random.\n\n')
     universal.say('STRAP: Enemies choose their actions based on their own statistics, and the skills of their allies. They choose their target at random.\n\n')
@@ -367,12 +386,12 @@ def request_name():
 def request_name_interpreter(keyEvent):
     global partialName
     if keyEvent.key == K_RETURN:
-        person.set_PC(person.PlayerCharacter(partialName, gender))
+        universal.state.player = person.PlayerCharacter(partialName, gender)
         person.get_PC().set_all_stats(2, 2, 2, 2, 2, 12, 10)
         person.set_party(person.Party([person.get_PC()]))
-        person.PC.currentEpisode = firstEpisode
-        person.PC.name = partialName
-        person.PC.set_fake_name()
+        universal.state.player.currentEpisode = firstEpisode
+        universal.state.player.name = partialName
+        universal.state.player.set_fake_name()
         request_nickname()
     elif keyEvent.key == K_ESCAPE:
         partialName = ''
@@ -394,11 +413,11 @@ def request_nickname():
     global partialName
     universal.say('Provide a nickname for your character:\n')
     universal.set_commands(['Esc'])
-    print(person.PC)
-    print(person.PC.gender)
-    if person.PC.is_male():
+    print(universal.state.player)
+    print(universal.state.player.gender)
+    if universal.state.player.is_male():
         partialName = 'Juli'
-    elif person.PC.is_female():
+    elif universal.state.player.is_female():
         partialName = 'Julia'
     universal.say(partialName)
     universal.say('_')
@@ -407,7 +426,7 @@ def request_nickname():
 def request_nickname_interpreter(keyEvent):
     global partialName
     if keyEvent.key == K_RETURN:
-        person.PC.nickname = partialName
+        universal.state.player.nickname = partialName
         final_confirmation()
     elif keyEvent.key == K_ESCAPE:
         partialName = ''
@@ -451,7 +470,7 @@ def simpleTitleCase(string):
 requestDescriptionString = 'The following is your character\'s background. If you wish, you may add additional text. For example, you can give more details about your character\'s physical appearance. Note that this is purely aesthetic, and will not affect any in-game text. Also, you cannot change your character\'s background. To go back, hit Esc. When done, hit enter.\n\n'
 def request_description():
     universal.say(requestDescriptionString)
-    universal.say(person.PC.description)
+    universal.say(universal.state.player.description)
     universal.say('_')
     universal.set_command_interpreter(request_description_interpreter)
 
@@ -459,7 +478,7 @@ partialDescription = ''
 def request_description_interpreter(keyEvent):
     global partialDescription
     if keyEvent.key == K_RETURN:
-        person.PC.description = ' '.join([person.PC.description, partialDescription])
+        universal.state.player.description = ' '.join([universal.state.player.description, partialDescription])
         final_confirmation()
     elif keyEvent.key == K_ESCAPE:
         partialDescription = ''
@@ -488,7 +507,7 @@ def request_description_interpreter(keyEvent):
         universal.say(requestDescriptionString)
         if keyEvent.key == K_SPACE:
             partialDescription += ' '
-        universal.say(' '.join([person.PC.description, partialDescription]))
+        universal.say(' '.join([universal.state.player.description, partialDescription]))
         universal.say('_')
     
 
@@ -528,30 +547,30 @@ Stats:
 statPoints = 3
 
 def final_confirmation():
-    person.PC.learn_spell(person.allSpells[0][0][0])
-    person.PC.learn_spell(person.allSpells[0][1][0])
-    person.PC.learn_spell(person.allSpells[0][2][0])
-    person.PC.learn_spell(person.allSpells[0][3][0])
-    universal.say(person.PC.character_sheet_spells(), columnNum=1)
-    #print(person.PC.character_sheet_spells())
+    universal.state.player.learn_spell(person.allSpells[0][0][0])
+    universal.state.player.learn_spell(person.allSpells[0][1][0])
+    universal.state.player.learn_spell(person.allSpells[0][2][0])
+    universal.state.player.learn_spell(person.allSpells[0][3][0])
+    universal.say(universal.state.player.character_sheet_spells(), columnNum=1)
+    #print(universal.state.player.character_sheet_spells())
     universal.set_commands('Is this acceptable? Y\N')
     universal.set_command_interpreter(final_confirmation_interpreter)
 
 def final_confirmation_interpreter(keyEvent):
-    #person.PC = person.get_person.PC()
+    #universal.state.player = person.get_universal.state.player()
     if keyEvent.key == K_y:
-        person.PC.currentEpisode = firstEpisode
-        person.PC.currentEpisode.currentSceneIndex = 0
+        universal.state.player.currentEpisode = firstEpisode
+        universal.state.player.currentEpisode.currentSceneIndex = 0
         #episode.set_post_title_card(townmode.save_game, ['.init', townmode.town_mode, False])
-        person.PC.currentEpisode.start_episode(False)
+        universal.state.player.currentEpisode.start_episode(False)
         townmode.saveName = ''
     elif keyEvent.key == K_n:
         global spellPoints
         global statPoints
         spellPoints = 3
         statPoints = 3
-        #person.PC.clear_spells()
-        #person.PC.reset_stats()
+        #universal.state.player.clear_spells()
+        #universal.state.player.reset_stats()
         title_screen(firstEpisode)
         universal.set_command_interpreter(title_screen_interpreter)
         universal.set_commands(['(S)tart', '(L)oad', '(Esc)Quit'])
