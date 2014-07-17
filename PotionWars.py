@@ -634,7 +634,6 @@ def elise_default_quip_function():
 elise_default.quip_function = elise_default_quip_function
 elise_greeting_1_1 = Node(69)
 elise = Elise(elise_default, elise_greeting_1_1)
-elise.set_all_stats(grapple=2)
 offStage.add_character(elise)
 
 class Carrie(p.Person):
@@ -896,7 +895,7 @@ class Carlita(p.Person):
     #    return carlita
 
     def set_default_stats(self):
-        self.set_all_stats(strength=0, dexterty=1, alertness=0, willpower=3, talent=1, health=3, mana=10)
+        self.set_all_stats(strength=0, dexterity=1, alertness=0, willpower=3, talent=1, health=3, mana=10)
 
 
 

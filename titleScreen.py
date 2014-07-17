@@ -448,7 +448,7 @@ def request_nickname_interpreter(keyEvent):
 #BODY_TYPES = ['slim', 'average', 'voluptuous', 'heavyset']
 def request_body_type():
     universal.say_title('Select Body Type')
-    universal.say(format_text('\n'.join(universal.numbered_list(person.BODY_TYPES)]), justification=0)
+    universal.say('\n'.join(universal.numbered_list(person.BODY_TYPES)), justification=0)
     set_command_interpreter(request_body_type_interpreter)
     set_commands(['(#) Select a number.'])
 
@@ -549,13 +549,13 @@ def request_hair_length_interpreter(keyEvent):
             request_hair_style()
 
 def get_hair_style():
-    if player.hairLength = 'short':
+    if player.hairLength == 'short':
         hairStyle = person.SHORT_HAIR_STYLE
-    elif player.hairLength = 'shoulder-length':
+    elif player.hairLength == 'shoulder-length':
         hairStyle = person.SHOULDER_HAIR_STYLE
-    elif person.hairLength = 'back-length':
+    elif person.hairLength == 'back-length':
         hairStyle = person.BACK_HAIR_STYLE
-    elif person.hairLength ='butt-length':
+    elif person.hairLength == 'butt-length':
         hairStyle = person.BUTT_HAIR_STYLE
     return hairStyle
 
@@ -690,7 +690,7 @@ def final_confirmation():
     universal.set_command_interpreter(final_confirmation_interpreter)
 
 def final_confirmation_interpreter(keyEvent):
-    #universal.state.player = person.get_universal.state.player()
+    #universal.state.player = person.get_PC()
     if keyEvent.key == K_y:
         universal.state.player.currentEpisode = firstEpisode
         universal.state.player.currentEpisode.currentSceneIndex = 0

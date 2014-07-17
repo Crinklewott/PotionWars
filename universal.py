@@ -18,7 +18,7 @@ SAVE_DELIMITER = '%%%'
 NUM_TIERS = 9
 
 SELECT_NUMBER_COMMAND = ['(#) Select a number.']
-SELECT_NUMBER_BACK_COMMAND = SELECT_NUMBER_BACK_COMMAND + ['<==Back']
+SELECT_NUMBER_BACK_COMMAND = SELECT_NUMBER_COMMAND + ['<==Back']
 
 def resource_path(relative):
     # PyInstaller creates a temp folder and stores path in _MEIPASS

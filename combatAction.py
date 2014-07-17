@@ -470,7 +470,7 @@ class ThrowAction(CombatAction):
     effectClass = ALL
     numTargets = 2
     primaryStat = universal.DEXTERITY
-    secondaryStat = univerwsal.STRENGTH
+    secondaryStat = universal.STRENGTH
     actionType = 'throw'
     def __init__(self, attacker, defenders, secondaryStat=universal.STRENGTH):
         super(ThrowAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)

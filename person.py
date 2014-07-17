@@ -27,16 +27,16 @@ import copy
 checkWillpower = True
 
 
-def flip_resilience()_check():
+def flip_willpower_check():
     global checkWillpower
     checkWillpower = not checkWillpower
 
-def set_resilience()_check(resilience()):
+def set_willpower_check(willpower):
     global checkWillpower
-    checkWillpower = resilience() > 0
+    checkWillpower = willpower > 0
 
 
-def get_resilience()_check():
+def get_willpower_check():
     return 1 if checkWillpower else 0
 
 """
@@ -74,10 +74,11 @@ def remove_character(person):
         universal.state.characters.remove(person)
 
 universal.state.player = universal.state.player
-def get_universal.state.player():
+
+def get_PC():
     return universal.state.player
 
-def set_universal.state.player(playerCharacter):
+def set_PC(playerCharacter):
     universal.state.player = playerCharacter
 
 class InvalidEquipmentError(Exception):
@@ -341,6 +342,17 @@ class Person(universal.RPGObject):
         self.mainStatDisplay = True
         universal.state.add_character(self)
 
+    def _set_weapon(self, weapon):
+        self.equipmentList[WEAPON] = weapon
+
+    def _set_shirt(self, shirt):
+        self.equipmentList[SHIRT] = shirt
+
+    def _set_lower_clothing(self, lowerClothing):
+        self.equipmentList[LOWER_CLOTHING] = lowerClothing
+
+    def _set_underwear(self, underwear):
+        self.equipmentList[UNDERWEAR] = underwear
 
     def bum_adj(self):
         if self.bodyType == 'slim':
@@ -394,7 +406,7 @@ class Person(universal.RPGObject):
     def towered_over_by(self, char):
         return - (HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 2
 
-    def dwarfed_by(self, char)
+    def dwarfed_by(self, char):
         return -(HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 3
 
     #HAIR_LENGTH = ['short', 'shoulder-length', 'back-length', 'butt-length']
@@ -615,24 +627,24 @@ class Person(universal.RPGObject):
         #self.statList[stat] = num
 
     def set_all_stats(self, strength=None, willpower=None, talent=None, dexterity=None, alertness=None, health=None, mana=None):
-        if warfare is not None:
-            self.statList[universal.STRENGTH] = strength
+        if strength is not None:
+            self.primaryStats[universal.STRENGTH] = strength
         if willpower is not None:
-            self.statList[universal.WILLPOWER] = willpower
+            self.primaryStats[universal.WILLPOWER] = willpower
         if talent is not None:
-            self.statList[universal.TALENT] = talent
+            self.primaryStats[universal.TALENT] = talent
         if dexterity is not None:
-            self.statList[universal.DEXTERITY] = dexterity
+            self.primaryStats[universal.DEXTERITY] = dexterity
         if alertness is not None:
-            self.statList[universal.ALERTNESS] = alertness
+            self.primaryStats[universal.ALERTNESS] = alertness
         if health is not None:
-            self.statList[universal.HEALTH] = health
+            self.primaryStats[universal.HEALTH] = health
         if mana is not None:
-            self.statList[universal.MANA] = mana
+            self.primaryStats[universal.MANA] = mana
         if health is not None:
-            self.statList[universal.CURRENT_HEALTH] = health
+            self.primaryStats[universal.CURRENT_HEALTH] = health
         if mana is not None:
-            self.statList[universal.CURRENT_MANA] = mana
+            self.primaryStats[universal.CURRENT_MANA] = mana
 
     #def increase_stat(self, stat, increment):
     #    self.set_stat(stat, self.statList[stat] + increment)
@@ -667,19 +679,20 @@ class Person(universal.RPGObject):
     def equip(self, equipment): 
         try:
             equipment.equip(self)
-        except NakedException:
+        except items.NakedException:
             universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(), '''equips''', equipment.name + ",", '''then''', heshe(),
                 '''will be naked from the waist down.''', HeShe(), '''decides not to equip''', equipment.name + "."]]), justification=0)
             acknowledge(Person.equip_menu, (self,))
 
 
-    def unequip(self, equipment):
-        try:
-            equipment.unequip(self)
-        except NakedException:
-            universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(), '''removes''', equipment.name + ",", '''then''', heshe(),
-                '''will be naked from the waist down.''', HeShe(), '''decides not to remove''', equipment.name + "."]]), justification=0)
-            acknowledge(Person.equip_menu, self)
+    def unequip(self, equipment, couldBeNaked=True):
+        if not equipment in items.emptyEquipment:
+            try:
+                equipment.unequip(self, couldBeNaked)
+            except items.NakedException:
+                universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(), '''removes''', equipment.name + ",", '''then''', heshe(),
+                    '''will be naked from the waist down.''', HeShe(), '''decides not to remove''', equipment.name + "."]]), justification=0)
+                acknowledge(Person.equip_menu, self)
 
 
     def display_equipment(self, slot):
@@ -719,7 +732,7 @@ class Person(universal.RPGObject):
         """
         for stat in range(len(self.primaryStats)):
             if stat != universal.HEALTH and stat != universal.MANA and stat != universal.CURRENT_MANA and stat != universal.CURRENT_HEALTH:
-                self.statList[stat] += num
+                self.primaryStats[stat] += num
 
 
     def decrease_all_stats(self, penalty):
@@ -837,7 +850,7 @@ class Person(universal.RPGObject):
     def stealth(self):
         value = 2 * self.alertness()
         for equipment in self.equipmentList:
-            value += sum([enchantment.bonus for enchantment in equipment.enchantment if enchantment.stat == universal.STEALTH)
+            value += sum([enchantment.bonus for enchantment in equipment.enchantment if enchantment.stat == universal.STEALTH])
         return value
 
     def health(self):
@@ -1782,7 +1795,7 @@ class Status(Spell):
         self.magicMultiplier = None
         self.minProbability = None
         self.maxProbability = None
-        self.resilience()Multiplier = None
+        self.willpowerMultiplier = None
         self.successStatement = []
         self.failureStatement = []
         self.spellType = STATUS #Deprecated. Do not use.
@@ -1810,7 +1823,7 @@ class Status(Spell):
                 else:
                     defender = availableOpponents[random.randrange(0, len(availableOpponents))]
                     currentDefenders.append(defender)
-            successProbability = self.resilience()Multiplier * (attacker.resilience() - attacker.magic_penalty() - defender.resilience())
+            successProbability = self.resilienceMultiplier * (attacker.resilience() - attacker.magic_penalty() - defender.resilience())
             print('casing weaken')
             print("caster's resilience():")
             print(attacker.resilience())
@@ -1839,7 +1852,7 @@ class Status(Spell):
                 #print('casting' + str(self))
                 #print('successProbability:' + str(successProbability))
                 #print('success: ' + str(success))
-                #print('resilience()Multiplier: ' + str(self.resilience()Multiplier))
+                #print('resilienceMultiplier: ' + str(self.resilienceMultiplier))
                 #print('attacker resilience(): ' + str(attacker.resilience()))
                 #print('attacker magic penalty: ' + str(attacker.magic_penalty()))
                 #print('defender resilience(): ' + str(defender.resilience()))
@@ -1906,7 +1919,7 @@ class CharmMagic(Status):
                 else:
                     defender = availableOpponents[random.randrange(0, len(availableOpponents))]
                     currentDefenders.append(defender)
-            successProbability = self.resilience()Multiplier * (attacker.resilience() - attacker.magic_penalty() - defender.resilience() - defender.magic_defense(self.rawMagic))
+            successProbability = self.resilienceMultiplier * (attacker.resilience() - attacker.magic_penalty() - defender.resilience() - defender.magic_defense(self.rawMagic))
             duration = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
             if defender.ignores_spell(self):
                 resultString.append(self.immune_statement(defender))
@@ -2078,7 +2091,7 @@ class SpectralSpanking(Spectral):
         self.numTargets = 1
         self.magicMultiplier = 2
         self.smackMultiplier = 5
-        self.resilience()Multiplier = 2
+        self.resilienceMultiplier = 2
         self.targetType = combatAction.ENEMY
         self.effectClass = combatAction.ALL
         self.statusInflicted = statusEffects.HUMILIATED
@@ -2114,7 +2127,7 @@ class SpectralSpanking(Spectral):
         attacker = self.attacker
         damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
         numSmacks = self.smackMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-        duration = self.resilience()Multiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier(self.rawMagic) + severity)
+        duration = self.resilienceMultiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier(self.rawMagic) + severity)
         resultStatement = []
         effects = []
         effectString = self.effect_statement(defender)

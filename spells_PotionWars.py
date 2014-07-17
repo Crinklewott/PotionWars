@@ -142,7 +142,7 @@ class Weaken(p.Status):
         self.statusInflicted = statusEffects.WEAKENED
         self.effectClass = combatAction.WARRIORS_GRAPPLERS
         self.cost = Weaken.cost
-        self.resilience()Multiplier = 30
+        self.resilienceMultiplier = 30
         self.expertise = BASIC
         self.minDuration = 4
         self.magicMultiplier = 4
@@ -185,7 +185,7 @@ class MassWeaken(p.Status):
         self.name = 'Mass Weaken'
         self.description = 'Wraps up to 3 enemies in a field that interferes with the implicit magic responsible for lending strength to their muscles, making them physically weaker and slower.'
         self.effectFormula = 'EFFECT: -3 penalty to warfare and grappling\nSUCCESS CHANCE (%): 30 | 30 * (resilience() - enemy resilience()) | 98 \nDURATION: 4 | 4 *(magic - enemy magic)'
-        self.resilience()Multiplier = 30
+        self.resilienceMultiplier = 30
         self.numTargets = 3
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.rawMagic = True
@@ -245,7 +245,7 @@ class WeakCharm(p.CharmMagic):
         self.expertise = EXPERT
         self.grappleStatus = combatAction.ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
         self.minProbability = 20
-        self.resilience()Multiplier = 10
+        self.resilienceMultiplier = 10
         self.magicMultiplier = 4
         self.minDuration = 4
 
@@ -776,7 +776,7 @@ class DistortMagic(p.Status):
         self.statusInflicted = statusEffects.MAGIC_DISTORTED
         self.effectClass = combatAction.SPELL_SLINGERS
         self.cost = DistortMagic.cost
-        self.resilience()Multiplier = 30
+        self.resilienceMultiplier = 30
         self.magicMultiplier = 4
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.expertise = BASIC
@@ -829,7 +829,7 @@ class MassDistortMagic(p.Status):
         self.effectClass = combatAction.SPELL_SLINGERS
         self.cost = MassDistortMagic.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
-        self.resilience()Multiplier = 30
+        self.resilienceMultiplier = 30
         self.expertise = ADVANCED
         self.maxProbability = 95
         self.minProbability = 50
@@ -879,7 +879,7 @@ class Charm(p.CharmMagic):
         self.expertise = EXPERT
         self.grappleStatus = combatAction.ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
         self.minProbability = 20
-        self.resilience()Multiplier = 20
+        self.resilienceMultiplier = 20
 
     def effect_statement(self, defender):
         attacker = self.attacker
@@ -1066,7 +1066,7 @@ class SpectralStrapping(p.SpectralSpanking):
         self.numTargets = 1
         self.magicMultiplier = 3
         self.smackMultiplier = 5
-        self.resilience()Multiplier = 2
+        self.resilienceMultiplier = 2
         self.targetType = combatAction.ENEMY
         self.effectClass = combatAction.ALL
         self.statusInflicted = statusEffects.HUMILIATED
@@ -1097,7 +1097,7 @@ class SpectralStrapping(p.SpectralSpanking):
         attacker = self.attacker
         damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
         numSmacks = self.smackMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-        duration = self.resilience()Multiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier() + spanking.LEATHER_STRAP_SEVERITY)
+        duration = self.resilienceMultiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier() + spanking.LEATHER_STRAP_SEVERITY)
         resultStatement = []
         resultStatement.extend(self.effect_statement(defender))
         if defender.ignores_spell(self):
@@ -1161,7 +1161,7 @@ class SpectralCaning(p.SpectralSpanking):
         self.smackMultiplier = 5
         self.tier = SpectralCaning.tier
         self.expertise = EXPERT
-        self.resilience()Multiplier = 2
+        self.resilienceMultiplier = 2
         self.targetType = combatAction.ENEMY
         self.effectClass = combatAction.ALL
         self.statusInflicted = statusEffects.HUMILIATED
@@ -1189,7 +1189,7 @@ class SpectralCaning(p.SpectralSpanking):
         attacker = self.attacker
         damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
         numSmacks = self.smackMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-        duration = self.resilience()Multiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier() + spanking.LEATHER_STRAP_SEVERITY)
+        duration = self.resilienceMultiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier() + spanking.LEATHER_STRAP_SEVERITY)
         resultStatement = []
         resultStatement.extend(self.effect_statement(defender))
         if defender.ignores_spell(self):
