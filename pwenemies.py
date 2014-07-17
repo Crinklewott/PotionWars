@@ -102,11 +102,11 @@ class VengadorWarrior(Enemy):
         self.equip(copy.copy(itemspotionwars.warspear))
         self.description = universal.format_line(['''A tall, broad-shouldered''', person.manwoman(self) + ".", person.HeShe(self), '''is wielding a''', self.weapon().name, 
         '''and is wearing''', self.shirt().name, '''and''', self.lower_clothing().name + "."])
-        self.set_all_stats(warfare=3, grapple=0, willpower=0, magic=0, health=10, mana=0, stealth=1)
+        self.set_all_stats(strength=3, dexterity=0, willpower=0, talent=0, health=10, mana=0, alertness=1)
         self.spankingPositions = [positions.headBetweenLegs, positions.frontalOverLap]
 
     def default_stats(self):
-        self.set_all_stats(warfare=2, grapple=0, stealth=1, willpower=1, magic=0, health=18, mana=0)
+        self.set_all_stats(strength=3, dexterity=0, willpower=0, talent=0, health=10, mana=0, alertness=1)
 
     def post_combat_spanking(self):
         bottomAdj = "large, smooth, round" if self.is_female() else "large, rather hairy"
@@ -128,7 +128,7 @@ class VengadorWarrior(Enemy):
             '''hand far more than it has any right to!'''],
         [person.HeShe(self), '''laughs. "Please. Ana's reminder taps hurt more than this."'''],
         ['''For a second,''', name(), '''hesitates, and studies the red, angry looking bottom.''']])
-        if universal.state.player.willpower() > self.willpower():
+        if universal.state.player.resilience() > self.resilience():
             warriorText = format_text([warriorText, [name(), '''steels''', person.himselfherself() + ".", person.HeShe(), '''slips off''', person.hisher(), '''pack, and pulls''',
                 '''out''', person.hisher(), '''wooden spoon.'''],
             ['''"Right then."''', name(), '''taps the spoon against the''', person.manwoman(self) + "'s", '''bottom. "Let's see if I can change that attitude."'''],
@@ -235,7 +235,7 @@ class VengadorSpellslinger(Enemy):
     def __init__(self, gender, level=0):
         super(VengadorSpellslinger, self).__init__('Vengador', gender, None, specialization=universal.COMBAT_MAGIC)
         self.level = level
-        self.set_all_stats(warfare=0, grapple=1, willpower=1, magic=3, health=7, mana=10, stealth=0)
+        self.set_all_stats(strength=0, dexterity=1, willpower=1, talent=3, health=7, mana=10, alertness=0)
         if gender == person.FEMALE:
             self.equip(copy.copy(itemspotionwars.wornDress))
         else:
@@ -249,7 +249,7 @@ class VengadorSpellslinger(Enemy):
         self.spankingPositions = [positions.overOneKnee, positions.waistBetweenLegs]
 
     def default_stats(self):
-        self.set_all_stats(warfare=0, grapple=1, stealth=0, willpower=1, magic=2, health=7, mana=10)
+        self.set_all_stats(strength=0, dexterity=1, willpower=1, talent=3, health=7, mana=10, alertness=0)
 
     def post_combat_spanking(self):
         insurgentText = format_text([['''The Vengador leans against a nearby wall, breathing heavily.''', person.HeShe(self), '''tries to stumble away from''', name() + ",",
@@ -266,7 +266,7 @@ class VengadorSpellslinger(Enemy):
             person.hisher(universal.state.player), '''hand is good and sore.'''],
         ['''"Now, tell me," says''', name() + "."],
         ['''"No!" says the insurgent.''']])
-        if universal.state.player.willpower() > self.willpower():
+        if universal.state.player.resilience() > self.resilience():
             if self.gender == person.FEMALE:
                 bumAdj = "large, round, light brown"
             else:
@@ -408,7 +408,7 @@ class VengadorScout(Enemy):
         self.equip(copy.copy(itemspotionwars.dagger))
         self.description = format_line(['''A short, thin Taironan''', person.manwoman(self), '''dresssed in a''', self.shirt().name + "," ''' and''', 
             self.lower_clothing().name + ".", person.HeShe(self), '''carries a''', self.weapon().name + "."])
-        self.set_all_stats(warfare=1, grapple=3, willpower=2, magic=1, health=7, mana=7, stealth=2)
+        self.set_all_stats(strength=1, dexterity=3, willpower=2, talent=1, health=7, mana=7, alertness=2)
         self.spankingPositions = [positions.diaper, positions.underarm]
         self.learn_spell(spells_PotionWars.heal)
         self.learn_spell(spells_PotionWars.weaken)

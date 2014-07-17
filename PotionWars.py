@@ -422,7 +422,7 @@ carol_leave.quip_function = carol_leave_quip_function
 
 carol.inventory = [itemspotionwars.thong, itemspotionwars.lacyUnderwear, itemspotionwars.boyShorts, itemspotionwars.underShorts, itemspotionwars.shorts, 
     itemspotionwars.shortShorts, itemspotionwars.plainSkirt, itemspotionwars.miniSkirt, itemspotionwars.blackDress, itemspotionwars.sunDress, itemspotionwars.vNeckTunic, 
-    itemspotionwars.qualityVNeckTunic, itemspotionwars.qualityTunic]
+    itemspotionwars.pencilSkirt, itemspotionwars.blouse]
 
 
 restfulRoad = Room("Restful Road", "Place holder")
@@ -685,7 +685,7 @@ offStage.add_character(ildri)
 
 class Carlita(p.Person):
     def __init__(self, defaultLitany, litany, description="A short, painfully thin young woman with a nicked dagger and battered breastplate.", 
-            printedName=None, coins=20, specialization=universal.WILLPOWER):
+            printedName=None, coins=20, specialization=universal.RESILIENCE):
             super(Carlita, self).__init__("Carlita", p.FEMALE, defaultLitany, litany,
                         description, printedName, coins, specialization, p.sixth_order)
             self.spankingPositions = [positions.overTheKnee, positions.underarm, positions.reverseRiding]
@@ -896,7 +896,7 @@ class Carlita(p.Person):
     #    return carlita
 
     def set_default_stats(self):
-        self.set_all_stats(warfare=0, grapple=1, stealth=0, willpower=3, magic=1, health=3, mana=10)
+        self.set_all_stats(strength=0, dexterty=1, alertness=0, willpower=3, talent=1, health=3, mana=10)
 
 
 
@@ -1143,9 +1143,9 @@ class Necia(p.Person):
 
     def set_default_stats(self):
         if universal.DEBUG:
-            self.set_all_stats(warfare=4, grapple=4, magic=3, stealth=4, willpower=2, health=2, mana=20)
+            self.set_all_stats(strength=4, dexterity=4, talent=3, alertness=4, willpower=2, health=2, mana=20)
         else:
-            self.set_all_stats(warfare=3, grapple=4, magic=3, stealth=4, willpower=2, health=25, mana=20)
+            self.set_all_stats(strength=3, dexterity=4, talent=3, alertness=4, willpower=2, health=25, mana=20)
 
 necia = Necia(None, None, description=universal.format_line(['''An athletic, hard-bodied, dagger-wielding woman of average height. There is a tremendous amount of''',
 '''tension in her stance.''']), printedName="Warslinger's Companion")
@@ -5142,7 +5142,7 @@ failedToHelpPaloma.quip_function = failedToHelpPaloma_qf
 helpPalomaClever.comment = '''"You know, we're getting spanked over at the entrance. We need all the help we could get out there."'''           
 def helpPalomaClever_qf():
     add_keyword('helped_Paloma')
-    if universal.state.player.willpower() > 2:
+    if universal.state.player.resilience() > 2:
         helpPalomaClever.quip = universal.format_text([['''The amazon frowns, and looks over her shoulder at''', name() + ".", '''"I find that hard to believe. Our express''',
         '''orders were to raid the armory-"'''],
         [name(), '''gives the amazon's heavily muscled bottom a hard slap.'''],
@@ -7003,9 +7003,9 @@ def mai_spanking_interpreter(keyEvent):
                                         '''rapid pattern on Mai's large, jiggling bottom. Mai squeals, kicks, and wiggles in''', names(), '''grip, but doesn't try to break it (which''',
                                         name(), '''is reasonably certain she could do).'''],
                                 [name(), '''pauses, and rubs''', hisher(), '''palm against''', hisher(), '''leg in an attempt to ease the sting. "Madre, you have a hard bottom."''']]), justification=0)
-                        if universal.state.player.is_female():
+                        if universal.state.player.is_soft():
                             universal.say(universal.format_text([['''\n\n"100 squat thrusts everyday," says Mai smugly.''', '''"You should join me. I noticed more than a little jiggle to your''',
-                            '''wiggle when I was spanking you earlier."'''],
+                            '''wiggle''' if universal.state.player.is_female() else '''walk''', '''when I was spanking you earlier."'''],
                                 ['''"Oooh, I'll show you jiggle!"''', name(), '''begins swatting Mai as hard and fast as she can, laying on about fifty smacks in about''',
                                 '''twenty seconds to the cheeky elf's rippling bottom.'''],
                                 ['''"Oww, oww, oww, oww!" cries the elf. "I'm not insulting-oww! Just-oww!" The elf kicks, and bucks and flails beneath''', names(), 
@@ -7244,7 +7244,7 @@ def mai_squat_thrusts_interpreter(keyEvent):
 def mai_convince_to_help_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
-        if num == 1 and universal.state.player.willpower() > 2:
+        if num == 1 and universal.state.player.resilience() > 2:
             add_keyword('Mai_defends_armory')
             universal.say(universal.format_text([['''Mai's eyes widen further, and she leans away from''', name() + ".", '''She nods. "Yes''', sirmaam() + '."', '''She runs past''', name(),
                 '''and vanishes into the shadows.''']]), justification=0)

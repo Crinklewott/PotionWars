@@ -42,12 +42,20 @@ batteredLeatherBreastplate = items.UpperArmor('battered leather breastplate', 'A
 
 tunic = items.UpperArmor('tunic', 'A fairly common, loose fitting tunic. A bit worn, but otherwise in good shape.', price=5) 
 
+"""
 qualityTunic = items.UpperArmor('quality tunic', 'A heavy tunic made from high quality leathers. The tunic also has the smallest hint of magic about it, providing ' +
 'a little bit of protection from enemy blows.', attackDefense=2, price=10)
-
+"""
 vNeckTunic = items.UpperArmor('V-neck tunic', 'A cotton tunic with a deep v-shaped slit down the front, revealing a fair amount of the upper chest.', price=5)
 
+"""
 qualityVNeckTunic = items.UpperArmor('quality V-neck tunic', 'A high quality v-neck tunic. There\'s even a little bit of magic woven into it, providing a bit of protection.', price=10, attackDefense=2)
+"""
+
+blouse = items.UpperArmor('blouse', 'A plain, white, loose-fitting blouse.', price=5)
+"""
+qualityBlouse = items.UpperArmor('blouse', 'A well-made blouse with a hint of protective magic.', price=10, attackDefense=2)
+"""
 
 #--------------------------------------Lower Armor--------------------------------
 
@@ -58,7 +66,7 @@ shorts = items.Shorts('shorts', 'A pair of knee-length cotton shorts.', price=5)
 
 shortShorts = items.Shorts('short shorts', "A pair of skintight shorts that barely cover one's bottom.", price=10)
 
-holeyTrousers = items.Pants('holey Trousers', 'A pair of ragged, borderline unwearable trousers. There is a massive hole in the left knee, the right leg stops in a frayed mess just pass the knee, and the waist is held up with a threadbare rope.')
+holeyTrousers = items.Pants('holey trousers', 'A pair of ragged, borderline unwearable trousers. There is a massive hole in the left knee, the right leg stops in a frayed mess just pass the knee, and the waist is held up with a threadbare rope.')
 
 #---------------------------------------items.Skirts------------------------------------
 combatSkirt = items.Skirt('combat skirt', 'A skirt that extends down to just shy of the knees. There is the faintest hint of magic. Not much, but enough that the skirt likely provides some limited combat protection, despite being made of cloth.', price=5, attackDefense=2)
@@ -67,6 +75,9 @@ plainSkirt = items.Skirt('skirt', 'A simple cotton skirt that extends down to ju
         price=5)
 
 miniSkirt = items.Skirt('miniskirt', 'A tight leather skirt that extends about halfway down the thigh.', 
+        price=5)
+
+pencilSkirt = items.Skirt('pencil skirt', 'A narrow, black skirt that extends just past the knees. The skirt has a slit in back to minimize movement restriction.',
         price=5)
 
 #------------------------------------items.Underwear-------------------------------------
@@ -88,11 +99,9 @@ lacyUnderwear = items.Underwear('lacy underwear', 'A pair of white, flowery, lac
 
 boyShorts = items.Underwear('boyshorts', 'A pair of dark red boyshorts that completely cover the bottom.', price=3)
 
-stealthThongBonus = [0 for i in range(universal.NUM_STATS)]
-stealthThongBonus[universal.STEALTH] = 1
 stealthThong = items.Thong('loincloth of stealth', ' '.join(["A brown loincloth that leaves the majority of the wearer's cheeks exposed. It is lightly imbued with magic. The magic provides the wearer with improved fine motor",
     '''control over their legs, improving the wearer's ability to move stealthily. Provides a +1 bonus to Stealth.''']), price=50, 
-    statBonuses=stealthThongBonus)
+    enchantments=[items.Enchantment(1, universal.STEALTH, 1)]
 
 chainmailBikini = items.Thong('chainmail bikini', "A two piece set of chainmail. The top piece covers a woman's breasts, but nothing else. The bottom is a chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's almost as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of one's body, the armor has a negligible impact on magic.",price=5000, attackDefense=16) 
 

@@ -66,7 +66,7 @@ activeAlly = None
 chosenActions = []
 titleFont = pygame.font.SysFont(universal.FONT_LIST, universal.TITLE_SIZE)
 enemySurface = None
-allySurface = None
+allySurface = None_interpreter
 commandSurface = None
 clearScreen = None
 previousMode = None
@@ -95,17 +95,19 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
     global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface, enemySurface, commandSurface, clearScreen, previousMode, origAllies, origEnemies, \
             actionsInflicted, actionsEndured, chosenActions, optional, defeatedEnemies, defeatedAllies
     global ambush, boss, initialState
+    universal.state.enemies = Party(enemiesIn)
+    universal.state.allies = Party(list(universal.state.party) + (additionalAllies if additionalAllies else []))
     initialState = copy.deepcopy(initialState)
     boss = bossFight
     ambush = ambushIn
-    enemies = None
-    allies = None
+    enemies = universal.state.enemies
+    allies = universal.state.allies
     defeatedAllies = []
     defeatedEnemies = []
     optional = optionalIn
-    print(enemiesIn)
-    print(person.get_party().members)
-    print(additionalAllies if additionalAllies is not None else [])
+    #print(enemiesIn)
+    #print(person.get_party().members)
+    #print(additionalAllies if additionalAllies is not None else [])
     try:
         actionsInflicted = {combatant:[] for combatant in enemiesIn + person.get_party().members + (additionalAllies if additionalAllies is not None else [])}
     except TypeError:
@@ -118,14 +120,6 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
         music.play_music(music.BOSS)
     else:
         music.play_music(music.COMBAT)
-    if type(enemiesIn) != list:
-        enemiesIn = [enemiesIn]
-    origEnemies = copy.deepcopy(enemiesIn)
-    enemies = person.Party(enemiesIn)
-    if additionalAllies is not None:
-        allies = person.Party(list(person.get_party().members + additionalAllies))
-    else:
-        allies = person.Party(list(person.get_party().members))
     for ally in allies:
         ally.chanceIncrease = [0 for i in range(len(ally.chanceIncrease))]
     origAllies = copy.deepcopy(allies.members)
@@ -1344,11 +1338,14 @@ def game_over():
 
 def game_over_interpreter(keyEvent):
     if keyEvent.key == K_y:
-        global allies, enemies, chosenActions, actionResults, actionsEndured, actionsInflicted, defeatedAllies, defeatedEnemies, origEnemies, origAllies
+        global allies, enemies, chosenActions, actionResults, actionsEndured, actionsInflicted, defeatedAllies, defeatedEnemies
+        universal.state = initialState
+        allies = universal.state.allies
+        enemies = universal.state.enemies
+        defeatedEnemies = []
+        defeatedAllies = []
         actionsEndured = {combatant:[] for combatant in enemies + allies}
         actionsInflicted = {combatant:[] for combatant in enemies + allies}
-        print('actionsEndured : ' + str(actionsEndured))
-        print('actionsInflicted : ' + str(actionsInflicted))
         display_combat_status()
         global activeAlly
         activeAlly = allies[0]
@@ -1358,15 +1355,13 @@ def game_over_interpreter(keyEvent):
             music.play_music(music.COMBAT)
     elif keyEvent.key == K_n:
         if optional:
-            print(allies.members)
-            print([ally for ally in allies if ally.current_health() <= 0])
-            print(enemies.members)
-            print([enemy for enemy in enemies if enemy.current_health() <= 0])
             afterCombatEvent([ally for ally in allies if ally.current_health() <= 0] + defeatedAllies, 
                     [enemy for enemy in enemies if enemy.current_health() <= 0] + defeatedEnemies, False)
             allies.members += defeatedAllies    
         else:
             end_fight()
+            universal.state.enemies = None
+            universal.state.allies = None
             titleScreen.title_screen()
         return
 
@@ -1381,6 +1376,8 @@ def victory():
     global allies, defeatedAllies, enemies, defeatedEnemies
     allies.members += defeatedAllies
     enemies.members += defeatedEnemies
+    universal.state.allies = None
+    universal.state.enemies = None
     activeAllies = [ally for ally in allies if ally.current_health() > 0]
     activeEnemies = [enemy for enemy in enemies if enemy.current_health() > 0]
     for enemy in enemies:
@@ -1443,7 +1440,7 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
                 #print('chanceIncrease for ' + ally.name + ' after end of combat bonuses.') 
                 #print(ally.chanceIncrease)
             try:
-                print('stat:' + person.stat_name(i)) 
+                print('stat:' + person.primary_stat_name(i)) 
                 print(ally.chanceIncrease[i])
             except TypeError:
                 print('spell school: ' + str(i))
@@ -1462,7 +1459,7 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
                     #print(ally.get_stat(i))
                     #print(specialization_bonus(ally, i))
                     gainedPoint = True
-                    print('increasing stat: ' + person.stat_name(i))
+                    print('increasing stat: ' + person.primary_stat_name(i))
                     gain = 1
                     if i != HEALTH and i != MANA and i != CURRENT_HEALTH and i != CURRENT_MANA:
                         ally.increase_stat(i, 1)
@@ -1472,7 +1469,7 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
                         print(universal.state.player)
                         ally.improve_stat(i, gain)
                     if i != CURRENT_HEALTH and i != CURRENT_MANA:
-                        universal.say(format_line([ally.name, 'has gained', str(gain), person.stat_name(i) + '.\n']))
+                        universal.say(format_line([ally.name, 'has gained', str(gain), person.primary_stat_name(i) + '.\n']))
                 else:
                     #print('learning a spell.')
                     learn_spell(ally, i)

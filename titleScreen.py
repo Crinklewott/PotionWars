@@ -10,6 +10,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
+from __future__ import division
 import sys
 import re
 import person
@@ -427,7 +428,7 @@ def request_nickname_interpreter(keyEvent):
     global partialName
     if keyEvent.key == K_RETURN:
         universal.state.player.nickname = partialName
-        final_confirmation()
+        request_body_type()
     elif keyEvent.key == K_ESCAPE:
         partialName = ''
         request_name()
@@ -444,7 +445,139 @@ def request_nickname_interpreter(keyEvent):
         universal.say(partialName)
         universal.say('_')
 
+#BODY_TYPES = ['slim', 'average', 'voluptuous', 'heavyset']
+def request_body_type():
+    universal.say_title('Select Body Type')
+    universal.say(format_text('\n'.join(universal.numbered_list(person.BODY_TYPES)]), justification=0)
+    set_command_interpreter(request_body_type_interpreter)
+    set_commands(['(#) Select a number.'])
 
+def request_body_type_interpreter(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            request_nickname()
+        return
+    else:
+        try:
+            universal.state.player.bodyType = person.BODY_TYPES[num]
+        except IndexError:
+            return
+        else:
+            request_height()
+
+#HEIGHT = ['short', 'average', 'tall', 'huge']
+def request_height():
+    NUM_INCHES_IN_FOOT = 12
+    NUM_METERS_IN_INCH = .0254
+    def inches_to_meters(inches):
+        return round(inches * NUM_METERS_IN_INCH, 1)
+    universal.say_title('Select Height')
+    height = universal.numbered_list(person.HEIGHTS)
+    increment = NUM_INCHES_IN_FOOT //  len(person.HEIGHTS) 
+    for i in range(len(height)):
+        bottom = + increment * i
+        top =  5 + increment * (i + 1)
+        height[i] += ''.join([': ', str(bottom // NUM_INCHES_IN_FOOT), '.', str(bottom % NUM_INCHES_IN_FOOT), ' ft', '(', str(inches_to_meters(bottom)), ' m)', '-', 
+            str(top // NUM_INCHES_IN_FOOT), '.', str(top % NUM_INCHES_IN_FOOT), ' ft', '(', str(inches_to_meters(top)), ')'])
+    set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
+    set_command_interpreter(request_height_interpreter)
+
+def request_height_interpreter(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            request_body_type()
+        return
+    else:
+        try:
+            universal.state.player.height = person.HEIGHTS[num]
+        except IndexError:
+            return
+        else:
+            request_musculature()
+
+#MUSCULATURE = ['soft', 'fit', 'muscular']
+def request_musculature():
+    universal.say_title('Select Musculature')
+    musculature = universal.numbered_list(person.MUSCULATURE)
+    musculature[0] += ' '.join(['', universal.state.player.name, '''has a soft, jiggly body. Muscles are not well defined.'''])
+    musculature[1] += ' '.join(['', universal.state.player.name, '''has a toned, firm, smooth body, with a hint of muscle definition.'''])
+    musculature[2] += ' '.join(['', universal.state.player.name, '''has a very hard body with large, well-defined muscles.'''])
+    universal.say('\n'.join(musculature), justification=0)
+    set_command_interpreter(request_musculature_interpreter)
+    set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
+
+def request_musculature_interpreter(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            request_height()
+        return
+    else:
+        try:
+            universal.state.player.musculature = person.MUSCULATURE[num]
+        except IndexError:
+            return
+        else:
+            request_hair_length()
+
+
+
+
+#HAIR_LENGTH = ['short', 'shoulder-length', 'back-length', 'butt-length']
+def request_hair_length():
+    universal.say_title('Select Hair Length')
+    universal.say('\n'.join(numbered_list(person.HAIR_LENGTH)))
+    set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
+    set_command_interpreter(request_hair_length_interpreter)
+
+def request_hair_length_interpreter(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        return
+    else:
+        try:
+            universal.state.player.hairLength = person.HAIR_LENGTH[num]
+        except IndexError:
+            return
+        else:
+            request_hair_style()
+
+def get_hair_style():
+    if player.hairLength = 'short':
+        hairStyle = person.SHORT_HAIR_STYLE
+    elif player.hairLength = 'shoulder-length':
+        hairStyle = person.SHOULDER_HAIR_STYLE
+    elif person.hairLength = 'back-length':
+        hairStyle = person.BACK_HAIR_STYLE
+    elif person.hairLength ='butt-length':
+        hairStyle = person.BUTT_HAIR_STYLE
+    return hairStyle
+
+def request_hair_style():
+    universal.say_title('Select Hair Style')
+    player = universal.state.player
+    universal.say('\n'.join(numbered_list(get_hair_style())))
+    set_commands(SELECT_NUMBER_BACK_COMMAND)
+    set_command_interpreter(request_hair_style_interpreter)
+
+def request_hair_style_interpreter(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        return
+    else:
+        try:
+            universal.state.player.hairStyle = get_hair_style()[num]
+        except IndexError:
+            return
+        else:
+            final_confirmation()
 def simpleTitleCase(string):
     """
     A quick and dirty function for doing halfway decent title case.
@@ -536,7 +669,7 @@ partialDescription = ''
 Stats:
     warfare
     magic
-    willpower
+    resilience()
     grapple
     stealth
     health
@@ -551,7 +684,7 @@ def final_confirmation():
     universal.state.player.learn_spell(person.allSpells[0][1][0])
     universal.state.player.learn_spell(person.allSpells[0][2][0])
     universal.state.player.learn_spell(person.allSpells[0][3][0])
-    universal.say(universal.state.player.character_sheet_spells(), columnNum=1)
+    universal.say(universal.state.player.appearance(), columnNum=1)
     #print(universal.state.player.character_sheet_spells())
     universal.set_commands('Is this acceptable? Y\N')
     universal.set_command_interpreter(final_confirmation_interpreter)

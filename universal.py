@@ -17,6 +17,9 @@ SAVE_DELIMITER = '%%%'
 
 NUM_TIERS = 9
 
+SELECT_NUMBER_COMMAND = ['(#) Select a number.']
+SELECT_NUMBER_BACK_COMMAND = SELECT_NUMBER_BACK_COMMAND + ['<==Back']
+
 def resource_path(relative):
     # PyInstaller creates a temp folder and stores path in _MEIPASS
     try:
@@ -41,7 +44,7 @@ programmerEmail = authorEmail
 NUM_STATS = 9
 WARFARE = 0
 MAGIC = 1
-WILLPOWER = 2
+RESILIENCE = 2
 GRAPPLE = 3
 STEALTH = 4
 HEALTH = 5
@@ -53,6 +56,44 @@ STATUS_MAGIC = 10
 BUFF_MAGIC = 11
 SPECTRAL_MAGIC = 12
 BALANCED = 13
+
+def stat_name(stat):
+    if stat == WARFARE:
+        return 'warfare'    
+    elif stat == MAGIC:
+        return 'magic'
+    elif stat == RESILIENCE:
+        return 'resilience'
+    elif stat == GRAPPLE:
+        return 'grapple'
+    elif stat == STEALTH:
+        return 'stealth'
+    elif stat == HEALTH:
+        return 'health'
+    elif stat == MANA:
+        return 'mana'
+    elif stat == CURRENT_HEALTH:
+        return 'current health'
+    elif stat == CURRENT_MANA:
+        return 'current mana'
+
+STRENGTH = 0
+DEXTERITY = 1
+WILLPOWER = 2
+TALENT = 3
+ALERTNESS = 4
+
+def primary_stat_name(stat):
+    if stat == STRENGTH:
+        return 'Strength'    
+    elif stat == DEXTERITY:
+        return 'Dexterity'
+    elif stat == WILLPOWER:
+        return 'Willpower'
+    elif stat == TALENT:
+        return 'Talent'
+    elif stat == ALERTNESS:
+        return 'Alertness'
 
 #This contains a list of list of triples. get_spells()[i] is the list of triples for tier i. Each triple consists of three separate spells: a basic, advanced, and expert
 #spell at tier i for each type. Basic and Advanced spells are available to everyone, but they must learn basic before advanced. Expert spells are only available to a 
@@ -766,6 +807,8 @@ class State(object):
         self.player = None
         self.bedroom = None
         self.party = None
+        self.enemies = None
+        self.allies = None
         self.location = None
         self.characters = sets.Set()
         self.rooms = sets.Set()

@@ -135,14 +135,14 @@ class Weaken(p.Status):
         super(Weaken, self).__init__(attacker, defenders)
         self.name = 'Weaken'
         self.description = 'Wraps your enemy in a field that interferes with the implicit magic responsible for lending strength to their muscles, making them physically weaker and slower.'
-        self.effectFormula = 'EFFECT: -3 penalty to warfare and grappling\nSUCCESS CHANCE (%): 50 | 30 * (willpower - enemy willpower) | 98\n DURATION: 4 | 4 *(magic - enemy magic)'
+        self.effectFormula = 'EFFECT: -3 penalty to warfare and grappling\nSUCCESS CHANCE (%): 50 | 30 * (resilience() - enemy resilience()) | 98\n DURATION: 4 | 4 *(magic - enemy magic)'
         self.numTargets = 1
         self.rawMagic = True
         self.tier = Weaken.tier
         self.statusInflicted = statusEffects.WEAKENED
         self.effectClass = combatAction.WARRIORS_GRAPPLERS
         self.cost = Weaken.cost
-        self.willpowerMultiplier = 30
+        self.resilience()Multiplier = 30
         self.expertise = BASIC
         self.minDuration = 4
         self.magicMultiplier = 4
@@ -184,8 +184,8 @@ class MassWeaken(p.Status):
         super(MassWeaken, self).__init__(attacker, defenders)
         self.name = 'Mass Weaken'
         self.description = 'Wraps up to 3 enemies in a field that interferes with the implicit magic responsible for lending strength to their muscles, making them physically weaker and slower.'
-        self.effectFormula = 'EFFECT: -3 penalty to warfare and grappling\nSUCCESS CHANCE (%): 30 | 30 * (willpower - enemy willpower) | 98 \nDURATION: 4 | 4 *(magic - enemy magic)'
-        self.willpowerMultiplier = 30
+        self.effectFormula = 'EFFECT: -3 penalty to warfare and grappling\nSUCCESS CHANCE (%): 30 | 30 * (resilience() - enemy resilience()) | 98 \nDURATION: 4 | 4 *(magic - enemy magic)'
+        self.resilience()Multiplier = 30
         self.numTargets = 3
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.rawMagic = True
@@ -235,7 +235,7 @@ class WeakCharm(p.CharmMagic):
         super(WeakCharm, self).__init__(attacker, defenders)
         self.name = 'Weak Charm'
         self.description = 'The weakest of the mind control spells. Even this simple charm spell is so complex, that only a specialist can cast it without permanently damaging the recipient\'s brain. Furthermore, it can only be cast when the caster is grappling an opponent.'
-        self.effectFormula = 'EFFECT: Target is forced to fight for their opponents\nSUCCESS CHANCE (%): 20 | 10 * (willpower - enemy willpower)\n DURATION: 4 | 4 *(magic - enemy magic)'
+        self.effectFormula = 'EFFECT: Target is forced to fight for their opponents\nSUCCESS CHANCE (%): 20 | 10 * (resilience() - enemy resilience())\n DURATION: 4 | 4 *(magic - enemy magic)'
         self.numTargets = 1
         self.rawMagic = False
         self.tier = WeakCharm.tier
@@ -245,7 +245,7 @@ class WeakCharm(p.CharmMagic):
         self.expertise = EXPERT
         self.grappleStatus = combatAction.ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
         self.minProbability = 20
-        self.willpowerMultiplier = 10
+        self.resilience()Multiplier = 10
         self.magicMultiplier = 4
         self.minDuration = 4
 
@@ -769,14 +769,14 @@ class DistortMagic(p.Status):
         super(DistortMagic, self).__init__(attacker, defenders)
         self.name = 'Distort Magic'
         self.description = 'Wraps your enemy in a field that interferes with the target\'s ability to cast and protect against spells.'
-        self.effectFormula = 'EFFECT: -3 penalty to magic\nSUCCESS CHANCE (%): 50 | 30 * (willpower - enemy willpower) | 95\n DURATION: 4 | 4 *(magic - enemy magic)'
+        self.effectFormula = 'EFFECT: -3 penalty to magic\nSUCCESS CHANCE (%): 50 | 30 * (resilience() - enemy resilience()) | 95\n DURATION: 4 | 4 *(magic - enemy magic)'
         self.numTargets = 1
         self.rawMagic = True
         self.tier = DistortMagic.tier
         self.statusInflicted = statusEffects.MAGIC_DISTORTED
         self.effectClass = combatAction.SPELL_SLINGERS
         self.cost = DistortMagic.cost
-        self.willpowerMultiplier = 30
+        self.resilience()Multiplier = 30
         self.magicMultiplier = 4
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.expertise = BASIC
@@ -820,7 +820,7 @@ class MassDistortMagic(p.Status):
         super(MassDistortMagic, self).__init__(attacker, defenders)
         self.name = 'Mass Distort Magic'
         self.description = 'Wraps up to 3 enemies in a field that interfers with their ability to cast and protect against spells.'
-        self.effectFormula = 'EFFECT: -3 penalty to magic\nSUCCESS CHANCE (%): 50 | 30 * (willpower - enemy willpower) | 95\n DURATION: 4 | 4 *(magic - enemy magic)'
+        self.effectFormula = 'EFFECT: -3 penalty to magic\nSUCCESS CHANCE (%): 50 | 30 * (resilience() - enemy resilience()) | 95\n DURATION: 4 | 4 *(magic - enemy magic)'
         self.numTargets = 3
         self.rawMagic = True
         self.magicMultiplier = 4
@@ -829,7 +829,7 @@ class MassDistortMagic(p.Status):
         self.effectClass = combatAction.SPELL_SLINGERS
         self.cost = MassDistortMagic.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
-        self.willpowerMultiplier = 30
+        self.resilience()Multiplier = 30
         self.expertise = ADVANCED
         self.maxProbability = 95
         self.minProbability = 50
@@ -869,7 +869,7 @@ class Charm(p.CharmMagic):
         super(Charm, self).__init__(attacker, defenders)
         self.name = 'Charm'
         self.description = 'A more powerful version of Weak Charm. Charm has a higher chance of success and lasts longer.'
-        self.effectFormula = 'EFFECT: Target is forced to fight for their enemies.\nSUCCESS CHANCE (%): 30 | 20 * (willpower - enemy willpower) | 95 \n DURATION: 4 | 4 *(magic - enemy magic)'
+        self.effectFormula = 'EFFECT: Target is forced to fight for their enemies.\nSUCCESS CHANCE (%): 30 | 20 * (resilience() - enemy resilience()) | 95 \n DURATION: 4 | 4 *(magic - enemy magic)'
         self.numTargets = 1
         self.rawMagic = False
         self.tier = Charm.tier
@@ -879,7 +879,7 @@ class Charm(p.CharmMagic):
         self.expertise = EXPERT
         self.grappleStatus = combatAction.ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
         self.minProbability = 20
-        self.willpowerMultiplier = 20
+        self.resilience()Multiplier = 20
 
     def effect_statement(self, defender):
         attacker = self.attacker
@@ -1062,11 +1062,11 @@ class SpectralStrapping(p.SpectralSpanking):
         self.cost = SpectralStrapping.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.description = 'Conjures a \'hand\' and \'strap\' made of raw magic. The hand grabs the target and lifts them into the air. The strap lands a number of swats on the target\'s backside. Once the spanking is done, the hand lifts the target up, and throws them into the ground.'
-        self.effectFormula = 'NUMBER OF SMACKS: 5 | 5 * (magic - enemy magic), \nHUMILIATION DURATION: 2 | 2* (willpower - enemy willpower)' + str(spanking.LEATHER_STRAP_SEVERITY) + '\nDAMAGE: 3 | 3 * (magic - enemy magic)\nSuccess (%): 40 | 32 * (magic - enemy magic) | 96'
+        self.effectFormula = 'NUMBER OF SMACKS: 5 | 5 * (magic - enemy magic), \nHUMILIATION DURATION: 2 | 2* (resilience() - enemy resilience())' + str(spanking.LEATHER_STRAP_SEVERITY) + '\nDAMAGE: 3 | 3 * (magic - enemy magic)\nSuccess (%): 40 | 32 * (magic - enemy magic) | 96'
         self.numTargets = 1
         self.magicMultiplier = 3
         self.smackMultiplier = 5
-        self.willpowerMultiplier = 2
+        self.resilience()Multiplier = 2
         self.targetType = combatAction.ENEMY
         self.effectClass = combatAction.ALL
         self.statusInflicted = statusEffects.HUMILIATED
@@ -1097,7 +1097,7 @@ class SpectralStrapping(p.SpectralSpanking):
         attacker = self.attacker
         damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
         numSmacks = self.smackMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-        duration = self.willpowerMultiplier * (attacker.willpower() - defender.willpower() - defender.iron_modifier() + spanking.LEATHER_STRAP_SEVERITY)
+        duration = self.resilience()Multiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier() + spanking.LEATHER_STRAP_SEVERITY)
         resultStatement = []
         resultStatement.extend(self.effect_statement(defender))
         if defender.ignores_spell(self):
@@ -1155,13 +1155,13 @@ class SpectralCaning(p.SpectralSpanking):
         self.cost = SpectralCaning.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.description = 'Conjures a \'hand\' and \'cane\' made of raw magic. The hand grabs the target and lifts them into the air. The cane lands a number of swats on the target\'s backside. Once the caning is done, the hand lifts the target up, and throws them into the ground.'
-        self.effectFormula = 'NUMBER OF SMACKS: max(5, 5 * (magic - enemy magic)), \nHUMILIATION DURATION: max(2, 2* (willpower - enemy willpower))' + str(spanking.CANE_SEVERITY) + '\nDAMAGE: max(4, 4 * (magic - enemy magic))\nSUCCESS (%): 40 | 35 * (magic - enemy magic) | 97'
+        self.effectFormula = 'NUMBER OF SMACKS: max(5, 5 * (magic - enemy magic)), \nHUMILIATION DURATION: max(2, 2* (resilience() - enemy resilience()))' + str(spanking.CANE_SEVERITY) + '\nDAMAGE: max(4, 4 * (magic - enemy magic))\nSUCCESS (%): 40 | 35 * (magic - enemy magic) | 97'
         self.numTargets = 1
         self.magicMultiplier = 4
         self.smackMultiplier = 5
         self.tier = SpectralCaning.tier
         self.expertise = EXPERT
-        self.willpowerMultiplier = 2
+        self.resilience()Multiplier = 2
         self.targetType = combatAction.ENEMY
         self.effectClass = combatAction.ALL
         self.statusInflicted = statusEffects.HUMILIATED
@@ -1189,7 +1189,7 @@ class SpectralCaning(p.SpectralSpanking):
         attacker = self.attacker
         damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
         numSmacks = self.smackMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-        duration = self.willpowerMultiplier * (attacker.willpower() - defender.willpower() - defender.iron_modifier() + spanking.LEATHER_STRAP_SEVERITY)
+        duration = self.resilience()Multiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier() + spanking.LEATHER_STRAP_SEVERITY)
         resultStatement = []
         resultStatement.extend(self.effect_statement(defender))
         if defender.ignores_spell(self):

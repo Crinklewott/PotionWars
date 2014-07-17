@@ -263,7 +263,7 @@ class DefendStatus(StatusEffect):
         super(DefendStatus, self).__init__(DefendStatus.name, duration, isNegative=False)
     def inflict_status(self, p):
         """
-        When a character is defending, they get a +3 bonus to warfare, grapple, willpower, and magic, to help them defend against enemy attacks.
+        When a character is defending, they get a +3 bonus to warfare, grapple, resilience(), and magic, to help them defend against enemy attacks.
         Note: This does not apply when a character is defending another character. This only works when a character is defending themselves.
         """
         print('inflicting defense status.')
@@ -271,7 +271,7 @@ class DefendStatus(StatusEffect):
         print(p.statList)
         p.set_stat(WARFARE, p.warfare() + 3)
         p.set_stat(GRAPPLE, p.grapple() + 3)
-        p.set_stat(WILLPOWER, p.willpower() + 3)
+        p.set_stat(RESILIENCE, p.resilience() + 3)
         p.set_stat(MAGIC, p.magic() + 3)
         print('stats after defense:')
         print(p.statList)
@@ -283,7 +283,7 @@ class DefendStatus(StatusEffect):
         print(p.statList)
         p.set_stat(WARFARE, p.warfare() - 3)
         p.set_stat(GRAPPLE, p.grapple() - 3)
-        p.set_stat(WILLPOWER, p.willpower() - 3)
+        p.set_stat(RESILIENCE, p.resilience() - 3)
         p.set_stat(MAGIC, p.magic() - 3)
         print('stats after reversing defense:')
         print(p.statList)

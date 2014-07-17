@@ -27,16 +27,16 @@ import copy
 checkWillpower = True
 
 
-def flip_willpower_check():
+def flip_resilience()_check():
     global checkWillpower
     checkWillpower = not checkWillpower
 
-def set_willpower_check(willpower):
+def set_resilience()_check(resilience()):
     global checkWillpower
-    checkWillpower = willpower > 0
+    checkWillpower = resilience() > 0
 
 
-def get_willpower_check():
+def get_resilience()_check():
     return 1 if checkWillpower else 0
 
 """
@@ -51,8 +51,11 @@ BALANCED = 6
 
 MAGIC_PER_TIER = 3
 
-allStats = [universal.WARFARE, universal.MAGIC, universal.WILLPOWER, universal.GRAPPLE, universal.STEALTH, universal.HEALTH, universal.MANA, universal.CURRENT_HEALTH, 
+allStats = [universal.WARFARE, universal.MAGIC, universal.RESILIENCE, universal.GRAPPLE, universal.STEALTH, universal.HEALTH, universal.MANA, universal.CURRENT_HEALTH, 
         universal.CURRENT_MANA]
+
+allPrimaryStats = [universal.STRENGTH, universal.DEXTERITY, universal.WILLPOWER, universal.TALENT, universal.ALERTNESS, universal.HEALTH, universal.MANA, 
+        universal.CURRENT_HEALTH, universal.CURRENT_MANA]
 
 MALE = 0
 FEMALE = 1
@@ -70,11 +73,11 @@ def remove_character(person):
     if person.name in universal.state.characters:
         universal.state.characters.remove(person)
 
-PC = universal.state.player
-def get_PC():
+universal.state.player = universal.state.player
+def get_universal.state.player():
     return universal.state.player
 
-def set_PC(playerCharacter):
+def set_universal.state.player(playerCharacter):
     universal.state.player = playerCharacter
 
 class InvalidEquipmentError(Exception):
@@ -85,8 +88,8 @@ def stat_name(stat):
         return 'warfare'    
     elif stat == universal.MAGIC:
         return 'magic'
-    elif stat == universal.WILLPOWER:
-        return 'willpower'
+    elif stat == universal.RESILIENCE:
+        return 'resilience()'
     elif stat == universal.GRAPPLE:
         return 'grapple'
     elif stat == universal.STEALTH:
@@ -121,7 +124,7 @@ def slot_Name(slot):
 Stats:
     warfare
     magic
-    willpower
+    resilience()
     grapple
     stealth
     health
@@ -238,12 +241,41 @@ def display_person(person):
         return ' '
     else:
         return person.printedName
+
+BODY_TYPES = ['slim', 'average', 'voluptuous', 'heavyset']
+
+
+HEIGHTS = ['short', 'average', 'tall', 'huge']
+
+
+MUSCULATURE = ['soft', 'fit', 'muscular']
+
+
+HAIR_LENGTH = ['short', 'shoulder-length', 'back-length', 'butt-length']
+
+SHORT_HAIR_STYLE = ['down']
+SHOULDER_HAIR_STYLE = SHORT_HAIR_STYLE + ['ponytail', 'braid', 'pigtail', 'bun']
+BACK_HAIR_STYLE = SHOULDER_HAIR_STYLE
+BUTT_HAIR_STYLE = BACK_HAIR_STYLE
+
+
+def compute_stat(stat, primaryStats):
+    if stat == WARFARE:
+        return 2 * primaryStats[universal.STRENGTH] + primaryStats[universal.DEXTERITY]
+    elif stat == GRAPPLE:
+        return 2 * primaryStats[universal.DEXTERITY] + primaryStats[universal.STRENGTH]
+    elif stat == RESILIENCE:
+        return 2 * primaryStats[universal.WILLPOWER] + primaryStats[universal.TALENT]
+    elif stat == STEALTH:
+        return 2 * ALERTNESS
+    
+
 class Person(universal.RPGObject): 
     """
         People are complicated.
     """
     def __init__(self, name, gender, defaultLitany, litany, description="", printedName=None, 
-            coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None): 
+            coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle=''): 
         self.name = name
         self.gender = gender
         if type(description) is list:
@@ -265,7 +297,8 @@ class Person(universal.RPGObject):
         self.equipmentList[SHIRT] = items.emptyUpperArmor
         self.equipmentList[LOWER_CLOTHING] = items.emptyLowerArmor
         self.equipmentList[UNDERWEAR] = items.emptyUnderwear
-        self.statList = [1 for i in range(len(allStats))]
+        self.primaryStats = [1 for i in range(len(allPrimaryStats))]
+        #self.statList = [compute_stat(stat, self.primaryStats) for i in range(len(allStats))]
         self.set_default_stats()
         self.level = 1
         self.tier = 0
@@ -281,7 +314,7 @@ class Person(universal.RPGObject):
         self.specialization = specialization
         self.order = order
         #Last four indices are the appropriate spell categories
-        self.chanceIncrease = [0 for i in range(len(allStats) + NUM_SPELL_CATEGORIES)]
+        self.chanceIncrease = [0 for i in range(len(allPrimaryStats) + NUM_SPELL_CATEGORIES)]
         if printedName is None:
             self.printedName = name
         else:
@@ -295,7 +328,88 @@ class Person(universal.RPGObject):
         self.statPoints = 0
         self.availableStats = None
         self.origStats = None
+        self.hairLength = None
+        self.bodyType = None
+        self.height = None
+        self.musculature = 0
+        self.bumStatus = 0
+        self.welts = []
+        self.skinColor = skinColor
+        self.hairColor = hairColor
+        self.eyeColor = eyeColor
+        self.hairStyle = hairStyle
+        self.mainStatDisplay = True
         universal.state.add_character(self)
+
+
+    def bum_adj(self):
+        if self.bodyType == 'slim':
+            adjList = ['small', 'petite', 'slim']
+        elif self.bodyType == 'average':
+            adjList = ['heart-shaped', 'round', 'curved']
+        elif self.bodyType == 'voluptuous':
+            adjList = ['plump', 'ample', 'curvaceous']
+        elif self.bodyType == 'heavyset':
+            adjList = ['fleshy', 'wide', 'expansive']
+        return random.choice(adjList)
+
+    def is_slim(self):
+        return self.bodyType == 'slim'
+
+    def is_average(self):
+        return self.bodyType == 'average'
+
+    def is_heavyset(self):
+        return self.bodyType == 'heavyset'
+
+    def muscle_adj(self):
+        if self.musculature == 'soft':
+            adjList = rand['jiggly', 'wobbly', 'pillowy']
+        elif self.musculature == 'fit':
+            adjList = ['firm', 'toned', 'bouncy']
+        elif self.musculature == 'muscular':
+            adjList = ['hard', 'solid', 'muscular']
+        return random.choice(adjList)
+
+    def is_fit(self):
+        return self.musculature == 'fit'
+    def is_soft(self):
+        return self.musculature == 'soft'
+    def is_muscular(self):
+        return self.musculature == 'muscular'
+    
+    #HEIGHTS = ['short', 'average', 'tall', 'huge']
+    def dwarfs(self, char):
+        return HEIGHTS.index(self.height) - HEIGHTS.index(char.height) >= 3
+
+    def towers_over(self, char):
+        return HEIGHTS.index(self.height) - HEIGHTS.index(char.height) >= 2
+
+    def taller_than(self, char):
+        return HEIGHTS.index(self.height) - HEIGHTS.index(char.height) >= 1
+
+    def shorter_than(self, char):
+        return - (HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 1
+
+    def towered_over_by(self, char):
+        return - (HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 2
+
+    def dwarfed_by(self, char)
+        return -(HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 3
+
+    #HAIR_LENGTH = ['short', 'shoulder-length', 'back-length', 'butt-length']
+    def short_hair(self):
+        return self.hairLength == 'short'
+
+    def shoulder_hair(self):
+        return self.hairLength == 'shoulder-length'
+
+    def back_hair(self):
+        return self.hairLength == 'back-length'
+
+    def butt_hair(self):
+        return self.hairLength == 'butt-length'
+
 
     def __getstate__(self):
         originalOrder = self.order
@@ -309,15 +423,15 @@ class Person(universal.RPGObject):
         self.order = order_function(self.order)
 
     def get_core_stats(self):
-        return self.statList[:-2]
+        return self.primaryStats[:-2]
 
     def get_battle_stats(self):
         """Returns all the stats except for health, mana, current health, current mana
         """
-        return self.statList[:-4]
+        return self.primaryStats[:-4]
 
     def set_default_stats(self):
-        self.set_all_stats(warfare=1, grapple=1, willpower=1, magic=1, stealth=1, health=10, mana=10)
+        self.set_all_stats(strength=1, dexterity=1, willpower=1, talent=1, alertness=1, health=10, mana=10)
 
     def set_state(self, original):
         for attribute in vars(original).keys():
@@ -363,11 +477,11 @@ class Person(universal.RPGObject):
     def is_penalty(self, stat):
         if self.specialization == universal.WARFARE and stat == universal.MAGIC:
             return True
-        elif self.specialization == universal.GRAPPLE and stat == universal.WILLPOWER:
+        elif self.specialization == universal.GRAPPLE and stat == universal.RESILIENCE:
             return True
         elif self.specialization == universal.MAGIC and stat == universal.WARFARE:
             return True
-        elif self.specialization == universal.WILLPOWER and stat == universal.GRAPPLE:
+        elif self.specialization == universal.RESILIENCE and stat == universal.GRAPPLE:
             return True
         elif self.specialization == universal.STEALTH and stat == universal.WARFARE:
             return True
@@ -445,18 +559,17 @@ class Person(universal.RPGObject):
 #-----------------------------------------------------------------End Abstract Methods--------------------------------------------------------------------------
 
     def take_item(self, item):
-        if not item in self.inventory:
+        if not item in self.inventory and not item in items.emptyEquipment:
             self.inventory.append(item)
 
     def drop_item(self, item):
         successfulUnequip = True
         if not item in self.inventory:
-            successfulUnequip = self.unequip(item)
+            self.unequip(item)
         try:
             self.inventory.remove(item)
         except ValueError:
             pass
-        return successfulUnequip
 
     def set_spanking_positions(self, spankingPositions):
         self.spankingPositions = spankingPositions
@@ -498,20 +611,20 @@ class Person(universal.RPGObject):
     def set_gender(self, genderIn):
         self.gender = gender
 
-    def set_stat(self, stat, num):
-        self.statList[stat] = num
+    #def set_stat(self, stat, num):
+        #self.statList[stat] = num
 
-    def set_all_stats(self, warfare=None, willpower=None, magic=None, grapple=None, stealth=None, health=None, mana=None):
+    def set_all_stats(self, strength=None, willpower=None, talent=None, dexterity=None, alertness=None, health=None, mana=None):
         if warfare is not None:
-            self.statList[universal.WARFARE] = warfare
+            self.statList[universal.STRENGTH] = strength
         if willpower is not None:
             self.statList[universal.WILLPOWER] = willpower
-        if magic is not None:
-            self.statList[universal.MAGIC] = magic
-        if grapple is not None:
-            self.statList[universal.GRAPPLE] = grapple
-        if stealth is not None:
-            self.statList[universal.STEALTH] = stealth
+        if talent is not None:
+            self.statList[universal.TALENT] = talent
+        if dexterity is not None:
+            self.statList[universal.DEXTERITY] = dexterity
+        if alertness is not None:
+            self.statList[universal.ALERTNESS] = alertness
         if health is not None:
             self.statList[universal.HEALTH] = health
         if mana is not None:
@@ -521,8 +634,8 @@ class Person(universal.RPGObject):
         if mana is not None:
             self.statList[universal.CURRENT_MANA] = mana
 
-    def increase_stat(self, stat, increment):
-        self.set_stat(stat, self.statList[stat] + increment)
+    #def increase_stat(self, stat, increment):
+    #    self.set_stat(stat, self.statList[stat] + increment)
 
     def improve_stat(self, stat, increment):
         self.increase_stat(stat, increment)
@@ -544,86 +657,35 @@ class Person(universal.RPGObject):
     def increment_stat(self, stat):
         self.increase_stat(stat, 1)
 
-    def increase_all_stats(self, increment):
-        self.set_all_stats(warfare + increment, willpower + increment, magic + increment, grapple + increment, stealth + increment)
+    #def increase_all_stats(self, increment):
+    #    self.set_all_stats(warfare + increment, resilience() + increment, magic + increment, grapple + increment, stealth + increment)
 
-    def decrease_all_stats(self, decrement):
-        self.increase_all_stats(-decrement)
+    #def decrease_all_stats(self, decrement):
+    #    self.increase_all_stats(-decrement)
 
 
     def equip(self, equipment): 
-        oldEquipment = None
-        if isinstance(equipment, items.Weapon):
-            if self.equipmentList[WEAPON] != items.emptyWeapon:
-                oldEquipment = self.equipmentList[WEAPON]
-                self.inventory.append(self.equipmentList[WEAPON])
-            self.equipmentList[WEAPON] = equipment
-        elif isinstance(equipment, items.LowerArmor):
-            if self.equipmentList[LOWER_CLOTHING] != items.emptyLowerArmor:
-                self.inventory.append(self.equipmentList[LOWER_CLOTHING])
-                oldEquipment = self.equipmentList[LOWER_CLOTHING]
-            self.equipmentList[LOWER_CLOTHING] = equipment
-        elif isinstance(equipment, items.UpperArmor):
-            if self.equipmentList[SHIRT] != items.emptyUpperArmor:
-                self.inventory.append(self.equipmentList[SHIRT])
-                oldEquipment = self.equipmentList[SHIRT]
-            self.equipmentList[SHIRT] = equipment
-        elif isinstance(equipment, items.Underwear):
-            if self.equipmentList[UNDERWEAR] != items.emptyUnderwear:
-                self.inventory.append(self.equipmentList[UNDERWEAR])
-                oldEquipment = self.equipmentList[UNDERWEAR]
-            self.equipmentList[UNDERWEAR] = equipment
-        elif isinstance(equipment, items.FullArmor):
-            if self.equipmentList[LOWER_CLOTHING] != items.emptyLowerArmor:
-                self.inventory.append(self.equipmentList[LOWER_CLOTHING])
-                oldEquipment = self.equipmentList[LOWER_CLOTHING]
-            self.equipmentList[LOWER_CLOTHING] = equipment
-            if self.equipmentList[SHIRT] != items.emptyUpperArmor and not isinstance(self.equipmentList[SHIRT], items.FullArmor):
-                self.inventory.append(self.equipmentList[SHIRT])
-                oldEquipment = self.equipmentList[SHIRT]
-            self.equipmentList[SHIRT] = equipment
-        else:
-            raise InvalidEquipmentError(' '.join([equipment.name, 'is not equippable.']))
-        if equipment in self.inventory:
-            self.inventory.remove(equipment)
-        equipment.apply_bonuses(self)
-        if oldEquipment is not None:
-            oldEquipment.remove_bonuses(self)
+        try:
+            equipment.equip(self)
+        except NakedException:
+            universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(), '''equips''', equipment.name + ",", '''then''', heshe(),
+                '''will be naked from the waist down.''', HeShe(), '''decides not to equip''', equipment.name + "."]]), justification=0)
+            acknowledge(Person.equip_menu, (self,))
+
 
     def unequip(self, equipment):
-        empty = None
-        try: 
-            equipment == WEAPON
-        except AttributeError:
-            equipment = self.equipmentList.index(equipment)
-        if equipment == WEAPON and self.equipmentList[WEAPON].name != items.emptyWeapon.name:
-            empty = items.emptyWeapon
-        elif equipment == LOWER_CLOTHING and self.equipmentList[LOWER_CLOTHING].name != items.emptyLowerArmor.name:
-            empty = items.emptyLowerArmor
-            if self.underwear().name == items.emptyUnderwear.name:
-                universal.clear_screen()
-                universal.say(universal.format_line([self.printedName, '''begins to remove''', hisher(), self.lower_clothing().name, '''only to realize that''', heshe(),
-                    '''is not wearing any underwear. In the interests of modesty,''', heshe(), '''decides to keep''', hisher(), self.lower_clothing().name, '''on.''']))
-                acknowledge(self.character_sheet, None)
-                return None
-        elif equipment == UNDERWEAR and self.equipmentList[UNDERWEAR].name != items.emptyUnderwear.name:
-            empty = items.emptyUnderwear
-            if self.lower_clothing().name == items.emptyLowerArmor.name:
-                universal.clear_screen()
-                universal.say(universal.format_line([self.printedName, '''begins to remove''', hisher(), self.underwear().name, '''only to realize that''', heshe(),
-                    '''is not wearing any pants. In the interests of modesty,''', heshe(), '''decides to keep''', hisher(), self.underwear().name, '''on.''']))
-                acknowledge(self.character_sheet, None)
-                return None
-        elif equipment == SHIRT and self.equipmentList[SHIRT].name != items.emptyUpperArmor.name:
-            empty = items.emptyUpperArmor
-        if empty is not None:
-            self.inventory.append(self.equipmentList[equipment])
-            self.equipmentList[equipment] = empty
-        return empty is not None
+        try:
+            equipment.unequip(self)
+        except NakedException:
+            universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(), '''removes''', equipment.name + ",", '''then''', heshe(),
+                '''will be naked from the waist down.''', HeShe(), '''decides not to remove''', equipment.name + "."]]), justification=0)
+            acknowledge(Person.equip_menu, self)
+
 
     def display_equipment(self, slot):
-        universal.say(self.equipmentList[slot].display())
-        set_commands(['<==Back'])
+        self.viewedSlot = slot
+        universal.say(self.equipmentList[self.viewedSlot].display())
+        set_commands(['(Enter) View Character', '(U)nequip'])
         set_command_interpreter(view_item_interpreter)
 
     def is_male(self):
@@ -655,7 +717,7 @@ class Person(universal.RPGObject):
         """
             Note: This method increases all of the character's stats EXCEPT health, mana, current health, and current mana. 
         """
-        for stat in range(len(self.statList)):
+        for stat in range(len(self.primaryStats)):
             if stat != universal.HEALTH and stat != universal.MANA and stat != universal.CURRENT_MANA and stat != universal.CURRENT_HEALTH:
                 self.statList[stat] += num
 
@@ -720,11 +782,11 @@ class Person(universal.RPGObject):
         self.set_state(self.origSelf)
         return self
 
-    def reset_stats(self, episode=None, statList=None):
-        if statList is None:
+    def reset_stats(self, episode=None, primaryStats=None):
+        if primaryStats is None:
             self.default_stats()
         else:
-            self.statList = copy.deepcopy(statList) 
+            self.primaryStats = copy.deepcopy(primaryStats) 
         self.tier = self.magic() // MAGIC_PER_TIER
 
     def default_stats(self):
@@ -734,13 +796,26 @@ class Person(universal.RPGObject):
         self.set_all_stats(1, 1, 1, 1, 1, 15, 10)
 
     def get_stat(self, stat):
-        return int(self.statList[stat])
+        return int(self.primaryStats[stat])
+
     def warfare(self):
-        return int(self.statList[universal.WARFARE])
+        value = 2 * self.strength() + self.dexterity()
+        for equipment in self.equipmentList:
+            value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.WARFARE])
+        return value
+
     def magic(self):
-        return int(self.statList[universal.MAGIC])
-    def willpower(self):
-        return int(self.statList[universal.WILLPOWER])
+        value = 2 * self.talent() + self.resilience()
+        for equipment in self.equipmentList:
+            value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.MAGIC])
+        return value
+
+    def resilience(self):
+        value = 2 * self.willpower() + self.talent()
+        for equipment in self.equipmentList:
+            value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.RESILIENCE])
+        return value
+
     def grapple(self, person=None):
         """
         If person is none, we want the value of the grapple stat. If person is not None, then we want to start grappling that person.
@@ -749,7 +824,10 @@ class Person(universal.RPGObject):
             self.grapplingPartner = person
             person.grapplingPartner = self
         else:
-            return int(self.statList[universal.GRAPPLE])
+            value = 2 * self.dexterity() + self.strength()
+            for equipment in self.equipmentList:
+                value += snum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.GRAPPLE])
+
     def break_grapple(self):
         gp = self.grapplingPartner
         self.grapplingPartner = None
@@ -757,17 +835,47 @@ class Person(universal.RPGObject):
             gp.grapplingPartner = None
 
     def stealth(self):
-        return int(self.statList[universal.STEALTH])
+        value = 2 * self.alertness()
+        for equipment in self.equipmentList:
+            value += sum([enchantment.bonus for enchantment in equipment.enchantment if enchantment.stat == universal.STEALTH)
+        return value
+
     def health(self):
-        return int(self.statList[universal.HEALTH])
+        return int(self.primaryStats[universal.HEALTH])
+
     def mana(self):
-        return int(self.statList[universal.MANA])
+        return int(self.primaryStats[universal.MANA])
+
     def current_health(self):
-        return int(self.statList[universal.CURRENT_HEALTH])
+        return int(self.primaryStats[universal.CURRENT_HEALTH])
+
     def current_mana(self):
-        return int(self.statList[universal.CURRENT_MANA])
+        return int(self.primaryStats[universal.CURRENT_MANA])
+
     def stat(self, statIn):
-        return int(self.statList[statIn])
+        return int(self.primaryStats[statIn])
+
+    def primary_stat(self, stat):
+        return int(self.primaryStats[stat])
+
+    def strength(self):
+        return self.primary_stat(universal.STRENGTH)
+
+    def dexterity(self):
+        return self.primary_stat(universal.DEXTERITY)
+
+    def willpower(self):
+        return self.primary_stat(universal.WILLPOWER)
+
+    def talent(self):
+        return self.primary_stat(universal.TALENT)
+
+    def alertness(self):
+        return self.primary_stat(universal.ALERTNESS)
+
+    def increase_primary_stat(self, stat, increment=1):
+        self.primaryStats[stat] += increment
+        self.recompute_stats()
 
     def equipment(self, slot):
         return self.equipmentList[slot]
@@ -798,13 +906,22 @@ class Person(universal.RPGObject):
 
     def display_main_stats(self):
         #Don't include health or mana initially
-        statList = [': '.join([stat_name(stat), str(statValue)]) for (stat, statValue) in zip([i for i in range(0, len(self.statList)-4)], self.statList)] 
-        statList.append('health: ' + str(self.statList[-2]) + '/' + str(self.statList[-4]))
-        statList.append('mana: '   + str(self.statList[-1]) + '/' + str(self.statList[-3]))
+        if self.mainStatDisplay:
+            statList = [': '.join([universal.primary_stat_name(stat), str(statValue)]) for (stat, statValue) in 
+                    zip([i for i in range(0, len(self.primaryStats))], self.statList)] 
+        else:
+            statList = []
+            statList.append(' '.join(['warfare:', str(self.warfare())]))
+            statList.append(' '.join(['grapple:', str(self.grapple())]))
+            statList.append(' '.join(['resilience:', str(self.resilience())]))
+            statList.append(' '.join(['magic:', str(self.magic())]))
+            statList.append(' '.join(['stealth:', str(self.stealth())]))
+        statList.append('Health: ' + str(self.statList[-2]) + '/' + str(self.statList[-4]))
+        statList.append('Mana: '   + str(self.statList[-1]) + '/' + str(self.statList[-3]))
         return '\n'.join(statList)
-    def display_stats(self):
-        return self.display_main_stats()
 
+    def display_stats(self):
+        return self.display_stats()
     def display_spells(self, tierNum=None):
         if tierNum is None:
             spellList = []
@@ -1011,9 +1128,10 @@ class Person(universal.RPGObject):
             'Magic Defense: ' + str(self.magic_defense(False)),
             #'Exp to Next Level: ' + str(self.level * XP_INCREASE_PER_LEVEL - self.experience),
             self.display_stats(), '\t']))
-        universal.say('\n'.join(['Weapon: ' + self.weapon().name, 'Chest: ' + self.shirt().name, 'Legs: ' + self.lower_clothing().name, 
-            'Underwear: ' + self.underwear().name, self.display_inventory()]), columnNum=2)
-        set_commands(['(S)pells', '(E)quip', '(#)view item', '(W)eapon', '(C)hest', '(L)egs', '(U)nderwear', '<==Back']) 
+        numberedEquipmentList = universal.numbered_list(['Weapon: ' + self.weapon().name, 'Chest: ' + self.shirt().name, 'Legs: ' + self.lower_clothing().name, 
+            'Underwear: ' + self.underwear().name])
+        universal.say('\n'.join(numberedEquipmentList + [self.display_inventory()]), columnNum=2)
+        set_commands(['(A)ppearance','(S)pells', '(E)quip', '(#)view item', '(T)oggle Stats', '<==Back']) 
         set_command_interpreter(character_viewer_interpreter)
 
     def display_inventory(self):
@@ -1021,7 +1139,7 @@ class Person(universal.RPGObject):
             return 'Inventory:'
         else:
             return '\n'.join(['', 'Inventory:', ' '.join(str(n) + '. ' + item.name for 
-                (n, item) in zip([i for i in range(1, len(self.inventory)+1)], self.inventory))])
+                (n, item) in zip([i for i in range(len(self.equipmentList) + 1, len(self.inventory) + len(self.equipmentList) + 1)], self.inventory))])
 
     def display_tiers(self, interpreter=None):
         universal.say('Tiers: ' + ', '.join(str(i) for i in range(self.tier + 1)))
@@ -1042,11 +1160,10 @@ class Person(universal.RPGObject):
             return ', '.join([status + ": " + str(statusDurationPair[DURATION]) for status, statusDurationPair in self.statusList.iteritems()])
 
     def equip_menu(self):
-        set_commands(['(#) Select item to equip:_', 'Unequip (W)eapon', 'Unequip (C)hest', 'Unequip (L)egs', 'Unequip (U)nderwear', '<==Back', '(Esc) Return to menu'])
+        set_commands(['(#) Select item to equip:_', '<==Back', '(Esc) Return to menu'])
         global selectedPerson
         selectedPerson = self
         set_command_interpreter(equip_interpreter)
-
 
     @staticmethod
     def _get_load_data(loadData, lineNum, endLine):
@@ -1091,14 +1208,6 @@ def equip_interpreter(keyEvent):
                 say('''That cannot be equipppe!''')
                 acknowledge(selectedPerson.equip_menu, ())
                 return
-    elif keyEvent.key == K_w:
-        result = selectedPerson.unequip(WEAPON)
-    elif keyEvent.key == K_c:
-        result = selectedPerson.unequip(SHIRT)
-    elif keyEvent.key == K_l:
-        result = selectedPerson.unequip(LOWER_CLOTHING)
-    elif keyEvent.key == K_u:
-        result = selectedPerson.unequip(UNDERWEAR)
     try:
         if result is not None:
             selectedPerson.character_sheet()
@@ -1119,7 +1228,8 @@ class PlayerCharacter(Person):
     the entire game, so long as the two never fight each other).
     """
     def __init__(self, name, gender, description="", currentEpisode=None, order=sixth_order, nickname=""):
-        super(PlayerCharacter, self).__init__(name, gender, None, None, description=description, order=zeroth_order, rawName='$$$PC$$$')
+        super(PlayerCharacter, self).__init__(name, gender, None, None, description=description, order=zeroth_order, rawName='$$$universal.state.player$$$', skinColor='rich caramel',
+                eyeColor='brown', hairColor='dark brown')
         self.keywords = []
         self.currentEpisode = currentEpisode
         self.numSpankings = 0
@@ -1128,6 +1238,45 @@ class PlayerCharacter(Person):
         self.fakeName = ''
         self.set_copy()
         self.nickname = nickname
+        self.viewedSlot = None
+
+    def appearance(self):
+        hairStyleDescription = ''
+        if self.hairStyle == 'down':
+            hairStyleDescription = 'down'
+        else:
+            hairStyleDescription = 'pulled into'
+            if self.hairStyle == 'pigtails':
+                hairStyleDescription += ' cute pigtails.'
+            else:
+                hairStyleDescription = ' '.join(['a', self.hairStyle])
+        appearance = [[self.name + "'s", '''skin is a''', self.skinColor + ".", HeShe(), '''has''', self.eyeColor, '''eyes, and is wearing''', hisher(),
+            self.hairLength + ",", self.hairColor,'''hair''', hairStyleDescription + "."],
+            [HeShe(), '''stands at a fairly''', self.height, '''height.''', HeShe(), '''has a''', self.musculature + ",", self.bodyType, '''body.''']]
+        bumDesc = ' '.join([self.muscle_adj() + ",", self.bum_adj()])
+        if self.marks:
+            appearance.append(self.marks)
+        elif self.bumStatus > 9:
+            appearance.append([self.name + "'s", bumDesc, '''bottom is criss-crossed with countless layers of marks and welts. Every inch of''', hisher(), '''bottom is''',
+            '''throbbing with raw, burning pain.''', HisHer(), '''walk has been reduced to a pained hobble.'''])
+        elif self.bumStatus > 6:
+            appearance.append([self.name + "'s", bumDesc, '''bottom is a dark red. Every inch of''', hisher(), '''bum is covered in marks and welts. Every step makes''',
+                hisher(), '''bottom buzz with pain, and the thought of sitting makes''', himher(), '''wince.'''])
+        elif self.bumStatus > 3:
+            appearance.append([self.name + "'s", bumDesc, '''bottom is a deep red. Several welts mar''', hisher(), '''cheeks.''', HeShe(), '''can't sit without wincing''',
+                '''and there is a slight stiffness to''', hisher(), '''gait.'''])
+        elif self.bumStatus > 0:
+            appearance.append([self.name + "'s", bumDesc, '''bottom is a dark pink, interspersed with patches of dark red.''', HisHer(), '''bottom tingles with the''',
+                    '''lingering sting of''', hisher(), '''recent spankings. Sitting is best done with great care.'''])
+        elif self.bumStatus == 0:
+            appearance.append([self.name + "'s", bumDesc, '''bottom is smooth, the''', self.skinColor, '''cheeks unmarked.''', self.name, '''wonders idly just how long''',
+                    '''that will last.'''])
+        return format_text(appearance)
+
+
+
+                
+
 
     def get_id(self):
         return self.rawName + ".playerCharacter"
@@ -1213,21 +1362,15 @@ def character_viewer_interpreter(keyEvent):
         currentPerson.display_tiers()
     elif keyEvent.key == K_e:
         currentPerson.equip_menu()
-    elif keyEvent.key == K_w:
-        currentPerson.display_equipment(WEAPON)
-    elif keyEvent.key == K_c:
-        currentPerson.display_equipment(SHIRT)
-    elif keyEvent.key == K_l:
-        currentPerson.display_equipment(LOWER_CLOTHING)
-    elif keyEvent.key == K_u:
-        currentPerson.display_equipment(UNDERWEAR)
     elif keyEvent.key in NUMBER_KEYS:
-        if len(currentPerson.inventory) < 10:
-            num = int(pygame.key.name(keyEvent.key))
-            if currentPerson.inventory is not None and 0 < num \
-            and num <= len(currentPerson.inventory):
-                universal.say(currentPerson.inventory[num-1].display())
-                set_commands(['<==Back'])
+        if len(currentPerson.inventory) + len(self.equipmentList) < 10:
+            num = int(pygame.key.name(keyEvent.key)) - 1
+            if 0 < num and num <= len(currentPerson.inventory) + len(currentPerson.equipmentList):
+                allEquipment = currentPerson.equipmentList + currentPerson.inventory
+                universal.say(allEquipment[num-1].display())
+                if num < len(equipmentList):
+                    selectedPerson.viewedSlot = num
+                set_commands(['<==Back'] if len(equipmentList) <= num else ['(U)nequip', '<==Back'])
                 set_command_interpreter(view_item_interpreter)
         else:
             partialNum += pygame.key.name(keyEvent.key)
@@ -1236,9 +1379,17 @@ def character_viewer_interpreter(keyEvent):
         universal.say(currentPerson.inventory[num-1].display())
         set_commands(['<==Back'])
         set_command_interpreter(view_item_interpreter)
+    elif keyEvent.key == K_T:
+        self.mainStatDisplay = not self.mainStatDisplay
+        self.character_sheet()
 
 def view_item_interpreter(keyEvent):
     if keyEvent.key == K_BACKSPACE:
+        selectedPerson.viewedSlot = None
+        currentPerson.character_sheet(currentMode)
+    elif keyEvent.key == K_u and '(U)nequip' in universal.commands:
+        selectedPerson.unequip(selectedPerson.viewedSlot)
+        selectedPerson.viewedSlot = None
         currentPerson.character_sheet(currentMode)
 
 
@@ -1412,7 +1563,7 @@ EXPERT = 2
 #3. The actual action executed (i.e. self).
 NUM_SPELL_CATEGORIES = 4
 class Spell(combatAction.CombatAction):
-    primaryStat = universal.MAGIC
+    primaryStat = universal.TALENT
     targetType = None
     grappleStatus = None
     effectClass = None
@@ -1621,7 +1772,7 @@ class Status(Spell):
     effectClass = None
     statusInflicted = None
     primaryStat = universal.WILLPOWER
-    secondaryStat = universal.MAGIC
+    secondaryStat = universal.TALENT
     actionType = 'status'
     def __init__(self, attacker, defenders, secondaryStat=universal.MAGIC):
         super(Status, self).__init__(attacker, defenders, secondaryStat)
@@ -1631,7 +1782,7 @@ class Status(Spell):
         self.magicMultiplier = None
         self.minProbability = None
         self.maxProbability = None
-        self.willpowerMultiplier = None
+        self.resilience()Multiplier = None
         self.successStatement = []
         self.failureStatement = []
         self.spellType = STATUS #Deprecated. Do not use.
@@ -1659,17 +1810,17 @@ class Status(Spell):
                 else:
                     defender = availableOpponents[random.randrange(0, len(availableOpponents))]
                     currentDefenders.append(defender)
-            successProbability = self.willpowerMultiplier * (attacker.willpower() - attacker.magic_penalty() - defender.willpower())
+            successProbability = self.resilience()Multiplier * (attacker.resilience() - attacker.magic_penalty() - defender.resilience())
             print('casing weaken')
-            print("caster's willpower:")
-            print(attacker.willpower())
-            print("recipient's willpower:")
-            print(defender.willpower())
+            print("caster's resilience():")
+            print(attacker.resilience())
+            print("recipient's resilience():")
+            print(defender.resilience())
             print('success probability:')
             print(successProbability)
-            assert attacker.willpower() is not None, 'attacker has no willpower'
+            assert attacker.resilience() is not None, 'attacker has no resilience()'
             assert attacker.magic_penalty() is not None, 'attacker has no magic penalty'
-            assert defender.willpower() is not None, 'defender has no willpower'
+            assert defender.resilience() is not None, 'defender has no resilience()'
             assert defender.magic_defense(self.rawMagic) is not None, 'defender has no magic defense'
             duration = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
             resultString.append(self.effect_statement(defender))
@@ -1688,10 +1839,10 @@ class Status(Spell):
                 #print('casting' + str(self))
                 #print('successProbability:' + str(successProbability))
                 #print('success: ' + str(success))
-                #print('willpowerMultiplier: ' + str(self.willpowerMultiplier))
-                #print('attacker willpower: ' + str(attacker.willpower()))
+                #print('resilience()Multiplier: ' + str(self.resilience()Multiplier))
+                #print('attacker resilience(): ' + str(attacker.resilience()))
                 #print('attacker magic penalty: ' + str(attacker.magic_penalty()))
-                #print('defender willpower: ' + str(defender.willpower()))
+                #print('defender resilience(): ' + str(defender.resilience()))
                 #print('defender magic defense: ' + str(defender.magic_defense(self.rawMagic)))
                 print('success probability:')
                 print(successProbability)
@@ -1755,7 +1906,7 @@ class CharmMagic(Status):
                 else:
                     defender = availableOpponents[random.randrange(0, len(availableOpponents))]
                     currentDefenders.append(defender)
-            successProbability = self.willpowerMultiplier * (attacker.willpower() - attacker.magic_penalty() - defender.willpower() - defender.magic_defense(self.rawMagic))
+            successProbability = self.resilience()Multiplier * (attacker.resilience() - attacker.magic_penalty() - defender.resilience() - defender.magic_defense(self.rawMagic))
             duration = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
             if defender.ignores_spell(self):
                 resultString.append(self.immune_statement(defender))
@@ -1916,18 +2067,18 @@ class SpectralSpanking(Spectral):
     numTargets = 1
     statusInflicted = statusEffects.HUMILIATED
     cost = 8
-    secondaryStat = universal.WILLPOWER
+    secondaryStat = universal.RESILIENCE
     def __init__(self, attacker, defenders):
         super(SpectralSpanking, self).__init__(attacker, defenders)
         self.name = 'Spectral Spanking'
         self.cost = SpectralSpanking.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.description = 'Conjures \'hands\' of raw magic. One hand grabs the target and lifts them into the air. The other lands a number of swats on the target\'s backside. Once the spanking is done, the first hand lifts the target up, and throws them into the ground.'
-        self.effectFormula = 'NUMBER OF SMACKS: 5 | 5 * (magic - enemy magic), \nHUMILIATION DURATION: 2 | 2 * (willpower - enemy willpower)\nDAMAGE: 2 | 2 * (magic - enemy magic),\nSuccess (%): 40 | 30 * (magic - enemy magic) | 95'
+        self.effectFormula = 'NUMBER OF SMACKS: 5 | 5 * (magic - enemy magic), \nHUMILIATION DURATION: 2 | 2 * (resilience() - enemy resilience())\nDAMAGE: 2 | 2 * (magic - enemy magic),\nSuccess (%): 40 | 30 * (magic - enemy magic) | 95'
         self.numTargets = 1
         self.magicMultiplier = 2
         self.smackMultiplier = 5
-        self.willpowerMultiplier = 2
+        self.resilience()Multiplier = 2
         self.targetType = combatAction.ENEMY
         self.effectClass = combatAction.ALL
         self.statusInflicted = statusEffects.HUMILIATED
@@ -1963,7 +2114,7 @@ class SpectralSpanking(Spectral):
         attacker = self.attacker
         damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
         numSmacks = self.smackMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-        duration = self.willpowerMultiplier * (attacker.willpower() - defender.willpower() - defender.iron_modifier(self.rawMagic) + severity)
+        duration = self.resilience()Multiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier(self.rawMagic) + severity)
         resultStatement = []
         effects = []
         effectString = self.effect_statement(defender)
@@ -2032,50 +2183,50 @@ def choose_string(person, male, female):
 
 def him_her(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return 'her' if person.is_female() else 'him' 
 def his_her(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return 'her' if person.is_female() else 'his'
 def He_She(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return 'She' if person.is_female() else 'He'
 
 def himher(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return 'her' if person.is_female() else 'him' 
 
 def HimHer(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return 'her' if person.is_female() else 'him' 
 
 def hisher(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return 'her' if person.is_female() else 'his'
 
 def HisHer(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return 'Her' if person.is_female() else 'His'
 
 def heshe(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return 'she' if person.is_female() else 'he'
 
 def HeShe(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return 'She' if person.is_female() else 'He'
 
 def himselfherself(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'himself', 'herself')
 
 def HimselfHerself(person):
@@ -2083,177 +2234,177 @@ def HimselfHerself(person):
 
 def mistermiss(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'mister', 'miss')
 
 def MisterMiss(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Mister', 'Miss')
 
 def manwoman(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'man', 'woman')
 
 def ManWoman(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Man', 'Woman')
 
 
 def menwomen(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'men', 'women')
 
 def MenWomen(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Man', 'Woman')
 
 def hishers(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'his', 'hers')
 
 def HisHers(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'His', 'Hers')
 
 def boygirl(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'boy', 'girl')
 
 def BoyGirl(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Boy', 'Girl')
 
 def manlady(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'man', 'lady')
 
 def ManLady(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Man', 'Lady')
 
 def kingqueen(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'king', 'queen')
 
 def KingQueen(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'King', 'Queen')
 
 def lordlady(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'lord', 'lady')
 
 def LordLady(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Lord', 'Lady')
 
 def brothersister(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'brother', 'sister')
 
 def BrotherSister(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Brother', 'Sister')
 
 def underwearpanties(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'underwear', 'panties')
 
 def UnderwearPanties(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Underwear', 'Panties')
 
 def thisthese(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'this', 'these')
 
 def itthem(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'it', 'them')
 
 def itthey(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'it', 'they')
 
 def isare(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'is', 'are')
 
 def UnderwearPanties(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Underwear', 'Panties')
 
 def pigcow(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'pig', 'cow')
 def PigCow(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Pig', 'Cow')
 
 def sirmaam(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'sir', "ma'am")
 
 def SirMaam(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Sir', "Ma'am")
 
 def menwomen(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'men', 'women')
 
 
 def MenWomen(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Men', 'Women')
 
 def bastardbitch(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'bastard', 'bitch')
 
 def BastardBitch(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Bastard', 'Bitch')
 
 def ladlass(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'lad', 'lass')
 
 def LadLass(person=None):
     if person is None:
-        person = PC
+        person = universal.state.player
     return choose_string(person, 'Lad', 'Lass')
 
