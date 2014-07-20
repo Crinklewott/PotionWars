@@ -193,7 +193,7 @@ class AttackAction(CombatAction):
             attackBonus = wa.attack_bonus(attacker.is_grappling())
             defendBonus = wd.parry_bonus(defender.is_grappling())
             attackBonus += attacker.warfare()
-            defendBonus += (defender.warfare() // 2)
+            defendBonus += defender.warfare() // 2
             #assert attacker.attack_penalty() >= 0, '%s attack penalty: %s' % (attacker.name, attacker.attack_penalty())
             attackBonus += attacker.attack_penalty()
             defendBonus += defender.attack_penalty()
@@ -377,20 +377,18 @@ class SpankAction(CombatAction):
     numTargets = 1
     primaryStat = universal.DEXTERITY
     actionType = 'spank'
-    def __init__(self, attacker, defenders, position, secondaryStat=None):
+    def __init__(self, attacker, defenders, secondaryStat=None):
         super(SpankAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
-        self.position = position
         self.targetType = ENEMY
         self.grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
         self.effectClass = ALL
-        self.position = position
         self.statusInflicted = statusEffects.HUMILIATED 
         self.actionType = 'spank'
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
-            Returns a triple: The result of the spanking, the number of smacks administered (the number of smacks is negative, if the spanking was reversed, 0 if the 
-            spanking failed), and the actual action performed.
+            Returns a triple: The result of the spanking, a positive number if the spanking was successful, a negative number if the spanking was reversed, and 0 if the 
+            spanking failed, and the actual action performed.
         """
         attacker = self.attacker
         defender = self.defenders[0]
@@ -402,64 +400,29 @@ class SpankAction(CombatAction):
             wd = defender.weapon()
             spankABonus = wa.grapple_bonus() + attacker.grapple() - attacker.attack_penalty()
             spankDBonus = wd.grapple_bonus() + defender.grapple() - defender.attack_penalty()
-            print('spankABonus:')
-            print(spankABonus)
-            print('spankDBonus:')
-            print(spankDBonus)
             success = rand(spankABonus)
-            print('success')
-            print(success)
-            failure = rand(spankDBonus + self.position.difficulty)
-            print('failure')
-            print(failure)
+            failure = rand(spankDBonus)
             humiliated = False
-            numSmacks = 0
+            successFlag =  0
             if failure <= success:
                 if not defender.is_inflicted_with(statusEffects.Humiliated.name):
-                    defender.numSmacks = max(MIN_SMACKS, SMACKS_MULTIPLIER * (max(0, rand(attacker.grapple()) - rand(defender.grapple()))) + self.position.maintainability)
-                    numSmacks = defender.numSmacks
                     duration = max(MIN_DURATION, DURATION_MULTIPLIER * (max(0, rand(attacker.resilience()) - rand(defender.resilience()))))
-                    defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration, defender.numSmacks))
-                if universal.state.player in enemies and attacker == universal.state.player:
-                    #The PC is a little bit tricky, because we don't have spanking text for him/her, but he/she could still be charmed, and therefore could be in enemies.
-                    #So either way, we need to use the defender's spanking text (so we'll need to give the other party members spanking text). So we need to make sure
-                    #that we never invoke the spanking text for PC.
-                    resultString = defender.spanked_by(attacker, self.position)
-                else:
-                    resultString = attacker.spanks(defender, self.position) if attacker in enemies else defender.spanked_by(attacker, self.position)
-                    print(self.position.name)
-                    print(resultString)
+                    defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration))
+                resultString = spanking.spanking_string(attacker, defender)
+                successFlag = 1
             else:
-                print('reverse success')
-                success = rand(spankDBonus + self.position.reversability)
-                print(success)
+                success = rand(spankDBonus)
                 failure = rand(spankABonus * 2 if spankABonus >= 0 else spankABonus * .5)
-                print('reverse failure')
-                print(failure)
-                print(failure <= success)
                 if failure <= success:
                     if not attacker.is_inflicted_with(statusEffects.Humiliated.name):
-                        attacker.numSmacks = max(MIN_SMACKS, SMACKS_MULTIPLIER * (max(0, rand(defender.grapple()) - rand(attacker.grapple()))))
-                        numSmacks = 0 - attacker.numSmacks
                         duration = max(MIN_DURATION, DURATION_MULTIPLIER * (max(0, rand(defender.resilience()) - rand(attacker.resilience()))))
-                        attacker.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration, attacker.numSmacks))
-                    if universal.state.player in enemies and defender == universal.state.player:
-                        #The PC is a little bit tricky, because we don't have spanking text for him/her, but he/she could still be charmed, and therefore could be in enemies.
-                        #So either way, we need to use the defender's spanking text (so we'll need to give the other party members spanking text). So we need to make sure
-                        #that we never invoke the spanking text for PC.
-                        resultString = defender.reversed_spanking_of(attacker, self.position)
-                    else:
-                        resultString = defender.reversed_spanking_of(attacker, self.position) if defender in enemies else\
-                                attacker.had_spanking_reversed_by(defender, self.position)
+                        attacker.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration))
+                    resultString = spanking.reversed_spanking(attacker, defender)
+                    successFlag = -1
                 else:
-                    if universal.state.player in enemies and defender == universal.state.player:
-                        #The PC is a little bit tricky, because we don't have spanking text for him/her, but he/she could still be charmed, and therefore could be in enemies.
-                        #So either way, we need to use the defender's spanking text (so we'll need to give the other party members spanking text). So we need to make sure
-                        #that we never invoke the spanking text for PC.
-                        resultString = defender.failed_to_spank(attacker, self.position)
-                    else:
-                        resultString = defender.avoided_spanking_by(attacker, self.position) if defender in enemies else attacker.failed_to_spank(defender, self.position)
-            return (resultString, [numSmacks], self)
+                    resultString = spanking.failed_spanking(attacker, defender)
+                    successFlag = 0
+            return (resultString, [successFlag], self)
         else:
             return GrappleAction(attacker, defender).effect(inCombat, allies, enemies)
 

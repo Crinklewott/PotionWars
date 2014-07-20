@@ -98,24 +98,27 @@ class Humiliated(StatusEffect):
     #The number of smacks that need to be landed to increase the penalty by another point. This can be varied for balancing.
     smacksPerPenaltyPoint = 5
     name = 'Humiliation'
-    def __init__(self, duration, numSmacks):
+    def __init__(self, duration):
         super(Humiliated, self).__init__(Humiliated.name, duration, True)
-        self.penalty = numSmacks // Humiliated.smacksPerPenaltyPoint + 1
+        self.penalty = 1
+        self.affectedStat = -1
 
     def inflict_status(self, person):
         print(' '.join([person.name, 'before humiliation:']))
-        print(person.statList)
-        person.decrease_all_stats(self.penalty)
+        print(person.primaryStats)
+        stat = max([i for i in range(len(person.primaryStats[:-4]))], key=lambda x : person.primaryStats[x])
+        person.decrease_stat(stat, self.penalty)
+        self.affectedStat = stat
         print(' '.join([person.name, 'after humiliation:']))
-        print(person.statList)
+        print(person.primaryStats)
         return 0
 
     def reverse_status(self, person):
-        print(' '.join([person.name, 'before reverse humiliation:']))
-        print(person.statList)
-        person.increase_all_stats(self.penalty)
-        print(' '.join([person.name, 'before after humiliation:']))
-        print(person.statList)
+        print(' '.join([person.name, 'before reversing humiliation:']))
+        print(person.primaryStats)
+        person.increase_stat(self.affectedStat, self.penalty)
+        print(' '.join([person.name, 'after humiliation:']))
+        print(person.primaryStats)
         return 0
 
 class Weakened(StatusEffect):
@@ -125,20 +128,20 @@ class Weakened(StatusEffect):
 
     def inflict_status(self, person):
         print(' '.join([person.name, 'before weakened:']))
-        print(person.statList)
-        person.decrease_stat(WARFARE, 3)
-        person.decrease_stat(GRAPPLE, 3)
+        print(person.primaryStats)
+        person.decrease_stat(STRENGTH, 2)
+        person.decrease_stat(DEXTERITY, 2)
         print(' '.join([person.name, 'after weakened:']))
-        print(person.statList)
+        print(person.primaryStats)
         return 0
 
     def reverse_status(self, person):
         print(' '.join([person.name, 'before reverse weakened:']))
-        print(person.statList)
-        person.increase_stat(WARFARE, 3)
-        person.increase_stat(GRAPPLE, 3)
+        print(person.primaryStats)
+        person.increase_stat(STRENGTH, 2)
+        person.increase_stat(DEXTERITY, 2)
         print(' '.join([person.name, 'after reverse weakened:']))
-        print(person.statList)
+        print(person.primaryStats)
         return 0
 
 class Shielded(StatusEffect):
@@ -182,11 +185,11 @@ class MagicDistorted(StatusEffect):
         super(MagicDistorted, self).__init__(MagicDistorted.name, duration, False)
 
     def inflict_status(self, person):
-        person.decrease_stat(MAGIC, 3)
+        person.decrease_stat(TALENT, 2)
         return 0
 
     def reverse_status(self, person):
-        person.increase_stat(MAGIC, 3)
+        person.increase_stat(TALENT, 2)
         return 0
 
 class Charmed(StatusEffect):
@@ -268,25 +271,25 @@ class DefendStatus(StatusEffect):
         """
         print('inflicting defense status.')
         print('stats before defense:')
-        print(p.statList)
-        p.set_stat(WARFARE, p.warfare() + 3)
-        p.set_stat(GRAPPLE, p.grapple() + 3)
-        p.set_stat(RESILIENCE, p.resilience() + 3)
-        p.set_stat(MAGIC, p.magic() + 3)
+        print(p.primaryStats)
+        p.set_stat(STRENGTH, p.strength() + 1)
+        p.set_stat(DEXTERITY, p.dexterity() + 1)
+        p.set_stat(RESILIENCE, p.willpower() + 1)
+        p.set_stat(TALENT, p.talent() + 1)
         print('stats after defense:')
-        print(p.statList)
+        print(p.primaryStats)
         return
 
     def reverse_status(self, p):
         print('reversing defense status.')
         print('stats before reversing defense:')
-        print(p.statList)
-        p.set_stat(WARFARE, p.warfare() - 3)
-        p.set_stat(GRAPPLE, p.grapple() - 3)
-        p.set_stat(RESILIENCE, p.resilience() - 3)
-        p.set_stat(MAGIC, p.magic() - 3)
+        print(p.primaryStats)
+        p.set_stat(STRENGTH, p.strength() - 1)
+        p.set_stat(DEXTERITY, p.dexterity() - 1)
+        p.set_stat(WILLPOWER, p.willpower() - 1)
+        p.set_stat(MAGIC, p.talent() - 1)
         print('stats after reversing defense:')
-        print(p.statList)
+        print(p.primaryStats)
         return
 
 class FirstOrder(StatusEffect):
@@ -414,7 +417,7 @@ def build_status(status, duration=0, numSmacks=0, allies=None, enemies=None):
         status can also be the status' name.
     """
     if status == HUMILIATED or status == Humiliated.name:
-        return Humiliated(duration, numSmacks)
+        return Humiliated(duration)
     elif status == WEAKENED or status == Weakened.name:
         return Weakened(duration)
     elif status == MAGIC_DISTORTED or status == MagicDistorted.name:

@@ -95,13 +95,37 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
     global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface, enemySurface, commandSurface, clearScreen, previousMode, origAllies, origEnemies, \
             actionsInflicted, actionsEndured, chosenActions, optional, defeatedEnemies, defeatedAllies
     global ambush, boss, initialState
-    universal.state.enemies = Party(enemiesIn)
-    universal.state.allies = Party(list(universal.state.party) + (additionalAllies if additionalAllies else []))
-    initialState = copy.deepcopy(initialState)
+    universal.state.enemies = person.Party(enemiesIn)
+    universal.state.allies = person.Party(list(universal.state.party) + (additionalAllies if additionalAllies else []))
+    initialState = copy.deepcopy(universal.state)
     boss = bossFight
     ambush = ambushIn
     enemies = universal.state.enemies
     allies = universal.state.allies
+    for enemy in enemies:
+        print(enemy.name)
+        print('magic')
+        print(enemy.magic())
+        print('warfare')
+        print(enemy.warfare())
+        print('resilience')
+        print(enemy.resilience())
+        print('stealth')
+        print(enemy.stealth())
+        print('grapple')
+        print(enemy.grapple())
+    for ally in allies:
+        print(ally.name)
+        print('magic')
+        print(ally.magic())
+        print('warfare')
+        print(ally.warfare())
+        print('resilience')
+        print(ally.resilience())
+        print('stealth')
+        print(ally.stealth())
+        print('grapple')
+        print(ally.grapple())
     defeatedAllies = []
     defeatedEnemies = []
     optional = optionalIn
@@ -197,21 +221,18 @@ def display_combat_status(targeted=None, printAllies=True, printEnemies=True):
     if optional:
         print_command('Optional')
     #print_command(activeAlly.printedName)
-    commandList = ['(A)ttack', '(C)ast', '(D)efend', '(L)ook']
+    commandList = ['(#Enter)Attack', '(C)ast', '(F#) Quick Spell', '(D)efend', '(L)ook']
     if activeAlly.is_grappling():
         commandList.remove('(L)ook')
         #commandList.extend(['(S)pank', '(T)hrow', '(B)reak Grapple']) 
-        commandList.extend(['(T)hrow', '(B)reak Grapple']) 
+        commandList.extend(['(S)pank', '(T)hrow', '(B)reak Grapple']) 
     else:
         commandList.append('(G)rapple')
         if runnable:
             commandList.append('(F)lee')
-    commandList.append('(R)eset')
     commandList.append('<==Back')
     commandList.append('(Esc)To Title')
     set_commands(commandList)   
-    print('setting commands')   
-    print(commandList)  
     set_command_interpreter(battle_interpreter)
 
 def print_enemies(enemies, targetList=None, title='Enemies'):
@@ -261,6 +282,8 @@ def print_command(command):
 
 def battle_interpreter(keyEvent):
     global chosenActions, activeAlly
+    print(len(activeAlly.quickSpells))
+    print(activeAlly.quickSpells)
     if keyEvent.key == K_ESCAPE:
         set_commands(['Are you sure you want to quit? (Y/N)'])
         set_command_interpreter(confirm_to_title_interpreter)
@@ -269,15 +292,41 @@ def battle_interpreter(keyEvent):
             activeAlly = allies[allies.index(activeAlly)-1]
             del chosenActions[-1]
             display_combat_status(printEnemies=False, printAllies=False)
-    elif keyEvent.key == K_a:
-        attack()
+    elif keyEvent.key == K_RETURN:
+        attack(-1)
+    elif keyEvent.key in universal.NUMBER_KEYS:
+        attack(int(universal.key_name(keyEvent)) - 1)
     elif keyEvent.key == K_c:
         cast()
     elif keyEvent.key == K_d:
         defend()
+    elif keyEvent.key == K_F1 and activeAlly.quickSpells[0] != None:
+        cast(activeAlly.quickSpells[0])
+    elif keyEvent.key == K_F2 and activeAlly.quickSpells[1] != None:
+        cast(activeAlly.quickSpells[1])
+    elif keyEvent.key == K_F3 and activeAlly.quickSpells[2] != None:
+        cast(activeAlly.quickSpells[2])
+    elif keyEvent.key == K_F4 and activeAlly.quickSpells[3] != None:
+        cast(activeAlly.quickSpells[3])
+    elif keyEvent.key == K_F5 and activeAlly.quickSpells[4] != None:
+        cast(activeAlly.quickSpells[4])
+    elif keyEvent.key == K_F6 and activeAlly.quickSpells[5] != None:
+        cast(activeAlly.quickSpells[5])
+    elif keyEvent.key == K_F7 and activeAlly.quickSpells[6] != None:
+        cast(activeAlly.quickSpells[6])
+    elif keyEvent.key == K_F8 and activeAlly.quickSpells[7] != None:
+        cast(activeAlly.quickSpells[7])
+    elif keyEvent.key == K_F9 and activeAlly.quickSpells[8] != None:
+        cast(activeAlly.quickSpells[8])
+    elif keyEvent.key == K_F10 and activeAlly.quickSpells[9] != None:
+        cast(activeAlly.quickSpells[9])
+    elif keyEvent.key == K_F11 and activeAlly.quickSpells[10] != None:
+        cast(activeAlly.quickSpells[10])
+    elif keyEvent.key == K_F12 and activeAlly.quickSpells[11] != None:
+        cast(activeAlly.quickSpells[11])
     elif activeAlly.is_grappling():
-        #if keyEvent.key == K_s:
-            #spank()
+        if keyEvent.key == K_s:
+            spank()
         if keyEvent.key == K_t:
             throw()
         elif keyEvent.key == K_b:
@@ -338,7 +387,7 @@ def next_character():
         say_title('Confirm Actions')
         for action in chosenActions:
             universal.say(print_action(action) + '\n\n') 
-        set_commands(['Begin round(Y/N)?'])
+        set_commands(['(Enter) Begin Round', '<==Back'])
         set_command_interpreter(begin_round_interpreter)
 
 
@@ -359,7 +408,7 @@ def print_action(action):
     elif isinstance(action, combatAction.BreakGrappleAction):
         return ' '.join([attacker, 'will attempt to stop grappling', defenders + '.'])
     elif isinstance(action, combatAction.SpankAction):
-        return ' '.join([attacker, 'will spank', defenders, 'in the', action.position.name, 'position.'])
+        return ' '.join([attacker, 'will attempt to spank', defenders, '.'])
     elif isinstance(action, combatAction.BreakAllysGrappleAction):
         return ' '.join([attacker, 'will break', defenders + "'s", 'grapple.'])
     elif isinstance(action, person.Spell):
@@ -392,7 +441,7 @@ def increase_stat_chance():
 
 def begin_round_interpreter(keyEvent):
     global chosenActions, chosenTargets
-    if keyEvent.key == K_y:
+    if keyEvent.key == K_RETURN:
         global ambush
         if ambush <= 0:
             choose_enemy_actions()
@@ -400,7 +449,7 @@ def begin_round_interpreter(keyEvent):
             ambush = 0
         increase_stat_chance()
         start_round(chosenActions)
-    elif keyEvent.key == K_n:
+    elif keyEvent.key == K_BACKSPACE:
         if DEBUG:
             chosenActions = []
         else:
@@ -414,37 +463,38 @@ def confirm_to_title_interpreter(keyEvent):
             ally.break_grapple()
         end_fight()
         titleScreen.title_screen()
+        return
     elif keyEvent.key == K_n:
         display_combat_status(printAllies=False, printEnemies=False)
 
 
-def attack():
-    print_command('Attack')
-    if activeAlly.is_grappling():
-        set_commands(['(Enter) Attack grappling partner.', '<==Back'])
-    else:
-        set_commands(['(#) Select target.'])
-    set_command_interpreter(attack_interpreter)
-
-def attack_interpreter(keyEvent):
-    if keyEvent.key == K_BACKSPACE:
-        display_combat_status(printAllies=False, printEnemies=False)
-    elif activeAlly.is_grappling() and keyEvent.key == K_RETURN:
+def attack(target):
+    if target < 0:
+        target = enemies.index(activeAlly.grapplingPartner) if activeAlly.is_grappling() else 0
+    activeAlly.previousTarget = target
+    if activeAlly.is_grappling() and target == enemies.index(activeAlly.grapplingPartner):
         chosenActions.append(combatAction.AttackAction(activeAlly, activeAlly.grapplingPartner, secondaryStat=universal.GRAPPLE))
         next_character()
-    elif not activeAlly.is_grappling() and keyEvent.key in NUMBER_KEYS:
-        num = int(pygame.key.name(keyEvent.key)) - 1
-        if 0 <= num and num < len(enemies) and enemies[num] in [enemy for enemy in enemies if enemy.current_health() > 0]:
-            chosenActions.append(combatAction.AttackAction(activeAlly, enemies[num]))
+    elif not activeAlly.is_grappling():
+        if 0 <= target and target < len(enemies) and enemies[target] in [enemy for enemy in enemies if enemy.current_health() > 0]:
+            chosenActions.append(combatAction.AttackAction(activeAlly, enemies[target]))
             next_character()
 
-def cast():
-    print_command('Tier')
-    commandList = [str(i) for i in range(0, activeAlly.tier+1)]
-    if len(commandList) < 9:
-        commandList.append('<==Back')
-    set_commands(commandList)
-    set_command_interpreter(cast_interpreter)
+def cast(quickSpell=None):
+    if quickSpell is not None:
+        if (activeAlly.is_grappling() and quickSpell.grappleStatus == combatAction.NOT_WHEN_GRAPPLED) or (not activeAlly.is_grappling() and 
+        (quickSpell.grappleStatus == combatAction.ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY or quickSpell.grappleStatus == combatAction.ONLY_WHEN_GRAPPLED)):
+            return
+        global chosenSpell
+        chosenSpell = quickSpell
+        target_spell()
+    else:
+        print_command('Tier')
+        commandList = [str(i) for i in range(0, activeAlly.tier+1)]
+        if len(commandList) < 9:
+            commandList.append('<==Back')
+        set_commands(commandList)
+        set_command_interpreter(cast_interpreter)
 
 def cast_interpreter(keyEvent):
     if keyEvent.key == K_BACKSPACE:
@@ -526,6 +576,7 @@ def target_spell_interpreter(keyEvent):
     printTargets = print_allies if targetAllies else print_enemies
     targetStr = 'enemy'
     targetStrs = 'enemies'
+    global chosenTier
     if targetAllies:
         targetStr = 'ally'
         targetStrs = 'allies'
@@ -537,11 +588,17 @@ def target_spell_interpreter(keyEvent):
             else:
                 chosenActions.append(chosenSpell.__class__(activeAlly, activeAlly))
                 activeAlly.chanceIncrease[chosenSpell.spellSchool] += spellIncrease
+            chosenTier = None
             next_character()
         elif keyEvent.key == K_BACKSPACE:
-            print_allies(allies)
-            print_enemies(enemies)
-            select_spell(chosenTier)
+            print(chosenTier)
+            if chosenTier is not None:
+                print_allies(allies)
+                print_enemies(enemies)
+                select_spell(chosenTier)
+            else:
+                display_combat_status(printAllies=True, printEnemies=True)
+
     else:
         print('targeting.')
         if keyEvent.key == K_BACKSPACE:
@@ -550,7 +607,10 @@ def target_spell_interpreter(keyEvent):
                 print('numTargetsChosen is 0')
                 print_allies(allies)
                 print_enemies(enemies)
-                select_spell(chosenTier)
+                if chosenTier:
+                    select_spell(chosenTier)
+                else:
+                    display_combat_status(printAllies=True, printEnemies=True)
             else:
                 print('removing target')
                 print(chosenTargets)
@@ -664,12 +724,14 @@ def run():
     chosenActions.append(combatAction.RunAction(activeAlly, None))
     next_character()
 def spank():
-    print_command('Position')
-    set_commands(numbered_list([p.name for p in activeAlly.grapplingPartner.spankingPositions]) + ['<==Back'])
-    set_command_interpreter(spank_interpreter)
+    chosenActions.append(combatAction.SpankAction(activeAlly, activeAlly.grapplingPartner))
+    next_character()
 
 chosenPos = None
 def spank_interpreter(keyEvent):
+    """
+    Not used.
+    """
     if keyEvent.key == K_BACKSPACE:
         display_combat_status(printAllies=False, printEnemies=False)
     elif keyEvent.key in NUMBER_KEYS:
@@ -683,6 +745,9 @@ def spank_interpreter(keyEvent):
             set_command_interpreter(confirm_spanking_interpreter)
 
 def confirm_spanking_interpreter(keyEvent):
+    """
+    Not used.
+    """
     if keyEvent.key == K_y: 
         chosenActions.append(combatAction.SpankAction(activeAlly, activeAlly.grapplingPartner, chosenPos))
         next_character()
@@ -711,8 +776,7 @@ def choose_enemy_actions():
 def select_action(enemy):
     allActions = [combatAction.AttackAction]#, combatAction.DefendAction]
     if enemy.is_grappling():
-        #allActions.extend([combatAction.SpankAction, combatAction.ThrowAction, combatAction.BreakGrappleAction])
-        allActions.extend([combatAction.ThrowAction, combatAction.BreakGrappleAction])
+        allActions.extend([combatAction.SpankAction, combatAction.ThrowAction, combatAction.BreakGrappleAction])
         allActions.extend([spell.__class__ for spell in enemy.flattened_spell_list() if spell.grappleStatus != combatAction.NOT_WHEN_GRAPPLED and 
             spell.cost <= enemy.current_mana()])
     else:
@@ -739,11 +803,7 @@ def hand_ai(enemy, allActions):
             if targetList == [] and action == combatAction.ThrowAction:
                 defenders.append(defenders[0])
                 break
-    if action == combatAction.SpankAction:
-        randIndex = random.randrange(0, len(enemy.spankingPositions))
-        action = combatAction.SpankAction(enemy, defenders, enemy.spankingPositions[randIndex])
-    else:
-        action = action(enemy, defenders)
+    action = action(enemy, defenders)
     return action   
 
 def strap_cane_ai(enemy):
@@ -802,8 +862,8 @@ def strap_cane_ai(enemy):
             #warfareActions.extend([combatAction.DefendAction for statName in enemy.status_names() if statusEffects.is_negative(enemy.get_status(statName))])
         elif chosenActionClass == grappleActions:
             if enemy.is_grappling():
-                #if not enemy.grapplingPartner.is_inflicted_with(statusEffects.Humiliated.name):
-                    #grappleActions.extend([combatAction.SpankAction for i in range(max(1, enemy.grapple()))])
+                if not enemy.grapplingPartner.is_inflicted_with(statusEffects.Humiliated.name):
+                    grappleActions.extend([combatAction.SpankAction for i in range(max(1, enemy.grapple()))])
                 grappleActions.extend([combatAction.AttackAction for i in range(max(1, enemy.warfare()))])
                 grappleActions.extend([combatAction.ThrowAction for i in range(max(1, enemy.grapple()))])
             else:
@@ -842,7 +902,8 @@ def strap_cane_ai(enemy):
             chosenAction = chosenActionClass.pop(random.randrange(0, len(chosenActionClass)))
             defenders = select_targets(chosenAction, enemy)
             chosenActionClass = [actionClass for actionClass in chosenActionClass if actionClass.actionType != chosenAction.actionType]
-        #Note: The below won't actually happen, because I've commented out the code that allows the player and the enemy to use the SpankAction.
+        """
+        We've removed the positions, so the enemy no longer has to choose one.
         if chosenAction == combatAction.SpankAction:
             posDifficulty = [pos.difficulty + pos.reversability - pos.maintainability for pos in enemy.spankingPositions]
             posAndDiff = zip(enemy.spankingPositions, posDifficulty)
@@ -860,6 +921,7 @@ def strap_cane_ai(enemy):
                 weightedPos.extend([pos for i in range(min(0, enemy.grapple() - difficulty))]) 
                 weightedPos.extend([pos for i in range(len([position for (position, result) in pastPositions if position == pos and result > 0]))])
             return chosenAction(enemy, defenders, weightedPos[random.randrange(0, len(weightedPos))])
+        """
         try:
             return chosenAction(enemy, defenders)
         except TypeError:
@@ -904,6 +966,8 @@ def strap_cane_ai(enemy):
                 defenders.append(activeOpponents.pop(random.randrange(0, len(activeOpponents))))
                 if activeOpponents == []:
                     break
+        """
+        We've removed positions, so the enemy doesn't have to choose one.
         if chosenAction == combatAction.SpankAction:
             posDifficulty = [pos.difficulty + pos.reversability - pos.maintainability for pos in enemy.spankingPositions]
             posAndDiff = zip(enemy.spankingPositions, posDifficulty)
@@ -917,14 +981,14 @@ def strap_cane_ai(enemy):
             for pos, difficulty in posAndDiff:
                 weightedPos.extend([pos for i in range(min(0, enemy.grapple() - difficulty))]) 
             return chosenAction(enemy, defenders, weightedPos[random.randrange(0, len(weightedPos))])
-        else:
-            try:
-                return chosenAction(enemy, defenders)
-            except TypeError:
-                chosenAction = copy.deepcopy(chosenAction)
-                chosenAction.attacker = enemy
-                chosenAction.defenders = defenders
-                return chosenAction
+        """
+        try:
+            return chosenAction(enemy, defenders)
+        except TypeError:
+            chosenAction = copy.deepcopy(chosenAction)
+            chosenAction.attacker = enemy
+            chosenAction.defenders = defenders
+            return chosenAction
 
 def weight_classes_cane(actionClasses):
     """
@@ -1251,6 +1315,9 @@ def start_round(chosenActions):
                     raise KeyError(str(e))
                 defenders = combatAction.executed_action(actionEffect).defenders
                 attacker = combatAction.executed_action(actionEffect).attacker
+                print(defenders)
+                print('action effects!')
+                print(combatAction.effects(actionEffect))
                 for defender, effect in zip(defenders, combatAction.effects(actionEffect)):
                     if defender is not None:
                         actionsEndured[defender].append((combatAction.executed_action(actionEffect), effect))
@@ -1328,16 +1395,16 @@ def game_over():
     music.play_music(music.DEFEATED)
     clear_screen()
     say_title('Game over!')
-    universal.say('You have been defeated! Would you like to try again? (Y/N)\n\n')
+    universal.say('You have been defeated! Would you like to try again?\n\n')
     if optional:
         universal.say('Note that winning this fight is optional. Saying "no" will NOT give you a game over.')
     else:
         universal.say('Note that you need to win this fight to continue the game. If you say "no" you will return to the title screen.')
-    set_commands(['(Y)es', '(N)o'])
+    set_commands(["(Enter) Try Again", "(Esc) Don't try again"])
     set_command_interpreter(game_over_interpreter)
 
 def game_over_interpreter(keyEvent):
-    if keyEvent.key == K_y:
+    if keyEvent.key == K_RETURN:
         global allies, enemies, chosenActions, actionResults, actionsEndured, actionsInflicted, defeatedAllies, defeatedEnemies
         universal.state = initialState
         allies = universal.state.allies
@@ -1346,6 +1413,7 @@ def game_over_interpreter(keyEvent):
         defeatedAllies = []
         actionsEndured = {combatant:[] for combatant in enemies + allies}
         actionsInflicted = {combatant:[] for combatant in enemies + allies}
+        chosenActions = []
         display_combat_status()
         global activeAlly
         activeAlly = allies[0]
@@ -1353,7 +1421,7 @@ def game_over_interpreter(keyEvent):
             music.play_music(music.BOSS)
         else:
             music.play_music(music.COMBAT)
-    elif keyEvent.key == K_n:
+    elif keyEvent.key == K_ESCAPE:
         if optional:
             afterCombatEvent([ally for ally in allies if ally.current_health() <= 0] + defeatedAllies, 
                     [enemy for enemy in enemies if enemy.current_health() <= 0] + defeatedEnemies, False)
@@ -1459,10 +1527,10 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
                     #print(ally.get_stat(i))
                     #print(specialization_bonus(ally, i))
                     gainedPoint = True
-                    print('increasing stat: ' + person.primary_stat_name(i))
+                    print('increasing stat: ' + universal.primary_stat_name(i))
                     gain = 1
                     if i != HEALTH and i != MANA and i != CURRENT_HEALTH and i != CURRENT_MANA:
-                        ally.increase_stat(i, 1)
+                        ally.improve_stat(i, 1)
                     elif i != CURRENT_HEALTH and i != CURRENT_MANA:
                         gain = random.randint(1, 10)    
                         print(ally)

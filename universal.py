@@ -15,7 +15,7 @@ DEBUG = False
 SAVE_DELIMITER = '%%%'
 
 
-NUM_TIERS = 9
+NUM_TIERS = 10
 
 SELECT_NUMBER_COMMAND = ['(#) Select a number.']
 SELECT_NUMBER_BACK_COMMAND = SELECT_NUMBER_COMMAND + ['<==Back']
@@ -84,6 +84,7 @@ TALENT = 3
 ALERTNESS = 4
 
 def primary_stat_name(stat):
+    print(stat)
     if stat == STRENGTH:
         return 'Strength'    
     elif stat == DEXTERITY:
@@ -94,6 +95,14 @@ def primary_stat_name(stat):
         return 'Talent'
     elif stat == ALERTNESS:
         return 'Alertness'
+    elif stat == HEALTH:
+        return 'Health'
+    elif stat == MANA:
+        return 'Mana'
+    elif stat == CURRENT_HEALTH:
+        return 'Current Health'
+    elif stat == CURRENT_MANA:
+        return 'Current Mana'
 
 #This contains a list of list of triples. get_spells()[i] is the list of triples for tier i. Each triple consists of three separate spells: a basic, advanced, and expert
 #spell at tier i for each type. Basic and Advanced spells are available to everyone, but they must learn basic before advanced. Expert spells are only available to a 
@@ -107,6 +116,7 @@ def get_spells():
     return spellsByTier
 
 NUMBER_KEYS = [K_0, K_1, K_2, K_3, K_4, K_5, K_6, K_7, K_8, K_9]
+FUNCTION_KEYS = [K_F1, K_F2, K_F3, K_F4, K_F5, K_F6, K_F7, K_F8, K_F9, K_F10,  K_F11, K_F12]  
 
 def set_programmer_email(email):
     global programmerEmail
@@ -363,6 +373,7 @@ def get_screen():
 
 def clear_screen():
     global textToDisplay
+    print('clearing screen!')
     textToDisplay = ""
     clearScreen = pygame.Surface((worldView.width, worldView.height))
     clearScreen.fill(DARK_GREY)
@@ -399,6 +410,9 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
     user to split text along pages, rather than relying solely on whether there is enough room. This can be particularly useful for things like combat messages.    
     We print the text in columns based on the location of \t. Essentially, each \t indicates that the following text should go in the next column, where the next column
     is current column + 1 % numColumns.  
+
+    Note: Tabbing is really fucked up, and I have no idea how it works anymore. I'd recommend avoiding it, unless you want to fix it or poke your own eyes out.
+    TODO: Improve tabbing. Seriously, IMPROVE TABBING! YE GODS IT'S SO HACKY AND HORRIBLE!!!!!
 
     Meanwhile, \p indicates that the next batch of text should appear on a new screen of text(with an acknowledgment between them) in the appropriate column. Note that 
     we split on pages first, then columns.
@@ -810,87 +824,83 @@ class State(object):
         self.enemies = None
         self.allies = None
         self.location = None
-        self.characters = sets.Set()
-        self.rooms = sets.Set()
-        self.nodes = sets.Set()
-        self.items = sets.Set()
-        self.episodes = sets.Set()
-        self.scenes = sets.Set()
-        self.positions = sets.Set()
+        self.characters = {}
+        self.rooms = {}
+        self.items = {}
 
-    def add_position(self, position):
-        return
-        self.positions.add(position)
+    """
+        def add_position(self, position):
+            self.positions[position.name] = position
 
-    def remove_position(self, position):
-        return
-        try:
-            self.positions.remove(position)
-        except KeyError:
-            return
+        def remove_position(self, position):
+            try:
+                del positions[position.name]
+            except KeyError:
+                return
 
-    def add_scene(self, scene):
-        return
-        self.scenes.add(scene)
 
-    def remove_scene(self, scene):
-        return
-        try:
-            self.scenes.remove(scene)
-        except KeyError:
-            return
+        def add_scene(self, scene):
+            self.scenes[scene.name] = scene
 
-    def add_episode(self, episode):
-        return
-        self.episodes.add(episode)
+        def remove_scene(self, scene):
+            try:
+                self.scenes.remove(scene)
+            except KeyError:
+                return
 
-    def remove_episode(self, episode):
-        return
-        try:
-            self.episodes.remove(episode)
-        except KeyError:
-            return
+        def add_episode(self, episode):
+            self.episodes[episode.name] = episode
+
+        def remove_episode(self, episode):
+            try:
+                del self.episodes[episode.name]
+            except KeyError:
+                return
+    """
 
     def add_item(self, item):
-        return
-        self.items.add(item)
+        self.items[item.name] = item
 
     def remove_item(self, item):
-        return
         try:
-            self.items.remove(item)
+            del self.items[item.name]
         except KeyError:
             return
 
     def add_room(self, room):
-        return
-        self.rooms.add(room)
+        print('adding room:')
+        print(room)
+        print(room.characters)
+        self.rooms[room.name] = room
 
     def remove_room(self, room):
-        return
         try:
-            self.rooms.remove(room)
+            del self.rooms[room.name]
         except KeyError:
             return
 
-    def add_node(self, node):
-        return
-        self.nodes.add(node)
-
-    def remove_node(self, node):
-        return
+    def get_room(self, room):
         try:
-            self.nodes.remove(node)
-        except KeyError:
-            return
+            return self.rooms[room.name]
+        except AttributeError:
+            return self.rooms[room]
+
     def add_character(self, character):
-        self.characters.add(character)
+        self.characters[character.get_id()] = character
 
     def remove_character(self, character):
         try:
-            self.characters.remove(character)
+            del self.characters[character.get_id()]
         except KeyError:
             return
+
+    def get_character(self, character):
+        print(self.characters)
+        try:
+            return self.characters[character.get_id()]
+        except AttributeError:
+            return self.characters[character]
+
 state = State()
 
 def set_initial_room(room):

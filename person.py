@@ -276,9 +276,11 @@ class Person(universal.RPGObject):
         People are complicated.
     """
     def __init__(self, name, gender, defaultLitany, litany, description="", printedName=None, 
-            coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle=''): 
+            coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle='', marks=None,
+            musculature='', hairLength='', height='', bodyType=''): 
         self.name = name
         self.gender = gender
+        self.previousTarget = 0
         if type(description) is list:
             self.description = description
         else:
@@ -316,6 +318,8 @@ class Person(universal.RPGObject):
         self.order = order
         #Last four indices are the appropriate spell categories
         self.chanceIncrease = [0 for i in range(len(allPrimaryStats) + NUM_SPELL_CATEGORIES)]
+        #We have as many quick spells as we do function keys.
+        self.quickSpells = [None for i in range(12)]
         if printedName is None:
             self.printedName = name
         else:
@@ -329,10 +333,10 @@ class Person(universal.RPGObject):
         self.statPoints = 0
         self.availableStats = None
         self.origStats = None
-        self.hairLength = None
-        self.bodyType = None
-        self.height = None
-        self.musculature = 0
+        self.hairLength = hairLength
+        self.bodyType = bodyType
+        self.height = height
+        self.musculature = musculature
         self.bumStatus = 0
         self.welts = []
         self.skinColor = skinColor
@@ -340,7 +344,72 @@ class Person(universal.RPGObject):
         self.eyeColor = eyeColor
         self.hairStyle = hairStyle
         self.mainStatDisplay = True
+        if marks is None:
+            self.marks = []
+        else:
+            self.marks = marks
         universal.state.add_character(self)
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        known_spells = [[] for i in range(universal.NUM_TIERS)]
+        print(self)
+        print("'s spell list!")
+        print(self.spellList)
+        state['spellList'] = [[(allSpells[tier].index((get_basic_spell(tier, action_type_to_spell_type(spell.actionType)), 
+            get_advanced_spell(tier, action_type_to_spell_type(spell.actionType)), get_expert_spell(tier, action_type_to_spell_type(spell.actionType)))), spell.expertise) 
+            for spell in self.spellList[tier]] for tier in range(len(self.spellList)) if self.spellList[tier] is not None]
+        print("state's spell list!")
+        print(state['spellList'])
+        return state
+
+    def __setstate__(self, state):
+        import traceback
+        print(traceback.print_stack())
+        print(state['spellList'])
+        state['spellList'] = [[allSpells[tier][index][expertise] for (index, expertise) in state['spellList'][tier]] for tier in range(len(state['spellList']))]
+        state['spellList'].extend([None for i in range(universal.NUM_TIERS - len(state['spellList']))])
+        self.__dict__.update(state)
+        assert(self.spellList != [])
+        print('done settingt state!')
+        print(self.spellList)
+        print(self)
+        self.spellList = state['spellList']
+
+
+    def add_quick_spell(self, spell):
+        try:
+            self.quickSpells[self.quickSpells.index(None)] = spell
+        except ValueError:
+            pass
+
+    def set_quick_spell(self, spell, index):
+        try:
+            self.quickSpells[index] = spell
+        except IndexError:
+            return
+
+    def swap_quick_spells(self, index1, index2):
+        try:
+            self.quickSpells[index1], self.quickSpells[index2] = self.quickSpells[index2], self.quickSpells[index1]
+        except IndexError:
+            return
+
+    def hair_styles(self):
+        if self.hairLength == 'short':
+            return SHORT_HAIR_STYLE
+        elif self.hairLength == 'shoulder-length':
+            return SHOULDER_HAIR_STYLE
+        elif self.hairLength == 'back-length':
+            return BACK_HAIR_STYLE
+        elif self.hairLength == 'butt-length':
+            return BUTT_HAIR_STYLE
+
+    def risque(self):
+        risqueLevel = sum(equipment.risque for equipment in self.equipmentList if not isinstance(equipment.Weapon))
+        #If the lower clothing isn't baring, then we can't see the underwear, so its risque level doesn't matter.
+        if not self.lower_clothing().baring:
+            risqueLevel -= self.underwear().risque
 
     def _set_weapon(self, weapon):
         self.equipmentList[WEAPON] = weapon
@@ -376,7 +445,7 @@ class Person(universal.RPGObject):
 
     def muscle_adj(self):
         if self.musculature == 'soft':
-            adjList = rand['jiggly', 'wobbly', 'pillowy']
+            adjList = ['jiggly', 'wobbly', 'pillowy']
         elif self.musculature == 'fit':
             adjList = ['firm', 'toned', 'bouncy']
         elif self.musculature == 'muscular':
@@ -423,17 +492,6 @@ class Person(universal.RPGObject):
         return self.hairLength == 'butt-length'
 
 
-    def __getstate__(self):
-        originalOrder = self.order
-        self.order = order_name(self.order)
-        result = self.__dict__.copy()
-        self.order = originalOrder
-        return result
-
-    def __setstate__(self, dictIn):
-        self.__dict__ = dictIn
-        self.order = order_function(self.order)
-
     def get_core_stats(self):
         return self.primaryStats[:-2]
 
@@ -446,15 +504,12 @@ class Person(universal.RPGObject):
         self.set_all_stats(strength=1, dexterity=1, willpower=1, talent=1, alertness=1, health=10, mana=10)
 
     def set_state(self, original):
-        for attribute in vars(original).keys():
-            if attribute != 'origSelf':
-                setattr(self, attribute, copy.deepcopy(vars(original)[attribute]))
+        raise NotImplementedError()
         """
         self.name = original.name
         self.gender = original.gender
         self.description = original.description
         self.statusList = original.statusList
-        self.spellList = original.spellList
         self.numSmacks = original.numSmacks
         self.grapplingPartner = original.grapplingPartner
         self.inventory = original.inventory
@@ -572,10 +627,9 @@ class Person(universal.RPGObject):
 
     def take_item(self, item):
         if not item in self.inventory and not item in items.emptyEquipment:
-            self.inventory.append(item)
+            self.inventory.append(copy.deepcopy(item))
 
     def drop_item(self, item):
-        successfulUnequip = True
         if not item in self.inventory:
             self.unequip(item)
         try:
@@ -623,8 +677,8 @@ class Person(universal.RPGObject):
     def set_gender(self, genderIn):
         self.gender = gender
 
-    #def set_stat(self, stat, num):
-        #self.statList[stat] = num
+    def set_stat(self, stat, num):
+        self.primaryStats[stat] = num
 
     def set_all_stats(self, strength=None, willpower=None, talent=None, dexterity=None, alertness=None, health=None, mana=None):
         if strength is not None:
@@ -646,10 +700,11 @@ class Person(universal.RPGObject):
         if mana is not None:
             self.primaryStats[universal.CURRENT_MANA] = mana
 
-    #def increase_stat(self, stat, increment):
-    #    self.set_stat(stat, self.statList[stat] + increment)
+    def increase_stat(self, stat, increment):
+        self.primaryStats[stat] += increment
 
     def improve_stat(self, stat, increment):
+        #TODO: Change how quickly a person's spell tiers increases.
         self.increase_stat(stat, increment)
         oldTier = self.tier
         self.tier = self.magic() // MAGIC_PER_TIER
@@ -679,26 +734,38 @@ class Person(universal.RPGObject):
     def equip(self, equipment): 
         try:
             equipment.equip(self)
-        except items.NakedException:
-            universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(), '''equips''', equipment.name + ",", '''then''', heshe(),
-                '''will be naked from the waist down.''', HeShe(), '''decides not to equip''', equipment.name + "."]]), justification=0)
-            acknowledge(Person.equip_menu, (self,))
+        except items.NakedError:
+            universal.clear_screen()
+            universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(self), '''equips''', equipment.name + ",", '''then''', 
+                heshe(self), '''will be naked from the waist down.''', HeShe(self), '''decides not to equip''', equipment.name + "."]]), justification=0)
+            acknowledge(Person.character_sheet, self)
+            raise items.NakedError()
+        except AttributeError:
+            pass
+        else:
+            try:
+                self.inventory.remove(equipment)
+            except ValueError:
+                pass
 
 
     def unequip(self, equipment, couldBeNaked=True):
         if not equipment in items.emptyEquipment:
             try:
                 equipment.unequip(self, couldBeNaked)
-            except items.NakedException:
-                universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(), '''removes''', equipment.name + ",", '''then''', heshe(),
-                    '''will be naked from the waist down.''', HeShe(), '''decides not to remove''', equipment.name + "."]]), justification=0)
-                acknowledge(Person.equip_menu, self)
+            except items.NakedError:
+                universal.clear_screen()
+                universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(self), '''removes''', hisher(self), equipment.name + ",", 
+                    '''then''', heshe(self),
+                    '''will be naked from the waist down.''', HeShe(self), '''decides not to remove''', equipment.name + "."]]), justification=0)
+                acknowledge(Person.character_sheet, self)
+                raise items.NakedError()
 
 
     def display_equipment(self, slot):
         self.viewedSlot = slot
         universal.say(self.equipmentList[self.viewedSlot].display())
-        set_commands(['(Enter) View Character', '(U)nequip'])
+        set_commands(['(Enter) Unequip', '<==Back'])
         set_command_interpreter(view_item_interpreter)
 
     def is_male(self):
@@ -788,9 +855,6 @@ class Person(universal.RPGObject):
         else:
             self.increase_stat(universal.CURRENT_MANA, num)
 
-    def set_copy(self):
-        self.origSelf = copy.deepcopy(self)
-
     def reset(self):
         self.set_state(self.origSelf)
         return self
@@ -818,7 +882,7 @@ class Person(universal.RPGObject):
         return value
 
     def magic(self):
-        value = 2 * self.talent() + self.resilience()
+        value = 2 * self.talent() + self.willpower()
         for equipment in self.equipmentList:
             value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.MAGIC])
         return value
@@ -839,7 +903,8 @@ class Person(universal.RPGObject):
         else:
             value = 2 * self.dexterity() + self.strength()
             for equipment in self.equipmentList:
-                value += snum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.GRAPPLE])
+                value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.GRAPPLE])
+            return value
 
     def break_grapple(self):
         gp = self.grapplingPartner
@@ -850,7 +915,7 @@ class Person(universal.RPGObject):
     def stealth(self):
         value = 2 * self.alertness()
         for equipment in self.equipmentList:
-            value += sum([enchantment.bonus for enchantment in equipment.enchantment if enchantment.stat == universal.STEALTH])
+            value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.STEALTH])
         return value
 
     def health(self):
@@ -918,10 +983,9 @@ class Person(universal.RPGObject):
         return self.equipmentList[UNDERWEAR]
 
     def display_main_stats(self):
-        #Don't include health or mana initially
         if self.mainStatDisplay:
             statList = [': '.join([universal.primary_stat_name(stat), str(statValue)]) for (stat, statValue) in 
-                    zip([i for i in range(0, len(self.primaryStats))], self.statList)] 
+                    zip([i for i in range(0, len(self.primaryStats[:-4]))], self.primaryStats)] 
         else:
             statList = []
             statList.append(' '.join(['warfare:', str(self.warfare())]))
@@ -929,12 +993,12 @@ class Person(universal.RPGObject):
             statList.append(' '.join(['resilience:', str(self.resilience())]))
             statList.append(' '.join(['magic:', str(self.magic())]))
             statList.append(' '.join(['stealth:', str(self.stealth())]))
-        statList.append('Health: ' + str(self.statList[-2]) + '/' + str(self.statList[-4]))
-        statList.append('Mana: '   + str(self.statList[-1]) + '/' + str(self.statList[-3]))
+        statList.append('Health: ' + str(self.primaryStats[-2]) + '/' + str(self.primaryStats[-4]))
+        statList.append('Mana: '   + str(self.primaryStats[-1]) + '/' + str(self.primaryStats[-3]))
         return '\n'.join(statList)
 
     def display_stats(self):
-        return self.display_stats()
+        return self.display_main_stats()
     def display_spells(self, tierNum=None):
         if tierNum is None:
             spellList = []
@@ -948,6 +1012,17 @@ class Person(universal.RPGObject):
                 return '\n'.join([str(n) + '. ' + s.name for (n,s) in zip([i for i in range(1, len(tier)+1)], tier)])
             except TypeError:
                 return ' '.join([self.printedName, 'does not know any spells of this tier.'])
+
+    def known_spells(self, tierNum=None):
+        if tierNum is None:
+            spellList = []
+            for tier in self.spellList:
+                if tier is not None:
+                    spellList.extend([s for s in tier])
+            return spellList
+        else:
+            tier = self.spellList[tierNum]
+        return tier
 
     #The following functions take another person as argument. The first is used when this person failed to spank the arguent.
     #The second is used when the argument failed to spank this person.
@@ -999,36 +1074,24 @@ class Person(universal.RPGObject):
             weaponDamage += self.weapon().armslengthBonus
         return self.warfare() + weaponDamage
 
-    def magic_defense_modifier(self, rawMagic):
+    def magic_defense(self, rawMagic=False):
         return self.magic() + self.magic_defense_bonus() + (self.magic_penalty() if rawMagic else 0)
 
     def defense(self):
         if self.is_grappling():
-            return self.grapple() // 2 + self.defense_bonus()
+            return self.grapple() + self.defense_bonus()
         else:
-            return self.warfare() // 2 + self.defense_bonus()
+            return self.warfare() + self.defense_bonus()
 
     def magic_penalty(self, rawMagic=True):
         return self.weapon().castingPenalty + self.shirt().castingPenalty + self.lower_clothing().castingPenalty + self.underwear().castingPenalty
 
-    def magic_defense(self, rawMagic):
-        return self.magic_defense_modifier(rawMagic)
 
     def magic_defense_bonus(self):
         defenseBonus = 0
         if statusEffects.LoweredMagicDefense.name in self.statusList:
             defenseBonus = self.statusList[statusEffects.LoweredMagicDefense.name][0].inflict_status(self)
         if statusEffects.MagicShielded.name in self.statusList: 
-            print('magic defense bonus:')
-            print(self.weapon().magicDefense)
-            print(self.shirt().magicDefense)
-            print(self.lower_clothing().magicDefense)
-            print(self.underwear().magicDefense)
-            print(defenseBonus)
-            print(self.statusList[statusEffects.MagicShielded.name][STATUS_OBJ])
-            print(self.statusList[statusEffects.MagicShielded.name][STATUS_OBJ])
-            print(self.statusList[statusEffects.MagicShielded.name][STATUS_OBJ].inflict_status(self))
-            print(self.statusList[statusEffects.MagicShielded.name][STATUS_OBJ].inflict_status)
             defenseBonus += self.statusList[statusEffects.MagicShielded.name][STATUS_OBJ].inflict_status(self)
         return self.weapon().magicDefense + self.shirt().magicDefense + self.lower_clothing().magicDefense + self.underwear().magicDefense + defenseBonus
 
@@ -1071,6 +1134,7 @@ class Person(universal.RPGObject):
         
     
     def learn_spell(self, spell):
+        print(self.spellList)
         if self.spellList[spell.tier] is None:
             self.spellList[spell.tier] = [spell]
         else:
@@ -1132,6 +1196,7 @@ class Person(universal.RPGObject):
             more detail
         """
         global currentMode
+        print('character sheet!')
         if mode is not None:
             currentMode = mode
         global currentPerson
@@ -1178,22 +1243,54 @@ class Person(universal.RPGObject):
         selectedPerson = self
         set_command_interpreter(equip_interpreter)
 
-    @staticmethod
-    def _get_load_data(loadData, lineNum, endLine):
-        data = []
-        while loadData[lineNum] != endLine:
-            data.append(loadData[lineNum])
-            lineNum += 1
-        return (data, lineNum)
+    def appearance(self, printEquipment=False):
+        hairStyleDescription = ''
+        if self.hairStyle == 'down':
+            hairStyleDescription = 'down'
+        else:
+            hairStyleDescription = 'pulled into'
+            if self.hairStyle == 'pigtails':
+                hairStyleDescription += ' cute pigtails.'
+            else:
+                hairStyleDescription += ' '.join(['', 'a', self.hairStyle])
+        appearance = [[self.name + "'s", '''skin is a''', self.skinColor + ".", HeShe(self), '''has''', self.eyeColor, '''eyes, and is wearing''', hisher(self),
+            self.hairLength + ",", self.hairColor,'''hair''', hairStyleDescription + "."],
+            [HeShe(self), '''stands at a fairly''', self.height, '''height.''', HeShe(self), '''has a''', self.musculature + ",", self.bodyType, '''body.''']]
+        bumDesc = ' '.join([self.muscle_adj() + ",", self.bum_adj()])
+        if self.marks:
+            appearance.append(self.marks)
+        elif self.bumStatus > 6:
+            appearance.append([self.name + "'s", bumDesc, '''bottom is criss-crossed with countless layers of marks and welts. Every inch of''', hisher(), '''bottom is''',
+            '''throbbing with raw, burning pain.''', HisHer(), '''walk has been reduced to a pained hobble.'''])
+        elif self.bumStatus > 4:
+            appearance.append([self.name + "'s", bumDesc, '''bottom is a dark red. Every inch of''', hisher(), '''bum is covered in marks and welts. Every step makes''',
+                hisher(), '''bottom buzz with pain, and the thought of sitting makes''', himher(), '''wince.'''])
+        elif self.bumStatus > 2:
+            appearance.append([self.name + "'s", bumDesc, '''bottom is a deep red. Several welts mar''', hisher(), '''cheeks.''', HeShe(), '''can't sit without wincing''',
+                '''and there is a slight stiffness to''', hisher(), '''gait.'''])
+        elif self.bumStatus > 0:
+            appearance.append([self.name + "'s", bumDesc, '''bottom is a dark pink, interspersed with patches of dark red.''', HisHer(), '''bottom tingles with the''',
+                    '''lingering sting of''', hisher(), '''recent spankings. Sitting is best done with great care.'''])
+        elif self.bumStatus == 0:
+            appearance.append([self.name + "'s", bumDesc, '''bottom is smooth and unmarked.''', HeShe(), '''wonders idly just how long''',
+                    '''that will last.'''])
+        if printEquipment:
+            appearance.append('\n'.join(['Weapon: ' + self.weapon().name, 'Chest: ' + self.shirt().name, 'Legs: ' + self.lower_clothing().name, 
+                'Underwear: ' + self.underwear().name]))
+        return format_text(appearance)
 
 equipNum = ''
 selectedPerson = None
 def equip_interpreter(keyEvent):
     global equipNum
     if keyEvent.key in NUMBER_KEYS:
-        num = int(pygame.key.name(keyEvent.key)) - 1
-        if 0 < num and num <= len(selectedPerson.inventory): 
-            if len(selectedPerson.inventory) < 10:
+        num = int(pygame.key.name(keyEvent.key))
+        if 0 < num and num <= len(selectedPerson.inventory) + len(selectedPerson.equipmentList): 
+            if len(selectedPerson.inventory) + len(selectedPerson.equipmentList) < 10:
+                num = num - len(selectedPerson.equipmentList) - 1
+                print('inventory')
+                print(num)
+                print(selectedPerson.inventory[num])
                 try:
                     selectedPerson.equip(selectedPerson.inventory[num])
                 except InvalidEquipmentError:
@@ -1213,20 +1310,16 @@ def equip_interpreter(keyEvent):
     elif keyEvent.key == K_ESCAPE:
         selectedPerson.character_sheet(currentMode)
     elif keyEvent.key == K_RETURN and equipNum != '':
-        num = int(equipNum)
+        num = int(equipNum) - len(selectedPerson.equipmentList) - 1
         if 0 < num and num <= len(selectedPerson.inventory):
             try:
                 selectedPerson.equip(selectedPerson.inventory[num])
             except InvalidEquipmentError:
-                say('''That cannot be equipppe!''')
+                say('''That cannot be equipped!''')
                 acknowledge(selectedPerson.equip_menu, ())
                 return
-    try:
-        if result is not None:
-            selectedPerson.character_sheet()
-            selectedPerson.equip_menu()
-    except UnboundLocalError:
-        pass
+        selectedPerson.character_sheet()
+        selectedPerson.equip_menu()
 
                 
 
@@ -1249,42 +1342,9 @@ class PlayerCharacter(Person):
         self.numSpankingsGiven = 0
         self.coins = 20
         self.fakeName = ''
-        self.set_copy()
         self.nickname = nickname
         self.viewedSlot = None
 
-    def appearance(self):
-        hairStyleDescription = ''
-        if self.hairStyle == 'down':
-            hairStyleDescription = 'down'
-        else:
-            hairStyleDescription = 'pulled into'
-            if self.hairStyle == 'pigtails':
-                hairStyleDescription += ' cute pigtails.'
-            else:
-                hairStyleDescription = ' '.join(['a', self.hairStyle])
-        appearance = [[self.name + "'s", '''skin is a''', self.skinColor + ".", HeShe(), '''has''', self.eyeColor, '''eyes, and is wearing''', hisher(),
-            self.hairLength + ",", self.hairColor,'''hair''', hairStyleDescription + "."],
-            [HeShe(), '''stands at a fairly''', self.height, '''height.''', HeShe(), '''has a''', self.musculature + ",", self.bodyType, '''body.''']]
-        bumDesc = ' '.join([self.muscle_adj() + ",", self.bum_adj()])
-        if self.marks:
-            appearance.append(self.marks)
-        elif self.bumStatus > 9:
-            appearance.append([self.name + "'s", bumDesc, '''bottom is criss-crossed with countless layers of marks and welts. Every inch of''', hisher(), '''bottom is''',
-            '''throbbing with raw, burning pain.''', HisHer(), '''walk has been reduced to a pained hobble.'''])
-        elif self.bumStatus > 6:
-            appearance.append([self.name + "'s", bumDesc, '''bottom is a dark red. Every inch of''', hisher(), '''bum is covered in marks and welts. Every step makes''',
-                hisher(), '''bottom buzz with pain, and the thought of sitting makes''', himher(), '''wince.'''])
-        elif self.bumStatus > 3:
-            appearance.append([self.name + "'s", bumDesc, '''bottom is a deep red. Several welts mar''', hisher(), '''cheeks.''', HeShe(), '''can't sit without wincing''',
-                '''and there is a slight stiffness to''', hisher(), '''gait.'''])
-        elif self.bumStatus > 0:
-            appearance.append([self.name + "'s", bumDesc, '''bottom is a dark pink, interspersed with patches of dark red.''', HisHer(), '''bottom tingles with the''',
-                    '''lingering sting of''', hisher(), '''recent spankings. Sitting is best done with great care.'''])
-        elif self.bumStatus == 0:
-            appearance.append([self.name + "'s", bumDesc, '''bottom is smooth, the''', self.skinColor, '''cheeks unmarked.''', self.name, '''wonders idly just how long''',
-                    '''that will last.'''])
-        return format_text(appearance)
 
 
 
@@ -1366,6 +1426,7 @@ def return_to_display_spells_interpreter(keyEvent):
 currentMode = None
 currentPerson = None
 partialNum = ''
+selectedNum = None
 def character_viewer_interpreter(keyEvent):     
     global partialNum
     #set_commands(['(S)pells, (E)quip, (#)View Item, (W)eapon, S(H)irt, (L)ower Clothing, (U)nderwear, <==Back']) 
@@ -1376,14 +1437,25 @@ def character_viewer_interpreter(keyEvent):
     elif keyEvent.key == K_e:
         currentPerson.equip_menu()
     elif keyEvent.key in NUMBER_KEYS:
-        if len(currentPerson.inventory) + len(self.equipmentList) < 10:
+        if len(currentPerson.inventory) + len(currentPerson.equipmentList) < 10:
             num = int(pygame.key.name(keyEvent.key)) - 1
-            if 0 < num and num <= len(currentPerson.inventory) + len(currentPerson.equipmentList):
-                allEquipment = currentPerson.equipmentList + currentPerson.inventory
-                universal.say(allEquipment[num-1].display())
-                if num < len(equipmentList):
-                    selectedPerson.viewedSlot = num
-                set_commands(['<==Back'] if len(equipmentList) <= num else ['(U)nequip', '<==Back'])
+            allEquipment = currentPerson.equipmentList + currentPerson.inventory
+            try:
+                universal.say(allEquipment[num].display())
+            except IndexError:
+                return
+            else:
+                if num < len(currentPerson.equipmentList):
+                    currentPerson.viewedSlot = num
+                commandList = []
+                if len(currentPerson.equipmentList) <= num and currentPerson.inventory[num - len(currentPerson.equipmentList)].is_equippable():
+                    commandList.append('(Enter) Equip')
+                    global selectedNum
+                    selectedNum = num - len(currentPerson.equipmentList)
+                elif num < len(currentPerson.equipmentList): 
+                    commandList.append('(Enter) Unequip')
+                commandList.append('<==Back')
+                set_commands(commandList)
                 set_command_interpreter(view_item_interpreter)
         else:
             partialNum += pygame.key.name(keyEvent.key)
@@ -1392,17 +1464,28 @@ def character_viewer_interpreter(keyEvent):
         universal.say(currentPerson.inventory[num-1].display())
         set_commands(['<==Back'])
         set_command_interpreter(view_item_interpreter)
-    elif keyEvent.key == K_T:
-        self.mainStatDisplay = not self.mainStatDisplay
-        self.character_sheet()
+    elif keyEvent.key == K_t:
+        currentPerson.mainStatDisplay = not currentPerson.mainStatDisplay
+        currentPerson.character_sheet()
+    elif keyEvent.key == K_a:
+        say(currentPerson.appearance(), justification=0)
+        acknowledge(Person.character_sheet, currentPerson)
 
 def view_item_interpreter(keyEvent):
     if keyEvent.key == K_BACKSPACE:
-        selectedPerson.viewedSlot = None
+        currentPerson.viewedSlot = None
         currentPerson.character_sheet(currentMode)
-    elif keyEvent.key == K_u and '(U)nequip' in universal.commands:
-        selectedPerson.unequip(selectedPerson.viewedSlot)
-        selectedPerson.viewedSlot = None
+    elif keyEvent.key == K_RETURN and '(Enter) Unequip' in universal.commands:
+        try:
+            currentPerson.unequip(currentPerson.equipmentList[currentPerson.viewedSlot])
+        except items.NakedError:
+            return
+        currentPerson.viewedSlot = None
+        currentPerson.character_sheet(currentMode)
+    elif keyEvent.key == K_RETURN and '(Enter) Equip' in universal.commands:
+        global selectedNum
+        currentPerson.equip(currentPerson.inventory[selectedNum])
+        selectedNum = None
         currentPerson.character_sheet(currentMode)
 
 
@@ -1539,6 +1622,15 @@ def get_spell_index(spellIndex):
     else:
         raise ValueError(str(i) + 'is not a valid spell school.')
 
+def action_type_to_spell_type(actionType):
+    if actionType == 'combat':
+        return COMBAT
+    elif actionType == 'buff':
+        return BUFF
+    elif actionType == 'status':
+        return STATUS
+    elif actionType == 'spectral':
+        return SPECTRAL
 def get_basic_spell(tierNum, spellType):
     if spellType < 0 or spellType > SPECTRAL:
         raise ValueError(' '.join(['invalid spell type. Excepted a number between 0 and 3, got', str(spellType)]))
@@ -1609,6 +1701,9 @@ class Spell(combatAction.CombatAction):
         self.magicMultiplier = None
         self.castableOutsideCombat = False
 
+    def __str__(self):
+        return self.name
+    
     def _save(self):
         raise NotImplementedError()
 
@@ -1761,12 +1856,12 @@ class Combat(Spell):
                     currentDefenders.append(defender)
             damage = 0
             if not defender.ignores_spell(self):
-                #print('-------------------' + self.name + '------------------')
-                #print('magicMultiplier: ' + str(self.magicMultiplier))
-                #print('magic_attack: ' + str(attacker.magic_attack()))
-                #print('magic_defense: ' + str(attacker.magic_defense(self.rawMagic)))
+                print('-------------------' + self.name + '------------------')
+                print('magicMultiplier: ' + str(self.magicMultiplier))
+                print('magic_attack: ' + str(attacker.magic_attack()))
+                print('magic_defense: ' + str(attacker.magic_defense(self.rawMagic)))
                 damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-                #print('damage: ' + str(damage))
+                print('damage: ' + str(damage))
                 if damage < self.minDamage:
                     damage = self.minDamage
             defender.receives_damage(damage)
@@ -2079,7 +2174,7 @@ class SpectralSpanking(Spectral):
     tier = 1
     numTargets = 1
     statusInflicted = statusEffects.HUMILIATED
-    cost = 8
+    cost = 5
     secondaryStat = universal.RESILIENCE
     def __init__(self, attacker, defenders):
         super(SpectralSpanking, self).__init__(attacker, defenders)
@@ -2087,10 +2182,9 @@ class SpectralSpanking(Spectral):
         self.cost = SpectralSpanking.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.description = 'Conjures \'hands\' of raw magic. One hand grabs the target and lifts them into the air. The other lands a number of swats on the target\'s backside. Once the spanking is done, the first hand lifts the target up, and throws them into the ground.'
-        self.effectFormula = 'NUMBER OF SMACKS: 5 | 5 * (magic - enemy magic), \nHUMILIATION DURATION: 2 | 2 * (resilience() - enemy resilience())\nDAMAGE: 2 | 2 * (magic - enemy magic),\nSuccess (%): 40 | 30 * (magic - enemy magic) | 95'
+        self.effectFormula = 'HUMILIATION DURATION: 2 | 2 * (resilience - enemy resilience)\nDAMAGE: 2 | 2 * (magic - enemy magic),\nSuccess (%): 40 | 30 * (magic - enemy magic) | 95'
         self.numTargets = 1
         self.magicMultiplier = 2
-        self.smackMultiplier = 5
         self.resilienceMultiplier = 2
         self.targetType = combatAction.ENEMY
         self.effectClass = combatAction.ALL
@@ -2126,7 +2220,6 @@ class SpectralSpanking(Spectral):
         defender = self.defenders[0]
         attacker = self.attacker
         damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-        numSmacks = self.smackMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
         duration = self.resilienceMultiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier(self.rawMagic) + severity)
         resultStatement = []
         effects = []
@@ -2143,10 +2236,10 @@ class SpectralSpanking(Spectral):
                 successProbability = self.maxProbability
             success = random.randint(1, 100)
             if success <= successProbability:
-                defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, numSmacks))
+                defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED))
                 defender.receives_damage(damage)
                 resultStatement.append(self.success_statement(defender))
-                effects.append((damage, numSmacks))
+                effects.append(damage)
                 effectString = effectString + [universal.format_line(self.success_statement(defender)), universal.format_line(['\n' + self.attacker.printedName, 'does', str(damage), 'damage to', defender.printedName + "!"])]
                 if defender.current_health() <= 0:
                     resultStatement = [effectString  + [defender.printedName + ' collapses!']]

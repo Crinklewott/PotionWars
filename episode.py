@@ -32,14 +32,15 @@ def set_post_title_card(postTitleCardFunctionIn, postTitleCardFuncArgsIn):
     postTitleCardFuncArgs = postTitleCardFuncArgsIn
 
 class Episode(universal.RPGObject):
-    def __init__(self, num, name, nextEpisode=None, scenes=None, currentSceneIndex=0, titleTheme=None):
+    def __init__(self, num, name, nextEpisode=None, scenes=None, currentSceneIndex=0, titleTheme=None, init=None):
         self.num = num
         self.name = name
         self.scenes = scenes
         self.currentSceneIndex = 0
         self.nextEpisode = nextEpisode
         self.titleTheme = titleTheme
-        universal.state.add_episode(self)
+        self.init = init
+        allEpisodes[name] = self
 
     def start_episode(self, *startingSceneArgs):
         global postTitleCardFunction, postTitleCardFuncArgs
@@ -77,8 +78,8 @@ class Episode(universal.RPGObject):
             self.scenes[self.currentSceneIndex].endScene()
         else:
             self.scenes[self.currentSceneIndex].endScene(*endingSceneArgs)
-        universal.state.player.currentEpisode = self.nextEpisode
-        universal.state.player.currentEpisode.start_episode()
+        universal.state.player.currentEpisode = self.nextEpisode.name
+        allEpisodes[universal.state.player.currentEpisode].start_episode()
 
     def next_scene(self, previousSceneArgs=(), startingSceneArgs=()):
         if self.scenes[self.currentSceneIndex].endScene is not None:
@@ -99,7 +100,7 @@ class Episode(universal.RPGObject):
     def _load(loadData):
         raise NotImplementedError()
 
-allScenes = None
+allScenes = {}
 class Scene(universal.RPGObject):
     """
         A scene has a name, a startFunction, and an endFunction.
@@ -112,7 +113,7 @@ class Scene(universal.RPGObject):
         self.name = name
         self.startScene = startScene
         self.endScene = endScene
-        universal.state.add_scene(self)
+        allScenes[name] = self
 
     def _save(self):
         raise NotImplementedError()

@@ -23,6 +23,9 @@ from pygame.locals import *
 import music
 import os
 import episode
+import items
+import itemspotionwars
+import copy
 
 """ Note: This file will have to be modified if we ever decide to have multiple universal.state.player's. Not quite sure what the best way of handling the case of multiple universal.state.player's is. We'll have
     to see.
@@ -186,55 +189,31 @@ def opening_crawl():
     '''adults only. Nothing in this game should be interpreted as''', 
     '''advocating any form of non-consensual spanking or the spanking of minors.''',
     '''\n-Andrew Russell''',
-    '''\n\nTo skip the opening crawl, press Enter at any time.'''])
+    '''\n\nTo skip the opening crawl (which will begin shortly), press Enter at any time.'''])
     display_crawl()
     delay()
     if not skip:
         music.play_music(OPENING_CRAWL, fadeoutTime=0, wait=True)
-    universal.say_replace(["A sharp pain springs into life deep within your chest, as if some beast",
-    "is trying to cut its way free.",
-        "Your health magic surges, as your body tries to repair the damage."])
+    universal.say_replace(["Along the coast of the Medios Sea is a region rife with bickering city-states, known collectively as the 1024. The city-states are inhabited by two broad cultures: the bronze-skinned "
+        "Taironans, and the much paler Carnutians."])
     display_crawl()
     delay()
-    universal.say_replace(["But there's no damage to repair."])
-    display_crawl()
-    delay_short()
-    universal.say_replace(["Ants cover every inch of your skin, tearing into you with their razor-sharp mandibles.",
-        "Your health drains away like sand through your fingers."])
-    display_crawl()
-    delay()
-    universal.say_replace(["But there's no damage to repair."])
-    display_crawl()
-    delay_short()
-    universal.say_replace(["Your skin has been scraped raw. The thinnest of clothing,",
-        "the slightest of breezes, the gentlest of touches, they all go",
-        "beyond pain.",
-        "Your body draws on every ounce of power, and suffuses your skin with healing magic."])
-    display_crawl()
-    delay()
-    universal.say_replace("But there's no damage to repair."),
-    display_crawl()
-    delay_short()
-    universal.say_replace(["You can no longer breath. You can no longer see. You can",
-        "no longer think."])
-    display_crawl()
-    delay_short()
-    universal.say_replace("You die.")
-    display_crawl()
-    delay_short()
-    universal.say("\n\n40% of your neighbors die.")
-    display_crawl()
-    delay_short()
-    universal.say_replace(["Along the coast of the Medios Sea is a region rife with bickering city-states, known collectively as the One-Thousand-Twenty-Four. The city-states are inhabited by two broad cultures: the bronze-skinned "
-        "Taironans, and the much paler Carnutians, though people identify more closely with their city than their culture. In the year 1273, the Wasting Wail descended upon Bonda, a leading",
-        "Taironan city. It began in the",
-            "Merchant District, raced through the slums, and even swept through the",
-            "nobility. Bonda's gates were closed, and the other cities set up a blockade to",
-            "enforce the quarantine."])
+    universal.say_replace(["Magic permeates this world, like oxygen permeates our own. Just as we have adapted to use oxygen, so have they adapted to use magic.",
+        "They instinctively use magic to strengthen their bodies, making the average person faster, stronger, and more perceptive than our greatest athletes. Each has a",
+        "special store of magic, called health, that allows them to instantly heal serious injuries."])
     display_crawl()
     delay_long()
-    universal.say_replace(["An army of holy people came from the Matirian Church, a powerful (Carnutian) religion. They carried with them a new invention: Potions."])
-            
+    universal.say_replace(["However, there is a terrible and feared disease called the Wasting Wail. So long as someone is inflicted with the Wail, their body believes",
+    "they are covered in terrible wounds, and tries to heal these nonexistent injuries. Their body heals, and heals, until they have no more health. Then, the body",
+    "pulls energy from other places, and continues healing, until either they are lucky, and the disease passes, or if they are unlucky, they die."])
+    display_crawl()
+    delay_long()
+    universal.say_replace(["In the hear 1273, the Wasting Wail descended upon the Taironan city of Bonda. It started in the Merchant District, spread into the slums, and",
+    "even touched the nobility. The other cities instituted a strict quarantine, and left Bonda alone to endure the ravages of the plague"])
+    display_crawl()
+    delay_long()
+    universal.say_replace(["But then, a group of Brothers and Sisters from the Matirian Church, a powerful (Carnutian) religion arrived at the gates of Bonda. They",
+    "carried with them a new invention: Potions."])
     display_crawl()
     delay()
     universal.say_replace(["These Potions, they claimed, were healers in a bottle. They would keep the plague",
@@ -267,7 +246,7 @@ def opening_crawl():
             "escape."])
     display_crawl()
     delay_long()
-    universal.say_replace("A little over twenty years have passed. Now, Tairona and Carnute teeter on the edge of a")
+    universal.say_replace("A little over twenty years have passed. Bonda has all but collapsed, and Avaricum teeters on the edge of a")
     display_crawl()
     if not skip:
         music.play_music(music.THEME, DELAY_TIME / 3, wait=True)
@@ -332,8 +311,12 @@ def title_screen(episode=None):
         screen.blit(textSurface, worldView.centerleft)
     pygame.display.flip()
     while 1:
+        universal.textToDisplay = ''
+        universal.titleText = ''
         for event in pygame.event.get():
             if event.type == KEYUP:
+                import traceback
+                traceback.print_stack()
                 return
     #subtitleLocation = (wvMidLeft[0], wvMidLeft[1]+50)
     #textSurface = textrect.render_textrect(get_subtitle(), pygame.font.SysFont(universal.FONT_LIST, 30), worldView, LIGHT_GREY, DARK_GREY, 1)
@@ -388,9 +371,9 @@ def request_name_interpreter(keyEvent):
     global partialName
     if keyEvent.key == K_RETURN:
         universal.state.player = person.PlayerCharacter(partialName, gender)
-        person.get_PC().set_all_stats(2, 2, 2, 2, 2, 12, 10)
+        person.get_PC().set_all_stats(2, 2, 2, 2, 2, 20, 10)
         person.set_party(person.Party([person.get_PC()]))
-        universal.state.player.currentEpisode = firstEpisode
+        universal.state.player.currentEpisode = firstEpisode.name
         universal.state.player.name = partialName
         universal.state.player.set_fake_name()
         request_nickname()
@@ -450,7 +433,7 @@ def request_body_type():
     universal.say_title('Select Body Type')
     universal.say('\n'.join(universal.numbered_list(person.BODY_TYPES)), justification=0)
     set_command_interpreter(request_body_type_interpreter)
-    set_commands(['(#) Select a number.'])
+    set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
 
 def request_body_type_interpreter(keyEvent):
     try:
@@ -472,15 +455,21 @@ def request_height():
     NUM_INCHES_IN_FOOT = 12
     NUM_METERS_IN_INCH = .0254
     def inches_to_meters(inches):
-        return round(inches * NUM_METERS_IN_INCH, 1)
+        return round(inches * NUM_METERS_IN_INCH, 2)
     universal.say_title('Select Height')
-    height = universal.numbered_list(person.HEIGHTS)
+    height = universal.numbered_list([h + ':' for h in person.HEIGHTS])
     increment = NUM_INCHES_IN_FOOT //  len(person.HEIGHTS) 
+    heightNums = []
     for i in range(len(height)):
-        bottom = + increment * i
-        top =  5 + increment * (i + 1)
-        height[i] += ''.join([': ', str(bottom // NUM_INCHES_IN_FOOT), '.', str(bottom % NUM_INCHES_IN_FOOT), ' ft', '(', str(inches_to_meters(bottom)), ' m)', '-', 
-            str(top // NUM_INCHES_IN_FOOT), '.', str(top % NUM_INCHES_IN_FOOT), ' ft', '(', str(inches_to_meters(top)), ')'])
+        bottom = 5*12 + increment * i
+        top =  5*12 + increment * (i + 1)
+        heightNums.append(''.join([str(bottom // NUM_INCHES_IN_FOOT), "'", str(bottom % NUM_INCHES_IN_FOOT), '"', ' (', str(inches_to_meters(bottom)), 'm)', ' - ', 
+            str(top // NUM_INCHES_IN_FOOT), "'", str(top % NUM_INCHES_IN_FOOT), '"', ' (', str(inches_to_meters(top)), 'm)']))
+    heightNums = '\n'.join(heightNums)
+    height = '\n'.join(height)
+    print('---------------height------------------')
+    print('\n'.join(height))
+    universal.say(height + '\t' + heightNums, columnNum=4, justification=0)
     set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(request_height_interpreter)
 
@@ -502,11 +491,14 @@ def request_height_interpreter(keyEvent):
 #MUSCULATURE = ['soft', 'fit', 'muscular']
 def request_musculature():
     universal.say_title('Select Musculature')
-    musculature = universal.numbered_list(person.MUSCULATURE)
-    musculature[0] += ' '.join(['', universal.state.player.name, '''has a soft, jiggly body. Muscles are not well defined.'''])
-    musculature[1] += ' '.join(['', universal.state.player.name, '''has a toned, firm, smooth body, with a hint of muscle definition.'''])
-    musculature[2] += ' '.join(['', universal.state.player.name, '''has a very hard body with large, well-defined muscles.'''])
-    universal.say('\n'.join(musculature), justification=0)
+    musculature = '\n'.join([m + ':' for m in universal.numbered_list(person.MUSCULATURE)])
+    musculatureDescr = [
+            ' '.join(['', universal.state.player.name, '''has a soft, jiggly body.''']), 
+            ' '.join(['', universal.state.player.name, '''has a firm, smooth body.''']), 
+            ' '.join(['', universal.state.player.name, '''has a hard, muscled body.'''])
+            ]
+    musculatureDescr = '\n'.join(musculatureDescr)    
+    universal.say(musculature + '\t' + musculatureDescr, justification=0, columnNum=3)
     set_command_interpreter(request_musculature_interpreter)
     set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
 
@@ -531,7 +523,7 @@ def request_musculature_interpreter(keyEvent):
 #HAIR_LENGTH = ['short', 'shoulder-length', 'back-length', 'butt-length']
 def request_hair_length():
     universal.say_title('Select Hair Length')
-    universal.say('\n'.join(numbered_list(person.HAIR_LENGTH)))
+    universal.say('\n'.join(numbered_list(person.HAIR_LENGTH)), justification=0)
     set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(request_hair_length_interpreter)
 
@@ -539,6 +531,8 @@ def request_hair_length_interpreter(keyEvent):
     try:
         num = int(universal.key_name(keyEvent)) - 1
     except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            request_musculature()
         return
     else:
         try:
@@ -549,20 +543,21 @@ def request_hair_length_interpreter(keyEvent):
             request_hair_style()
 
 def get_hair_style():
+    player = universal.state.player
     if player.hairLength == 'short':
         hairStyle = person.SHORT_HAIR_STYLE
     elif player.hairLength == 'shoulder-length':
         hairStyle = person.SHOULDER_HAIR_STYLE
-    elif person.hairLength == 'back-length':
+    elif player.hairLength == 'back-length':
         hairStyle = person.BACK_HAIR_STYLE
-    elif person.hairLength == 'butt-length':
+    elif player.hairLength == 'butt-length':
         hairStyle = person.BUTT_HAIR_STYLE
     return hairStyle
 
 def request_hair_style():
     universal.say_title('Select Hair Style')
     player = universal.state.player
-    universal.say('\n'.join(numbered_list(get_hair_style())))
+    universal.say('\n'.join(numbered_list(get_hair_style())), justification=0)
     set_commands(SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(request_hair_style_interpreter)
 
@@ -570,6 +565,8 @@ def request_hair_style_interpreter(keyEvent):
     try:
         num = int(universal.key_name(keyEvent)) - 1
     except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            request_hair_length()
         return
     else:
         try:
@@ -577,7 +574,168 @@ def request_hair_style_interpreter(keyEvent):
         except IndexError:
             return
         else:
-            final_confirmation()
+            select_shirt()
+
+#[itemspotionwars.thong, itemspotionwars.lacyUnderwear, itemspotionwars.boyShorts, itemspotionwars.underShorts
+shirtList = []
+chosenShirt = None
+#TODO: Refactor all of this to allow me to set it through the game file rather than in titleScreen.
+def select_shirt():
+    global shirtList
+    universal.say_title('Select Shirt')
+    shirtList = [itemspotionwars.vNeckTunic, itemspotionwars.tunic, itemspotionwars.blouse, itemspotionwars.bra, itemspotionwars.blackDress, itemspotionwars.sunDress,
+            itemspotionwars.robe, items.emptyUpperArmor]
+    universal.say('\n'.join(universal.numbered_list([shirt.name for shirt in shirtList])), justification=0)
+    set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
+    set_command_interpreter(select_shirt_interpreter)
+
+def select_shirt_interpreter(keyEvent):
+    global chosenShirt
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            request_hair_style()
+    else:
+        try:
+            chosenShirt = shirtList[num]
+        except IndexError:
+            return
+        else:
+            universal.say(chosenShirt.display())
+            set_command_interpreter(confirm_shirt_interpreter)
+            set_commands(['(Enter) Equip shirt', '<==Back'])
+
+def confirm_shirt_interpreter(keyEvent):
+    if keyEvent.key == K_RETURN:
+        universal.state.player._set_shirt(copy.deepcopy(chosenShirt))
+        if isinstance(chosenShirt, items.FullArmor):
+            universal.state.player._set_lower_clothing(universal.state.player.shirt())
+        else:
+            universal.state.player._set_lower_clothing(items.emptyLowerArmor)
+        select_lower_clothing()
+    elif keyEvent.key == K_BACKSPACE:
+        select_shirt()
+
+chosenPants = None
+pantsList = []
+def select_lower_clothing():
+    global pantsList
+    print(universal.state.player.lower_clothing().name)
+    print(universal.state.player.shirt().name)
+    if universal.state.player.lower_clothing() is universal.state.player.shirt():
+        select_underwear()
+    else:
+        universal.say_title('Select Lower Clothing')
+        pantsList = [itemspotionwars.shorts, itemspotionwars.shortShorts, itemspotionwars.plainSkirt, itemspotionwars.miniSkirt, itemspotionwars.pencilSkirt,
+                items.emptyLowerArmor]
+        universal.say('\n'.join(universal.numbered_list([pants.name for pants in pantsList])), justification=0)
+        set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
+        set_command_interpreter(select_lower_clothing_interpreter)
+
+def select_lower_clothing_interpreter(keyEvent):
+    global chosenPants
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            select_shirt()
+    else:
+        try:
+            chosenPants = pantsList[num]
+        except IndexError:
+            return
+        else:
+            universal.say(chosenPants.display())
+            set_command_interpreter(confirm_lower_clothing_interpreter)
+            set_commands([' '.join(['(Enter) Equip', chosenPants.armorType]), '<==Back'])
+    
+def confirm_lower_clothing_interpreter(keyEvent):
+    if keyEvent.key == K_RETURN:
+        universal.state.player._set_lower_clothing(copy.deepcopy(chosenPants))
+        select_underwear()
+    elif keyEvent.key == K_BACKSPACE:
+        select_lower_clothing()
+
+underwearList = []
+chosenUnderwear = None
+
+def select_underwear():
+    global underwearList
+    underwearList = [itemspotionwars.thong, itemspotionwars.lacyUnderwear, itemspotionwars.boyShorts, itemspotionwars.underShorts, itemspotionwars.modestUnderwear,
+            items.emptyUnderwear]
+    if universal.state.player.lower_clothing() == items.emptyLowerArmor:
+        underwearList.remove(items.emptyUnderwear)
+    universal.say_title('Select Underwear')        
+    universal.say('\n'.join(universal.numbered_list([underwear.name for underwear in underwearList])), justification=0)
+    set_commands(SELECT_NUMBER_BACK_COMMAND)
+    set_command_interpreter(select_underwear_interpreter)
+
+def select_underwear_interpreter(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            print('keyError!')
+            if universal.state.player.shirt() is universal.state.player.lower_clothing():
+                select_shirt()
+            else:
+                select_lower_clothing()
+    else:
+        global chosenUnderwear
+        try:
+            chosenUnderwear = underwearList[num]
+        except IndexError:
+            return
+        else:
+            universal.say(chosenUnderwear.display())
+            set_commands(['(Enter) Equip underwear', '<==Back'])
+            set_command_interpreter(confirm_underwear_interpreter)
+
+def confirm_underwear_interpreter(keyEvent):
+    if keyEvent.key == K_RETURN:
+        universal.state.player._set_underwear(copy.deepcopy(chosenUnderwear))
+        select_weapon()
+    elif keyEvent.key == K_BACKSPACE:
+        select_underwear()
+  
+weaponList = []
+chosenWeapon = None
+def select_weapon():
+    global weaponList
+    weaponList = [itemspotionwars.familyDagger, itemspotionwars.familySword, itemspotionwars.familySpear]
+    universal.say_title('Request Weapon')
+    universal.say('\n'.join(universal.numbered_list([weapon.name for weapon in weaponList])), justification=0)
+    set_commands(SELECT_NUMBER_BACK_COMMAND)
+    set_command_interpreter(select_weapon_interpreter)
+
+def select_weapon_interpreter(keyEvent):
+    global chosenWeapon
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            select_underwear()
+        return
+    else:
+        try:
+            chosenWeapon = weaponList[num]
+        except IndexError:
+            return
+        else:
+            universal.say(chosenWeapon.display())
+            set_commands(['(Enter) Equip Weapon', '<==Back'])
+            set_command_interpreter(confirm_weapon_interpreter)
+
+def confirm_weapon_interpreter(keyEvent):
+    if keyEvent.key == K_RETURN:
+        universal.state.player._set_weapon(copy.deepcopy(chosenWeapon))
+        final_confirmation()
+    elif keyEvent.key == K_BACKSPACE:
+        select_weapon()
+
+    
+
 def simpleTitleCase(string):
     """
     A quick and dirty function for doing halfway decent title case.
@@ -680,24 +838,30 @@ Stats:
 statPoints = 3
 
 def final_confirmation():
+    print(universal.state.player.spellList)
     universal.state.player.learn_spell(person.allSpells[0][0][0])
     universal.state.player.learn_spell(person.allSpells[0][1][0])
     universal.state.player.learn_spell(person.allSpells[0][2][0])
     universal.state.player.learn_spell(person.allSpells[0][3][0])
-    universal.say(universal.state.player.appearance(), columnNum=1)
+    spells = [person.allSpells[0][0][0], person.allSpells[0][1][0], person.allSpells[0][2][0], person.allSpells[0][3][0]]
+    for i in range(len(spells)):
+        universal.state.player.quickSpells[i] = spells[i]
+    universal.say(universal.state.player.appearance(True), justification=0)
     #print(universal.state.player.character_sheet_spells())
-    universal.set_commands('Is this acceptable? Y\N')
+    universal.set_commands(['(Enter) Begin Game', '<==Back', '(Esc) To Title Screen'])
     universal.set_command_interpreter(final_confirmation_interpreter)
 
 def final_confirmation_interpreter(keyEvent):
     #universal.state.player = person.get_PC()
-    if keyEvent.key == K_y:
-        universal.state.player.currentEpisode = firstEpisode
-        universal.state.player.currentEpisode.currentSceneIndex = 0
+    if keyEvent.key == K_RETURN:
+        universal.state.player.currentEpisode = firstEpisode.name
+        episode.allEpisodes[universal.state.player.currentEpisode].currentSceneIndex = 0
         #episode.set_post_title_card(townmode.save_game, ['.init', townmode.town_mode, False])
-        universal.state.player.currentEpisode.start_episode(False)
+        episode.allEpisodes[universal.state.player.currentEpisode].start_episode(False)
         townmode.saveName = ''
-    elif keyEvent.key == K_n:
+    elif keyEvent.key == K_BACKSPACE:
+        select_weapon()
+    elif keyEvent.key == K_ESCAPE:
         global spellPoints
         global statPoints
         spellPoints = 3

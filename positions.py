@@ -24,6 +24,7 @@ MAX_RATING = 3
 def rating(num):
     return ''.join([str(num), '/', str(MAX_RATING)])
 
+allPositions = {}
 class Position(universal.RPGObject):
     """
     Defines the spanking positions
@@ -34,7 +35,7 @@ class Position(universal.RPGObject):
         self.maintainability = maintainability
         self.reversability = reversability
         self.description = description
-        universal.state.add_position(self)
+        allPositions[self.name] = self
 
     def display(self):
         return '\n'.join([self.description, 'difficulty: ' + rating(self.difficulty), 'maintainability: ' + rating(self.maintainability), 

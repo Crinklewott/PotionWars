@@ -31,11 +31,13 @@ def name():
     return universal.state.player.name
 
 class Enemy(person.Person):
-    def __init__(self, name, gender, defaultLitany, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3):
+    def __init__(self, name, gender, defaultLitany, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3, musculature='', 
+            bodyType='', height='', hairLength='', hairStyle='', eyeColor='', skinColor='', order=person.zeroth_order):
         """
         Drop chance determines the chances that this character will drop a piece of equipment.
         """
-        super(Enemy, self).__init__(name, gender, defaultLitany, defaultLitany, description, printedName, coins, specialization)
+        super(Enemy, self).__init__(name, gender, defaultLitany, defaultLitany, description, printedName, coins, specialization, order, musculature=musculature,
+                bodyType=bodyType, height=height, hairLength=hairLength, hairStyle=hairStyle, eyeColor=eyeColor, skinColor=skinColor)
         self.dropChance = dropChance
         self.printedName = self.printedName + (' (M)' if self.is_male() else ' (F)')
         self.equip(items.emptyWeapon)
@@ -95,14 +97,15 @@ class VengadorWarrior(Enemy):
     #def __init__(self, name, gender, defaultLitany, description="", printedName=None, 
             #coins=20, specialization=BALANCED)
     def __init__(self, gender, level=0):
-        super(VengadorWarrior, self).__init__('Vengador Warrior', gender, None, specialization=universal.WARFARE)
+        super(VengadorWarrior, self).__init__('Vengador Warrior', gender, None, specialization=universal.WARFARE, bodyType='voluptuous', musculature='muscular', 
+                height='tall')
         self.level = level
         self.equip(copy.copy(itemspotionwars.leatherCuirass))
         self.equip(copy.copy(itemspotionwars.trousers))
         self.equip(copy.copy(itemspotionwars.warspear))
         self.description = universal.format_line(['''A tall, broad-shouldered''', person.manwoman(self) + ".", person.HeShe(self), '''is wielding a''', self.weapon().name, 
         '''and is wearing''', self.shirt().name, '''and''', self.lower_clothing().name + "."])
-        self.set_all_stats(strength=3, dexterity=0, willpower=0, talent=0, health=10, mana=0, alertness=1)
+        self.set_all_stats(strength=3, dexterity=1, willpower=0, talent=0, health=16, mana=0, alertness=1)
         self.spankingPositions = [positions.headBetweenLegs, positions.frontalOverLap]
 
     def default_stats(self):
@@ -233,9 +236,9 @@ class VengadorWarrior(Enemy):
 
 class VengadorSpellslinger(Enemy):
     def __init__(self, gender, level=0):
-        super(VengadorSpellslinger, self).__init__('Vengador', gender, None, specialization=universal.COMBAT_MAGIC)
+        super(VengadorSpellslinger, self).__init__('Vengador', gender, None, specialization=universal.COMBAT_MAGIC, bodyType='voluptuous', height='short', musculature='soft')
         self.level = level
-        self.set_all_stats(strength=0, dexterity=1, willpower=1, talent=3, health=7, mana=10, alertness=0)
+        self.set_all_stats(strength=0, dexterity=1, willpower=1, talent=3, health=11, mana=10, alertness=0)
         if gender == person.FEMALE:
             self.equip(copy.copy(itemspotionwars.wornDress))
         else:
@@ -401,14 +404,14 @@ class VengadorSpellslinger(Enemy):
 
 class VengadorScout(Enemy):
     def __init__(self, gender, level=0):
-        super(VengadorScout, self).__init__('Vengador Scout', gender, None, specialization=person.GRAPPLE)
+        super(VengadorScout, self).__init__('Vengador Scout', gender, None, specialization=person.GRAPPLE, bodyType='slim', height='average', musculature='fit')
         self.level = level
         self.equip(copy.copy(itemspotionwars.tunic))
         self.equip(copy.copy(itemspotionwars.trousers))
         self.equip(copy.copy(itemspotionwars.dagger))
         self.description = format_line(['''A short, thin Taironan''', person.manwoman(self), '''dresssed in a''', self.shirt().name + "," ''' and''', 
             self.lower_clothing().name + ".", person.HeShe(self), '''carries a''', self.weapon().name + "."])
-        self.set_all_stats(strength=1, dexterity=3, willpower=2, talent=1, health=7, mana=7, alertness=2)
+        self.set_all_stats(strength=1, dexterity=3, willpower=2, talent=1, health=13, mana=7, alertness=2)
         self.spankingPositions = [positions.diaper, positions.underarm]
         self.learn_spell(spells_PotionWars.heal)
         self.learn_spell(spells_PotionWars.weaken)

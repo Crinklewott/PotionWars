@@ -40,23 +40,25 @@ batteredLeatherBreastplate = items.UpperArmor('battered leather breastplate', 'A
 
 #------------------------------------Shirts---------------------------------------
 
-tunic = items.UpperArmor('tunic', 'A fairly common, loose fitting tunic. A bit worn, but otherwise in good shape.', price=5) 
+tunic = items.Shirt('tunic', 'A fairly common, loose fitting tunic. A bit worn, but otherwise in good shape.', price=5) 
 
 """
-qualityTunic = items.UpperArmor('quality tunic', 'A heavy tunic made from high quality leathers. The tunic also has the smallest hint of magic about it, providing ' +
+qualityTunic = items.Shirt('quality tunic', 'A heavy tunic made from high quality leathers. The tunic also has the smallest hint of magic about it, providing ' +
 'a little bit of protection from enemy blows.', attackDefense=2, price=10)
 """
-vNeckTunic = items.UpperArmor('V-neck tunic', 'A cotton tunic with a deep v-shaped slit down the front, revealing a fair amount of the upper chest.', price=5)
+vNeckTunic = items.Shirt('V-neck tunic', 'A cotton tunic with a deep v-shaped slit down the front, revealing a fair amount of the upper chest.', price=5, risque=1)
 
 """
-qualityVNeckTunic = items.UpperArmor('quality V-neck tunic', 'A high quality v-neck tunic. There\'s even a little bit of magic woven into it, providing a bit of protection.', price=10, attackDefense=2)
+qualityVNeckTunic = items.Shirt('quality V-neck tunic', 'A high quality v-neck tunic. There\'s even a little bit of magic woven into it, providing a bit of protection.', price=10, attackDefense=2)
 """
 
-blouse = items.UpperArmor('blouse', 'A plain, white, loose-fitting blouse.', price=5)
+blouse = items.Shirt('blouse', 'A plain, white, loose-fitting blouse.', price=5)
 """
-qualityBlouse = items.UpperArmor('blouse', 'A well-made blouse with a hint of protective magic.', price=10, attackDefense=2)
+qualityBlouse = items.Shirt('blouse', 'A well-made blouse with a hint of protective magic.', price=10, attackDefense=2)
 """
 
+bra = items.Shirt('bra', format_line(['Recent research has shown that people who wear shirts are baby-eating, Mother-hating scum who are secretly planning to steal''',
+'''your husband's sword. Be a true Avaricumite. Wear nothing but a bra today (and pants. Or a teeny tiny skirt. Or just panties.)!''']))
 #--------------------------------------Lower Armor--------------------------------
 
 #--------------------------------------items.Pants-------------------------------------
@@ -64,7 +66,7 @@ trousers = items.Pants('trousers', 'Simple loose-fitting trousers. They are a bi
 
 shorts = items.Shorts('shorts', 'A pair of knee-length cotton shorts.', price=5)
 
-shortShorts = items.Shorts('short shorts', "A pair of skintight shorts that barely cover one's bottom.", price=10)
+shortShorts = items.Shorts('short shorts', "A pair of skintight shorts that barely cover one's bottom.", price=5, risque=2)
 
 holeyTrousers = items.Pants('holey trousers', 'A pair of ragged, borderline unwearable trousers. There is a massive hole in the left knee, the right leg stops in a frayed mess just pass the knee, and the waist is held up with a threadbare rope.')
 
@@ -75,16 +77,16 @@ plainSkirt = items.Skirt('skirt', 'A simple cotton skirt that extends down to ju
         price=5)
 
 miniSkirt = items.Skirt('miniskirt', 'A tight leather skirt that extends about halfway down the thigh.', 
-        price=5)
+        price=5, risque=2)
 
 pencilSkirt = items.Skirt('pencil skirt', 'A narrow, black skirt that extends just past the knees. The skirt has a slit in back to minimize movement restriction.',
-        price=5)
+        price=5, risque=1)
 
 #------------------------------------items.Underwear-------------------------------------
 modestUnderwear = items.Underwear("underwear", universal.format_line(['A plain, modest pair of underwear that', 'covers the entire bottom.']), price=3)
 
 silkPanties = items.Underwear('silk panties', universal.format_line(['A very well-made and comfortable pair of',
-    'black silk panties that leave the lower-half of a woman\'s bottom exposed.']), price=50, baring=True)
+    'black silk panties that leave the lower-half of a woman\'s bottom exposed.']), price=50, baring=True, risque=2)
 
 underShorts = items.Underwear('undershorts', universal.format_line(['A pair of shorts that extend about a quarter',
     'of the way down the thigh. Such shorts are often worn underneath skirts to better protect', 
@@ -92,10 +94,9 @@ underShorts = items.Underwear('undershorts', universal.format_line(['A pair of s
     'or otherwise).']), price=3)
 
 thong = items.Thong('thong', ' '.join(['An undergarment that covers the genitalia, but leaves the',
-    'bottom bare (except for a narrow strip of cloth that runs between the cheeks). If you\'re',
-    'female, comes with a matching brassiere.']), price=3)
+    'bottom bare (except for a narrow strip of cloth that runs between the cheeks).']), price=3)
 
-lacyUnderwear = items.Underwear('lacy underwear', 'A pair of white, flowery, lacy underwear that leaves the lower-half of the bottom bare.', baring=True, price=3)
+lacyUnderwear = items.Underwear('lacy underwear', 'A pair of white, flowery, lacy underwear that leaves the lower-half of the bottom bare.', baring=True, price=3, risque=2)
 
 boyShorts = items.Underwear('boyshorts', 'A pair of dark red boyshorts that completely cover the bottom.', price=3)
 
@@ -103,9 +104,9 @@ stealthThong = items.Thong('loincloth of stealth', ' '.join(["A brown loincloth 
     '''control over their legs, improving the wearer's ability to move stealthily. Provides a +1 bonus to Stealth.''']), price=50, 
     enchantments=[items.Enchantment(1, universal.STEALTH, 1)])
 
-chainmailBikini = items.Thong('chainmail bikini', "A two piece set of chainmail. The top piece covers a woman's breasts, but nothing else. The bottom is a chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's almost as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of one's body, the armor has a negligible impact on magic.", price=5000, attackDefense=16) 
+chainmailBikini = items.Thong('chainmail bikini', "A two piece set of chainmail. The top piece covers a woman's breasts, but nothing else. The bottom is a chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's almost as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of one's body, the armor has a negligible impact on magic.", price=5000, attackDefense=16, risque=3, maxEnchantment=2) 
 
-chainmailThong = items.Thong('chainmail thong', "A chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's just as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of your body, the armor only has a much smaller penalty to magic than a chain (or plate) cuirass.", price=5000, attackDefense=16)
+chainmailThong = items.Thong('chainmail thong', "A chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's just as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of your body, the armor only has a much smaller penalty to magic than a chain (or plate) cuirass.", price=5000, attackDefense=16, risque=3, maxEnchantment=2)
 
 
 #--------------------------Full Armor---------------------------------------
@@ -117,9 +118,9 @@ wornDress = items.Dress('worn dress', "An old, ragged wool dress.")
 blueDress = items.Dress('blue dress', "A soft blue cotton dress without any trim. This type of dress is worn by Younger Sisters of the Healer Persuasion in the Mother's Church.")
 
 blackDress = items.Dress('black dress', "A long, slinky black dress that extends from the bottom of your neck to your ankles, but hugs your form in all the right places. A " +
-"slit runs up the side of the dress to allow for front-saddle riding.", price=20)
+"slit runs up the side of the dress to allow for front-saddle riding.", price=20, risque=2)
 
-sunDress = items.Dress('sun dress', 'A low-cut cotton dress  that extends to just above the knees.', price=20)
+sunDress = items.Dress('sun dress', 'A low-cut cotton dress  that extends to about two-thirds down the thigh.', price=20, risque=3)
 
 deidresDress = items.Dress("Deidre's dress", "A black dress with red trim made from high quality cotton. The dress is floor-length on Deidre, and is cut to balance professionalism with showing off Deidre's average bust, shapely hips and long legs. Though an elegant dress, it can interfere with combat and other highly physical activities.", 
         attackDefense=4, attackPenalty=1)
@@ -127,11 +128,13 @@ deidresDress = items.Dress("Deidre's dress", "A black dress with red trim made f
 
 #------------------------Robes----------------------------------------
 wornRobe = items.Robe('worn robe', "An old, ragged wool robe.")
+robe = items.Robe("robe", "A warm, bulky outfit often worn by men who wish they were women, but don't have the guts to wear a dress.")
 #---------------------Weapons---------------------------------------------
 #------------------------------Knives------------------------------------
-familyDagger = items.Knife('family dagger', "A war dagger, typically carried by fledgling warriors. Engraved on the hilt is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate hilt design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=100)
+familyDagger = items.Knife('family dagger', "Engraved on the hilt is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate hilt design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=100)
 
-qualityDagger = items.Knife('quality dagger', "A war dagger very similar to the Family Dagger. However this version is larger and better balanced.", genericBonus=1, price=50) 
+qualityDagger = items.Knife('quality dagger', "A war dagger very similar to the Family Dagger. However this version is larger and better balanced.", genericBonus=1, 
+        price=100) 
 
 mariasDagger = items.Knife("Maria's dagger", "A beautifully made war dagger with a wicked edge. The weapon seems to gleem faintly, a sign of the magic that was imbued into the steel at its time of forging.", genericBonus=4)
 
@@ -141,10 +144,13 @@ dagger = items.Knife('dagger', "A large, wicked looking dagger.", price=10)
 
 
 #-------------------------Swords------------------------------------------
-longsword = items.Sword('longsword', "A standard, one-handed, double-edged sword. Often used as a sign of status by knights and other warriors of noble birth.", price=100)
+longsword = items.Sword('longsword', "A standard, one-handed, double-edged sword. Often used as a sign of status by knights and other warriors of noble birth.", price=100,
+        genericBonus=1)
+familySword = items.Sword('family sword', "Engraved on the hilt is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate hilt design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=100)
 
 #-----------------------------Spears-------------------------------------
-warspear = items.Spear('warspear', "A heavy wooden pole with a thick metal spike on one end, and an iron band on the other for balance. Very dangerous when you can keep your opponents at arms length.", price=50)
+warspear = items.Spear('warspear', "A heavy wooden pole with a thick metal spike on one end, and an iron band on the other for balance. Very dangerous when you can keep your opponents at arms length.", price=100, genericBonus=1)
+familySpear = items.Spear('family spear', "Engraved on the spear shaft is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=100)
 
 staff = items.Spear('staff', "A heavy wooden staff. Staff-wielders are specially trained in defensive combat. Therefore, although not as dangerous as a spear, a staff provides better protection against being grappled, and has a smaller penalty while grappled. A favorite weapon of spellslingers.", price=30, minDamage=1, maxDamage=3, 
         grappleAttempt=-3, grappleAttemptDefense=4, grappleBonus=-1,

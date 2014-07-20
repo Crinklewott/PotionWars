@@ -61,7 +61,9 @@ directionSurface.fill(universal.DARK_GREY)
 def set_dungeon_commands(dungeon=None):
     #import traceback
     #traceback.print_stack()   
-    set_commands(['(P)arty', '(S)ave', '(Q)uick Save', '(L)oad', 't(I)tle Screen', '(C)ast', '(Esc)Quit'])
+    set_commands(['(P)arty', '(S)ave', '(Q)uick Save', '(M)odify Quick Spells', '(L)oad', 't(I)tle Screen', '(C)ast', '(Esc)Quit'])
+    print(dungeon)
+    print(dungeon.coordinates)
     if dungeon is not None:
         floor = dungeon.coordinates[0]
         row = dungeon.coordinates[1]
@@ -76,6 +78,7 @@ def set_dungeon_commands(dungeon=None):
             print('Going down.')
             changingFloors = True
             set_commands(['(D)own'] + get_commands())
+
 def print_dir(direction):
     if direction == NORTH:
         return "N"
@@ -87,12 +90,20 @@ def print_dir(direction):
         return "W"
 
 def dungeon_mode(sayDescription=True):
+    global dungeon
+    print(dungeon.name)
+    dungeon = universal.state.get_room(dungeon.name)
+    universal.state.location = dungeon
+    print(dungeon)
+    print(universal.state.rooms)
     music.play_music(dungeon.bgMusic)
     if dungeon.coordinates == (-1, -1, -1):
+        print('initializing dungeon!')
         dungeon.coordinates = start_coordinate(dungeon)
-        previousRoom = [room for room in townmode.allRooms.keys() if townmode.allRooms[room].characters is not None and 
-            person.get_party()[0] in townmode.allRooms[room].characters.values()][0]
-        townmode.allRooms[previousRoom].remove_characters(universal.state.party.members)
+        print(dungeon.coordinates)
+        previousRoom = [room for room in universal.state.rooms.keys() if universal.state.get_room(room).characters is not None and 
+            person.get_party()[0] in universal.state.get_room(room).characters.values()][0]
+        universal.state.get_room(previousRoom).remove_characters(universal.state.party.members)
         dungeon.add_characters(universal.state.party.members)
         dungeon.display_event()
     else:
@@ -669,17 +680,17 @@ class Dungeon(townmode.Room):
             event = True
             self.encounter()
         if has_char('e', square):
-            set_commands(['(E)xit'] + get_commands())
+            set_commands(get_commands())
             if self.dungeonEvents[floor][row][column] is not None:
                 event = True
                 self.dungeonEvents[floor][row][column]()
         if has_char('u', square):
             changingFloors = 1
-            set_commands(['(U)p'] + get_commands())
+            set_commands(get_commands())
         if has_char('d', square):
             print('Going down.')
             changingFloors = -1
-            set_commands(['(D)own'] + get_commands())
+            set_commands(get_commands())
         if not event and random.randint(0, 99) < self[floor].encounterRate:
             self.encounter()
         elif not event:
@@ -824,6 +835,8 @@ def dungeon_interpreter(keyEvent):
     elif keyEvent.key == K_LEFT:
         dungeon.direction = left(dungeon.direction)
         dungeon.display()
+    elif keyEvent.key == K_m:
+        townmode.select_char_quickspells(dungeon_mode)
 
 def select_character_interpreter(keyEvent):
     party = person.get_party()

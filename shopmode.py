@@ -51,7 +51,7 @@ def shop_mode(personIn=None, doneShoppingLitany=None):
     say_title(' '.join(['''Shopping with''', shopkeeper.printedName]))
     litany = doneShoppingLitany
     universal.say('"What can I do for you?"')
-    set_commands(['(B)uy', '(S)ell', '(Esc)Leave'])
+    set_commands(['(B)uy', '(S)ell', '<==Leave'])
     set_command_interpreter(shop_interpreter)
 
 def shop_interpreter(keyEvent):
@@ -59,12 +59,10 @@ def shop_interpreter(keyEvent):
         window_shop() 
     elif keyEvent.key == K_s:
         window_sell()
-    elif keyEvent.key == K_ESCAPE:
+    elif keyEvent.key == K_BACKSPACE:
         if litany is None:
             townmode.town_mode()
         else:
-            print("litany:")
-            print(litany)
             shopkeeper.litany = litany
             say_title(universal.state.location.name)
             conversation.converse_with(shopkeeper, townmode.town_mode)
@@ -84,9 +82,9 @@ def window_shop_person_chosen():
     say_title('Coins: ' + str(chosenPerson.coins))
     universal.say('\n'.join([i + ". " + good.name + ': ' + price for (i, good, price) in shopGoods]))
     if len(shopGoods) < 10:
-        set_commands(['(#) Select item to examine.', '(Esc)Back'])
+        set_commands(['(#) Select item to examine.', '<==Back'])
     else:
-        set_commands(['(#) Select item to examine:_', '(Enter)Choose', '(Esc)Back'])
+        set_commands(['(#) Select item to examine:_', '(Enter)Choose', '<==Back'])
     set_command_interpreter(window_shop_interpreter)
 
 def select_character_to_buy_interpreter(keyEvent):
@@ -95,8 +93,10 @@ def select_character_to_buy_interpreter(keyEvent):
         if 0 <= num and num < person.get_party().len():
             chosenPerson = person.get_party().get_member(num)
             window_shop_person_chosen()
-    elif keyEvent.key == K_ESCAPE:
-        if person.get_party().len() == 1:
+    elif keyEvent.key == K_BACKSPACE:
+        if len(playerGoods) >= 10 and partialNum != '':
+            partialNum = partialNum[:-1]
+        elif person.get_party().len() == 1:
             shop_mode(doneShoppingLitany=litany)
         else:
             window_shop()
@@ -112,12 +112,12 @@ def window_shop_interpreter(keyEvent):
             global partialNum
             partialNum += pygame.key.name(keyEvent.key)
             set_commands([''.join(['(#) Select item to examine:', partialNum, '_']), 
-                '(Enter)Choose', '(Esc)Back'])
+                '(Enter)Choose', '<==Back'])
     elif keyEvent.key == K_BACKSPACE and len(shopGoods) >= 10:
         partialNum = partialNum[:-1]
         set_commands([''.join(['(#) Select item to examine:', partialNum, '_']), 
-            '(Enter)Choose', '(Esc)Back'])
-    elif keyEvent.key == K_ESCAPE:
+            '(Enter)Choose', '<==Back'])
+    elif keyEvent.key == K_BACKSPACE:
         shop_mode(doneShoppingLitany=litany)
     elif keyEvent.key == K_RETURN:
         try:
@@ -135,7 +135,7 @@ def buy(num):
     chosenGood = shopGoods[num-1][ITEM]
     say_title('Coins: ' + str(chosenPerson.coins))
     universal.say(chosenGood.display())
-    set_commands(['Purchase? (Y/N)'])
+    set_commands(['(Enter) Purchase', '<==Back'])
     set_command_interpreter(confirm_buy_interpreter)
 
 def buy_interpreter(keyEvent):
@@ -161,10 +161,11 @@ def buy_interpreter(keyEvent):
     """
 
 def confirm_buy_interpreter(keyEvent):
-    if keyEvent.key == K_y:
+    if keyEvent.key == K_RETURN:
         if chosenPerson.coins >= chosenGood.price:
             chosenPerson.coins -= chosenGood.price
             shopkeeper.inventory.remove(chosenGood)
+            chosenPerson.take_item(chosenGood)
             say_title([chosenPerson.name + "'s", 'Coins: ', str(chosenPerson.coins)])
             if chosenGood.is_equippable():
                 if len(person.get_party()) == 1:
@@ -179,7 +180,7 @@ def confirm_buy_interpreter(keyEvent):
             universal.say([chosenPerson.name, "doesn't have enough money!"])
             acknowledge(window_shop_person_chosen, ())
         set_goods()
-    elif keyEvent.key == K_n:
+    elif keyEvent.key == K_BACKSPACE:
         window_shop_person_chosen()
 
 def equip_interpreter(keyEvent):
@@ -210,6 +211,8 @@ def choose_character_to_equip_item_interpreter(keyEvent):
             if 0 <= num and num < len(person.get_party()):
                 personWhoBoughtGood = chosenPerson
                 chosenPerson = person.get_party().get_member(num)
+                personWhoBoughtGood.drop_item(chosenGood)
+                chosenPerson.take_item(chosenGood)
                 chosenPerson.equip(chosenGood)
                 universal.say([chosenPerson.name, 'has equipped', chosenGood.name + '.'])
                 chosenPerson = personWhoBoughtGood
@@ -275,10 +278,10 @@ def window_sell_person_chosen():
     universal.say('\n'.join([str(i) + ". " + good.name + ": " + str(price) 
         for (i, good, price) in playerGoods]))
     if len(playerGoods) < 10:
-        set_commands(['(#) Select item to sell.', '(Esc)Back'])
+        set_commands(['(#) Select item to sell.', '<==Back'])
     else:
         partialNum = ''
-        set_commands(['(#) Select item to sell:_', '(Esc)Back'])
+        set_commands(['(#) Select item to sell:_', '<==Back'])
     set_command_interpreter(window_sell_interpreter)
 
 def select_party_member_to_sell_interpreter(keyEvent):
@@ -302,13 +305,13 @@ def window_sell_interpreter(keyEvent):
                 confirm_sell()
         else:
             partialNum += pygame.key.name(keyEvent.key)
-    elif keyEvent.key == K_ESCAPE:
-        if person.get_party().len() == 1:
+    elif keyEvent.key == K_BACKSPACE:
+        if len(playerGoods) >= 10 and partialNum != '':
+            partialNum = partialNum[:-1]
+        elif person.get_party().len() == 1:
             shop_mode(doneShoppingLitany=litany)
         else:
             window_sell()
-    elif keyEvent.key == K_BACKSPACE and len(playerGoods) >= 10:
-        partialNum = partialNum[:-1]
     elif keyEvent.key == K_RETURN:
         try:
             chosenGood = chosenPerson.get_item(int(partialNum)-1)

@@ -23,7 +23,7 @@ import random
 
 allItems = {}
 
-class NakedException(Exception):
+class NakedError(Exception):
     pass
 
 class Enchantment(universal.RPGObject):
@@ -86,13 +86,15 @@ class Item(universal.RPGObject):
             person.decrease_stat(enchantment.stat, enchantment.bonus)
 
     def print_enchantments(self):
-        return '\n'.join(['\t' + enchantment.display() for enchantment in self.enchantments])
+        if self.enchantments:
+            return '\n'.join(['\t' + enchantment.display() for enchantment in self.enchantments])
+        else:
+            return 'None'
 
     @abc.abstractmethod
     def display(self):
-        return '\n'.join([self.name, self.description, 'Price: ' + str(self.price), 'Enchantment Level: ', str(self.enchantmentLevel), '/', str(self.maxEnchantment),
-            'Enchantments:', self.print_enchantments()])
-
+        return '\n'.join([self.name, self.description, 'Price: ' + str(self.price), ''.join(['Enchantment Level: ', str(self.enchantment_level()), '/', 
+            str(self.maxEnchantment)]), 'Enchantments:', self.print_enchantments()])
     def get_price(self):
         return self.price
 
@@ -101,10 +103,11 @@ class Item(universal.RPGObject):
         raise NotImplementedError()
 
 class Armor(Item):
-    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6):
+    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6, risque=0):
         #print(' '.join([name, 'price:', str(price), 'attackDefense:', str(attackDefense)]))
         super(Armor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment)
         self.armorType = 'armor'
+        self.risque = 0
 
     def is_equippable(self):
         return True
@@ -116,8 +119,8 @@ class Armor(Item):
 
 class UpperArmor(Armor):
     armorType = 'chest armor'
-    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6):
-        super(UpperArmor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment)
+    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6, risque=0):
+        super(UpperArmor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
         self.armorType = 'chest armor'
 
     def equip(self, char):
@@ -128,19 +131,28 @@ class UpperArmor(Armor):
         """
         couldBeNaked is here only for reasons of consistency with the other types of equipment. It doesn't influence the execution of unequip at all.
         """
-        char.equip(emptyUpperArmor)
+        char._set_shirt(emptyUpperArmor)
         char.take_item(self)
 
+class Shirt(UpperArmor):
+    armorType = 'shirt'
+    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=9, risque=0):
+        super(Shirt, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
+        self.armorType = Shirt.armorType
 
 class FullArmor(Armor):
     armorType = 'full armor'
-    def __init__(self, name, description, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, price=0, enchantments=None, maxEnchantment=12):
-        super(FullArmor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment)
+    def __init__(self, name, description, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, price=0, enchantments=None, maxEnchantment=12, risque=0):
+        super(FullArmor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
         self.armorType = 'full armor'
 
     def unequip(self, char, couldBeNaked=True):
-        char.unequip(char.lower_clothing(), couldBeNaked)
-        char.unequip(char.shirt())
+        if couldBeNaked and char.underwear() == emptyUnderwear:
+            raise NakedError()
+        else:
+            char._set_lower_clothing(emptyLowerArmor)
+            char._set_shirt(emptyUpperArmor)
+            char.take_item(self)
 
     def equip(self, char):
         char.unequip(char.lower_clothing(), False)
@@ -150,27 +162,29 @@ class FullArmor(Armor):
 
 class Dress(FullArmor):
     armorType = 'dress'
-    def __init__(self, name, description, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, price=0, enchantments=None, maxEnchantment=18):
-        super(Dress, self).__init__(name, description, attackDefense, attackPenalty, castingPenalty, magicDefense, price, enchantments, maxEnchantment=18)
+    def __init__(self, name, description, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, price=0, enchantments=None, maxEnchantment=18, risque=0):
+        super(Dress, self).__init__(name, description, attackDefense, attackPenalty, castingPenalty, magicDefense, price, enchantments, maxEnchantment, risque)
         self.armorType = 'dress'
     pass
 
 class Robe(Dress):
     armorType = 'dress'
-    def __init__(self, name, description, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, price=0, enchantments=None, maxEnchantment=18):
-        super(Robe, self).__init__(name, description, attackDefense, attackPenalty, castingPenalty, magicDefense, price, enchantments, maxEnchantment)
+    def __init__(self, name, description, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, price=0, enchantments=None, maxEnchantment=18, risque=0):
+        super(Robe, self).__init__(name, description, attackDefense, attackPenalty, castingPenalty, magicDefense, price, enchantments, maxEnchantment, risque)
         self.armorType = 'robe'
 
 class LowerArmor(Armor):
-    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6):
-        super(LowerArmor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment)
+    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6, risque=0,
+            baring=False):
+        super(LowerArmor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
+        self.baring = False
     #def down_up
 
     def unequip(self, char, couldBeNaked=True):
-        if couldBeNaked and self.underwear() == emptyUnderwear:
-            raise NakedException()
+        if couldBeNaked and char.underwear() == emptyUnderwear:
+            raise NakedError()
         else:
-            char.equip(emptyLowerArmor)
+            char._set_lower_clothing(emptyLowerArmor)
             char.take_item(self)
 
     def equip(self, char):
@@ -180,27 +194,31 @@ class LowerArmor(Armor):
 
 class Pants(LowerArmor):
     armorType = 'pants'
-    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=9):
-        super(Pants, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment)
+    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=9, risque=0,
+            baring=False):
+        super(Pants, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque, baring)
         self.armorType = 'pants'
 
 class Shorts(Pants):
     armorType = 'shorts'
-    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=9):
-        super(Shorts, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment)
+    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=9, risque=0,
+            baring=False):
+        super(Shorts, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque, baring)
         self.armorType = Shorts.armorType
 
 class Skirt(LowerArmor):
     armorType = 'skirt'
-    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=9):
-        super(Skirt, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment)
+    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=9, risque=0,
+            baring=False):
+        super(Skirt, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque,
+                baring)
         self.armorType = 'skirt'
 
 class Underwear(Armor):
     armorType = 'underwear'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, baring=False, armorType='underwear',
-            enchantments=None, maxEnchantment=9):
-        super(Underwear, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment)
+            enchantments=None, maxEnchantment=9, risque=0):
+        super(Underwear, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
         self.baring = baring
         self.armorType = armorType
 
@@ -214,16 +232,18 @@ class Underwear(Armor):
         a different piece of equipment.
         """
         if couldBeNaked and char.lower_clothing() == emptyLowerArmor:
-            raise NakedException()
+            raise NakedError()
         else:
-            char.equip(emptyUnderwear)
+            char._set_underwear(emptyUnderwear)
             char.take_item(self)
 
 
 class Thong(Underwear):
     armorType = 'thong'
-    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, armorType='thong', enchantments=None, maxEnchantment=9):
-        super(Thong, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, True, armorType, enchantments, maxEnchantment) 
+    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, armorType='thong', enchantments=None, maxEnchantment=9,
+            risque=3):
+        super(Thong, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, True, armorType, enchantments, maxEnchantment,
+                risque) 
 
 class Weapon(Item):
     weaponType = 'weapon'   
@@ -245,7 +265,7 @@ class Weapon(Item):
     def display(self):
         displayString = super(Weapon, self).display()
         return '\n'.join([displayString, 
-            'Damage:  ' + str(self.minDamage + self.genericBonus) + ' -> ' + str(self.maxDamage + self.genericBonus), 
+            'Damage:  ' + str(self.minDamage + self.genericBonus) + ' - ' + str(self.maxDamage + self.genericBonus), 
             'grapple attempt: ' + str(self.grappleAttempt + self.genericBonus), 
             'grapple attempt defense: ' + str(self.grappleAttemptDefense + self.genericBonus), 
             'grapple bonus: ' + str(self.grappleBonus + self.genericBonus), 
@@ -255,7 +275,7 @@ class Weapon(Item):
         """
         couldBeNaked is here only for reasons of consistency with the other types of equipment. It has no impact on the execution of this method.
         """
-        char.equip(emptyWeapon)
+        char._set_weapon(emptyWeapon)
         char.take_item(self)
 
     def equip(self, char):
@@ -386,10 +406,10 @@ def bottom_without_lower_clothing(person):
 
 emptyItem = Item('empty', 'empty', maxEnchantment=0)
 emptyWeapon = Weapon('bare hands', "I'll crush you with my bare hands! Or my magic. Whatever.", 0, 1, 1, -3, 2, -2, 0, maxEnchantment=0)
-emptyUpperArmor = UpperArmor('shirtless', "Going for the sexy shirtless barbarian look eh? Remember, the key is to be flexing ALL THE TIME. Unless you're a woman, in which case the key is to have a two-dimensional waist and boobs so big they'd force you to walk on your hands and knees if you were a real-life person constrained by real-life physics. Fortunately, you are not.", maxEnchantment=0) 
-emptyLowerArmor = LowerArmor('pantsless', "Real Men(TM) know that balls of steel are the only defense a man needs. Real Women(TM) know that running around pantsless is the best way to sell magazines. And books. And video games. And, well, anything really.", maxEnchantment=0)
-emptyUnderwear = Underwear('bare bottom', "Your tush. A round, firm, glorious specimen. Go ahead and give it a slap. You know you want to.", baring=True, armorType='bare',
-        maxEnchantment=0)
+emptyUpperArmor = UpperArmor('shirtless', "Going for the sexy shirtless barbarian look eh? Remember, the key is to be flexing ALL THE TIME. Unless you're a woman, in which case the key is to have a two-dimensional waist and boobs so big they'd force you to walk on your hands and knees if you were a real-life person constrained by real-life physics. Fortunately, you are not.", maxEnchantment=0, risque=3) 
+emptyLowerArmor = LowerArmor('pantsless', "Real Men(TM) know that balls of steel are the only defense a man needs. Real Women(TM) know that running around pantsless is the best way to sell magazines. And books. And video games. And, well, anything really.", maxEnchantment=0, baring=True, risque=3)
+emptyUnderwear = Underwear('bare bottom', "Your tush. A truly glorious specimen. Go ahead and give it a slap. You know you want to.", baring=True, armorType='bare',
+        maxEnchantment=0, risque=999)
 
 emptyEquipment = [emptyItem, emptyWeapon, emptyUpperArmor, emptyLowerArmor, emptyUnderwear]
 

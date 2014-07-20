@@ -6,6 +6,7 @@ import person
 import re
 import conversation
 import music
+import episode
 from pygame.locals import *
 
 def town_mode(sayDescription=True):
@@ -14,17 +15,18 @@ def town_mode(sayDescription=True):
     say the description.
     """
     room = universal.state.location
+    print('calling town mode')
     if sayDescription:
         universal.say_title(room.name)
     if sayDescription:
         universal.say_replace(room.get_description())
-    universal.set_commands(['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', 't(I)tle Screen'])
+    universal.set_commands(['(P)arty', '(G)o', '(M)odify Quick Spells', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', 't(I)tle Screen'])
     universal.set_command_interpreter(town_mode_interpreter)
     music.play_music(room.bgMusic)
 
 def rest_mode(sayDescription=True):
     town_mode(sayDescription)
-    universal.set_commands(['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', '(C)lean', '(R)est'])
+    universal.set_commands(['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', '(C)lean', '(R)est', '(H)air Style'])
     universal.set_command_interpreter(bedroom_interpreter)
 
 def set_bedroom(bedroomIn):
@@ -38,10 +40,55 @@ def bedroom_interpreter(keyEvent):
     if keyEvent.key == K_c:
         bedroom.clean()
     elif keyEvent.key == K_r:
-        print('calling bedroom.sleep')
         bedroom.sleep()
+    elif keyEvent.key == K_h:
+        style_character()
     else:
         town_mode_interpreter(keyEvent, rest_mode)
+
+def style_character():
+        universal.say_title('Whose hair should be styled?')
+        universal.say(universal.numbered_list(universal.state.party.members), justification=0)
+        set_command_interpreter(universal.SELECT_NUMBER_BACK_COMMAND)
+        set_command_interpreter(style_character_interpreter)
+chosenPerson = None
+def style_character_interpreter(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            rest_mode()
+    else:
+        global chosenPerson
+        try:
+            chosenPerson = universal.state.party[num]
+        except IndexError:
+            return
+        else:
+            say_title(format_line(['How should', chosenPerson.name + "'s", '''hair be styled?''']))
+            if chosenPerson.hairLength == 'short':
+                hairStyles = person.SHORT_HAIR_STYLE
+            universal.say(universal.numbered_list(chosenPerson.hair_styles()), justification=0)
+            set_command_interpreter(style_hair_interpreter)
+            set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
+
+def style_hair_interpreter(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            rest_mode()
+    else:
+        global chosenPerson
+        try:
+            chosenPerson.hairStyle = chosenPerson.hair_styles()[num]
+        except IndexError:
+            return
+        else:
+            universal.say(format_line([chosenPerson.name, format_line(['''frees''', hisher(chosenPerson), '''hair.''']) if chosenPerson.hair_styles()[num] == 'down' else
+                format_line(['''pulls''', hisher(chosenPerson), '''hair into''', '''some cute pigtails''' if chosenPerson.hair_styles()[num] == 'pigtails' else 
+                    format_line(['''a''', chosenPerson.hair_styles()[num]]) + "."])]), justification=0)
+
 
 class Room(universal.RPGObject):
     """
@@ -60,7 +107,10 @@ class Room(universal.RPGObject):
         else:
             self.description = description
         self.adjacent = adjacent
-        self.characters = characters
+        if characters is None:
+            self.characters = {}
+        else:
+            self.characters = characters
         self.after_arrival = after_arrival
         self.before_arrival = before_arrival
         universal.state.add_room(self)
@@ -71,6 +121,7 @@ class Room(universal.RPGObject):
     def add_characters(self, characters):
         for character in characters:
             self.add_character(character)
+
     def add_character(self, character):
         if self.characters is None:
             self.characters = {character.get_id():character}
@@ -287,6 +338,8 @@ def town_mode_interpreter(keyEvent, previousModeIn=None):
         talk(previousMode)
     elif keyEvent.key == K_g:
         select_destination(previousMode)
+    elif keyEvent.key == K_m:
+        select_char_quickspells(previousModeIn)
     elif keyEvent.key == K_p:
         previousMode = previousModeIn
         universal.set_commands(['(#)Character', '<==Back'])
@@ -294,6 +347,111 @@ def town_mode_interpreter(keyEvent, previousModeIn=None):
         universal.say('\t'.join(['Name:', 'Health:', 'Mana:\n\t',]), columnNum=3)
         universal.say(party.display_party(), columnNum=3)
         universal.set_command_interpreter(select_character_interpreter)
+
+def select_char_quickspells(previousModeIn):
+    universal.clear_screen()
+    global previousMode
+    previousMode = previousModeIn
+    if len(universal.state.party) == 1:
+        modify_quick_spells(universal.state.party[0])
+    else:
+        universal.say_title(format_line([chosenPerson.name + "'s", "Quick Spells"]))
+        universal.say(universal.numbered_list(universal.state.party.members))
+        set_commands(['(#) Select a character.', '<==Back'])
+        set_command_interpreter(select_char_quickspells_interpreter)
+
+def select_char_quickspells_interpreter(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            previousMode()
+    else:
+        try:
+            modify_quick_spells(universal.state.party[num])
+        except IndexError:
+            return
+
+
+def modify_quick_spells(selectedPerson):
+    global chosenPerson
+    chosenPerson = selectedPerson
+    universal.say_title(format_line([chosenPerson.name + "'s", "Quick Spells"]))
+    universal.say('\n'.join(['F' + str(spell) for spell in universal.numbered_list([str(spell) for spell in chosenPerson.quickSpells])]), justification=0)
+    set_commands(['(F#) Modify quick spell', '<==Back'])
+    set_command_interpreter(modify_quick_spells_interpreter)
+
+quickSpellIndex = None
+def modify_quick_spells_interpreter(keyEvent):
+    try:
+        num = universal.FUNCTION_KEYS.index(keyEvent.key)
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            if len(universal.state.party) == 1:
+                previousMode()
+            else:
+                select_char_quickspells()
+    else:
+        global quickSpellIndex
+        quickSpellIndex = num
+        modify_chosen_spell()
+
+def modify_chosen_spell():
+    set_commands(['(F#) Swap with F' + str(quickSpellIndex + 1) + ".", '(S)et F' + str(quickSpellIndex + 1), '<==Back']) 
+    set_command_interpreter(modify_chosen_spell_interpreter)
+
+def modify_chosen_spell_interpreter(keyEvent):
+    try:
+        num = universal.FUNCTION_KEYS.index(keyEvent.key)
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            modify_quick_spells()
+        elif keyEvent.key == K_s:
+            select_new_quick_spell()
+    else:
+        global quickSpellIndex
+        chosenPerson.swap_quick_spells(quickSpellIndex, num)
+        quickSpellIndex = None
+        modify_quick_spells(chosenPerson)
+
+def select_new_quick_spell():
+    universal.say_title('Set F' + str(quickSpellIndex + 1))
+    chosenPerson.display_tiers(interpreter=select_new_quick_spell_interpreter)
+
+chosenTier = None
+def select_new_quick_spell_interpreter(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent))
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            modify_chosen_spell()
+    else:
+        global chosenTier
+        chosenTier = num
+        select_spell()
+
+def select_spell():
+    universal.say_title('Select Quickspell for F' + str(quickSpellIndex + 1))
+    universal.say(chosenPerson.display_spells(chosenTier))
+    set_command_interpreter(select_spell_interpreter)
+    set_commands(['(#) Set spell to F' + str(quickSpellIndex + 1), '<==Back'])
+
+def select_spell_interpreter(keyEvent):
+    try:
+        num = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_BACKSPACE:
+            select_new_quick_spell()
+    else:
+        global chosenPerson, quickSpellIndex
+        try:
+            chosenPerson.quickSpells[quickSpellIndex] = chosenPerson.known_spells(chosenTier)[num]
+        except IndexError:
+            return
+        else:
+            quickSpellIndex = None
+            modify_quick_spells(chosenPerson)
+
 
 def select_character_interpreter(keyEvent):
     party = person.get_party()
@@ -343,6 +501,7 @@ def confirm_title_screen_interpreter(keyEvent):
     elif keyEvent.key == K_n:
         import titleScreen
         titleScreen.title_screen()
+        return
     elif keyEvent.key == K_BACKSPACE:
         if previousMode is None:
             previousMode = town_mode
@@ -366,9 +525,9 @@ def save(previousModeIn):
         pass
     universal.say('\n'.join(universal.numbered_list(saveFiles)))
     if len(saveFiles) < 10:
-        universal.set_commands(['Provide a save name:_', '(#) Select a save file.', '(Esc)Back'])
+        universal.set_commands(['Provide a save name:_', '(#) Select a save file.', '<==Back'])
     else:
-        universal.set_commands([' '.join(['Provide a save name:_']), '(#) Select a save file:_', '(Esc)Back'])
+        universal.set_commands([' '.join(['Provide a save name:_']), '(#) Select a save file:_', '<==Back'])
     universal.set_command_interpreter(save_interpreter)
 
 numLastInput = False
@@ -377,8 +536,12 @@ def save_interpreter(keyEvent):
     global saveName, saveNum, numLastInput, previousMode
     playerInput = pygame.key.name(keyEvent.key)
     if keyEvent.key == K_BACKSPACE:
-        if numLastInput and saveNum == '':
-            saveNum = saveNum[:-1] 
+        if saveNum == '':
+            if previousMode is not None:
+                previousMode()
+            else:
+                town_mode()
+            return
         else:
             saveName = saveName[:-1]
     elif keyEvent.key == K_RETURN:
@@ -388,12 +551,6 @@ def save_interpreter(keyEvent):
             except (IndexError, ValueError):
                 return
         confirm_save(saveName)
-        return
-    elif keyEvent.key == K_ESCAPE:
-        if previousMode is not None:
-            previousMode()
-        else:
-            town_mode()
         return
     elif keyEvent.key in NUMBER_KEYS and saveName == '':
         if len(saveFiles) < 10 and saveName == '':
@@ -413,7 +570,7 @@ def save_interpreter(keyEvent):
             saveName += playerInput
         numLastInput = False
     universal.set_commands([''.join(['Provide a save name:', saveName, '_']), 
-        ''.join(['(#) Select a save file:', saveNum, '_']), '(Esc)Back'])
+        ''.join(['(#) Select a save file:', saveNum, '_']), '<==Back'])
 
 
 possibleSave = ''
@@ -479,9 +636,9 @@ def load(returnMode=None):
     universal.say_title('Load')
     universal.say('\n'.join(universal.numbered_list([sf for sf in saveFiles if sf[0] != '.'])))
     if len(saveFiles) < 10:
-        universal.set_commands(['(#) Select a file to load:', '(Esc)Back'])
+        universal.set_commands(['(#) Select a file to load:', '<==Back'])
     else:
-        universal.set_commands(['(#) Select a file to load:_', '(Esc)Back'])
+        universal.set_commands(['(#) Select a file to load:_', '<==Back'])
     universal.set_command_interpreter(load_interpreter)
 
 def load_interpreter(keyEvent):
@@ -500,7 +657,11 @@ def load_interpreter(keyEvent):
         else:
             loadName += playerInput
     elif keyEvent.key == K_BACKSPACE:
-        loadName = loadName[:-1] 
+        if loadName == '':
+            returnTo()
+            return
+        else:
+            loadName = loadName[:-1] 
     elif keyEvent.key == K_RETURN:
         try:
             loadName = saveFiles[int(loadName)-1]
@@ -508,14 +669,11 @@ def load_interpreter(keyEvent):
             return
         confirm_load()
         return
-    elif keyEvent.key == K_ESCAPE:
-        returnTo()
-        return
-    universal.set_commands([''.join(['(#) Select a file to load:', loadName, '_']), '(Esc)Back'])
+    universal.set_commands([''.join(['(#) Select a file to load:', loadName, '_']), '<==Back'])
 
 def confirm_load():
     global loadName
-    universal.set_commands([' '.join(['Is', loadName, 'correct? Y/N']), '(Esc)Back'])
+    universal.set_commands([' '.join(['Is', loadName, 'correct? Y/N']), '<==Back'])
     universal.set_command_interpreter(confirm_load_interpreter)
 
 def confirm_load_interpreter(keyEvent):
@@ -525,7 +683,7 @@ def confirm_load_interpreter(keyEvent):
         load(returnTo)
         global loadName
         loadName = ''
-    elif keyEvent.key == K_ESCAPE:
+    elif keyEvent.key == K_BACKSPACE:
         returnTo()
 
 def load_game(loadNameIn=None, preserveLoadName=True):
@@ -541,11 +699,14 @@ def load_game(loadNameIn=None, preserveLoadName=True):
         acknowledge(load, returnTo)
     else:
         assert(person.get_PC().name != '')
+        try:
+            episode.allEpisodes[universal.state.player.currentEpisode].init()
+        except (TypeError, KeyError):
+            pass
         if not preserveLoadName:
             #global loadName
             loadName = ''
-        else:
-            go(universal.state.location)
+        go(universal.state.location)
 
 
 def select_destination(previousModeIn):
@@ -588,7 +749,7 @@ def go(room, party=None, sayDescription=True):
 def perform_go(room, party=None, sayDescription=True):
     if party is None:
         party = person.get_party()
-    if universal is not None:
+    if universal.state.location is not None:
         universal.state.location.remove_characters(party)
     room.add_characters(party)
     set_current_room(room)

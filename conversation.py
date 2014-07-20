@@ -27,6 +27,7 @@ SPLIT = -50
 def converse_with(person, previousModeIn):
     global conversationPartner
     conversationPartner = person
+    print(conversationPartner.name)
     if person.litany is not None:
         litany = person.litany
     else:
@@ -36,10 +37,11 @@ def converse_with(person, previousModeIn):
     say_title(person.printedName)
     say_node(litany)
 
-def say_node(litany):
+def say_node(litanyIndex):
     #This may appear redundant, but it's possible for a node's quip_function to immediately invoke a different node, without going through the player. In that case,
     #we need to make sure that the current litany of the conversationPartner is properly updated.
-    conversationPartner.litany = litany
+    conversationPartner.litany = litanyIndex
+    litany = allNodes[litanyIndex]
     function = None
     args = None
     executeImmediately = False
@@ -108,14 +110,20 @@ def converse_with_interpreter(keyEvent):
     global conversationPartner
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
-        if 0 < num and num <= len(conversationPartner.litany.children):
+        if DEBUG:
+            try:
+                print(conversationPartner.litany.index)
+            except AttributeError:
+                pass
+        if 0 < num and num <= len(allNodes[conversationPartner.litany].children):
             if DEBUG:
                 global previousConversation
                 previousConversation = conversationPartner.litany
-            conversationPartner.litany = conversationPartner.litany.children[num-1]  
+            conversationPartner.litany = allNodes[conversationPartner.litany].children[num-1].index
+            assert isinstance(conversationPartner.litany, int), "Problem node:%r" % previousConversation.litany
             converse_with(conversationPartner, previousMode)
-    elif keyEvent.key == K_RETURN and (conversationPartner.litany.children is None or 
-        conversationPartner.litany.children == []):
+    elif keyEvent.key == K_RETURN and (allNodes[conversationPartner.litany].children is None or 
+        allNodes[conversationPartner.litany].children == []):
         previousMode()
     #Note: This DOES NOT attempt to maintain any sort of consistent state. It's merely to allow the debugger to easily look at all the text in the conversation. In order
     #to ensure that the states are being modified correctly, one needs to play the conversations normally (i.e. without backtracking).
@@ -128,10 +136,7 @@ def converse_with_interpreter(keyEvent):
             converse_with(conversationPartner, previousMode)
 
 
-
-
-
-
+allNodes = {}
 class Node(universal.RPGObject):
     def __init__(self, index):
         self.quip = ''
@@ -141,7 +146,7 @@ class Node(universal.RPGObject):
         self.comment = None
         self.index = index
         self.music = None
-        universal.state.add_node(self)
+        allNodes[index] = self
 
     def _save(self):
         raise NotImplementedError()
