@@ -1572,6 +1572,7 @@ def learn_spell(ally, spellSchool):
     if len(unknownSpells) > 0:
         learnedSpell = unknownSpells[random.randint(0, len(unknownSpells)-1)]
         ally.learn_spell(learnedSpell)
+        ally.add_quick_spell(learnedSpell)
         universal.say(format_line([ally.name, 'has learned the spell', learnedSpell.name + '!\n']))
         
 

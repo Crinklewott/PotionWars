@@ -101,14 +101,12 @@ class Humiliated(StatusEffect):
     def __init__(self, duration):
         super(Humiliated, self).__init__(Humiliated.name, duration, True)
         self.penalty = 1
-        self.affectedStat = -1
 
     def inflict_status(self, person):
         print(' '.join([person.name, 'before humiliation:']))
         print(person.primaryStats)
-        stat = max([i for i in range(len(person.primaryStats[:-4]))], key=lambda x : person.primaryStats[x])
-        person.decrease_stat(stat, self.penalty)
-        self.affectedStat = stat
+        #stat = max([i for i in range(len(person.primaryStats[:-4]))], key=lambda x : person.primaryStats[x])
+        person.decrease_all_stats(self.penalty)
         print(' '.join([person.name, 'after humiliation:']))
         print(person.primaryStats)
         return 0
@@ -116,7 +114,7 @@ class Humiliated(StatusEffect):
     def reverse_status(self, person):
         print(' '.join([person.name, 'before reversing humiliation:']))
         print(person.primaryStats)
-        person.increase_stat(self.affectedStat, self.penalty)
+        person.increase_all_stats(self.penalty)
         print(' '.join([person.name, 'after humiliation:']))
         print(person.primaryStats)
         return 0
@@ -185,11 +183,13 @@ class MagicDistorted(StatusEffect):
         super(MagicDistorted, self).__init__(MagicDistorted.name, duration, False)
 
     def inflict_status(self, person):
-        person.decrease_stat(TALENT, 2)
+        person.decrease_stat(TALENT, 3)
+        person.decrease_stat(WILLPOWER, 3)
         return 0
 
     def reverse_status(self, person):
-        person.increase_stat(TALENT, 2)
+        person.increase_stat(TALENT, 3)
+        person.increase_stat(WILLPOWER, 3)
         return 0
 
 class Charmed(StatusEffect):
@@ -266,16 +266,16 @@ class DefendStatus(StatusEffect):
         super(DefendStatus, self).__init__(DefendStatus.name, duration, isNegative=False)
     def inflict_status(self, p):
         """
-        When a character is defending, they get a +3 bonus to warfare, grapple, resilience(), and magic, to help them defend against enemy attacks.
+        When a character is defending, they get a +3 bonus to strength, dexterity, willpower, and talent, to help them defend against enemy attacks.
         Note: This does not apply when a character is defending another character. This only works when a character is defending themselves.
         """
         print('inflicting defense status.')
         print('stats before defense:')
         print(p.primaryStats)
-        p.set_stat(STRENGTH, p.strength() + 1)
-        p.set_stat(DEXTERITY, p.dexterity() + 1)
-        p.set_stat(RESILIENCE, p.willpower() + 1)
-        p.set_stat(TALENT, p.talent() + 1)
+        p.set_stat(STRENGTH, p.strength() + 3)
+        p.set_stat(DEXTERITY, p.dexterity() + 3)
+        p.set_stat(RESILIENCE, p.willpower() + 3)
+        p.set_stat(TALENT, p.talent() + 3)
         print('stats after defense:')
         print(p.primaryStats)
         return

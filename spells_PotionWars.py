@@ -171,44 +171,42 @@ class Weaken(p.Status):
         return [defender.printedName, 'is weakened!']
 
 
-
-class MassWeaken(p.Status):
+class BrainFog(p.Status):
     targetType = ENEMY
     grappleStatus = GRAPPLER_ONLY
-    effectClass = WARRIORS_GRAPPLERS
-    numTargets = 3
+    effectClass = SPELL_SLINGERS
+    numTargets = 1
     tier = 0
-    statusInflicted = statusEffects.WEAKENED
-    cost = 3
+    statusInflicted = statusEffects.MAGIC_DISTORTED
+    cost = 1
     def __init__(self, attacker, defenders):
-        super(MassWeaken, self).__init__(attacker, defenders)
-        self.name = 'Mass Weaken'
-        self.description = 'Wraps up to 3 enemies in a field that interferes with the implicit magic responsible for lending strength to their muscles, making them physically weaker and slower.'
-        self.effectFormula = 'EFFECT: -2 penalty to Strength and Dexterity\nSUCCESS CHANCE (%): 30 | 15 * (resilience() - enemy resilience()) | 98 \nDURATION: 3 | (magic - enemy magic)'
-        self.resilienceMultiplier = 15
-        self.numTargets = 3
-        self.grappleStatus = combatAction.GRAPPLER_ONLY
+        super(BrainFog, self).__init__(attacker, defenders)
+        self.name = 'Brain Fog'
+        self.description = 'Wraps your enemy in a field that interferes with the target\'s ability to cast and protect against spells.'
+        self.effectFormula = 'EFFECT: -2 penalty to Talent and Willpower\nSUCCESS CHANCE (%): 40 | 15 * (resilience - enemy resilience) | 95\n DURATION: 3 | 2 *(magic - enemy magic)'
+        self.numTargets = 1
         self.rawMagic = True
-        self.tier = MassWeaken.tier
+        self.tier = BrainFog.tier
+        self.statusInflicted = statusEffects.MAGIC_DISTORTED
+        self.effectClass = combatAction.SPELL_SLINGERS
+        self.cost = BrainFog.cost
+        self.resilienceMultiplier = 15
+        self.magicMultiplier = 2
         self.grappleStatus = combatAction.GRAPPLER_ONLY
-        self.statusInflicted = statusEffects.WEAKENED
-        self.effectClass = combatAction.WARRIORS_GRAPPLERS
-        self.cost = MassWeaken.cost
-        self.expertise = ADVANCED
-        self.magicMultiplier = 1
-        self.minDuration = 2
-        self.minProbability = 30
-        self.maxProbability = 98
+        self.expertise = BASIC
+        self.maxProbability = 95
+        self.minProbability = 40
+        self.minDuration = 3
 
 
     def effect_statement(self, defender):
         attacker = self.attacker
-        self.effectStatements = ([[attacker.printedName, 'casts Mass Weaken on', defender.printedName + "!"]])
-        """
-        self.effectStatements = ([[attacker.name, 'points', his_her(attacker), 'finger at', defender.name, '. A beam of red light flies from ', attacker.name, 
-            '\'s fignertip and strikes', defender.name, '. The beam disperses into a cocoon of light that then fuses with', defender.name, '\'s skin.']])
-        """
-        return super(MassWeaken, self).effect_statement(defender)
+        A = attacker.printedName
+        D = defender.printedName
+        self.effectStatements = [[A, 'casts Brain Fog on', D + "!"]]
+        #self.effectStatements = [[A, 'sweeps', hisher(attacker), 'arm in an arc in front of', himselfherself(attacker), 'as if', p.heshe(attacker),
+        #   'were scattering birdseed. Half a dozen small red robs fly from', A, 'and strike', E,'.']]
+        return super(BrainFog, self).effect_statement(defender)
 
     def immune_statement(self, defender):
         A = self.attacker.printedName
@@ -221,7 +219,9 @@ class MassWeaken(p.Status):
         return [D, 'resists!']
 
     def success_statement(self, defender):
-        return [defender.printedName, 'is weakened!']
+        return [defender.printedName, 'is distorted!']
+
+
 
 class WeakCharm(p.CharmMagic):
     targetType = ENEMY
@@ -272,9 +272,9 @@ class WeakCharm(p.CharmMagic):
         return [defender.printedName, 'is charmed!']
 
 weaken = Weaken(None, None)
-massWeaken = MassWeaken(None, None)
+distortMagic = BrainFog(None, None)
 weakCharm = WeakCharm(None, None)
-p.allSpells[0].append((weaken, massWeaken, weakCharm))
+p.allSpells[0].append((weaken, distortMagic, weakCharm))
 #--------------------------------------------------------------Tier 0 Buff----------------------------------------------------------------
 
 class Heal(p.Healing):
@@ -383,7 +383,7 @@ class SpectralPush(p.Spectral):
     grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
     effectClass = ALL
     numTargets = 1
-    tier = 0
+    tier = 1
     cost = 2
     def __init__(self, attacker, defenders):
         super(SpectralPush, self).__init__(attacker, defenders)
@@ -478,7 +478,7 @@ class SpectralPull(p.Spectral):
     grappleStatus = NOT_WHEN_GRAPPLED
     effectClass = SPELL_SLINGERS
     numTargets = 1
-    tier = 0
+    tier = SpectralPush.tier
     cost = 3
     def __init__(self, attacker, defenders):
         super(SpectralPull, self).__init__(attacker, defenders)
@@ -570,7 +570,7 @@ class SpectralShove(p.Spectral):
     grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
     effectClass = ALL
     numTargets = 1
-    tier = 0
+    tier = SpectralPush.tier
     cost = 4
     def __init__(self, attacker, defenders):
         super(SpectralShove, self).__init__(attacker, defenders)
@@ -658,7 +658,8 @@ class SpectralShove(p.Spectral):
 spectralPush = SpectralPush(None, None)
 spectralPull = SpectralPull(None, None)
 spectralShove = SpectralShove(None, None)
-p.allSpells[0].append((spectralPush, spectralPull, spectralShove))
+print(p.allSpells)
+p.allSpells[1] = [(spectralPush, spectralPush, spectralPush)]
 
 #---------------------------------------------------------Tier 1-------------------------------------------------------------------------------
 #---------------------------------------------------------Tier 1 Combat Spells-------------------------------------------------------------------------------
@@ -755,44 +756,46 @@ class Magicstrike(p.Combat):
 lightningBolt = Lightningbolt(None, None) 
 thunderBolt = Thunderbolt(None, None) 
 magicStrike = Magicstrike(None, None)
-p.allSpells[1] = [(lightningBolt, thunderBolt, magicStrike)]
+p.allSpells[1].append((lightningBolt, thunderBolt, magicStrike))
 #---------------------------------------------------------Tier 1 Status Spells-------------------------------------------------------------------------------
-class DistortMagic(p.Status):
+class MassWeaken(p.Status):
     targetType = ENEMY
     grappleStatus = GRAPPLER_ONLY
-    effectClass = SPELL_SLINGERS
-    numTargets = 1
+    effectClass = WARRIORS_GRAPPLERS
+    numTargets = 3
     tier = 1
-    statusInflicted = statusEffects.MAGIC_DISTORTED
-    cost = 3
+    statusInflicted = statusEffects.WEAKENED
+    cost = 4
+
     def __init__(self, attacker, defenders):
-        super(DistortMagic, self).__init__(attacker, defenders)
-        self.name = 'Distort Magic'
-        self.description = 'Wraps your enemy in a field that interferes with the target\'s ability to cast and protect against spells.'
-        self.effectFormula = 'EFFECT: -2 penalty to Talent\nSUCCESS CHANCE (%): 40 | 15 * (resilience() - enemy resilience()) | 95\n DURATION: 3 | 2 *(magic - enemy magic)'
-        self.numTargets = 1
-        self.rawMagic = True
-        self.tier = DistortMagic.tier
-        self.statusInflicted = statusEffects.MAGIC_DISTORTED
-        self.effectClass = combatAction.SPELL_SLINGERS
-        self.cost = DistortMagic.cost
+        super(MassWeaken, self).__init__(attacker, defenders)
+        self.name = 'Mass Weaken'
+        self.description = 'Wraps up to 3 enemies in a field that interferes with the implicit magic responsible for lending strength to their muscles, making them physically weaker and slower.'
+        self.effectFormula = 'EFFECT: -2 penalty to Strength and Dexterity\nSUCCESS CHANCE (%): 30 | 15 * (resilience() - enemy resilience()) | 98 \nDURATION: 3 | (magic - enemy magic)'
         self.resilienceMultiplier = 15
-        self.magicMultiplier = 2
+        self.numTargets = 3
         self.grappleStatus = combatAction.GRAPPLER_ONLY
-        self.expertise = BASIC
-        self.maxProbability = 95
-        self.minProbability = 40
-        self.minDuration = 3
+        self.rawMagic = True
+        self.tier = MassWeaken.tier
+        self.grappleStatus = combatAction.GRAPPLER_ONLY
+        self.statusInflicted = statusEffects.WEAKENED
+        self.effectClass = combatAction.WARRIORS_GRAPPLERS
+        self.cost = MassWeaken.cost
+        self.expertise = ADVANCED
+        self.magicMultiplier = 1
+        self.minDuration = 2
+        self.minProbability = 30
+        self.maxProbability = 98
 
 
     def effect_statement(self, defender):
         attacker = self.attacker
-        A = attacker.printedName
-        D = defender.printedName
-        self.effectStatements = [[A, 'casts Distort Magic on', D + "!"]]
-        #self.effectStatements = [[A, 'sweeps', hisher(attacker), 'arm in an arc in front of', himselfherself(attacker), 'as if', p.heshe(attacker),
-        #   'were scattering birdseed. Half a dozen small red robs fly from', A, 'and strike', E,'.']]
-        return super(DistortMagic, self).effect_statement(defender)
+        self.effectStatements = ([[attacker.printedName, 'casts Mass Weaken on', defender.printedName + "!"]])
+        """
+        self.effectStatements = ([[attacker.name, 'points', his_her(attacker), 'finger at', defender.name, '. A beam of red light flies from ', attacker.name, 
+            '\'s fignertip and strikes', defender.name, '. The beam disperses into a cocoon of light that then fuses with', defender.name, '\'s skin.']])
+        """
+        return super(MassWeaken, self).effect_statement(defender)
 
     def immune_statement(self, defender):
         A = self.attacker.printedName
@@ -805,30 +808,29 @@ class DistortMagic(p.Status):
         return [D, 'resists!']
 
     def success_statement(self, defender):
-        return [defender.printedName, 'is distorted!']
+        return [defender.printedName, 'is weakened!']
 
 
-
-class MassDistortMagic(p.Status):
+class MassBrainFog(p.Status):
     targetType = ENEMY
     grappleStatus = GRAPPLER_ONLY
     effectClass = SPELL_SLINGERS
     numTargets = 3
     tier = 1
     statusInflicted = statusEffects.MAGIC_DISTORTED
-    cost = 7
+    cost = 4
     def __init__(self, attacker, defenders):
-        super(MassDistortMagic, self).__init__(attacker, defenders)
-        self.name = 'Mass Distort Magic'
+        super(MassBrainFog, self).__init__(attacker, defenders)
+        self.name = 'Mass Brain Fog'
         self.description = 'Wraps up to 3 enemies in a field that interfers with their ability to cast and protect against spells.'
-        self.effectFormula = 'EFFECT: -2 penalty to Talent\nSUCCESS CHANCE (%): 40 | 15 * (resilience() - enemy resilience()) | 95\n DURATION: 3 | 2 *(magic - enemy magic)'
+        self.effectFormula = 'EFFECT: -2 penalty to Talent and Willpower\nSUCCESS CHANCE (%): 40 | 15 * (resilience() - enemy resilience()) | 95\n DURATION: 3 | 2 *(magic - enemy magic)'
         self.numTargets = 3
         self.rawMagic = True
         self.magicMultiplier = 2
-        self.tier = MassDistortMagic.tier
+        self.tier = MassBrainFog.tier
         self.statusInflicted = statusEffects.MAGIC_DISTORTED
         self.effectClass = combatAction.SPELL_SLINGERS
-        self.cost = MassDistortMagic.cost
+        self.cost = MassBrainFog.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.resilienceMultiplier = 15
         self.expertise = ADVANCED
@@ -840,10 +842,10 @@ class MassDistortMagic(p.Status):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        self.effectStatements = [[A, 'casts Mass Distort Magic on', D + "!"]]
+        self.effectStatements = [[A, 'casts Mass Brain Fog on', D + "!"]]
         #self.effectStatements = [[A, 'sweeps', hisher(attacker), 'arm in an arc in front of', himselfherself(attacker), 'as if', p.heshe(attacker),
         #   'were scattering birdseed. Half a dozen small red robs fly from', A, 'and strike', E,'.']]
-        return super(MassDistortMagic, self).effect_statement(defender)
+        return super(MassBrainFog, self).effect_statement(defender)
 
     def immune_statement(self, defender):
         A = self.attacker.printedName
@@ -853,7 +855,7 @@ class MassDistortMagic(p.Status):
     def failure_statement(self, defender):
         A = self.attacker.printedName
         D = defender.printedName
-        return [D, 'has resisted the Mass Distort Magic spell!']
+        return [D, 'has resisted the Mass Brain Fog spell!']
 
     def success_statement(self, defender):
         return [defender.printedName, 'is distorted!']
@@ -903,10 +905,11 @@ class Charm(p.CharmMagic):
     def failure_statement(self, defender):
         D = defender.printedName
         return [D, 'resists!']
-distortMagic = DistortMagic(None, None) 
-massDistortMagic = MassDistortMagic(None, None) 
+
+massWeaken = MassWeaken(None, None) 
+massBrainFog = MassBrainFog(None, None) 
 charm = Charm(None, None)
-p.allSpells[1].append((distortMagic, massDistortMagic, charm))
+p.allSpells[1].append((massWeaken, massBrainFog, charm))
 #---------------------------------------------------------Tier 1 Buff Spells-------------------------------------------------------------------------------
 class Shield(p.Buff):
     targetType = ALLY
@@ -1054,9 +1057,9 @@ class SpectralStrapping(p.SpectralSpanking):
     grappleStatus = GRAPPLER_ONLY
     effectClass = ALL
     numTargets = 1
-    tier = 1
+    tier = p.SpectralSpanking.tier
     statusInflicted = statusEffects.HUMILIATED
-    cost = 6
+    cost = 4
     def __init__(self, attacker, defenders):
         super(SpectralStrapping, self).__init__(attacker, defenders)
         self.name = 'Spectral Strapping'
@@ -1145,10 +1148,10 @@ class SpectralCaning(p.SpectralSpanking):
     grappleStatus = GRAPPLER_ONLY
     effectClass = ALL
     numTargets = 1
-    tier = 1
+    tier = p.SpectralSpanking.tier
     statusInflicted = statusEffects.HUMILIATED
     effectClass = combatAction.ALL
-    cost = 7
+    cost = 6
     def __init__(self, attacker, defenders):
         super(SpectralCaning, self).__init__(attacker, defenders)
         self.name = 'Spectral Caning'
@@ -1239,5 +1242,5 @@ class SpectralCaning(p.SpectralSpanking):
 spectralSpanking = p.SpectralSpanking(None, None) 
 spectralStrapping = SpectralStrapping(None, None) 
 spectralCaning = SpectralCaning(None, None)
-p.allSpells[1].append((spectralSpanking, spectralStrapping, spectralCaning))
+p.allSpells[p.SpectralSpanking.tier].append((spectralSpanking, spectralStrapping, spectralCaning))
 universal.set_spells(p.allSpells)

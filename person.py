@@ -49,7 +49,7 @@ GRAPPLING = 5
 BALANCED = 6
 """
 
-MAGIC_PER_TIER = 3
+MAGIC_PER_TIER = 10
 
 allStats = [universal.WARFARE, universal.MAGIC, universal.RESILIENCE, universal.GRAPPLE, universal.STEALTH, universal.HEALTH, universal.MANA, universal.CURRENT_HEALTH, 
         universal.CURRENT_MANA]
@@ -2171,18 +2171,18 @@ class SpectralSpanking(Spectral):
     targetType = ENEMY
     grappleStatus = GRAPPLER_ONLY
     effectClass = ALL
-    tier = 1
+    tier = 0
     numTargets = 1
     statusInflicted = statusEffects.HUMILIATED
-    cost = 5
+    cost = 2
     secondaryStat = universal.RESILIENCE
     def __init__(self, attacker, defenders):
         super(SpectralSpanking, self).__init__(attacker, defenders)
         self.name = 'Spectral Spanking'
         self.cost = SpectralSpanking.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
-        self.description = 'Conjures \'hands\' of raw magic. One hand grabs the target and lifts them into the air. The other lands a number of swats on the target\'s backside. Once the spanking is done, the first hand lifts the target up, and throws them into the ground.'
-        self.effectFormula = 'HUMILIATION DURATION: 2 | 2 * (resilience - enemy resilience)\nDAMAGE: 2 | 2 * (magic - enemy magic),\nSuccess (%): 40 | 30 * (magic - enemy magic) | 95'
+        self.description = 'Conjures \'hands\' of raw magic. One hand grabs the target and lifts them into the air. The other lands a number of swats on the target\'s backside. Once the spanking is done, the first hand lifts the target up, and throws them into the ground. The spanking leaves your opponent distracted and humiliated, giving them a -1 penalty to all stats.'
+        self.effectFormula = 'DURATION: 2 | 2 * (resilience - enemy resilience)\nDAMAGE: 2 | 2 * (magic - enemy magic),\nSuccess (%): 40 | 30 * (magic - enemy magic) | 95'
         self.numTargets = 1
         self.magicMultiplier = 2
         self.resilienceMultiplier = 2
