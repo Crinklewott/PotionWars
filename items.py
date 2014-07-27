@@ -239,11 +239,12 @@ class Underwear(Armor):
 
 
 class Thong(Underwear):
-    armorType = 'thong'
-    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, armorType='thong', enchantments=None, maxEnchantment=9,
+    armorType = Underwear.armorType
+    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, armorType='underwear', enchantments=None, maxEnchantment=9,
             risque=3):
         super(Thong, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, True, armorType, enchantments, maxEnchantment,
                 risque) 
+        self.armorType = armorType
 
 class Weapon(Item):
     weaponType = 'weapon'   
@@ -349,28 +350,113 @@ class Spear(Weapon):
                 armslengthBonus, genericBonus, enchantments=enchantments, maxEnchantment=maxEnchantment)
         self.weaponType = 'spear'
 
+
+#----------------------------------------------------Pajamas---------------------------------------
+
+class Pajamas(Item):
+    armorType = 'pajamas'
+    def __init__(self, name, description, price):
+        super(Pajamas, self).__init__(name, description, price)
+        self.armorType = Pajamas.armorType
+
+    def is_equippable(self):
+        return True
+
+class FullPajamas(Pajamas):
+    armorType = 'full pajamas'
+    def __init__(self, name, description, price):
+        super(FullPajamas, self).__init__(name, description, price)
+        self.armorType = FullPajamas.armorType
+
+    def unequip(self, char, couldBeNaked=True):
+        if couldBeNaked:
+            raise NakedError()
+        else:
+            char._set_pajama_bottom(emptyLowerArmor)
+            char._set_pajama_top(emptyUpperArmor)
+            char.take_item(self)
+
+    def equip(self, char):
+        char.unequip(char.pajama_bottom(), False)
+        char.unequip(char.pajama_top())
+        char._set_pajama_top(self)
+        char._set_pajama_bottom(self)
+
+class PajamaTop(Pajamas):
+    armorType = 'pajama top'
+    def __init__(self, name, description, price):
+        super(PajamaTop, self).__init__(name, description, price)
+        self.armorType = PajamaTop.armorType
+
+    def equip(self, char):
+        char.unequip(char.pajama_top())
+        char._set_pajama_top(self)
+
+    def unequip(self, char, couldBeNaked=True):
+        """
+        couldBeNaked is here only for reasons of consistency with the other types of equipment. It doesn't influence the execution of unequip at all.
+        """
+        char._set_pajama_top(emptyPajamaTop)
+        char.take_item(self)
+
+class PajamaBottom(Pajamas):
+    armorType = 'pajama bottom'
+    def __init__(self, name, description, price):
+        super(PajamaBottom, self).__init__(name, description, price)
+        self.armorType = PajamaBottom.armorType
+
+    def unequip(self, char, couldBeNaked=True):
+        if couldBeNaked:
+            raise NakedError()
+        else:
+            char._set_pajama_bottom(emptyPajamaBottom)
+            char.take_item(self)
+
+    def equip(self, char):
+        char.unequip(char.pajama_bottom(), False)
+        char._set_pajama_bottom(self)
+    
+class PajamaPants(PajamaBottom):
+    armorType = 'pajama pants'
+    def __init__(self, name, description, price):
+        super(PajamaPants, self).__init__(name, description, price)
+        self.armorType = PajamaPants.armorType
+
 def liftlower(armor):
     if armor.armorType == Dress.armorType or armor.armorType == Skirt.armorType or armor.armorType == Robe.armorType:
         return 'lift'
-    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Shorts.armorType:
+    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Thong.armorType or armor.armorType == Shorts.armorType or armor.armorType == PajamaPants.armorType:
         return 'lower'
+
+def liftslowers(armor):
+    return liftlower(armor) + "s"
+
 
 def restore_liftlower(armor):
     if armor.armorType == Dress.armorType or armor.armorType == Skirt.armorType:
         return 'lower'
-    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType:
+    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Thong.armorType:
         return 'lift'
+
+def restore_liftslowers(armor):
+    return restore_liftlower(armor) + "s"
 
 def lowerlift(armor):
     if armor.armorType == Dress.armorType:
         return 'lift'
-    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Skirt.armorType or armor.armorType == Shorts.armorType:
+    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Thong.armorType or armor.armorType == Skirt.armorType or armor.armorType == Shorts.armorType:
         return 'lower'
+
+def lowerslifts(armor):
+    return lowerlift(armor) + "s"
 def restore_lowerlift(armor):
     if armor.armorType == Dress.armorType:
         return 'lower'
-    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Skirt.armorType or armor.armorType == Shorts.armorType:
+    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Thong.armorType or armor.armorType == Skirt.armorType or armor.armorType == Shorts.armorType:
         return 'lift'
+
+def restore_lowerslifts(armor):
+    return restore_lowerlift(armor) + "s"
 
 def itthem(armor):
     if armor.armorType == Pants.armorType or armor.armorType == Shorts.armorType:
@@ -385,13 +471,13 @@ def isare(armor):
         return "is"
 
 def waistbandhem(armor):
-    if armor.armorType == Pants.armorType or armor.armorType == Skirt.armorType or armor.armorType == Underwear.armorType or armor.armorType == Shorts.armorType:
+    if armor.armorType == Pants.armorType or armor.armorType == Skirt.armorType or armor.armorType == Underwear.armorType or armor.armorType == Shorts.armorType or armor.armorType == Thong.armorType:
         return 'waistband'
     else:
         return 'hem'
 
 def hemwaistband(armor):    
-    if armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Shorts.armorType:
+    if armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Thong.armorType or armor.armorType == Shorts.armorType:
         return 'waistband'
     else:
         return 'hem'
@@ -411,5 +497,9 @@ emptyLowerArmor = LowerArmor('pantsless', "Real Men(TM) know that balls of steel
 emptyUnderwear = Underwear('bare bottom', "Your tush. A truly glorious specimen. Go ahead and give it a slap. You know you want to.", baring=True, armorType='bare',
         maxEnchantment=0, risque=999)
 
-emptyEquipment = [emptyItem, emptyWeapon, emptyUpperArmor, emptyLowerArmor, emptyUnderwear]
+emptyPajamaTop = PajamaTop('Topless', 'Who needs to sleep with a top on?', 0)
+
+emptyPajamaBottom = PajamaBottom('Bottomless', 'Who needs to sleep with a bottom on?', 0)
+
+emptyEquipment = [emptyItem, emptyWeapon, emptyUpperArmor, emptyLowerArmor, emptyUnderwear, emptyPajamaTop, emptyPajamaBottom]
 

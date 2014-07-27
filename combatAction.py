@@ -466,7 +466,7 @@ class ThrowAction(CombatAction):
             failure = rand(grappleGBonus)
             if failure <= success:
                 betterStat = attacker.warfare() if attacker.warfare() >= attacker.grapple() else attacker.grapple()
-                dam = int(math.floor(rand(damRange[1] + betterStat - defender.defense()) + damRange[0]))
+                dam = int(math.floor(rand(damRange[1] + betterStat // 2 - defender.defense()) + damRange[0]))
                 if dam < 1:
                     dam = 1
                 grappler.receives_damage(dam)   

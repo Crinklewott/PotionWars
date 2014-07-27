@@ -23,8 +23,9 @@ import os
 
 currentMusic = None
 currentMusicFileName = None
-musicFiles = []
-def decrypt(fileName):
+musicFiles = {}
+
+def decrypt(fileName, songName):
     """
     We'll have to encrypt our music files once it's time to release the game, and decrypt
     them as a temporary file. This function
@@ -48,36 +49,47 @@ def decrypt(fileName):
         return musicFiles[-1]
     """
     if os.path.exists(fileName):
+        musicFiles[songName] = fileName
         return fileName
     else:
+        musicFiles[songName] = None
         return None
 
 
 def clean_up_music():    
-    for f in musicFiles:
-        os.remove(f)
+    #Tests to make sure we're running the game as a bundled exe. If we're not, then we DO NOT want to delete the music files.
+    try:
+        test = sys._MEIPASS
+    except Exception:
+        return
+    else:
+        for name, song in musicFiles.items():
+            try:
+                os.remove(song)
+            except (OSError, TypeError):
+                continue
 
 def set_theme(theme):
     global THEME
-    THEME = decrypt(theme)
+    THEME = decrypt(theme, 'theme')
 def set_town(music):
     global TOWN
-    TOWN = decrypt(music)
+    TOWN = decrypt(music, 'town')
 def set_combat(music):
     global COMBAT
-    COMBAT = decrypt(music)
+    COMBAT = decrypt(music, 'combat')
 
 def set_defeated(music):
     global DEFEATED
-    DEFEATED = decrypt(music)
+    DEFEATED = decrypt(music, 'defeated')
 
 def set_victory(music):
     global VICTORY
-    VICTORY = decrypt(music)
+    VICTORY = decrypt(music, 'victory')
 
 def set_boss(music):
     global BOSS
-    BOSS = decrypt(music)
+    BOSS = decrypt(music, 'boss')
 
 VICTORY = None
 TOWN = None

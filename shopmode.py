@@ -80,7 +80,11 @@ def window_shop():
 
 def window_shop_person_chosen():
     say_title('Coins: ' + str(chosenPerson.coins))
-    universal.say('\n'.join([i + ". " + good.name + ': ' + price for (i, good, price) in shopGoods]))
+    listOne = [i + ". " + good.name + ': ' + price for (i, good, price) in shopGoods[:10]]
+    #listOne.append('\t')
+    listTwo = [i + ". " + good.name + ': ' + price for (i, good, price) in shopGoods[10:]]
+    #listTwo.append('\t')
+    universal.say('\t'.join(['\n'.join(listOne), '\n'.join(listTwo)]), columnNum=2, justification=0)
     if len(shopGoods) < 10:
         set_commands(['(#) Select item to examine.', '<==Back'])
     else:
@@ -114,9 +118,12 @@ def window_shop_interpreter(keyEvent):
             set_commands([''.join(['(#) Select item to examine:', partialNum, '_']), 
                 '(Enter)Choose', '<==Back'])
     elif keyEvent.key == K_BACKSPACE and len(shopGoods) >= 10:
-        partialNum = partialNum[:-1]
-        set_commands([''.join(['(#) Select item to examine:', partialNum, '_']), 
-            '(Enter)Choose', '<==Back'])
+        if partialNum:
+            partialNum = partialNum[:-1]
+            set_commands([''.join(['(#) Select item to examine:', partialNum, '_']), 
+                '(Enter)Choose', '<==Back'])
+        else:
+            shop_mode(doneShoppingLitany=litany)
     elif keyEvent.key == K_BACKSPACE:
         shop_mode(doneShoppingLitany=litany)
     elif keyEvent.key == K_RETURN:

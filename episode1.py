@@ -47,17 +47,8 @@ import random
 import copy
 import pwenemies
 import sys
+import textCommands
 
-universal.set_author('Andrew Russell')
-universal.set_programmer('Andrew Russell')
-universal.set_author_email('sprpgs@gmail.com')
-universal.set_programmer_email('sprpgs@gmail.com')
-universal.set_author_email_bugs(universal.authorEmail + '+PWBugs')
-universal.set_programmer_email_bugs(universal.programmerEmail + '+PWBugs')
-universal.set_name('Potion Wars')
-titleScreen.title('Pandemonium Cycle')
-titleScreen.subtitle('The Potion Wars')
-titleScreen.set_title_image(universal.resource_path('PotionWarsTitleScreen'), 'png', 6)
 
 
 def spanked_episode_1():
@@ -168,36 +159,38 @@ def wearing_skirt_or_dress_or_pants():
 def no_shirt():
     return universal.state.player.shirt().name == items.emptyUpperArmor.name
 #-------------------------------------Music Files----------------------------------------
-CHURCH = music.decrypt(universal.resource_path('POL-apparition-long.wav'))
-GUARDS = music.decrypt(universal.resource_path('POL-war-victims-long.wav'))
-TAIRONAN = music.decrypt(universal.resource_path('POL-holy-forest-long.wav'))
-LIGHT_HEARTED = music.decrypt(universal.resource_path('POL-jesu-long.wav'))
-INTENSE = music.decrypt(universal.resource_path('POL-hurry-up-long.wav'))
-SADISTIC_GAME = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'))
-VENGADOR = music.decrypt(universal.resource_path('POL-antique-market-long.wav'))
-OMINOUS = music.decrypt(universal.resource_path('POL-bridge-over-darkness-long.wav'))
-CARLITA = music.decrypt(universal.resource_path('POL-goodbye-long.wav'))
-MARIA = music.decrypt(universal.resource_path('POL-moonlight-long.wav'))
-ROLAND = music.decrypt(universal.resource_path('POL-risky-plan-long.wav'))
-ELISE = music.decrypt(universal.resource_path('POL-land-of-peace-long.wav'))
-CATALIN = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'))
+"""
+textCommands.CHURCH = music.decrypt(universal.resource_path('POL-apparition-long.wav'))
+textCommands.GUARDS = music.decrypt(universal.resource_path('POL-war-victims-long.wav'))
+textCommands.TAIRONAN = music.decrypt(universal.resource_path('POL-holy-forest-long.wav'))
+textCommands.LIGHT_HEARTED = music.decrypt(universal.resource_path('POL-jesu-long.wav'))
+textCommands.INTENSE = music.decrypt(universal.resource_path('POL-hurry-up-long.wav'))
+textCommands.SADISTIC_GAME = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'))
+textCommands.VENGADOR = music.decrypt(universal.resource_path('POL-antique-market-long.wav'))
+textCommands.OMINOUS = music.decrypt(universal.resource_path('POL-bridge-over-darkness-long.wav'))
+textCommands.CARLITA = music.decrypt(universal.resource_path('POL-goodbye-long.wav'))
+textCommands.MARIA = music.decrypt(universal.resource_path('POL-moonlight-long.wav'))
+textCommands.ROLAND = music.decrypt(universal.resource_path('POL-risky-plan-long.wav'))
+textCommands.ELISE = music.decrypt(universal.resource_path('POL-land-of-peace-long.wav'))
+textCommands.CATALIN = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'))
 CARRIE = music.decrypt(universal.resource_path('POL-smart-ideas-long.wav'))
-PETER = music.decrypt(universal.resource_path('POL-telekinesis-long.wav'))
-COMBAT = music.decrypt(universal.resource_path('POL-chase-long.wav'))
-DEFEAT = music.decrypt(universal.resource_path('POL-graveyard-lord-long.wav'))
+textCommands.PETER = music.decrypt(universal.resource_path('POL-telekinesis-long.wav'))
+textCommands.COMBAT = music.decrypt(universal.resource_path('POL-chase-long.wav'))
+textCommands.DEFEAT = music.decrypt(universal.resource_path('POL-graveyard-lord-long.wav'))
 music.set_combat(universal.resource_path('POL-chase-long.wav'))
 music.set_boss(universal.resource_path('POL-last-duel-long.wav'))
 music.set_town(universal.resource_path('POL-spiritual-path-long.wav'))
 music.set_theme(universal.resource_path('POL-the-challenge-long.wav'))
 music.set_defeated(universal.resource_path('POL-graveyard-lord-long.wav'))
 music.set_victory(universal.resource_path('POL-the-challenge-long.wav'))
-titleScreen.set_opening_crawl(CHURCH)
+titleScreen.set_opening_crawl(textCommands.CHURCH)
+"""
 
 
 #--------------------------------------------Rooms-----------------------------------------------------------------------------------
 #Characters and other things go here when I want to remove them from play.
 #offStage.add_character(universal.state.player)
-edgeOfAvaricum = Room('Edge of Avaricum', "The road is overflowing with people, mostly merchants and farmers bringing their goods to market. Scattered amongst them is a much sadder crowd: Taironan refugees fleeing the strife of the Potion Riots. Many stumble down the road with dead eyes and ragged clothing, hunched under the weight of their children and few precious possessions. Just down the road is the city of Avaricum, the most powerful Carnutian city-state in this region of the One-Thousand-Twenty-Four. Several guards stand on either side of the road studying the people making their way into the Outer City.", bgMusic=VENGADOR)
+edgeOfAvaricum = Room('Edge of Avaricum', "The road is overflowing with people, mostly merchants and farmers bringing their goods to market. Scattered amongst them is a much sadder crowd: Taironan refugees fleeing the strife of the Potion Riots. Many stumble down the road with dead eyes and ragged clothing, hunched under the weight of their children and few precious possessions. Just down the road is the city of Avaricum, the most powerful Carnutian city-state in this region of the One-Thousand-Twenty-Four. Several guards stand on either side of the road studying the people making their way into the Outer City.", bgMusic=textCommands.VENGADOR)
 
 def enterLeft(character, room):
     offStage.remove_character(character)
@@ -211,7 +204,7 @@ def exitLeft(character, room):
 avaricumSquare = Room('Avaricum Square', "Avaricum Square is the center of daily life for the commoners living in Avaricum. Men and women (and even a handful of elves) of all shapes and sizes arrive from every direction and leave towards every other. Hawkers wander the crowds, shouting their wares at the top of their lungs. Corner entertainers juggle, dance to silent music, or create little sparkling butterflies with bits of magic. Children sprint around and between the legs of adults. A massive sundial dominates the center of the square.")
 avaricumSquare.add_adjacent(edgeOfAvaricum)
 
-shrine = Room('Shrine', '''Despite the size of the cathedral, the actual place of worship is tiny, no more than a shrine with with four pews, each of which could seat five people if they didn't mind being friendly. At the back of the shrine is an equallly small altar. Sitting on the center of the altar is a brightly painted wooden idol of the Mother. Behind the altar is a straight-backed, armless oaken chair. There is a sign carved into the wood of the vestibule: "Although the Avaricum Cathedral is open to all who seek help in any form, because of the small size of the shrine, only Sisters are allowed to attend the weekly worship."''', bgMusic=CHURCH)
+shrine = Room('Shrine', '''Despite the size of the cathedral, the actual place of worship is tiny, no more than a shrine with with four pews, each of which could seat five people if they didn't mind being friendly. At the back of the shrine is an equallly small altar. Sitting on the center of the altar is a brightly painted wooden idol of the Mother. Behind the altar is a straight-backed, armless oaken chair. There is a sign carved into the wood of the vestibule: "Although the Avaricum Cathedral is open to all who seek help in any form, because of the small size of the shrine, only Sisters are allowed to attend the weekly worship."''', bgMusic=textCommands.CHURCH)
 
 def shrine_before_arrival():
     if (universal.state.player.currentEpisode == episode1.name and episode.allEpisodes[universal.state.player.currentEpisode].currentSceneIndex == 0 and 
@@ -228,11 +221,11 @@ shrine.before_arrival = shrine_before_arrival
 shrine.add_adjacent(avaricumSquare) 
 
 orphanage = Room('Orphanage', universal.format_line(["The orphanage is a dizzying maze of twisting hallways. Children sprint through the hallways, gasping and laughing, playing hide and seek, tag, and countless other games. About a dozen Younger Brothers and Sisters in light blue, and students in light grey run after the children. In the center of the orphanage is a large dining hall. Two dozen or so children are crowded around an older woman sitting in the corner telling a story. Sitting in the center of the hall is a woman in her mid forties. She is wearing a dark red robe, which denotes her rank as a Sister of the Spectral Persuasion. She has light brown shoulder-length hair with a hint of grey, and pale skin. Her hair is pulled back into a complex braid. She is of average height, but carries herself with a level of",
-                '''confidence and conviction that makes her appear taller. Crows feet spread out from her blue eyes. Her eyes flick all over the dining room, keeping an eye on the children and Younger Brothers and Sisters both. At the same time, she braids the hair of a young girl to match her own.''']), bgMusic=LIGHT_HEARTED)
+                '''confidence and conviction that makes her appear taller. Crows feet spread out from her blue eyes. Her eyes flick all over the dining room, keeping an eye on the children and Younger Brothers and Sisters both. At the same time, she braids the hair of a young girl to match her own.''']), bgMusic=textCommands.LIGHT_HEARTED)
 
 orphanage.add_adjacent(shrine)
 
-hospital = Room('Hospital', "The hospital is a busy, but somber place. People afflicted with various diseases and injuries (crookedly healed bones appearing to be the most common) sit waiting to be treated. Brothers and Sisters in white walk back and forth, some disappearing into the patient rooms in the back, others speaking with those waiting, still others handing off paperwork to each other. Sitting behind a large desk at the back of the room is a woman about Elise's age. She is wearing the light grey robes of a student, and is hunched over some parchment, her forehead wrinkled in thought.", bgMusic=CHURCH)
+hospital = Room('Hospital', "The hospital is a busy, but somber place. People afflicted with various diseases and injuries (crookedly healed bones appearing to be the most common) sit waiting to be treated. Brothers and Sisters in white walk back and forth, some disappearing into the patient rooms in the back, others speaking with those waiting, still others handing off paperwork to each other. Sitting behind a large desk at the back of the room is a woman about Elise's age. She is wearing the light grey robes of a student, and is hunched over some parchment, her forehead wrinkled in thought.", bgMusic=textCommands.CHURCH)
 
 hospital.add_adjacent(shrine)
 hospital.add_adjacent(orphanage)
@@ -242,7 +235,7 @@ craftmansCorridor = Room("Craftman's Corridor", '''The Craftman's Corridor is al
 avaricumSquare.add_adjacent(craftmansCorridor)
 
 wesleyAndAnnesArmorShop = Room("Wesley and Anne's Weapons and Armor", "", 
-        bgMusic=PETER) 
+        bgMusic=textCommands.PETER) 
 def update_armor_shop_description():
     wesleyAndAnnesArmorShop.description = universal.format_line(['''The shop consists of a single small room. A counter runs the length of the far wall. Hanging on the left wall is a small collection of weapons, while on the right side are a few pieces of armor. What really catches''', universal.state.player.name + "'s", '''attention is a 'suit' of chanmail hanging on the wall above the counter.''', universal.format_line(['''The armor is a two piece affair. The top looks like to be barely big enough to cover (for a sufficiently loose definition of 'cover')''', universal.state.player.name + "'s", '''breasts, while the bottom is a thong. A thong made out of chainmail.''' if universal.state.player.is_female() else '''The armor is a single, small thong, which is made out of chainmail.'''])])
 def armor_shop_after_arrival():
@@ -431,13 +424,14 @@ carol_leave.quip_function = carol_leave_quip_function
 
 carol.inventory = [itemspotionwars.thong, itemspotionwars.lacyUnderwear, itemspotionwars.boyShorts, itemspotionwars.underShorts, itemspotionwars.shorts, 
     itemspotionwars.shortShorts, itemspotionwars.plainSkirt, itemspotionwars.miniSkirt, itemspotionwars.blackDress, itemspotionwars.sunDress, itemspotionwars.vNeckTunic, 
-    itemspotionwars.pencilSkirt, itemspotionwars.blouse]
+    itemspotionwars.pencilSkirt, itemspotionwars.blouse, itemspotionwars.largeShirt, itemspotionwars.pinkPajamaShirt, itemspotionwars.pinkPajamaPants, 
+    itemspotionwars.bluePajamaShirt, itemspotionwars.bluePajamaPants]
 
 
 restfulRoad = Room("Restful Road", "Place holder")
 #avaricumSquare.add_adjacent(restfulRoad)
 
-slums = Room("Slums", "", bgMusic=TAIRONAN)
+slums = Room("Slums", "", bgMusic=textCommands.TAIRONAN)
 
 def slums_after_arrival():
     if 'visited_slums' in keywords():
@@ -526,7 +520,7 @@ mariasHomeDesc = universal.format_line(['''Maria lives in a dinky little room wi
     '''floor is packed dirt, and the old wooden walls sag, seeming on the verge of collapse at any moment. A small, stone-circled firepit sits in the''',
     '''center, just below a small hole in the ceiling. A small collection of wooden bowls, plates, and  skewers lie next to the pit. A pile of ragged''',
     '''blankets is crumpled up in the corner.'''])
-mariasHome = townmode.Bedroom("Maria's Home", description=mariasHomeDesc, bgMusic=TAIRONAN, before_arrival=marias_home_before_arrival, after_arrival=marias_home_after_arrival)
+mariasHome = townmode.Bedroom("Maria's Home", description=mariasHomeDesc, bgMusic=textCommands.TAIRONAN, before_arrival=marias_home_before_arrival, after_arrival=marias_home_after_arrival)
 mariasHome.add_adjacent(slums)
 slums.add_adjacent(mariasHome)
 
@@ -549,10 +543,10 @@ class AdventurersGuild(Room):
 '''people each. About four very rough people sit at the central table. They are dirty, unkempt, and every one of them is armed. They all give''', universal.state.player.name, '''a wary look before returning to a large game of dice. Each roll is accompanied by boisterous laughter and vicious swearing in half a dozen different languages.''']]) 
         return adventurersGuild.description
 
-adventurersGuild = AdventurersGuild("Adventurer's Guild", bgMusic=LIGHT_HEARTED)
+adventurersGuild = AdventurersGuild("Adventurer's Guild", bgMusic=textCommands.LIGHT_HEARTED)
 adventurersGuild.add_adjacent(craftmansCorridor)
 infirmary = Room("Infirmary", description=universal.format_line(['''A large, open room filled with cots, and the sharp, irritating smell of poultices, alcohol,''',
-'''and other medical supplies.''']), bgMusic=LIGHT_HEARTED)
+'''and other medical supplies.''']), bgMusic=textCommands.LIGHT_HEARTED)
 
 
 def ildri_or_adrian():
@@ -579,7 +573,7 @@ def guild_bedroom_after_arrival():
 
 guildBedroom = townmode.Bedroom("Bedroom", description=universal.format_line(['''A small, bare room containing four beds in two stacks of two. The beds are feather-beds, complete with pillows and a few blankets. Adrian's''',
 '''obscene''',
-    '''wealth continues to boggle the brain.''']), bgMusic=LIGHT_HEARTED, punisher=ildri_or_adrian, before_arrival=guild_bedroom_before_arrival, 
+    '''wealth continues to boggle the brain.''']), bgMusic=textCommands.LIGHT_HEARTED, punisher=ildri_or_adrian, before_arrival=guild_bedroom_before_arrival, 
     after_arrival=guild_bedroom_after_arrival)
 guildBedroom.add_adjacent(adventurersGuild)
 
@@ -1212,7 +1206,7 @@ def guard_greeting_1_1_quip():
     '''outfit a guard in leather if that guard were also a spellslinger.'''],
     '''"What's your name?" asks the guard.'''])
     guard_greeting_1_1.playerComments = ['''"I don't have to answer that."''', '"' + universal.state.player.name + '"', '"' + universal.state.player.fakeName + '"']
-    music.play_music(GUARDS)
+    music.play_music(textCommands.GUARDS)
 
 southGuard.litany = too_busy.index
 southGuard.defaultLitany = too_busy.index
@@ -1480,7 +1474,7 @@ def maria_greeting_1_1_quip():
     ['''The Sister turns around, and returns Maria's wave. She is fairly short, and has the peach-colored skin common to Carnutians, though she is pale even by their standards. Although her dress obscures much of her figure,  she appears to be fairly curvy. Her shoulder-length brown hair has been pulled back into a ponytail to keep it out of her way while cleaning. "Taking advantage of me again, are you?"'''],
     '''"I'll clean up after myself, I promise," says Maria, plopping down into one of the pews.''',
     ['''"What about your new friend?" asks Elise, gesturing towards''', universal.state.player.name + "."],
-    ['''"This is''', universal.state.player.name + ''',''', nickname(), '''for short.''', HisHer(universal.state.player), '''Nana is my aunt and combat instructor," says Maria.''', '"' + universal.state.player.name + ",", '''this is Elise. She's a Sister of the Matirian Church. Got ordained just last month."'''],
+    ['''"This is''', universal.state.player.name + (format_line([''',''', nickname(), '''for short.''']) if name() != nickname() else '''.'''), HisHer(universal.state.player), '''Nana is my aunt and combat instructor," says Maria.''', '"' + universal.state.player.name + ",", '''this is Elise. She's a Sister of the Matirian Church. Got ordained just last month."'''],
     ['''"Pleasure to meet you," says Elise, giving''', universal.state.player.name, '''a wave. "I guess I can count on Maria to make sure you clean up properly, so I hope you don't mind if I keep cleaning up here. I was less than productive yesterday, so I've fallen a bit behind."'''],
     ['''"Not at all. I think it's best if''', nickname(), '''and I have a mildly private conversation anyway," says Maria. "After all, it's the first time we've seen each other in ten years."'''],
     ['''Maria pulls out some hard looking bread, as''', universal.state.player.name, '''sits down next to her.'''],
@@ -1493,7 +1487,7 @@ def maria_greeting_1_1_quip():
     shrine.add_character(maria)
     avaricumSquare.remove_character(universal.state.player)
     avaricumSquare.remove_character(maria)
-    maria_greeting_1_1.music = [CHURCH]
+    maria_greeting_1_1.music = [textCommands.CHURCH]
     universal.say_title('Shrine')
 
 maria_3_1_1 = Node(27)
@@ -1521,8 +1515,8 @@ def maria_1_1_1_quip():
         maria_1_1_1.children.append(maria_1p1p1_1_1)
         maria_1_1_1.playerComments.append('''"Yeah, I learned that last one the hard way."''')
     else:
-        maria_1_1_1.children.append(maria_1p1p2_1_1)
-        maria_1_1_1.playerComments.append('''"That's just fearmongering. I refuse to believe they'd ever do that for any reason other than self-defense, and even then it'd just be a Charm, not a full MC."''')
+        maria_1_1_1.add_child(maria_1p1p2_1_1)
+        maria_1_1_1.add_player_comment('''"That's just fearmongering. I refuse to believe they'd ever do that for any reason other than self-defense, and even then it'd just be a Charm, not a full MC."''')
 
 maria_1p1p1_1_1 = Node(32)
 maria_1p1p2_1_1 = Node(33)
@@ -1533,7 +1527,7 @@ maria_1_1_1.playerComments = ['''"Really? I never imagined... but Armando was al
 
 def maria_1p1p1_1_1_quip():
     maria_1p1p1_1_1.quip = universal.format_text([['''\mMaria risks a quick glance at Elise, who is cleaning underneath the altar, and whistling some merry tune or other. She leans in close to''', universal.state.player.name, '''and takes''', hisher(universal.state.player), '''hand. Her voice is barely audible. "Whatever you do, don't tell anyone else. Don't even think about it."''']])
-    maria_1p1p1_1_1.music = [MARIA]
+    maria_1p1p1_1_1.music = [textCommands.MARIA]
 
 maria_1p1p1_1_1.quip_function = maria_1p1p1_1_1_quip
 maria_1p1p1p1_1_1 = Node(35) 
@@ -1583,14 +1577,18 @@ maria_1p1p1p2p1p1p1_1_1.playerComments = ['''"Coward. It's because of people lik
 
 def maria_1p1p1p2p1p1p1p1p1_1_1_quip():
     maria_1p1p1p2p1p1p1p1p1_1_1.quip = universal.format_text([[universal.state.player.name, '''picks up''', hisher(universal.state.player), '''pack and starts to stand, but Maria's grip on''', hisher(universal.state.player), '''wrist tightens to the point of pain.'''], ['''Maria gives''', universal.state.player.name, '''a warning glare. "I'm giving you one last chance. Don't force my hand."'''],
-        [universal.state.player.name, '''leans in until''', hisher(universal.state.player), '''face and Maria's are only inches apart. "The only one forcing your hand is you."'''],
-        ['''Maria grabs''', universal.state.player.name + "'s", '''collar, and pivots in her seat, yanking''', universal.state.player.name, '''across her lap.''', universal.state.player.name + "'s", 
-        '''head just barely misses the edge of the pew.''', HeShe(universal.state.player), '''pushes against the pew seat and floor and tries to throw''', himselfherself(universal.state.player), '''off of Maria's lap,''',
-        '''but Maria just grabs the hand that's pressed against the pew seat, yanks it out from underneath''', name() + ",", '''and pins it securely against the small of''', names(), '''back.'''],
-    ['''Then she begins to spank''', universal.state.player.name + "."], 
+        ['''"The only one forcing your hand is you."''',
+        universal.state.player.name, '''rips''', hisher(), '''wrist free, and starts to storm from the Church.''']
+        ['''"Wait! Stop!" Maria leaps to her feet, and chases after''', universal.state.player.name + ".", '''She grabs the younger Taironan's''',
+            '''arm.'''],
+        ['''"Hey, let go of me," cries''', universal.state.player.name + ",", '''trying to wrench''', hisher(), '''arm free.'''],
+        ['''Maria steps forward, and grabs the back of''', names(), '''shirt with her free hand. She pivots into a lunge position, and flings''', name(), '''across her''',
+            '''knee.'''],
+        ['''"I said, let go of me!"''', names(), '''voice rises into a shout.'''],
+    ['''"I won't let you throw your life away," snaps Maria as she begins to spank''', universal.state.player.name + "."], 
     ['''"Stop this!" cries''', universal.state.player.name, ' '.join(['''vainly kicking''', hisher(universal.state.player), '''legs.''']) if universal.state.player.willpower_check(2) else ' '.join(['''as a sharp sting cuts through''', hisher(universal.state.player), '''bottom.''']), '''"It isn't right!"'''],
     ['''Maria ignores''', universal.state.player.name + "'s", '''plea, and slaps''', universal.state.player.name + "'s", '''bottom hard and fast, the next blow landing almost before the previous had registered. Her hand roams all over''', universal.state.player.name + "'s", '''bottom, smacking the center of''', hisher(universal.state.player), '''cheeks, then the top, then the center, then the sit spots, then the sit spots again.''', ' '.join(['''It isn't long before''', universal.state.player.name, '''is kicking''',
-    hisher(universal.state.player), '''legs, pounding''', hisher(universal.state.player), '''free fist against the floor, and bucking''', hisher(universal.state.player), '''hips.''', universal.state.player.name + "'s", '''yelps of pain turn into a continuous wail, and tears gather at''', hisher(universal.state.player), '''eyes. After a few stinging smacks to''', hisher(universal.state.player), '''sensitive thighs,''', hisher(universal.state.player), '''legs learn on their own to keep the kicking low. At one point,''', universal.state.player.name + "'s", '''flailing nearly topples''', himher(universal.state.player), '''off Maria's lap. Maria stops a second to readjust''', universal.state.player.name + "'s",'''position, before resuming the punishment, though she seems to be going slightly slower.''']) if universal.state.player.willpower_check(2) else ' '.join([universal.state.player.name,  '''gnaws on''', hisher(universal.state.player), '''lower lip,''', hisher(universal.state.player), '''hips jerking slightly under particularly painful blows.'''])],
+    hisher(universal.state.player), '''legs, pounding''', hisher(universal.state.player), '''fists against the floor, and bucking''', hisher(universal.state.player), '''hips.''', universal.state.player.name + "'s", '''yelps of pain turn into a continuous wail, and tears gather at''', hisher(universal.state.player), '''eyes. After a few stinging smacks to''', hisher(universal.state.player), '''sensitive thighs,''', hisher(universal.state.player), '''legs learn on their own to keep the kicking low. At one point,''', universal.state.player.name + "'s", '''flailing nearly topples''', himher(universal.state.player), '''off Maria's lap. Maria stops a second to readjust''', universal.state.player.name + "'s",'''position, before resuming the punishment, though she seems to be going slightly slower.''']) if universal.state.player.willpower_check(2) else ' '.join([universal.state.player.name,  '''gnaws on''', hisher(universal.state.player), '''lower lip,''', hisher(universal.state.player), '''hips jerking slightly under particularly painful blows.'''])],
     ['''Maria doesn't speak throughout the spanking. She doesn't scold''', universal.state.player.name + ",", '''or ask''', himher(universal.state.player), '''any questions like Nana did. She just strikes''', hisher(universal.state.player), '''burning bottom over and over and over again.'''],
     ['''Eventually, Maria takes a deep breath, and rests her hand lightly on''', universal.state.player.name + "'s", '''tender bottom. Then, she reaches over''', universal.state.player.name, '''and starts rooting around in''', universal.state.player.name + "'s",
 '''pack. "Hmm. A spoon eh? Looks like Aunt Reyna went easy on you." She pulls out the wooden spoon given to''', universal.state.player.name, '''by Nana. "Now, are you going to just let it go and try to live your life, or am I going to have to bare your bottom and use your own spoon on you?"'''],
@@ -1765,7 +1763,7 @@ def maria_1p1p2_1_1_quip():
     maria_1p1p2_1_1.quip = universal.format_text([['''\mMaria scowls. "Don't be so naive. The guards are going to do whatever they feel like to 'protect' Carnutians from us. The second you give them anything less than full cooperation, they'll drag you into some dank dungeon, steal your mind, pick it clean, then put it back, and they'll probably leave a few going away presents in there too."'''],
 [universal.state.player.name, '''scowls right back. "And do you have any proof for this supposed brutality?"'''],
 '''"Sure," says Maria. "Go take a walk through the slums. Look for the beggars that people take extra pains to avoid. Look for the men and women doing their laundry with their heads down. Quickly, furtively, like they're scared of being caught cleaning their own cursed clothing. Look for the ones who have a bubble of silence that follows them everywhere."'''])
-    maria_1p1p2_1_1.music = [MARIA]
+    maria_1p1p2_1_1.music = [textCommands.MARIA]
 maria_1p1p2_1_1.quip_function = maria_1p1p2_1_1_quip
 maria_1p1p2p2_1_1 = Node(52)
 maria_1p1p2p5_1_1 = Node(53)
@@ -1825,7 +1823,7 @@ maria_1p1p2p5_1_1.playerComments = mariaRootPlayerComments
 
 def maria_1p1p3_1_1_quip():
     maria_1p1p3_1_1.quip = universal.format_text([['''\mMaria's face takes on a slightly haunted look. Her voice is soft. "That's because they don't have the same job. Armando and Isaias protect the people of Chengue from bad guys. Avernite guards protect Carnutians from Taironans."''']])
-    maria_1p1p3_1_1.music = [MARIA]
+    maria_1p1p3_1_1.music = [textCommands.MARIA]
 maria_1p1p3_1_1.quip_function = maria_1p1p3_1_1_quip
 maria_1p1p3p1_1_1 = Node(56) 
 maria_1p1p3p2_1_1 = Node(57) 
@@ -1996,7 +1994,7 @@ def maria_3_1_1_quip():
 maria_3_1_1.quip_function = maria_3_1_1_quip
 
 def maria_3p1_1_1_quip():
-    maria_3p1_1_1.music = [LIGHT_HEARTED]
+    maria_3p1_1_1.music = [textCommands.LIGHT_HEARTED]
     maria_3p1_1_1.quip = universal.format_text([['''\m"Oh stop." Maria smacks''', universal.state.player.name, '''upside the head, her lips quirking. "That's not what I meant by 'history' and you know it. I'm just one of his more successful adventurers, and he trusts my judgement."'''],
     ['''"Yeah, I'll bet he does," says,''', universal.state.player.name, '''grinning suggestively.'''],
     ['''"Brat!" cries Maria, her voice filled with laughter. She jerks''', universal.state.player.name, '''to''', hisher(universal.state.player), '''feet and lands three smacks to''', hisher(universal.state.player), '''bottom. They're not particularly hard slaps, and clearly meant more as a joke than any sort of actual punishment.'''],
@@ -2010,7 +2008,7 @@ maria_3p1_1_1.children = mariaRootChildren
 maria_3p1_1_1.playerComments = mariaRootPlayerComments
 
 def maria_3p2_1_1_quip():
-    maria_3p2_1_1.music = [LIGHT_HEARTED]
+    maria_3p2_1_1.music = [textCommands.LIGHT_HEARTED]
     maria_3p2_1_1.quip = universal.format_text([['''\mMaria rolls her eyes. "I can assure you, there is nothing dirty about Adrian. The man probably thinks the Mother created dirt precisely to annoy him. Despite that, he'd rather roll around in the mud than sleep with one of his employees. Maybe. It'd be a tough decision either way."'''],
 ['''"And how you would know this?" asks,''', universal.state.player.name + "."], 
 ['''Maria slaps''', universal.state.player.name, '''upside the head. "Brat. What would Aunt Reyna say if she saw you acting like this?"'''],
@@ -2022,7 +2020,7 @@ maria_3p2_1_1.children = mariaRootChildren
 maria_3p2_1_1.playerComments = mariaRootPlayerComments
 
 def maria_3p3_1_1_quip():
-    maria_3p3_1_1.music = [LIGHT_HEARTED]
+    maria_3p3_1_1.music = [textCommands.LIGHT_HEARTED]
     maria_3p3_1_1.quip = universal.format_text(['''\mMaria gets shifty-eyed. "Of course not. What could ever make you think that?"''',
 [universal.state.player.name, '''puts''', hisher(universal.state.player), '''hands on''', hisher(universal.state.player), '''hips and mock scowls. "Maria."'''],
 ['''"Oh relax," says Maria, lightly touching''', universal.state.player.name, '''on the arm. "Adrian and I are close friends, I assure you. He might even give you a discount. Maybe. Guy's almost as stingy as he is clean."''']])
@@ -2032,7 +2030,7 @@ maria_3p3_1_1.children = mariaRootChildren
 maria_3p3_1_1.playerComments = mariaRootPlayerComments
 
 def maria_4_1_1_quip():
-    maria_4_1_1.music = [LIGHT_HEARTED]
+    maria_4_1_1.music = [textCommands.LIGHT_HEARTED]
     maria_4_1_1.quip = universal.format_text([['''"You can stay with me until Adrian gives you your first real job," says Maria. "Things can be a bit slow at first, and for the first month or so, you'll probably make barely enough to keep yourself fed, let alone afford a place to live. Once you've got a real job or two under your belt, then we can discuss your options. One possibility is that we room together. It'd certainly be cheaper for both of us."''']])
     if 'Maria_intimidated_you' in universal.state.player.keywords:
         maria_4_1_1.quip += '\n\n' + universal.format_text([[universal.state.player.name, '''shrugs. "I'll consider it I guess."'''], 
@@ -2073,7 +2071,7 @@ maria_5_1_1.quip_function = maria_5_1_1_quip
 elise_3_1_1 = Node(70)
 elise_4_1_1 = Node(71)
 def elise_greeting_1_1_quip_function():
-    music.play_music(ELISE)
+    music.play_music(textCommands.ELISE)
     if "Maria_intimidated_you" in universal.state.player.keywords:
         elise_greeting_1_1.quip = universal.format_text(['''"Hi. I, umm, couldn't help but overhear some of what happened," says Elise, smiling uneasily. "Sounded like you two had an argument."''',
 [universal.state.player.name, '''shrugs.'''],
@@ -2622,7 +2620,7 @@ elise_4p1p2p1p1p2p2_1_1 = Node(128)
 #elise_4p1p2p1p1p2_1_1.children = [elise_4p1p2p1p1p2p1_1_1, elise_4p1p2p1p1p2p2_1_1]
 def elise_4p1p2p1p1p2_1_1_qf():
     add_keyword('met_Samantha')
-    elise_4p1p2p1p1p2_1_1.add_song(OMINOUS)
+    elise_4p1p2p1p1p2_1_1.add_song(textCommands.OMINOUS)
     elise_4p1p2p1p1p2_1_1.quip = universal.format_text([['''\m"Excuse me?" says an unfamiliar voice from''' , universal.state.player.name + "'s", '''right.'''],
         [universal.state.player.name, '''jerks around. Standing in one of the doorways leading out of the shrine is a middle-aged woman in the dark red robes of a Sister of the Spectral Persuasion.'''],
             ['''Her skin is similar in tone to Elise's. She is of average height, but carries herself with a level of''',
@@ -2923,8 +2921,8 @@ def peter_2_1_1qf():
 ['''Peter rolls his eyes. "Grandpa claimed that the way the spell he used worked,''',
 '''the less the armor covers, the better the protection. When I asked him about that''',
 '''particular design..." Peter shudders.''',
-'''"He said it was based on an outfit grandma liked to wear when they were getting''',
-'''intimate.''' if universal.state.player.is_female() else '''"He said it was based on an outfit he used to wear when he and grandma were getting intimate.''',
+format_line(['''"He said it was based on an outfit grandma liked to wear when they were getting''',
+'''intimate.''']) if universal.state.player.is_female() else '''"He said it was based on an outfit he used to wear when he and grandma were getting intimate.''',
 '''I stopped asking after''',
 '''that." He shudders again.'''], 
 ['''"What about cold weather''', '''or the male gaze?"''' if universal.state.player.is_female() else '',  
@@ -3591,7 +3589,7 @@ adrian_8_1_1.quip_function = adrian_8_1_1_qf
 def display_text_start_next_scene(delayTime):
     flush_text()
     #pygame.time.delay(delayTime)
-    episode1.next_scene()
+    episode.allEpisodes[universal.state.player.currentEpisode].next_scene()
 
 def start_scene_1_episode_1(loading=False):
     print('starting_scene_1')
@@ -3634,7 +3632,7 @@ spankCarlitaNice = Node(197)
 spankCarlitaCruel = Node(198)
 spankCarlita.children = [spankCarlitaStern, spankCarlitaNice, spankCarlitaCruel]
 def spankCarlita_qf():
-    music.play_music(CARLITA)
+    music.play_music(textCommands.CARLITA)
     carlita = universal.state.get_character('Carlita.person')
     universal.say_title(carlita.printedName)
     spankCarlita.quip = universal.format_text([[universal.state.player.name + "'s", '''eyes widen as the young rebel collapses, her health clearly drained. It is blatantly obvious the young''',
@@ -4151,7 +4149,7 @@ def start_scene_2_episode_1(loading=False):
     carlita = universal.state.get_character('Carlita.person')
     carlita.litany = spankCarlita.index
     if not loading:
-        music.play_music(INTENSE, 500)
+        music.play_music(textCommands.INTENSE, 500)
     if not loading:
         universal.say_title('Adrian')
         universal.say(universal.format_text([['''The door bursts open and over a dozen heavily armed, masked warriors''',
@@ -4187,14 +4185,14 @@ def start_scene_2_episode_1(loading=False):
                 '''that is two sizes too big for her, and a pair of trousers. The trousers have a massive''',
                 '''hole in the left knee, and half the right pant leg missing completely.''',
                 '''She clutches an old, heavily nicked dagger. Her hand is shaking, but her eyes are filled with grim''',
-            '''determination.''', universal.state.player.name, '''readies''', hisher(universal.state.player), '''weapon.''']]), justification=0, music=[CATALIN])
+            '''determination.''', universal.state.player.name, '''readies''', hisher(universal.state.player), '''weapon.''']]), justification=0, music=[textCommands.CATALIN])
     adventurersGuild = universal.state.get_room("Adventurer's Guild")
     carlita = universal.state.get_character('Carlita.person')
     adventurersGuild.add_character(carlita)
     def after_fighting_carlita(allies, enemies, won):
         carlita = universal.state.get_character('Carlita.person')
         carlita.restores()
-        music.play_music(CARLITA)
+        music.play_music(textCommands.CARLITA)
         conversation.converse_with(carlita, townmode.town_mode)
     if not loading:
         universal.acknowledge(combat.fight, carlita, after_fighting_carlita, townmode.town_mode, False)
@@ -4205,7 +4203,7 @@ def e1_0_4():
     if 'visited_back_of_guild' not in keywords():
         add_keyword('visited_back_of_guild')
         universal.say_title('Back of Guild')
-        music.play_music(INTENSE)
+        music.play_music(textCommands.INTENSE)
         universal.say(universal.format_text([[name(), '''enters a long, dim corridor with wooden walls, and a wooden floor. There are four doors, two on each side, regularly spaced''',
         '''down the''',
         '''hallway. All of the doors are ajar, and three of them are hanging from one hing. The deafening sounds of battle echo throughout the building. Despite the''',
@@ -5445,7 +5443,7 @@ palLostSlingerDown.quip_function = palLostSlingerDown_qf
 
 palLostWarriorDown = Node(234)
 def palLostWarriorDown_qf():
-    music.play_music(INTENSE)
+    music.play_music(textCommands.INTENSE)
     palLostWarriorDown.quip = universal.format_text([[name(), '''stumbles, suddenly feeling very woozy.''', HisHer(), '''knees buckle, and''', hisher(), '''weapon begins to''',
         '''lower.'''],
         ['''The spellslinger raises her arms back over her head, and then snaps forward, her hands pushing out in front of her.'''],
@@ -5460,7 +5458,7 @@ def palLostWarriorDown_qf():
         [names(), '''stomach roils, and''', hisher(), '''vision narrows to a single point. The voices fade into faint murmurs.'''],
         [names(), '''leg wrenches.''', HeShe(), '''unleashes a high-pitched, glass-shattering shriek.'''],
         ['''Everything goes dark.\p''']])
-    #music.play_music(INTENSE)  
+    #music.play_music(textCommands.INTENSE)  
     palLostWarriorDown.quip = universal.format_text([palLostWarriorDown.quip, [name(), '''jerks awake, coughing and sputtering. A lingering taste of something... sweet(?)''',
         '''sits on''', hisher(), '''tongue. There is a strange, lingering''',
             '''sense of satisfaction, as if waking up from a particularly restful night. The pain in''', hisher(), '''head and leg is gone. A quick glance down''',
@@ -5804,8 +5802,8 @@ def e0_6_1():
                 ['''With that, Airell turns and runs out of the door with Morey.''']]), justification=0)
             universal.acknowledge(e0_6_1, ())
         else:
-            universal.say(universal.format_text(['\p', ['''1. "Why won't anyone''' if 'Ildri_spanked_you_unjustly' in keywords() or 'met_Mai' in keywords() else
-                '''you''', '''believe me?"'''], ['''2. "No no no I don't want to be spanked!"''']]), justification=0)
+            universal.say(universal.format_text(['\p', ['''1. "Why won't''', ('''anyone''' if 'Ildri_spanked_you_unjustly' in keywords() or 'met_Mai' in keywords() else
+                '''you'''), '''believe me?"'''], ['''2. "No no no I don't want to be spanked!"''']]), justification=0)
             if 'Ildri_spanked_you_unjustly' in keywords():
                 universal.say(universal.format_line(['''\n\n3. "Arrgh! Stupid no good wretched dicks. It's bad enough I got beaten by that stupid cook, I'm not getting spanked by''',
                 '''you too!"''']), justification=0)
@@ -5845,6 +5843,9 @@ def e0_6_1_no_ribbon_interpreter(keyEvent):
             universal.state.player.receives_damage(1)
             increment_spankings_taken()
             add_keyword('switched_by_Airell')
+            print(universal.state.player.clothing_below_the_waist())
+            print(universal.state.player.lower_clothing())
+            print(universal.state.player.underwear())
             universal.say(universal.format_text([[name(), '''lunges at the slinger,''', universal.state.player.weapon().name, '''leading. The slinger throws up his hand.''', name(), '''slams headfirst''',
                 '''into something very hard, and very invisible.''', HeShe(), '''staggers, clutching at''', hisher(), '''head.'''],
                 ['''The slinger grabs''', name(), '''by the arm. In one smooth, practiced motion, the slinger goes down on one knee, and hauls''', name(), '''across''',
@@ -5980,7 +5981,7 @@ def e0_6_1_dodge_or_submit_interpeter(keyEvent):
                     not universal.state.player.underwear().baring else universal.format_line(['''A few tears trace their way down''', names(), '''cheeks.''', HeShe(), '''takes a deep, shuddering''',
                         '''breath, and silently curses''', hisher(), '''decision to wear so little clothing. Even a pair of''', p.underwearpanties(), '''that actually''',
                         '''covered''', hisher(), '''bottom, let alone thick trousers or a multi-layered dress, would be precious.'''])],
-                ['''Before a fourth blow could land, the door flies open and''', '''Morey''' if 'helped_Morey''' in keywords() else '''a thin, pale, raven-haired man''',
+                ['''Before a fourth blow can land, the door flies open and''', '''Morey''' if 'helped_Morey''' in keywords() else '''a thin, pale, raven-haired man''',
                     '''bursts into the room.'''],
                 ['''"Morey!" roars Airell, shaking his fist. "How dare you and your crass method of combat stain this hollowed room!"'''],
                 ['''Morey narrows one eye. "I think you meant hallowed."'''],
@@ -6001,7 +6002,7 @@ def e0_6_1_dodge_or_submit_interpeter(keyEvent):
                 '''come on we need''','''to go."'''],
                 ['''The two trainers run out the door.''', name(), '''rubs''', hisher(), '''face with one hand, and rubs''', hisher(), '''bottom with the other.''', 
                 HeShe(), '''wonders with a touch of anxiety what Morey meant by''',
-                    ''''dicussing this more'.''']]) if 'helped_Morey' in keywords() else universal.format_text([['''Morey glances at''', name() + ".", '''"Hey, I think Adrian''',
+                    ''''dicussing this more'.''']]) if 'helped_Morey' in keywords() else universal.format_text([['''"Hey, I think Adrian''',
                         '''gave me''', hisher(), '''description.''', HeShe(), '''is a new member of the guild, who may not have had a chance to see Paloma for a''',
                         '''white ribbon yet. So, you should probably stop spanking''', himher() + "."],
                         ['''"I see," says Airell, deflating slightly. "Well, I apologize young''', mistermiss() + ".", '''I hope you understand, it is difficult to''',
@@ -6035,7 +6036,7 @@ def e0_6_1_attack_mage_interpreter(keyEvent):
                         universal.state.player.underwear().name != items.emptyUnderwear.name else '''.''')],
                         ['''Morey's hand beats a rapid-fire tattoo against''', names(), '''already heavily welted bottom. "You only strike an instructor if''',
                             '''they threaten your safety. Do I make myself clear?"'''],
-                        [name(), '''squeals and kicks beneath Morey's hard, calloused hand. The man might have been a stick, but weak he wasn't.'''],
+                        [name(), '''squeals and kicks beneath Morey's hard, calloused hand. The man might be a stick, but weak he isn't.'''],
                         ['''"Do I make myself clear?" snaps Morey.'''],
                         ['''"Yes!" cries''', name() + ".", '''Between Airell's stripes, and Morey's bruising hand, any feelings of rebellion that''', name(), 
                             '''may have felt were thoroughly quashed.'''],
@@ -6047,7 +6048,7 @@ def e0_6_1_attack_mage_interpreter(keyEvent):
                         '''get upstairs."'''],
                         [name(), '''nods and quickly covers''', himselfherself(), '''again.''', HeShe(), '''doesn't know if''', heshe(), '''should feel relief, or''',
                         '''worry.''', '''On the one hand, any minute not spent feeling that awful switch is a moment to be cherished. On the other hand,''', heshe(),
-                        '''would have to deal with it later, and that doesn't sound fun.''']]))
+                        '''will have to deal with it later, and that doesn't sound fun.''']]))
             add_keyword('punched_Airell')
             e0_6_1()
         elif num == 2:
@@ -6135,7 +6136,7 @@ def e0_6_1_interpreter(keyEvent):
                 names(), '''back,''']) if universal.state.player.clothing_below_the_waist().armorType == items.Dress.armorType else 
                 universal.format_line(['''pushes it up over''', names(), '''round, quivering bottom,''']) if universal.state.player.clothing_below_the_waist().armorType == items.Skirt.armorType
                     else universal.format_line(['''pulls''', items.itthem(universal.state.player.clothing_below_the_waist()), '''down to''', names(), '''ankles,''']), 
-                    universal.format_line(['''exposing''', hisher(), universal.state.player.underwear().name + "."]) if universal.state.player.clothing_below_the_waist().armorType != items.Underwear.armorType else 
+                    universal.format_line(['''exposing''', hisher(), universal.state.player.underwear().name + "."]) if universal.state.player.clothing_below_the_waist().armorType != items.Underwear.armorType and universal.state.player.clothing_below_the_waist().armorType != items.Thong.armorType else 
                     universal.format_line(['''completely baring''', hisher(), '''bottom.'''])],
             [universal.format_line(['''The hand doesn't stop there however, and with a quick tug, yanks''', names(), p.underwearpanties(), '''down to''', hisher(), '''knees,''',
                 '''completely baring''', hisher(), '''bottom to the menacing cane.''']) if universal.state.player.clothing_below_the_waist().armorType != items.Underwear.armorType and 
@@ -6729,7 +6730,7 @@ def cosima_noRibbon_join(keyEvent):
             add_keyword('Cosimas_task')
             universal.acknowledge(dungeonmode.dungeon_mode, ())
         elif num == 2:
-            universal.say(universal.format_text([['''The words are barely out of''', names(), '''mouth before''', hisher(), '''face is pressed against the wall again, and Cosima's''',
+            universal.say(universal.format_text([['''The words are barely out of''', names(), '''mouth before''', hisher(), '''face is pressed against the wall, and Cosima's''',
                 '''paddle is lighting''', hisher(), '''ass on fire.'''],
                 ['''"I do not have time for your pointless recalcitrance," says Cosima over''', names(), '''yelps of pain, and the heavy thwack of paddle to bottom.''',
                     '''"You will do as you're told, understand?"'''],
@@ -6923,7 +6924,7 @@ def e0_5_8():
             '''bum.''', HeShe(), '''screams against the gag, and jerks''', hisher(), '''bottom in a desperate but futile attempt to escape the switch.'''],
             ['''Over and over again, the switch swishes through the air and cuts against''', names(), '''bottom.''', HisHer(), '''squirming becomes so bad, that''',
                 '''the woman has to wrap her arm around''', names(), '''waist and hold''', himher(), '''still while administering the switch.'''],
-            ['''Eventually, after La Madre only knows how long (could have been a few seconds, a few minutes, or a few hours, for all''', name(), '''knew), a ''',
+            ['''Eventually, after La Madre only knows how long, a ''',
                 '''gentle hand rubs''', hisher(), '''fresh welts.'''],
             ['''"There," says the voice. "New stripes. Very nice. Let's see what's in your pack, yes? Maybe fancy new dagger, or sexy outfit!"''']]))
     if itemspotionwars.whiteRibbon in inventory():
@@ -6979,8 +6980,8 @@ def e0_5_8():
                 '''bottom, and a scrap of cloth across her chest. An elf. Interesting.'''],
             [names(), '''observations are interrupted when Cosima grabs''', hisher(), '''arm, and hauls''', himher(), '''over her knee.'''],
             ['''"Hey-oww!" cries''', name(), '''as Cosima's paddle cracks against''', hisher(), '''bottom.'''],
-            ['''"What did I tell you?" says Cosima. She rains four hard blows on''', universal.format_line(['''the seat of''', names(), 
-                universal.state.player.clothing_below_the_waist().name + ","]) if not no_pants() or not baring_underwear() else universal.format_line([names(), '''exposed, vulnerable bottom,'''
+            ['''"What did I tell you?" asks Cosima. She rains four hard blows on''', universal.format_line(['''the seat of''', names(), 
+                universal.state.player.clothing_below_the_waist().name + "."]) if not no_pants() or not baring_underwear() else universal.format_line([names(), '''exposed, vulnerable bottom,'''
                     '''two blows to each cheek.'''])],
             [name(), '''wails and kicks''', hisher(), '''legs.'''],
             ['''"I said, what did I tell you?" says Cosima. She gives''', name(), '''another three hard licks, this time focusing on the middle of''', names(), 
@@ -7416,9 +7417,9 @@ def mai_spanking_strength_interpreter(keyEvent):
                 universal.acknowledge(dungeonmode.dungeon_mode, ())
 def e0_1_3():
     universal.say_title('Warslinger')
-    music.play_music(VENGADOR)
+    music.play_music(textCommands.VENGADOR)
     universal.say(universal.format_text([['\m' + name(), '''enters the armory. The room is depressingly bare. Mostly empty racks line the right and left walls. Scattered about the room are''',
-    '''toppled armor stands and empty chests.\n\n''']]), justification=0, music=[VENGADOR])
+    '''toppled armor stands and empty chests.\n\n''']]), justification=0, music=[textCommands.VENGADOR])
     if 'met_Cosima' in keywords():
         universal.say(universal.format_text([['''In the center of the room, Cosima wrestles with a masked Taironan man. There is a deep, nearly inaudible thud, and Cosima flies through''',
             '''the air and slams into the wall next to''', name() + ".", '''The woman rolls to her feet, but then the man throws his hands forward.''',
@@ -7570,7 +7571,7 @@ def support_vengadores():
                             ['''"Like I said, stop being a pussy," says the Vengador, smirking.''']])
 
 def spank_necia(allies, enemies, won):
-        music.play_music(VENGADOR)
+        music.play_music(textCommands.VENGADOR)
         universal.say_title("Warslinger's Companion")
         if won:
             if 'chastised_warslinger' in keywords():
@@ -8461,7 +8462,7 @@ floor0Events = (
 floor0
 
 floorEvents = [floor0Events, floor1Events]
-backOfGuild = dungeonmode.Dungeon('Guild', [floor0, floor1], floorEvents, bgMusic= INTENSE, 
+backOfGuild = dungeonmode.Dungeon('Guild', [floor0, floor1], floorEvents, bgMusic= textCommands.INTENSE, 
         enemies=[pwenemies.VengadorScout, pwenemies.VengadorWarrior, pwenemies.VengadorSpellslinger]) 
 
 dungeonmode.set_dungeon(backOfGuild)
@@ -8475,6 +8476,8 @@ def end_scene_2_episode_1():
 
 
 def start_scene_3_episode_1(loading=False):
+    backOfGuild.remove_character(universal.state.player)
+    adventurersGuild.add_character(universal.state.player)
     southGuard = universal.state.get_character('Guard.person')
     southGuard.litany = too_busy.index
     infirmary = universal.state.get_room('Infirmary')
@@ -8535,7 +8538,7 @@ def scene_3_guild():
             [name(), '''hears a cry coming from outside. It sounds familiar.''', name(), '''swings''', hisher(), '''feet around, and stands up.'''],
             ['''"You shouldn't really be-"'''],
             ['''The room spins dizzily for a moment, but a hand to the bed braces''', himher(), '''until the dizziness passes.\n\n "I'm fine."''', name(),
-                '''absently waves Paloma away, as''', heshe(), '''exits the infirmary, and enters the main room.''']]), justification=0, music=[LIGHT_HEARTED])
+                '''absently waves Paloma away, as''', heshe(), '''exits the infirmary, and enters the main room.''']]), justification=0, music=[textCommands.LIGHT_HEARTED])
     else:           
         universal.say_title("Adventurer's Guild")
         universal.say(universal.format_text([['''\n\nAfter taking a few minutes to try to recover,''', name(), '''sighs, and shakes''', hisher(), '''head. Least it's over, finally.''', HeShe(), '''rolls''', hisher(), 
@@ -8601,7 +8604,7 @@ def scene_3_guild():
             ['''The guard scowls. "Of course. What do you take me for?"'''],
             ['''"Indeed," says Adrian. He throws''', name(), '''a reassuring smile, before turning and disappearing back into the milieu.'''],
             ['''A sharp cry comes from the main entranceway. It sounds familiar.''', name(), '''starts to push past the guards, and enters the main''',
-                '''room.\n\n''']]), justification=0, music=[GUARDS])
+                '''room.\n\n''']]), justification=0, music=[textCommands.GUARDS])
     universal.say(universal.format_text([['''\mThe main room is a complete mess. There is not a single table, chair, or die that hasn't been shattered. The counter has''',
         '''been cut in half, and the two gaping holes in the wall between the kitchen and the main entranceway have merged into one giant hole. The''',
         '''dirt floor is littered with holes, bloodstains, and shattered weapons. The front door has been blown completely off. The room is crawling''',
@@ -8613,7 +8616,7 @@ def scene_3_guild():
         '''in everything. They briefly meet''', names(), '''before sweeping past''', himher(), '''and focusing on the hole in the wall.''',
          '''A tall, blond''',
         '''woman in a slender black''',
-        '''dress and black beret approaches and begins speaking with him.\n\n''']]), justification=0, music=[ROLAND])
+        '''dress and black beret approaches and begins speaking with him.\n\n''']]), justification=0, music=[textCommands.ROLAND])
     if 'charmed_by_Deidre' in keywords():
         universal.say(universal.format_line([name(), '''grows cold. That's the woman from the guardhouse.\n\n''']), justification=0)
     universal.say(universal.format_text([['''\mThen, there is another cry coming from the far end of the room. Two guards are dragging the first Vengador''', name(), '''fought towards the door. She is bucking and crying.'''],
@@ -8623,7 +8626,7 @@ def scene_3_guild():
         ['''The woman cries out. Her eyes meet''', names() + ".", '''"Help me, please!"'''],
         ['\p'],
         ['''1. Help her.'''],
-        ['''2. Ignore her.''']]), justification=0, music=[CARLITA])
+        ['''2. Ignore her.''']]), justification=0, music=[textCommands.CARLITA])
     universal.set_command_interpreter(help_Carlita_interpreter)
     universal.set_commands(['(#) Select a number.'])
 
@@ -8635,7 +8638,7 @@ def end_scene_3_episode_1():
 episode1Scene3 = episode.Scene('Episode 1 Scene 3', start_scene_3_episode_1, end_scene_3_episode_1)
 
 def help_Carlita_interpreter(keyEvent):
-    music.play_music(CARLITA)
+    music.play_music(textCommands.CARLITA)
     try:
         num = int(pygame.key.name(keyEvent.key))
     except ValueError:
@@ -8702,7 +8705,7 @@ def help_Carlita_interpreter_continued(keyEvent):
         
 def questioning():
     universal.say(universal.format_text([['\m ' + HeShe(), '''walks over to a remnant of the counter, and leans on it.'''],
-        ['''After a few minutes, the tall blonde woman approaches. "Hello, my name is Deidre."\n\n''']]), justification=0, music=[GUARDS])
+        ['''After a few minutes, the tall blonde woman approaches. "Hello, my name is Deidre."\n\n''']]), justification=0, music=[textCommands.GUARDS])
     if 'charmed_by_Deidre' in keywords():
         universal.say(universal.format_text([['''"Yes, we've met," says''', name(), '''flatly.'''],
             ['''"Indeed, which is why Sir Roland sent me to talk to you," says Deidre, gesturing towards the man with the blue bird emblazoned on his''',
@@ -8740,7 +8743,7 @@ def episode_1_guild_end():
         '''eat."'''],
         ['''Alondra looks around the ruined kitchen. "Where?"'''],
         ['''Ildri chuckles. "Alright, maybe you won't sit, but just wait for me to get you something to eat."'''],
-        ['''Alondra smiles, and glances about again. She notices''', name(), '''and approaches''', himher() + ".", '''She flashes''', name(), '''a hesitant smile.\n\n''']]), justification=0, music=[LIGHT_HEARTED])
+        ['''Alondra smiles, and glances about again. She notices''', name(), '''and approaches''', himher() + ".", '''She flashes''', name(), '''a hesitant smile.\n\n''']]), justification=0, music=[textCommands.LIGHT_HEARTED])
     if 'Ildri_spanked_you_unjustly' in keywords() or 'Ildri_no_pants' in keywords():
         universal.say(universal.format_text([[name(), '''returns the smile warmly. Nothing like getting spanked with someone for instant bond building. "Hey. Alondra, right? I'm''',
             name() + ".", '''Nice to see you weren't dragged off by the guards."'''],
@@ -9703,7 +9706,7 @@ def elise_end_episode_1_qf():
             '''Samantha. She was in Bonda, you know? Makes her a little sensitive about the whole thing. Also, I heard about the attack on the''',
             '''Adventurer's Guild. Are you alright? Those thugs didn't hurt you, did they?"''']])
         elise_end_episode_1.children = [ep1_elise_dont_worry, ep1_elise_talk_with_Sister_Samantha]
-        elise_end_episode_1.music = [ELISE, CARRIE]
+        elise_end_episode_1.music = [textCommands.ELISE, CARRIE]
         return
     elise_end_episode_1.quip = universal.format_text([['''\m"Hey," says Elise, smiling broadly as she approaches''', name() + ".", '''Gone is the bulky blue''',
         '''Sister's dress. In its place is a high-cut, rather tight kelly-green dress that extends about halfway down her shins. It's cut to maximize her small bust,''',
@@ -9727,7 +9730,7 @@ def elise_end_episode_1_qf():
     #print('setting elises end episode 1 music.')
     #print(CARRIE)
     elise_end_episode_1.quip = universal.format_text([elise_end_episode_1.quip, carrie_arrival()])
-    elise_end_episode_1.music = [ELISE, CARRIE]
+    elise_end_episode_1.music = [textCommands.ELISE, CARRIE]
     if universal.state.player.is_female():
         elise_end_episode_1.children = [ep1_elise_prank, ep1_elise_no_prank]
     elif universal.state.player.is_male():
@@ -9765,7 +9768,7 @@ def elise_dont_worry_no_qf():
 ep1_elise_talk_with_Sister_Samantha = Node(269)
 ep1_elise_talk_with_Sister_Samantha.comment = '''"I'd like to talk to Sister Samantha."'''
 def ep1_elise_talk_with_Sister_Samantha_qf():
-    ep1_elise_talk_with_Sister_Samantha.music = [CHURCH]
+    ep1_elise_talk_with_Sister_Samantha.music = [textCommands.CHURCH]
     ep1_elise_talk_with_Sister_Samantha.quip = universal.format_text([['''"Alright," says Elise. "Follow me."'''],
         ['''The two go through a door in the back of the shrine, and wind their way through long, twisting corridors, and into a large mess hall.''',
             '''Sisters and Brothers are sitting at the tables, resting after a long day of looking after the orphaned children that lived in the church.''',
@@ -10019,7 +10022,7 @@ def ep1_elise_shake_qf():
 ep1_elise_shake.quip_function = ep1_elise_shake_qf
 
 def ep1_elise_carrie_banter(node):
-    node.music = [CARLITA, CARRIE]
+    node.music = [textCommands.CARLITA, CARRIE]
     return universal.format_text([
         ['''Elise narrows her eyes. "Carrie, Dan's out of town right now."'''],
         ['''"Exactly," says Carrie, her mischievous grin lighting up her face.'''],
@@ -10350,17 +10353,17 @@ def ep1_elise_prank_sorry_catfight():
         ['''"Hey-"'''],
         ['''"Both of you stop-"'''],
         [name(), '''grabs Carrie around the waist, and half lifts, have shoves her up onto the lip, forcing her to bend over.'''],
-        ['''"Let go of me!" cries Carrie, kicking her legs. A pulse of power bursts from her body, and runs up''', names(), '''arms like an electric''',
-            '''shock.''', name(), '''is no stranger to Spectral Pushes however, and Carrie's, while powerful, is not particularly well directed.''',
-            name(), '''easily maintains her grip.'''],
-        [name(), '''grabs the edge of Carrie's tiny dress, and pushes it up over the woman's round hips. She grabs the student's tights and tugs them down to the tops of her thighs, exposing a matching purple string-thong, and''',
+        ['''"Let go of me!" cries Carrie, kicking her legs, and squirming.''', name(), '''is no stranger to holding squirming opponents however, and easily maintains''',
+        hisher(), '''grip.'''],
+        [name(), '''grabs the edge of Carrie's tiny dress, and pushes it up over the woman's round hips.''', HeShe(), '''grabs the student's tights and tugs them down''',
+        '''to the tops of her thighs, exposing a matching purple string-thong, and''',
             '''a pair of round, quivering, bright-red bum cheeks. Mixed amongst the general redness are more than a few handprints.'''],
         ['''"Heh heh heh. Side-effects of your spanking from Elise?" says''', name() + ",", '''tracing one of the handprints with a fingernail.'''],
         ['''"Let go of me you mud-skinned-oww!" howls Carrie, as a full-armed smack cracks against her bottom, right on top of one of Elise's''',
             '''handprints.'''],
         ['''"Wow, was that ever the wrong thing to say," says''', name(), '''in a tight, angry voice.'''],
-        ['''Water starts flying everwhere, as''', name(), '''administers hard, full-armed spanks to Carrie's wet, wobbling butt cheeks. Carrie''',
-        '''starts kicking and flailing, sending water flying everwhere. The sharp slap of hand to wet flesh rings through the air.'''],
+        ['''Water starts flying everywhere, as''', name(), '''administers hard, full-armed spanks to Carrie's wet, wobbling butt cheeks. Carrie''',
+        '''starts kicking and flailing, sending water flying everywhere. The sharp slap of hand to wet flesh rings through the air.'''],
         ['''Elise stands at the edge of the tub, her fists tangled anxiously in her dress.''', '"' + name() + ',', '''stop it, please!"'''],
         [name(), '''ignores her. Carrie, meanwhile, is cursing and howling, shocks of magic rushing up''', names(), '''left arm as the woman casts''',
             '''Spectral Push again and again. The woman is clearly unpracticed at it however, especially in a stressful situation. Each Push is''',
@@ -10615,7 +10618,7 @@ ep1_elise_prank.children = [ep1_elise_prank_sorry, ep1_elise_prank_angry]
 ep1_elise_no_prank = Node(282)
 ep1_elise_no_prank.comment = '''Just wait for Carrie and Elise to return.'''
 def ep1_elise_no_prank_qf():
-    ep1_elise_no_prank.music = [CARLITA, CARRIE]
+    ep1_elise_no_prank.music = [textCommands.CARLITA, CARRIE]
     ep1_elise_no_prank.quip = universal.format_text([[name(), '''shrugs in the water. Probably shouldn't. It's not like it was that big of a deal anyway; she'd''',
         '''spent her whole life bathing in the public bath houses of Chengue, so nudity in front of other people (men and women!) is hardly new. Besides,''',
         '''Carrie's dress looks like it's made of wool. Well-made or not, dumping her in the warm tub runs a serious risk of clothing shrinkage.'''],
@@ -10984,12 +10987,12 @@ ep1_tavern_shy.quip_function = ep1_tavern_shy_qf
 def ep1_tavern_shy_female(node):
     add_keyword('shy_female')
     try:
-        node.music.append(PETER)
+        node.music.append(textCommands.PETER)
     except AttributeError:
         if node.music is None:
-            node.music = [PETER]
+            node.music = [textCommands.PETER]
         else:
-            node.music = [node.music, PETER]
+            node.music = [node.music, textCommands.PETER]
     quip = universal.format_text([[name(), '''shakes''', hisher(), '''head. "I don't think so."'''],
         ['''"Aww, come on why not?" yells Carrie, her voice almost completely lost in the din. "It'll be fun."'''],
         [name(), '''cranes''', hisher(), '''neck to look at the crowded floor. "I don't think so."'''],
@@ -11413,7 +11416,7 @@ ep1_tavern_outgoing_dont_rub.quip_function = ep1_tavern_outgoing_dont_rub_qf
         
 
 def ep1_elise_sing(node):
-    songs = [ELISE, OMINOUS, ROLAND, CARLITA, GUARDS, CATALIN, CARLITA, ROLAND, CATALIN, ROLAND, CARLITA, ELISE, CARRIE, ROLAND, CARRIE]  
+    songs = [textCommands.ELISE, textCommands.OMINOUS, textCommands.ROLAND, textCommands.CARLITA, textCommands.GUARDS, textCommands.CATALIN, textCommands.CARLITA, textCommands.ROLAND, textCommands.CATALIN, textCommands.ROLAND, textCommands.CARLITA, textCommands.ELISE, CARRIE, textCommands.ROLAND, CARRIE]  
     try:
         node.music.extend(songs)
     except AttributeError:
@@ -11592,9 +11595,9 @@ ep1_roland_despite_taironan.quip_function = ep1_roland_despite_taironan_qf
 
 def ep1_elise_meeting_roland(node):
     try:
-        node.music.append(ELISE)
+        node.music.append(textCommands.ELISE)
     except AttributeError:
-        node.music = [ELISE] if node.music is None else [node.music, ELISE]
+        node.music = [textCommands.ELISE] if node.music is None else [node.music, textCommands.ELISE]
     quip = universal.format_text([['''\mRoland leans back in his chair. "Let's see, it was what, three years ago?"'''],
         ['''Elise rolls her eyes. "Four, oh loving fiance."'''],
         ['''"Excessive beauty messes with a guy's sense of time, alright?" says Roland.'''],
@@ -11865,7 +11868,7 @@ def ep1_sister_samantha(node):
     quip = universal.format_text([['''\mThe four climb up into the Shrine. Sitting inside are Maria and Sister Samantha.''', '''Sitting next to the two are a pair of''',
     '''wide, flat-backed hairbrushes, one bone and the other wood.''',
     '''The two go silent as the four enter.''']])
-    node.add_song(MARIA)
+    node.add_song(textCommands.MARIA)
     if 'slapped_Maria' in keywords() or 'disowned_Maria' in keywords():
         quip = universal.format_text([quip, maria_slap(node)])
     elif 'lied_about_name' in keywords() or 'lied_about_Bonda' in keywords():
@@ -12025,9 +12028,9 @@ maria_no_problems.children = [ep1_maria_live, ep1_maria_dont_live]
 def maria_lied(node):
     increment_spankings_taken()
     try:
-        node.music.append(MARIA)
+        node.music.append(textCommands.MARIA)
     except AttributeError:
-        node.music = [MARIA] if node.music is None else [node.music, MARIA]
+        node.music = [textCommands.MARIA] if node.music is None else [node.music, textCommands.MARIA]
     quip = universal.format_text([['''\m"Well," says Maria. Her voice is tight, and her hand closes around the handle of the bone hairbrush. "Look who's here.''', 
         universal.state.player.fakeName if 'lied_about_name' in keywords() else name(), '''born in Chengue, right?''' if 'lied_about_Bonda' in keywords() else '''born in Bonda, right?''',
         '''See, that's really funny, because the last time I checked, you were''', name(), '''born in Bonda. I wonder how I could possibly have been mistaken?"''']])
@@ -12124,8 +12127,8 @@ def ep1_maria_temper_continue(node):
     return quip
 
 def ep1_maria_temper(node):
-    node.add_song(CHURCH)
-    node.add_song(MARIA)
+    node.add_song(textCommands.CHURCH)
+    node.add_song(textCommands.MARIA)
     quip = universal.format_text([['''Then, suddenly, the blows stop falling.''', name(), '''takes a deep, sobbing breath,''', hisher(), '''entire body quivering.'''],
             ['''"Sister Samantha what-"'''],
             ['''"That's enough." Sister Samantha's sharp, commanding voice rings out right next to''', name() + ".", HeShe(), '''cranes around and looks over''', 
@@ -12515,7 +12518,7 @@ ep1_maria_about_what.quip_function = ep1_maria_about_what_qf
 ep1_maria_about_what.children = [ep1_maria_live, ep1_maria_dont_live]
 
 def ep1_carrie_sex():
-    music.play_music(ELISE)
+    music.play_music(textCommands.ELISE)
     universal.say(universal.format_text([[name(), '''plops down on''', hisher(), ('''blankets''' if 'boarding_with_Maria' else '''bed''') + 
         (''', wincing as his sore bottom brushes against the blankets.''' if universal.state.player.numSpankings >0 else '''.'''),
         '''Carrie lays facedown across his lap, grinding''',
@@ -12706,7 +12709,7 @@ def ep1_carrie_pillow_talk():
         
 ep1_maria_home = Node(316)            
 def ep1_maria_home_qf():
-    music.play_music(MARIA)
+    music.play_music(textCommands.MARIA)
     if 'lied_about_name' in keywords() or 'lied_about_Bonda' in keywords():
         quip = maria_lied(ep1_maria_home)
     elif 'slapped_Maria' in keywords() or 'disowned_Maria' in keywords():
@@ -12804,7 +12807,7 @@ def ep1_catalin():
         ['''"Cat..." says''', name(), '''in a quiet, breathless voice. "Oh, Cat!"'''],
         [name(), '''grabs''', hisher(), '''older sister Catalin in a fierce hug. "Amor de la Madre, I've missed you so much!"'''],
         ['''"I missed you too," says Catalin, returning the hug fiercely. "Oh Madre, how I've missed you. You and Nana both. Even Maria."''']]), justification=0, 
-        music=[CATALIN])
+        music=[textCommands.CATALIN])
     if 'taking_Carrie_home' in keywords() and 'boarding_with_Maria' in keywords():
         universal.say(universal.format_text([['''\n\n"Hey, Carrie, wake up," says''', name(), '''reaching over and giving Carrie a shove. "You need to meet my sister. Hey, Maria, look whose''',
             '''here!"'''],
@@ -12860,7 +12863,7 @@ def ep1_catalin():
             ['''"I can't," says Catalin, looking uneasy for the first time. "I'm too busy."'''],
             ['''"Busy? With-"''', names(), '''eyes widen. "Padre de la Madre. You're one of them, aren't you? You're one of those pig-"'''],
             ['''"Now wait just a minute-" begins Catalin angrily.''']]), justification=0)
-        universal.say(ep1_roland(), justification=0, music=[ROLAND])
+        universal.say(ep1_roland(), justification=0, music=[textCommands.ROLAND])
     elif 'wimpy' in keywords():
         universal.say(universal.format_text([[''' "I've also heard you got a little bit beggy today in the Guild." Catalin's eyes sparkle with mirth.'''],
             [name(), '''grimaces. "I wasn't begging. I just didn't want to get dragged into some stupid war between the city guard and a gang with delusions of''',
@@ -12871,13 +12874,13 @@ def ep1_catalin():
             ['''"If they're careful, smart, and have a little bit of luck, yes," says Catalin. She stands, and starts to pace. "Roland's competent, but he's not''',
                 '''spectacular. Plus, his apparent honesty has not made him particularly popular with the other nobility. With a bit of careful politicking-"'''],
             ep1_roland()]),
-            justification=0, music=[ROLAND])
+            justification=0, music=[textCommands.ROLAND])
     elif 'mercenary' in keywords():
         universal.say(universal.format_text([['''"So I hear you're more than a little interested in the Vengadores," says Catalin, smiling.'''],
             [name(), '''shrugs. "Maybe, but they didn't seem particularly interested in me."'''],
             ['''"They don't trust you," says Catalin, rubbing her hands together.'''],
             [name(), '''frowns. "Are you-"'''],
-            ['''Catalin's smile widens. "Do me a favor, alright? Befriend Sister Elise. Get to know-"'''], ep1_roland()]), justification=0, music=[ROLAND])
+            ['''Catalin's smile widens. "Do me a favor, alright? Befriend Sister Elise. Get to know-"'''], ep1_roland()]), justification=0, music=[textCommands.ROLAND])
     episode.allEpisodes[universal.state.player.currentEpisode].end_episode()
 
 def ep1_roland():
@@ -12909,7 +12912,7 @@ def ep1_roland():
                 ['''Roland turns on his bootheel and leaves. Catalin's light orb winks out, and the room is once more bathed in darkness.''']])
                     
 #-----------------------------------------------End Episode 1: Tension---------------------------------------------------------------------
-episode1 = episode.Episode(1, 'Tension', scenes=[episode1Scene1, episode1Scene2, episode1Scene3], titleTheme=VENGADOR) 
+episode1 = episode.Episode(1, 'Tension', scenes=[episode1Scene1, episode1Scene2, episode1Scene3], titleTheme=textCommands.VENGADOR) 
 
 #----------------------------------------------Episode 2: Back Alleys-------------------------------------------------------------------
 def initialize_episode_2():

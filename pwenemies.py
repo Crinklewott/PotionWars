@@ -252,7 +252,7 @@ class VengadorSpellslinger(Enemy):
         self.spankingPositions = [positions.overOneKnee, positions.waistBetweenLegs]
 
     def default_stats(self):
-        self.set_all_stats(strength=0, dexterity=1, willpower=1, talent=3, health=7, mana=10, alertness=0)
+        self.set_all_stats(strength=0, dexterity=1, willpower=1, talent=3, health=7, mana=10, alertness=1)
 
     def post_combat_spanking(self):
         insurgentText = format_text([['''The Vengador leans against a nearby wall, breathing heavily.''', person.HeShe(self), '''tries to stumble away from''', name() + ",",

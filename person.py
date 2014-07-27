@@ -108,7 +108,9 @@ WEAPON = 0
 SHIRT = 1
 LOWER_CLOTHING = 2
 UNDERWEAR = 3
-NUM_EQUIP_SLOTS = 4
+PAJAMA_TOP = 4
+PAJAMA_BOTTOM = 5
+NUM_EQUIP_SLOTS = 6
 def slot_Name(slot):
     if slot == WEAPON:
         return 'weapon'
@@ -300,6 +302,8 @@ class Person(universal.RPGObject):
         self.equipmentList[SHIRT] = items.emptyUpperArmor
         self.equipmentList[LOWER_CLOTHING] = items.emptyLowerArmor
         self.equipmentList[UNDERWEAR] = items.emptyUnderwear
+        self.equipmentList[PAJAMA_TOP] = items.emptyPajamaTop
+        self.equipmentList[PAJAMA_BOTTOM] = items.emptyPajamaBottom
         self.primaryStats = [1 for i in range(len(allPrimaryStats))]
         #self.statList = [compute_stat(stat, self.primaryStats) for i in range(len(allStats))]
         self.set_default_stats()
@@ -423,6 +427,12 @@ class Person(universal.RPGObject):
     def _set_underwear(self, underwear):
         self.equipmentList[UNDERWEAR] = underwear
 
+    def _set_pajama_top(self, pajamaTop):
+        self.equipmentList[PAJAMA_TOP] = pajamaTop
+
+    def _set_pajama_bottom(self, pajamaBottom):
+        self.equipmentList[PAJAMA_BOTTOM] = pajamaBottom
+
     def bum_adj(self):
         if self.bodyType == 'slim':
             adjList = ['small', 'petite', 'slim']
@@ -465,6 +475,18 @@ class Person(universal.RPGObject):
 
     def towers_over(self, char):
         return HEIGHTS.index(self.height) - HEIGHTS.index(char.height) >= 2
+
+    def is_average_or_shorter(self):
+        return HEIGHTS.index(self.height) <= HEIGHTS.index('average')
+
+    def is_short(self):
+        return HEIGHTS.index(self.height) <= HEIGHTS.index('short')
+
+    def is_tall_or_shorter(self):
+        return HEIGHTS.index(self.height) <= HEIGHTS.index('tall')
+
+    def is_huge_or_shorter(self):
+        return HEIGHTS.index(self.height) <= HEIGHTS.index('huge')
 
     def taller_than(self, char):
         return HEIGHTS.index(self.height) - HEIGHTS.index(char.height) >= 1
@@ -736,8 +758,12 @@ class Person(universal.RPGObject):
             equipment.equip(self)
         except items.NakedError:
             universal.clear_screen()
-            universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(self), '''equips''', equipment.name + ",", '''then''', 
-                heshe(self), '''will be naked from the waist down.''', HeShe(self), '''decides not to equip''', equipment.name + "."]]), justification=0)
+            if isinstance(equipment, items.Pajamas):
+                universal.say(format_text([[self.name, '''can't go without pajama bottoms. After all,''', heshe(self), '''needs something to cover''', hisher(self), 
+                '''bottom for when''', heshe(self), '''wants to leave''', hisher(self), '''room, but doesn't want to get dressed.''']]), justification=0)
+            else:
+                universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(self), '''equips''', equipment.name + ",", '''then''', 
+                    heshe(self), '''will be naked from the waist down.''', HeShe(self), '''decides not to equip''', equipment.name + "."]]), justification=0)
             acknowledge(Person.character_sheet, self)
             raise items.NakedError()
         except AttributeError:
@@ -755,9 +781,12 @@ class Person(universal.RPGObject):
                 equipment.unequip(self, couldBeNaked)
             except items.NakedError:
                 universal.clear_screen()
-                universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(self), '''removes''', hisher(self), equipment.name + ",", 
-                    '''then''', heshe(self),
-                    '''will be naked from the waist down.''', HeShe(self), '''decides not to remove''', equipment.name + "."]]), justification=0)
+                if isinstance(equipment, items.Pajamas):
+                    universal.say(format_text([[self.name, '''can't go without pajama bottoms. After all,''', heshe(self), '''needs something to cover''', hisher(self), 
+                    '''bottom for when''', heshe(self), '''wants to leave''', hisher(self), '''room, but doesn't want to get dressed.''']]), justification=0)
+                else:
+                    universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(self), '''equips''', equipment.name + ",", '''then''', 
+                        heshe(self), '''will be naked from the waist down.''', HeShe(self), '''decides not to equip''', equipment.name + "."]]), justification=0)
                 acknowledge(Person.character_sheet, self)
                 raise items.NakedError()
 
@@ -971,16 +1000,25 @@ class Person(universal.RPGObject):
     def lower_clothing_type(self):
         return self.lower_clothing().armorType if self.lower_clothing().name != items.emptyLowerArmor.name else self.lower_clothing().armorType
 
-    def clad_bottom(self, useName=True):
-        return (hisher(self) + (" " + self.underwear().name + "-clad bottom" if self.underwear() != items.emptyUnderwear else self.lower_clothing_type() + " bottom") 
-                if self.lower_clothing() == items.emptyLowerArmor else "the seat of " + (self.printedName + "'s" if useName else hisher(self)) + " " + 
-                self.lower_clothing_type())
+    def clad_bottom(self, useName=True, pajama=False):
+        if pajama:
+            return hisher(self) + " " + self.pajama_bottom().name + "-clad bottom"
+        else:
+            return (hisher(self) + (" " + self.underwear().name + "-clad bottom" if self.underwear() != items.emptyUnderwear else self.lower_clothing_type() + " bottom") 
+                    if self.lower_clothing() == items.emptyLowerArmor else "the seat of " + (self.printedName + "'s" if useName else hisher(self)) + " " + 
+                    self.lower_clothing_type())
 
     def clothing_below_the_waist(self):         
         return self.underwear() if self.lower_clothing().name == items.emptyLowerArmor.name else self.lower_clothing()
     
     def underwear(self):
         return self.equipmentList[UNDERWEAR]
+
+    def pajama_top(self):
+        return self.equipmentList[PAJAMA_TOP]
+
+    def pajama_bottom(self):
+        return self.equipmentList[PAJAMA_BOTTOM]
 
     def display_main_stats(self):
         if self.mainStatDisplay:
@@ -1207,9 +1245,9 @@ class Person(universal.RPGObject):
             #'Exp to Next Level: ' + str(self.level * XP_INCREASE_PER_LEVEL - self.experience),
             self.display_stats(), '\t']))
         numberedEquipmentList = universal.numbered_list(['Weapon: ' + self.weapon().name, 'Chest: ' + self.shirt().name, 'Legs: ' + self.lower_clothing().name, 
-            'Underwear: ' + self.underwear().name])
+            'Underwear: ' + self.underwear().name, 'Pajama Top: ' + self.pajama_top().name, 'Pajama Bottom: ' + self.pajama_bottom().name])
         universal.say('\n'.join(numberedEquipmentList + [self.display_inventory()]), columnNum=2)
-        set_commands(['(A)ppearance','(S)pells', '(E)quip', '(#)view item', '(T)oggle Stats', '<==Back']) 
+        set_commands(['(A)ppearance','(S)pells', '(E)quip', '(#)View Item', '(T)oggle Stats', '<==Back']) 
         set_command_interpreter(character_viewer_interpreter)
 
     def display_inventory(self):
@@ -1288,17 +1326,16 @@ def equip_interpreter(keyEvent):
         if 0 < num and num <= len(selectedPerson.inventory) + len(selectedPerson.equipmentList): 
             if len(selectedPerson.inventory) + len(selectedPerson.equipmentList) < 10:
                 num = num - len(selectedPerson.equipmentList) - 1
-                print('inventory')
-                print(num)
-                print(selectedPerson.inventory[num])
                 try:
                     selectedPerson.equip(selectedPerson.inventory[num])
                 except InvalidEquipmentError:
                     universal.say('''That cannot be equipped!''')
                     acknowledge(selectedPerson.equip_menu, ())
                     return
+                except IndexError:
+                    pass
             else:
-                equipNum += pygame.key.name(playerInput)
+                equipNum += pygame.key.name(keyEvent.key)
                 set_command_interpreter(['(#) Select input to equip: ' + equipNum + '_', '<==Back', '(Esc) Return to menu'])
             selectedPerson.character_sheet()
             selectedPerson.equip_menu()
@@ -1344,6 +1381,7 @@ class PlayerCharacter(Person):
         self.fakeName = ''
         self.nickname = nickname
         self.viewedSlot = None
+        self.reputation = 0
 
 
 
@@ -1425,19 +1463,23 @@ def return_to_display_spells_interpreter(keyEvent):
 
 currentMode = None
 currentPerson = None
-partialNum = ''
 selectedNum = None
+NUM_DIGITS = 3
 def character_viewer_interpreter(keyEvent):     
-    global partialNum
+    global equipNum
     #set_commands(['(S)pells, (E)quip, (#)View Item, (W)eapon, S(H)irt, (L)ower Clothing, (U)nderwear, <==Back']) 
-    if keyEvent.key == K_BACKSPACE:
+    if keyEvent.key == K_BACKSPACE and equipNum != '':
+        equipNum = equipNum[:-1]
+        set_commands(['(A)ppearance','(S)pells', '(E)quip', '(#)View Item:' + equipNum + '_', '(T)oggle Stats', '<==Back']) 
+    elif keyEvent.key == K_BACKSPACE:
         currentMode()
     elif keyEvent.key == K_s:
         currentPerson.display_tiers()
-    elif keyEvent.key == K_e:
-        currentPerson.equip_menu()
+    #elif keyEvent.key == K_e:
+        #currentPerson.equip_menu()
     elif keyEvent.key in NUMBER_KEYS:
         if len(currentPerson.inventory) + len(currentPerson.equipmentList) < 10:
+            print('num items in inventory less than 10!')
             num = int(pygame.key.name(keyEvent.key)) - 1
             allEquipment = currentPerson.equipmentList + currentPerson.inventory
             try:
@@ -1458,11 +1500,53 @@ def character_viewer_interpreter(keyEvent):
                 set_commands(commandList)
                 set_command_interpreter(view_item_interpreter)
         else:
-            partialNum += pygame.key.name(keyEvent.key)
-    elif keyEvent.key == K_RETURN and len(currentPerson.inventory) >= 10:
-        num = int(partialNum)
-        universal.say(currentPerson.inventory[num-1].display())
-        set_commands(['<==Back'])
+            print('num items in inventory more than ten!')
+            if len(equipNum) < NUM_DIGITS:
+                equipNum += pygame.key.name(keyEvent.key)
+            set_commands(['(A)ppearance','(S)pells', '(E)quip', '(#)View Item:' + equipNum + '_', '(T)oggle Stats', '<==Back']) 
+    elif keyEvent.key == K_RETURN and len(currentPerson.equipmentList) + len(currentPerson.inventory) >= 10:
+        print('calling return!')
+        #This has turned into a nightmare, and really needs to be refactored. I'll do it later. All I want is for the damn thing to work.
+        try:
+            num = int(equipNum) - 1
+        except ValueError:
+            print('value error!')
+            print(equipNum)
+            equipNum = ''
+            return
+        else:
+            print('no value error!')
+            equipNum = ''
+        commandList = []
+        if len(currentPerson.equipmentList) <= num and currentPerson.inventory[num - len(currentPerson.equipmentList)].is_equippable():
+            commandList.append('(Enter) Equip')
+            global selectedNum
+            selectedNum = num - len(currentPerson.equipmentList)
+        elif num < len(currentPerson.equipmentList): 
+            commandList.append('(Enter) Unequip')
+        print('player input:')
+        print(num)
+        if num < 0:
+            set_commands(['(A)ppearance','(S)pells', '(E)quip', '(#)View Item:' + equipNum + '_', '(T)oggle Stats', '<==Back']) 
+            return
+        elif num >= len(currentPerson.equipmentList):
+            print('number greater than equipment list!')
+            num -= len(currentPerson.equipmentList)
+            try:
+                print(currentPerson.inventory[num].display())
+                universal.say(currentPerson.inventory[num].display())
+            except IndexError:
+                print('index error. inventory len:')
+                print(len(currentPerson.inventory))
+                print('num:')
+                print(num)
+                set_commands(['(A)ppearance','(S)pells', '(E)quip', '(#)View Item:' + equipNum + '_', '(T)oggle Stats', '<==Back']) 
+                return
+        elif num < len(currentPerson.equipmentList):
+            currentPerson.viewedSlot = num
+            universal.say(currentPerson.equipmentList[num].display())
+        commandList.append('<==Back')
+        set_commands(commandList)
         set_command_interpreter(view_item_interpreter)
     elif keyEvent.key == K_t:
         currentPerson.mainStatDisplay = not currentPerson.mainStatDisplay
@@ -1859,7 +1943,7 @@ class Combat(Spell):
                 print('-------------------' + self.name + '------------------')
                 print('magicMultiplier: ' + str(self.magicMultiplier))
                 print('magic_attack: ' + str(attacker.magic_attack()))
-                print('magic_defense: ' + str(attacker.magic_defense(self.rawMagic)))
+                print('magic_defense: ' + str(defender.magic_defense(self.rawMagic)))
                 damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
                 print('damage: ' + str(damage))
                 if damage < self.minDamage:
@@ -2182,9 +2266,9 @@ class SpectralSpanking(Spectral):
         self.cost = SpectralSpanking.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.description = 'Conjures \'hands\' of raw magic. One hand grabs the target and lifts them into the air. The other lands a number of swats on the target\'s backside. Once the spanking is done, the first hand lifts the target up, and throws them into the ground. The spanking leaves your opponent distracted and humiliated, giving them a -1 penalty to all stats.'
-        self.effectFormula = 'DURATION: 2 | 2 * (resilience - enemy resilience)\nDAMAGE: 2 | 2 * (magic - enemy magic),\nSuccess (%): 40 | 30 * (magic - enemy magic) | 95'
+        self.effectFormula = 'DURATION: 2 | 2 * (resilience - enemy resilience)\nDAMAGE: 1 | (magic - enemy magic),\nSuccess (%): 40 | 30 * (magic - enemy magic) | 95'
         self.numTargets = 1
-        self.magicMultiplier = 2
+        self.magicMultiplier = 1
         self.resilienceMultiplier = 2
         self.targetType = combatAction.ENEMY
         self.effectClass = combatAction.ALL
@@ -2240,9 +2324,9 @@ class SpectralSpanking(Spectral):
                 defender.receives_damage(damage)
                 resultStatement.append(self.success_statement(defender))
                 effects.append(damage)
-                effectString = effectString + [universal.format_line(self.success_statement(defender)), universal.format_line(['\n' + self.attacker.printedName, 'does', str(damage), 'damage to', defender.printedName + "!"])]
+                effectString = effectString + [universal.format_line(self.success_statement(defender)), universal.format_line(['\n\n' + self.attacker.printedName, 'does', str(damage), 'damage to', defender.printedName + "!"])]
                 if defender.current_health() <= 0:
-                    resultStatement = [effectString  + [defender.printedName + ' collapses!']]
+                    resultStatement = [effectString  + ['\n' + defender.printedName + ' collapses!']]
                 else:
                     resultStatement = [effectString]
             else:
@@ -2329,6 +2413,17 @@ def HeShe(person=None):
     if person is None:
         person = universal.state.player
     return 'She' if person.is_female() else 'He'
+
+
+def heshell(person=None):
+    if person is None:
+        person = universal.state.player
+    return "she'll" if person.is_female() else "he'll"
+
+def HeShell(person=None):
+    if person is None:
+        person = universal.state.player
+    return "She'll" if person.is_female() else "He'll"
 
 def himselfherself(person=None):
     if person is None:

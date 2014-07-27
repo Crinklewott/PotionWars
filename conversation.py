@@ -148,6 +148,14 @@ class Node(universal.RPGObject):
         self.music = None
         allNodes[index] = self
 
+    def add_child(self, child):
+        if not child in self.children:
+            self.children.append(child)
+
+    def add_player_comment(self, comment):
+        if not comment in self.playerComments:
+            self.playerComments.append(comment)
+
     def _save(self):
         raise NotImplementedError()
 

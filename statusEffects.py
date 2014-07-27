@@ -134,7 +134,6 @@ class Weakened(StatusEffect):
         return 0
 
     def reverse_status(self, person):
-        print(' '.join([person.name, 'before reverse weakened:']))
         print(person.primaryStats)
         person.increase_stat(STRENGTH, 2)
         person.increase_stat(DEXTERITY, 2)
@@ -274,7 +273,7 @@ class DefendStatus(StatusEffect):
         print(p.primaryStats)
         p.set_stat(STRENGTH, p.strength() + 3)
         p.set_stat(DEXTERITY, p.dexterity() + 3)
-        p.set_stat(RESILIENCE, p.willpower() + 3)
+        p.set_stat(WILLPOWER, p.willpower() + 3)
         p.set_stat(TALENT, p.talent() + 3)
         print('stats after defense:')
         print(p.primaryStats)
@@ -284,10 +283,10 @@ class DefendStatus(StatusEffect):
         print('reversing defense status.')
         print('stats before reversing defense:')
         print(p.primaryStats)
-        p.set_stat(STRENGTH, p.strength() - 1)
-        p.set_stat(DEXTERITY, p.dexterity() - 1)
-        p.set_stat(WILLPOWER, p.willpower() - 1)
-        p.set_stat(MAGIC, p.talent() - 1)
+        p.set_stat(STRENGTH, p.strength() - 3)
+        p.set_stat(DEXTERITY, p.dexterity() - 3)
+        p.set_stat(WILLPOWER, p.willpower() - 3)
+        p.set_stat(TALENT, p.talent() - 3)
         print('stats after reversing defense:')
         print(p.primaryStats)
         return

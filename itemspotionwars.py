@@ -133,7 +133,7 @@ robe = items.Robe("robe", "A warm, bulky outfit often worn by men who wish they 
 #------------------------------Knives------------------------------------
 familyDagger = items.Knife('family dagger', "Engraved on the hilt is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate hilt design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=100)
 
-qualityDagger = items.Knife('quality dagger', "A war dagger very similar to the Family Dagger. However this version is larger and better balanced.", genericBonus=1, 
+qualityDagger = items.Knife('quality dagger', "A war dagger. Very useful in close quarters.", genericBonus=1, 
         price=100) 
 
 mariasDagger = items.Knife("Maria's dagger", "A beautifully made war dagger with a wicked edge. The weapon seems to gleem faintly, a sign of the magic that was imbued into the steel at its time of forging.", genericBonus=4)
@@ -162,3 +162,25 @@ leatherBelt = spanking.CombatImplement('leather belt', 'A wide, worn leather bel
 
 #--------------------------------Generic Items--------------------------------
 whiteRibbon = items.Item('White Ribbon', 'A simple, yet elegant white silk ribbon.')
+
+
+#----------------------------------Pajamas-----------------------------------------
+oldShirt = items.PajamaTop('old shirt', 'An old, but comfortable t-shirt, just perfect for sleeping in.', 0)
+comfyShorts = items.PajamaBottom('comfy shorts', 'A pair of soft, comfy short shorts just perfect for sleeping in.', 0)
+
+largeShirt = items.FullPajamas('large shirt', 'A comfortable shirt that reaches about halfway down your thighs. Great for sleeping in.', 3)
+
+dropSeatPJs = items.FullPajamas('drop seat pajamas', 
+    format_line(['A one-piece, full body set of comfy pajamas. Great for cooler nights. Comes with a dropseat to make midnight bathroom rooms as painless as possible.']),
+    6)
+
+pinkPajamaPants = items.PajamaPants('pink pajama pants', 
+    'A pair of delightfully soft, bright pink pajama pants. Just tight enough to show off your ass, not tight enough to be uncomfortable.', 3)
+
+pinkPajamaShirt = items.PajamaTop('pink pajama shirt', 'A delightfully soft, bright pink pajama shirt. Goes great with the pink pajama pants', 3)
+
+
+bluePajamaPants = items.PajamaPants('blue pajama pants', 
+    'A pair of delightfully soft, dark blue pajama pants. Just tight enough to show off your ass, not tight enough to be uncomfortable.', 3)
+
+bluePajamaShirt = items.PajamaTop('blue pajama shirt', 'A delightfully soft, dark blue pajama shirt. Goes great with the blue pajama pants', 3)

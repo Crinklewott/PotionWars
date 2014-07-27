@@ -103,6 +103,7 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
     enemies = universal.state.enemies
     allies = universal.state.allies
     for enemy in enemies:
+        enemy.restores()
         print(enemy.name)
         print('magic')
         print(enemy.magic())
@@ -142,10 +143,27 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
     afterCombatEvent = afterCombatEventIn
     if bossFight:
         music.play_music(music.BOSS)
+        for ally in allies:
+            orderResult = ally.order(ally, allies, enemies)
+            if orderResult != '':
+                say_delay(orderResult)
+                for i in range(0, 5):
+                    delaySplit = delay // 5
+                    pygame.time.delay(delaySplit)
     else:
         music.play_music(music.COMBAT)
     for ally in allies:
         ally.chanceIncrease = [0 for i in range(len(ally.chanceIncrease))]
+    maxAllyLevel = max([sum(ally.get_battle_stats()) for ally in allies]) 
+    maxEnemyLevel = max([sum(enemy.get_battle_stats()) for enemy in enemies])
+    for enemy in enemies:
+        if sum(enemy.get_battle_stats()) <= maxAllyLevel:
+            orderResult = enemy.order(enemy, enemies, allies)
+            if orderResult is not '':
+                say_delay(orderResult)
+                for i in range(0, 5):
+                    delaySplit = delay // 5
+                    pygame.time.delay(delaySplit)
     origAllies = copy.deepcopy(allies.members)
     actionsEndured = {combatant:[] for combatant in allies + enemies}
     actionsInflicted = {combatant:[] for combatant in allies + enemies}
@@ -165,28 +183,10 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
     global runnable
     runnable = runnableIn
     activeAlly = allies[0]
-    maxAllyLevel = max([sum(ally.get_battle_stats()) for ally in allies]) 
     print([sum(ally.get_battle_stats()) for ally in allies])
     print([ally.get_battle_stats() for ally in allies])
-    maxEnemyLevel = max([sum(enemy.get_battle_stats()) for enemy in enemies])
     print('maxAllyLevel: ' + str(maxAllyLevel))
     print('maxEnemyLevel: ' + str(maxEnemyLevel))
-    for ally in allies:
-        if sum(ally.get_battle_stats()) <= maxEnemyLevel:
-            orderResult = ally.order(ally, allies, enemies)
-            if orderResult is not '':
-                say_delay(orderResult)
-                for i in range(0, 5):
-                    delaySplit = delay // 5
-                    pygame.time.delay(delaySplit)
-    for enemy in enemies:
-        if sum(enemy.get_battle_stats()) <= maxAllyLevel:
-            orderResult = enemy.order(enemy, enemies, allies)
-            if orderResult is not '':
-                say_delay(orderResult)
-                for i in range(0, 5):
-                    delaySplit = delay // 5
-                    pygame.time.delay(delaySplit)
     if ambush < 0:
         say_delay('The party has been ambushed!')
         ambush = 0
@@ -422,7 +422,7 @@ def increase_stat_chance():
         if action.attacker in allies:
                 increaseStat[action.primaryStat] += 8 if increaseStat[action.primaryStat] < 16 else 4
                 try:
-                    increaseStat[action.spellType] += 8 if increaseStat[action.spellType] < 16 else 4
+                    increaseStat[action.spellType] += 4 if increaseStat[action.spellType] < 8 else 2
                 except AttributeError:
                     continue
                 try:
@@ -1287,7 +1287,8 @@ def start_round(chosenActions):
     nonDefendActions = [action for action in chosenActions if action not in defendActions]
     #nonDefendActions.sort(key=lambda x : x.attacker.stat(x.primaryStat) + random.randrange(0, RANDOM_ORDER_MULTIPLIER))
     #We push all the defend actions to the beginning, so that every defending character is guaranteed to defend at the beginning.
-    chosenActions = defendActions + sorted(nonDefendActions, key=lambda x : x.attacker.stat(x.primaryStat) + random.randrange(0, RANDOM_ORDER_MULTIPLIER), reverse=True) 
+    chosenActions = defendActions + sorted(nonDefendActions, key=lambda x : x.attacker.stat(x.primaryStat) + (x.attacker.alertness() // 2) + 
+            random.randrange(0, RANDOM_ORDER_MULTIPLIER), reverse=True) 
     print('sorted actions:')
     print(chosenActions)
     for action in chosenActions:
@@ -1406,7 +1407,7 @@ def game_over():
 def game_over_interpreter(keyEvent):
     if keyEvent.key == K_RETURN:
         global allies, enemies, chosenActions, actionResults, actionsEndured, actionsInflicted, defeatedAllies, defeatedEnemies
-        universal.state = initialState
+        universal.set_state(copy.deepcopy(initialState))
         allies = universal.state.allies
         enemies = universal.state.enemies
         defeatedEnemies = []
@@ -1513,7 +1514,7 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
             except TypeError:
                 print('spell school: ' + str(i))
             #If your character already has a significantly higher stat than your opponent, the chances of increasing that stat drop off drastically
-            statChance = ally.chanceIncrease[i] + (100 if universal.DEBUG else 0)
+            statChance = ally.chanceIncrease[i] #+ (100 if universal.DEBUG else 0)
             #print('chance to increase:' + str(statChance))
             success = random.randint(1, 100)
             #print('success:' + str(success))

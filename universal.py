@@ -11,7 +11,7 @@ import Queue
 from pygame.locals import *
 import os
 
-DEBUG = False
+DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 
@@ -342,11 +342,12 @@ STRAP = 1
 CANE = 2
 difficulty = 0
 def set_difficulty(diff):
-    global difficulty
-    difficulty = diff
+    global state
+    state.difficulty = diff
 
 def get_difficulty():
-    return difficulty
+    global state
+    return state.difficulty
 
 #Make sure to confirm font names for Windows and Mac.
 FONT_LIST = 'Lucida Grande, Segoe UI, rachana'
@@ -816,6 +817,7 @@ def numbered_list(l):
 
 import sets
 
+
 class State(object):
     def __init__(self):
         self.player = None
@@ -827,6 +829,7 @@ class State(object):
         self.characters = {}
         self.rooms = {}
         self.items = {}
+        self.difficulty = None
 
     """
         def add_position(self, position):
@@ -902,6 +905,10 @@ class State(object):
             return self.characters[character]
 
 state = State()
+
+def set_state(stateIn):
+   global state
+   state = stateIn
 
 def set_initial_room(room):
     global state

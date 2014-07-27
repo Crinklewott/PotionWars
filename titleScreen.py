@@ -208,7 +208,7 @@ def opening_crawl():
     "pulls energy from other places, and continues healing, until either they are lucky, and the disease passes, or if they are unlucky, they die."])
     display_crawl()
     delay_long()
-    universal.say_replace(["In the hear 1273, the Wasting Wail descended upon the Taironan city of Bonda. It started in the Merchant District, spread into the slums, and",
+    universal.say_replace(["In the year 1273, the Wasting Wail descended upon the Taironan city of Bonda. It started in the Merchant District, spread into the slums, and",
     "even touched the nobility. The other cities instituted a strict quarantine, and left Bonda alone to endure the ravages of the plague"])
     display_crawl()
     delay_long()
@@ -248,8 +248,9 @@ def opening_crawl():
     delay_long()
     universal.say_replace("A little over twenty years have passed. Bonda has all but collapsed, and Avaricum teeters on the edge of a")
     display_crawl()
+    delay_short()
     if not skip:
-        music.play_music(music.THEME, DELAY_TIME / 3, wait=True)
+        music.play_music(music.THEME, DELAY_TIME_SHORT, wait=True)
     else:
         music.play_music(music.THEME, wait=True)
     #delay_short()
@@ -843,6 +844,8 @@ def final_confirmation():
     universal.state.player.learn_spell(person.allSpells[0][1][0])
     universal.state.player.learn_spell(person.allSpells[0][2][0])
     universal.state.player.learn_spell(person.allSpells[0][3][0])
+    universal.state.player.equip(itemspotionwars.oldShirt)
+    universal.state.player.equip(itemspotionwars.comfyShorts)
     spells = [person.allSpells[0][0][0], person.allSpells[0][1][0], person.allSpells[0][2][0], person.allSpells[0][3][0]]
     for i in range(len(spells)):
         universal.state.player.quickSpells[i] = spells[i]

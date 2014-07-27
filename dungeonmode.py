@@ -937,8 +937,11 @@ def select_targets_interpreter(keyEvent):
         numTargets = chosenSpell.numTargets - len(targetList)
         set_commands([ ' '.join(['(#) Select', str(numTargets), 'target' + ('s.' if numTargets > 1 else '.')]), '<==Back'])
     if chosenSpell.numTargets == len(targetList):
-        set_commands([' (Y/N) Cast spell?'])
-        set_command_interpreter(confirm_cast_interpreter)
+        spellResult = chosenSpell.__class__(selectedSlinger, targetList).effect(inCombat=False, allies=person.get_party())
+        selectedSlinger.uses_mana(chosenSpell.cost)
+        say(spellResult[0])
+        targetList = []
+        acknowledge(dungeon_mode, ())
         return
     say(person.get_party().display_party(targeted=targetList))
 

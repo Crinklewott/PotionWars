@@ -171,7 +171,7 @@ class Weaken(p.Status):
         return [defender.printedName, 'is weakened!']
 
 
-class BrainFog(p.Status):
+class DistortMagic(p.Status):
     targetType = ENEMY
     grappleStatus = GRAPPLER_ONLY
     effectClass = SPELL_SLINGERS
@@ -180,20 +180,20 @@ class BrainFog(p.Status):
     statusInflicted = statusEffects.MAGIC_DISTORTED
     cost = 1
     def __init__(self, attacker, defenders):
-        super(BrainFog, self).__init__(attacker, defenders)
-        self.name = 'Brain Fog'
+        super(DistortMagic, self).__init__(attacker, defenders)
+        self.name = 'Distort Magic'
         self.description = 'Wraps your enemy in a field that interferes with the target\'s ability to cast and protect against spells.'
         self.effectFormula = 'EFFECT: -2 penalty to Talent and Willpower\nSUCCESS CHANCE (%): 40 | 15 * (resilience - enemy resilience) | 95\n DURATION: 3 | 2 *(magic - enemy magic)'
         self.numTargets = 1
         self.rawMagic = True
-        self.tier = BrainFog.tier
+        self.tier = DistortMagic.tier
         self.statusInflicted = statusEffects.MAGIC_DISTORTED
         self.effectClass = combatAction.SPELL_SLINGERS
-        self.cost = BrainFog.cost
+        self.cost = DistortMagic.cost
         self.resilienceMultiplier = 15
         self.magicMultiplier = 2
         self.grappleStatus = combatAction.GRAPPLER_ONLY
-        self.expertise = BASIC
+        self.expertise = ADVANCED
         self.maxProbability = 95
         self.minProbability = 40
         self.minDuration = 3
@@ -203,10 +203,10 @@ class BrainFog(p.Status):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        self.effectStatements = [[A, 'casts Brain Fog on', D + "!"]]
+        self.effectStatements = [[A, 'casts Distort Magic on', D + "!"]]
         #self.effectStatements = [[A, 'sweeps', hisher(attacker), 'arm in an arc in front of', himselfherself(attacker), 'as if', p.heshe(attacker),
         #   'were scattering birdseed. Half a dozen small red robs fly from', A, 'and strike', E,'.']]
-        return super(BrainFog, self).effect_statement(defender)
+        return super(DistortMagic, self).effect_statement(defender)
 
     def immune_statement(self, defender):
         A = self.attacker.printedName
@@ -272,7 +272,7 @@ class WeakCharm(p.CharmMagic):
         return [defender.printedName, 'is charmed!']
 
 weaken = Weaken(None, None)
-distortMagic = BrainFog(None, None)
+distortMagic = DistortMagic(None, None)
 weakCharm = WeakCharm(None, None)
 p.allSpells[0].append((weaken, distortMagic, weakCharm))
 #--------------------------------------------------------------Tier 0 Buff----------------------------------------------------------------
@@ -781,7 +781,7 @@ class MassWeaken(p.Status):
         self.statusInflicted = statusEffects.WEAKENED
         self.effectClass = combatAction.WARRIORS_GRAPPLERS
         self.cost = MassWeaken.cost
-        self.expertise = ADVANCED
+        self.expertise = BASIC
         self.magicMultiplier = 1
         self.minDuration = 2
         self.minProbability = 30
@@ -811,7 +811,7 @@ class MassWeaken(p.Status):
         return [defender.printedName, 'is weakened!']
 
 
-class MassBrainFog(p.Status):
+class MassDistortMagic(p.Status):
     targetType = ENEMY
     grappleStatus = GRAPPLER_ONLY
     effectClass = SPELL_SLINGERS
@@ -820,17 +820,17 @@ class MassBrainFog(p.Status):
     statusInflicted = statusEffects.MAGIC_DISTORTED
     cost = 4
     def __init__(self, attacker, defenders):
-        super(MassBrainFog, self).__init__(attacker, defenders)
-        self.name = 'Mass Brain Fog'
+        super(MassDistortMagic, self).__init__(attacker, defenders)
+        self.name = 'Mass Distort Magic'
         self.description = 'Wraps up to 3 enemies in a field that interfers with their ability to cast and protect against spells.'
         self.effectFormula = 'EFFECT: -2 penalty to Talent and Willpower\nSUCCESS CHANCE (%): 40 | 15 * (resilience() - enemy resilience()) | 95\n DURATION: 3 | 2 *(magic - enemy magic)'
         self.numTargets = 3
         self.rawMagic = True
         self.magicMultiplier = 2
-        self.tier = MassBrainFog.tier
+        self.tier = MassDistortMagic.tier
         self.statusInflicted = statusEffects.MAGIC_DISTORTED
         self.effectClass = combatAction.SPELL_SLINGERS
-        self.cost = MassBrainFog.cost
+        self.cost = MassDistortMagic.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.resilienceMultiplier = 15
         self.expertise = ADVANCED
@@ -842,10 +842,10 @@ class MassBrainFog(p.Status):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        self.effectStatements = [[A, 'casts Mass Brain Fog on', D + "!"]]
+        self.effectStatements = [[A, 'casts Mass Distort Magic on', D + "!"]]
         #self.effectStatements = [[A, 'sweeps', hisher(attacker), 'arm in an arc in front of', himselfherself(attacker), 'as if', p.heshe(attacker),
         #   'were scattering birdseed. Half a dozen small red robs fly from', A, 'and strike', E,'.']]
-        return super(MassBrainFog, self).effect_statement(defender)
+        return super(MassDistortMagic, self).effect_statement(defender)
 
     def immune_statement(self, defender):
         A = self.attacker.printedName
@@ -855,7 +855,7 @@ class MassBrainFog(p.Status):
     def failure_statement(self, defender):
         A = self.attacker.printedName
         D = defender.printedName
-        return [D, 'has resisted the Mass Brain Fog spell!']
+        return [D, 'has resisted the Mass Distort Magic spell!']
 
     def success_statement(self, defender):
         return [defender.printedName, 'is distorted!']
@@ -907,9 +907,9 @@ class Charm(p.CharmMagic):
         return [D, 'resists!']
 
 massWeaken = MassWeaken(None, None) 
-massBrainFog = MassBrainFog(None, None) 
+massDistortMagic = MassDistortMagic(None, None) 
 charm = Charm(None, None)
-p.allSpells[1].append((massWeaken, massBrainFog, charm))
+p.allSpells[1].append((massWeaken, massDistortMagic, charm))
 #---------------------------------------------------------Tier 1 Buff Spells-------------------------------------------------------------------------------
 class Shield(p.Buff):
     targetType = ALLY

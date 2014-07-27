@@ -7,6 +7,9 @@ import re
 import conversation
 import music
 import episode
+import dill
+import copy
+import textrect
 from pygame.locals import *
 
 def town_mode(sayDescription=True):
@@ -24,10 +27,15 @@ def town_mode(sayDescription=True):
     universal.set_command_interpreter(town_mode_interpreter)
     music.play_music(room.bgMusic)
 
-def rest_mode(sayDescription=True):
+def rest_mode(bedroom, sayDescription=True):
     town_mode(sayDescription)
-    universal.set_commands(['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', '(C)lean', '(R)est', '(H)air Style'])
+    universal.set_commands(['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', '(C)lean', '(R)oom Actions'] if bedroom.boarding else 
+            ['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', '(C)lean'])
     universal.set_command_interpreter(bedroom_interpreter)
+
+def bedroom_actions():
+    universal.set_commands(['(C)lean', '(R)est', '(B)raid Hair', '(S)tore Item'])
+    universal.set_command_interpreter(bedroom_actions_interpreter)
 
 def set_bedroom(bedroomIn):
     global bedroom
@@ -37,14 +45,20 @@ def bedroom_interpreter(keyEvent):
     global bedroom
     global previousMode
     previousMode = rest_mode
-    if keyEvent.key == K_c:
-        bedroom.clean()
-    elif keyEvent.key == K_r:
-        bedroom.sleep()
-    elif keyEvent.key == K_h:
-        style_character()
+    if keyEvent.key == K_r and bedroom.boarding:
+        bedroom_actions()
     else:
         town_mode_interpreter(keyEvent, rest_mode)
+
+def bedroom_actions_interpreter(keyEvent):
+    if keyEvent.key == K_r:
+        bedroom.sleep()
+    elif keyEvent.key == K_b:
+        style_character()
+    elif keyEvent.key == K_c:
+        bedroom.clean()
+    elif keyEvent.key == k_s:
+        bedroom.store_items()
 
 def style_character():
         universal.say_title('Whose hair should be styled?')
@@ -114,6 +128,23 @@ class Room(universal.RPGObject):
         self.after_arrival = after_arrival
         self.before_arrival = before_arrival
         universal.state.add_room(self)
+
+
+    def __getstate__(self):
+        state = copy.copy(self.__dict__)
+        try:
+            state['bgMusic'] = [name for name, song in music.musicFiles.items() if song == self.bgMusic][0]
+        except IndexError:
+            state['bgMusic'] = None 
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        try:
+            self.bgMusic = music.musicFiles[self.bgMusic]
+        except KeyError:
+            pass
+
 
     def mode(self, sayDescription=True):
         return town_mode(sayDescription)
@@ -203,9 +234,23 @@ class Bedroom(Room):
         self.weeklyTasks = weeklyTasks
         self.after_after_arrival = after_arrival
         self.boarding = False
+        self.items = []
 
     def mode(self, sayDescription=True):
-        return rest_mode(sayDescription)
+        return rest_mode(self, sayDescription)
+
+    def store_items():
+        universal.say_title('Stored Items')
+        universal.say(', '.join(universal.numbered_list(self.items)))
+        set_commands(['(#)View Item', '(Enter) View Inventory', '<==Back'])
+        set_command_interpreter(store_items_interpreter)
+
+    def store_inventory(self):
+        universal.say_title('Inventory')
+        universal.say(universal.state.player.display_inventory())
+        set_commands(['(#)View Item', '(Enter) View Stored Items', '<==Back'])
+        set_command_interpreter(store_inventory_interpreter)
+
 
     def after_arrival(self):
         universal.say_title('Bedroom')
@@ -306,6 +351,71 @@ def load_initial_room():
 
 def set_current_room(room):
     universal.state.location = room
+
+chosenItemIndex = None
+
+def store_inventory_interpreter(keyEvent):
+    global chosenItemIndex
+    try:
+        chosenItemIndex = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_RETURN:
+            store_items()
+        elif keyEvent.key == K_BACKSPACE:
+            bedroom_actions()
+    else:
+        display_inventory_item()
+
+def display_inventory_item():
+    try:
+        universal.say(universal.player.inventory[chosenItemIndex])
+    except (IndexError, TypeError):
+        bedroom.store_inventory()
+    else:
+        set_commands(['(Enter) Store Item', '<==Back'])
+        set_command_interpreter(display_inventory_item_interpreter)
+
+def display_inventory_item_interpreter(keyEvent):
+    global chosenItemIndex
+    if keyEvent.key == K_RETURN:
+        bedroom.items.append(universal.state.player.inventory[chosenItemIndex])
+        del universal.state.player.inventory[chosenItemIndex]
+    elif keyEvent.key == K_BACKSPACE:
+        bedroom.store_inventory()
+
+
+
+def store_items_interpreter(keyEvent):
+    global chosenItemIndex
+    try:
+        chosenItemIndex = int(universal.key_name(keyEvent)) - 1
+    except ValueError:
+        if keyEvent.key == K_i:
+            bedroom.store_inventory()
+        elif keyEvent.key == K_BACKSPACE:
+            bedroom_actions()
+    else:
+        display_item()
+   
+def display_item():
+    global chosenItemIndex
+    try:
+        universal.say(bedroom.items[chosenItemIndex].display())
+    except IndexError:
+        bedroom.store_items()
+    else:
+        set_commands(['(Enter) Take item', '<==Back'])
+        set_command_interpreter(display_item_interpreter)
+
+def display_item_interpreter(keyEvent):
+    global chosenItemIndex
+    if keyEvent.key == K_RETURN:
+        universal.state.player.take_item(bedroom.items[chosenItemIndex])
+        del bedroom.items[chosenItemIndex]
+        chosenItemIndex = None
+    elif keyEvent.key == K_BACKSPACE:
+        bedroom.store_items()
+        chosenItemIndex = None
 
 lastSaveFile = 'pw'
 lastQuickSaveFile = ''
@@ -532,11 +642,12 @@ def save(previousModeIn):
 
 numLastInput = False
 saveNum = ''
+MAX_SAVE_NAME_LENGTH = 20
 def save_interpreter(keyEvent):
     global saveName, saveNum, numLastInput, previousMode
     playerInput = pygame.key.name(keyEvent.key)
     if keyEvent.key == K_BACKSPACE:
-        if saveNum == '':
+        if saveNum == '' and saveName == '':
             if previousMode is not None:
                 previousMode()
             else:
@@ -561,13 +672,15 @@ def save_interpreter(keyEvent):
             confirm_save(saveName)
             return
         else:
-            saveNum += playerInput
+            if len(saveNum) < MAX_SAVE_NAME_LENGTH:
+                saveNum += playerInput
             numLastInput = True
     elif re.match(re.compile(r'^\w$'), playerInput):
-        if pygame.key.get_pressed()[K_LSHIFT] or pygame.key.get_pressed()[K_RSHIFT]:
-            saveName += str.capitalize(playerInput)
-        else:
-            saveName += playerInput
+        if len(saveName) < MAX_SAVE_NAME_LENGTH:
+            if pygame.key.get_pressed()[K_LSHIFT] or pygame.key.get_pressed()[K_RSHIFT]:
+                saveName += str.capitalize(playerInput)
+            else:
+                saveName += playerInput
         numLastInput = False
     universal.set_commands([''.join(['Provide a save name:', saveName, '_']), 
         ''.join(['(#) Select a save file:', saveNum, '_']), '<==Back'])
@@ -591,7 +704,6 @@ def confirm_save_interpreter(keyEvent):
         save(previousMode)
 
 saveDirectory = os.path.join(os.getcwd(), 'save')
-import dill
 def save_game(saveName, previousModeIn=None, preserveSaveName=True):
     #import traceback
     #traceback.print_stack()
@@ -602,7 +714,7 @@ def save_game(saveName, previousModeIn=None, preserveSaveName=True):
         os.makedirs(saveDirectory)
     if saveName.split('.')[-1] != 'sav':
         saveName += '.sav'
-    with open(os.path.join(saveDirectory, saveName), 'w') as saveFile:
+    with open(os.path.join(saveDirectory, saveName), 'wb') as saveFile:
         dill.dump(universal.state, saveFile)
         saveFile.flush()
     global showTitleScreen, previousMode
@@ -673,13 +785,15 @@ def load_interpreter(keyEvent):
 
 def confirm_load():
     global loadName
-    universal.set_commands([' '.join(['Is', loadName, 'correct? Y/N']), '<==Back'])
+    universal.set_commands([' '.join(['(Enter) Load ', loadName]), '<==Back'])
     universal.set_command_interpreter(confirm_load_interpreter)
 
 def confirm_load_interpreter(keyEvent):
-    if keyEvent.key == K_y:
+    global loadName
+    if keyEvent.key == K_RETURN:
         load_game()
-    elif keyEvent.key == K_n:
+        loadName = ''
+    elif keyEvent.key == K_BACKSPACE:
         load(returnTo)
         global loadName
         loadName = ''
@@ -692,7 +806,7 @@ def load_game(loadNameIn=None, preserveLoadName=True):
     if loadNameIn:
         loadName = loadNameIn
     try:
-        with open(os.path.join(saveDirectory, loadName), 'r') as loadFile:
+        with open(os.path.join(saveDirectory, loadName), 'rb') as loadFile:
             universal.set_state(dill.load(loadFile))
     except IOError:
         universal.say([loadName, 'does not exist!'])
