@@ -308,7 +308,14 @@ The \textit{Pandemonium Cycle: The Potion Wars} viewscreen is split into two pie
     \item \verb|t(I)tle Screen| - Note here that the \verb|I| is wrapped in 
     parenthesis, \emph{not} the \verb|t|. By pressing \verb|I| you may return to
     the title screen (you will be asked if you'd like to save first).
+\item \verb|(M)odify Quick Spells|  - Allows you to change which spells are stored as quick spells. The player can have up to 12 quick spells (one for each function key). Your quick spells default to:
+    \begin{itemize}
+        \item \verb|F1| - Firebolt
+        \item \verb|F2| - Weaken
+        \item \verb|F3| - Heal
+        \item \verb|F4| - Spectral Spanking
     \end{itemize}
+    Each time you learn a new spell, that spell will be added to the next available quick spell, so long as you have quick slots available.
 
 \section{Conversation}
 \label{sec_conversation}
@@ -336,6 +343,19 @@ more than five seconds, you better know how to maximize your strengths, and
 minimize your weaknesses. Because you better believe your enemies will be 
 minimizing your strengths, and maximizing your weaknesses}{Reyna of Chengue}
 
+\subsection{Gameplay vs. Story}
+Magic permeates this world much like oxygen permeates our own. As a result, every living thing on the planet has adapted to use magic to enhance their physical capabilities. As a result, even the 
+average person is capable of olympic level feats. Highly experienced warriors can go toe-to-toe with Spider-Man. Even at relatively low levels, magic becomes a much more important factor
+than mundane strength (so a five foot tall, 100 pound girl can hold her own in a wrestling match with a six foot tall, 350 pound man). Furthermore, every person has a store of magic called health that 
+gives them a healing factor, similar to Wolverine's, except once a person runs out of health, they are no longer capable of healing themselves.
+
+However, using magic to push your body to superhuman levels is \emph{very hard} on your body. As a result, people's bodies have adapted so that they only draw on that power in extreme situations 
+(i.e. combat). In their average, day-to-day lives, these people are no stronger, faster, or more resilient than you or I (though many of them are probably in better shape). 
+
+This can lead to rather bizarre situations, like a five foot, 100 pound girl flinging a 6 foot, 350 pound gorilla of a man through a wall, and then fifteen minutes later getting hauled over her 
+boyfriends knee (whose half the weight of the aforementioned gorilla-man) and spanked like a naughty schoolgirl.
+
+\subsection{Stats}
 Figure~\ref{fig_char_screen} displays the character screen, with the 
 \verb|Shield| status.
 
@@ -351,7 +371,7 @@ side contains the following information:
 \begin{itemize}
     \item \verb|Order| - An Order is a special ability that some people have. Think
     of it as an adrenaline rush on steroids. When a person with an order faces
-    an enemy more powerful than they are, their bodies will unleash an extra large
+    an enemy more powerful than they are (i.e. a dungeon boss), their bodies will unleash an extra large
     burst of adrenaline. This adrenaline will trigger a burst of magical power 
     (called surging). These surges do different things depending on the order of
     the person. 
@@ -378,27 +398,44 @@ side contains the following information:
     \item \verb|Magic Defense| - Your character's protection against magical 
     attacks.
     Influenced by the \verb|Magic| stat, and your character's equipment.
-    \item \verb|warfare| - How good you are at physical combat. Influences your
-    physical damage and defense.
-    \item \verb|magic| - How good you are at casting spells. Also measures your
-    natural defenses against magic.
-    \item \verb|willpower| - Your strength of will. Makes your status spells more
-    effective, and makes it harder for enemies to inflict you with negative 
-    statuses.
-    \item \verb|grapple| - How good you are at grappling an opponent (see Chapter
-    ~\ref{ch_combat} for details on grappling).
-    \item \verb|stealth| - How stealthy you are. A higher stealth increases the 
-    chances that you will ambush your enemies, rather than your enemies ambushing
-    you. Will also influence the \verb|Hide| command once that has been implemented.
-    \item \verb|health| - A store of magic that your body automatically uses to
-    instantly repair any serious physical damage. Note that this is \emph{serious}
-    damage, in particular large gashes, serious internal damage, broken bones,
-    etc. Bruises and welts are not serious enough to trigger it. Sorry, no 
-    magical protection from spankings for you. When a character reaches zero health,
-    their body will trigger a final burst of magic to heal all injuries. While this ensures
-    the character won't die of any lingering wounds, it also leaves them weak as a kitten, and unable to continue fighting until they've been resparked 
-    (``resurrected" in standard RPG parlance).
-    \item \verb|mana| - A store of magic used to cast spells.
+    \item The player has two types of stats: Primary and Secondary. High secondary stats are key to defeating enemies. High primary stats are key to having high secondary stats.
+        \begin{itemize}
+        \item \verb|Primary|:
+            \begin{itemize}
+                \item \verb|Strength| - How physically strong your character is. In the heat of combat, a warrior's strength is primarily fueled by magic, not physical muscles. Purely 
+                    physical
+                    processes are only used in relatively low stress day-to-day activities. Therefore, it is not unusual to see a five foot girl whose 100 pounds soaking wet fling a 350 pound, six foot 
+                    tall gorilla of a man several feet down the street in combat. Then, fifteen minutes later, see the same girl get hauled over the knee of her five foot ten, 250 pound boyfriend, and
+                    get spanked like a naughty schoolgirl.
+                \item \verb|Dexterity| - 
+                    
+                    
+
+                \item \verb|health| - A store of magic that your body automatically uses to
+                instantly repair any serious physical damage. Note that this is \emph{serious}
+                damage, in particular large gashes, serious internal damage, broken bones,
+                etc. Bruises and welts are not serious enough to trigger it. Sorry, no 
+                magical protection from spankings for you. When a character reaches zero health,
+                their body will trigger a final burst of magic to heal all injuries. While this ensures
+                the character won't die of any lingering wounds, it also leaves them weak as a kitten, and unable to continue fighting until they've been resparked 
+                (``resurrected" in standard RPG parlance).
+                \item \verb|mana| - A store of magic used to cast spells.
+            \end{itemize}
+        \item \verb|Secondary|:
+            \begin{itemize}
+                \item \verb|warfare| - How good you are at physical combat. Influences your
+                physical damage and defense.
+                \item \verb|magic| - How good you are at casting spells. Also measures your
+                natural defenses against magic.
+                \item \verb|willpower| - Your strength of will. Makes your status spells more
+                effective, and makes it harder for enemies to inflict you with negative 
+                statuses.
+                \item \verb|grapple| - How good you are at grappling an opponent (see Chapter
+                ~\ref{ch_combat} for details on grappling).
+                \item \verb|stealth| - How stealthy you are. A higher stealth increases the 
+                chances that you will ambush your enemies, rather than your enemies ambushing
+                you. Will also influence the \verb|Hide| command once that has been implemented.
+    \end{itemize}
 \end{itemize}
 
     The righthand side is the following information:
