@@ -1,0 +1,244 @@
+% Style file for the SP-RPGS engine, a collection of Python files used to write spanking text-based RPGS by me. This includes custom environments and commands
+% that are used to ease a translation from latex source to Python source, allowing me to write the game in an environment more suitable to text than Python code.
+% author: Andrew Russell
+%
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{sprpgs}
+  [2011/01/11 v0.01 LaTeX package for my own purpose]
+
+\RequirePackage[colorlinks=true]{hyperref}
+\RequirePackage{verbatim}
+\RequirePackage{color}
+\RequirePackage{sectsty}
+\sectionfont{\centering}
+
+\newcounter{Scenecount}
+\setcounter{Scenecount}{1}
+
+\newcounter{Nodecount}
+\setcounter{Nodecount}{1}
+
+\newcommand{\gender}{f}
+\newcommand{\episode}{2}
+\newcommand{\female}{f}
+\newcommand{\name}{\ifx\gender\female Juliana\else Julian\fi}
+\newcommand{\names}{\ifx\gender\female Juliana's\else Julian's\fi}
+\newcommand{\hisher}{\ifx\gender\female her\else his\fi} 
+\newcommand{\HisHer}{\ifx\gender\female Her\else His\fi}
+\newcommand{\himher}{\ifx\gender\female her\else him\fi}
+\newcommand{\HimHer}{\ifx\gender\female Her\else Him\fi}
+\newcommand{\heshe}{\ifx\gender\female she\else he\fi}
+\newcommand{\HeShe}{\ifx\gender\female She\else He\fi}
+\newcommand{\heshell}{\ifx\gender\female she'll\else he'll\fi}
+\newcommand{\HeShell}{\ifx\gender\female She'll\else He'll\fi}
+\newcommand{\himselfherself}{\ifx\gender\female herself\else himself\fi}
+\newcommand{\HimselfHerself}{\ifx\gender\female Herself \elseHimself\fi}
+\newcommand{\mistermiss}{\ifx\gender\female miss\else mister\fi}
+\newcommand{\MisterMiss}{\ifx\gender\female Miss\else Mister\fi}
+\newcommand{\manwoman}{\ifx\gender\female woman\else man\fi}
+\newcommand{\ManWoman}{\ifx\gender\female Woman\else Man\fi}
+\newcommand{\hishers}{\ifx\gender\female hers\else his \fi}
+\newcommand{\HisHers}{\ifx\gender\female Hers\else His\fi}
+\newcommand{\boygirl}{\ifx\gender\female girl\else boy\fi}
+\newcommand{\BoyGirl}{\ifx\gender\female Girl\else Boy\fi}
+\newcommand{\manlady}{\ifx\gender\female lady\else man\fi}
+\newcommand{\ManLady}{\ifx\gender\female Lady \else Ma\fi}
+\newcommand{\kingqueen}{\ifx\gender\female queen\else king\fi}
+\newcommand{\KingQueen}{\ifx\gender\female Queen\else King\fi}
+\newcommand{\lordlady}{\ifx\gender\female lady\else lord\fi}
+\newcommand{\LordLady}{\ifx\gender\female Lady\else Lord\fi}
+\newcommand{\brothersister}{\ifx\gender\female Lady\else Lord\fi}
+\newcommand{\pigcow}{\ifx\gender\female cow\else pig\fi}
+\newcommand{\PigCow}{\ifx\gender\female Cow\else Pig\fi}
+\newcommand{\BrotherSister}{\ifx\gender\female Sister\else Brother\fi}
+\newcommand{\menwomen}{\ifx\gender\female women\else men\fi}
+\newcommand{\MenWomen}{\ifx\gender\female Women\else Men\fi}
+\newcommand{\sirmaam}{\ifx\gender\female maam\else sir\fi}
+\newcommand{\SirMaam}{\ifx\gender\female Sir\else Maam\fi}
+\newcommand{\bastardbitch}{\ifx\gender\female bastard\else bitch\fi}
+\newcommand{\BastardBitch}{\ifx\gender\female Bastard\else Bitch\fi}
+\newcommand{\weapon}{sword}
+
+%If that automatically hyperlinks between the if statement and the ending fi. Useful for large if's that might span multiple pages, making it possible for the reader
+%to lose track of what sitation they're in.
+%First argument is the condition to be evaluated.
+%Second and third arguments is a label to be used to allow us to hyperlink the if and fi together for ease of reference for large if chains.
+\newenvironment{linkif}[3]
+{
+    \newcommand{\secondCondifArg}{#2}
+    \newcommand{\thirdCondifArg}{#3}
+    \subsection*{\hyperref[#3]{if #1}}
+    \label{#2}
+}
+{
+    \subsection*{\hyperref[\secondCondifArg]{fi}}
+    \label{\thirdCondifArg}
+}
+
+
+%Short for "condition elif", which is short for "condition else if"
+%\newenvironment{linkelif}[3]
+%{
+%    \subsection*{\hyperref[#3]{else if #1}}
+%    \newcommand{\secondCondifArg}{#2}
+%    \newcommand{\thirdCondifArg}{#3}
+%}
+%{
+%    \subsection*{\hyperref[\secondCondifArg]{fi esle}}
+%    \label{\thirdCondifArg}
+%}
+
+%Short for "condition else"
+%\newenvironment{linkelse}[2]
+%{
+%    \subsection*{\hyperref[#2]{else}}
+%    \newcommand{\secondCondifArg}{#1}
+%    \newcommand{\thirdCondifArg}{#2}
+%}
+%{
+%    \subsection*{\hyperref[\secondCondifArg]{esle}}
+%    \label{\thirdCondifArg}
+%}
+
+\newcommand{\truth}{true}
+\newcommand{\falsetrue}{falsetrue}
+\newcommand{\true}{true}
+%Used for short one or two liners that don't have a chance of spanning multiple pages. Can also be used if you don't want the fancy hyperlinks of condif
+%cond is short for conditional.
+\newcommand{\cond}[3]{\ifx\truth\true \textcolor{blue}{#2}\else \textcolor{magenta}{#3}\fi}
+%First argument: if-check
+%Second argument: Result if if-check is true
+%Third Argument: elif-check
+%Fourth Argument: Result if if-check is false and elif-check is true
+%Fifth Argument: Result if both if-else and elif-check are false
+\newcommand{\condelif}[5]{\ifx\truth\true \textcolor{blue}{#2}\else \ifx\truth\falsetrue \textcolor{cyan}{#4}\else\textcolor{magenta}{#5} \fi \fi}
+
+%First argument is the location at which the node is taking place. Second argument is the person you are speaking to. Third argument is the name of the node.
+%The name of the node is used as the label for this particular node.
+\newenvironment{node}[3]
+{
+    \section*{\arabic{Nodecount}}
+    \addtocounter{Nodecount}{1}
+    \emph{Location: #1}
+
+    \emph{Speaking With: #2}
+    \newcommand{\nodeArg}{#3}
+    \label{#3}
+}
+{
+}
+
+\newenvironment{childnode}[1]
+{
+    \section*{\arabic{Nodecount}}
+    \addtocounter{Nodecount}{1}
+    \label{#1}
+}
+{}
+
+
+    
+
+%First argumnt is the reference the child should link to (i.e. the node that contains the text of the child), second argument is the text displayed.
+\newcommand{\child}[2]{\hyperref[#2]{#1}}
+
+\newcommand{\childif}[2]{\child{#1}{#2}}
+
+\newcommand{\continue}[2]{\child{#1}{#2}}
+
+\newcommand{\keyword}[1]{\name{} gains the \emph{keyword} #1}
+
+%Used for when I need to add any sort of complicated python code directly. Does not show up in the transcript.
+\newenvironment{code}{\comment}{\endcomment}
+
+%Doesn't actually do anything, except mark that we're starting a scene.
+\newenvironment{openScene}{\chapter*{Episode \episode{} Scene \arabic{Scenecount}}}{}
+
+\newenvironment{closeScene}{}{}
+
+%Arguments:
+%1 : room's name
+%2 : room description
+%3 : Comma-separated list of rooms that can be reached from this room. If none, write None.
+%4 : Comma-separated list of characters in this room. If none, write None.
+%5 : The name of the function to be invoked after the player arrives in this room, if any. If no such function, write None.
+%6 : The background music that should be played in this room, if any. If no such music, write None.
+%7 : The name of the function to be invoked before the player arrives in this room, if any. If no such function, write None.
+\newcommand{\room}[7]{
+
+    \section*{#1}
+
+    \textbf{Description:} #2
+
+    \textbf{Adjacent:} #3
+
+    \textbf{Characters:} #4
+}
+
+
+%Name
+%gender
+%description
+%printed name
+\newcommand{\character}[4]{
+
+    \section*{#1}
+
+    \textbf{Gender:} #2
+
+    \textbf{Description:} #3
+
+    \textbf{Displayed Name:} #4
+}
+
+%skin color
+%eye color
+%hair color
+%hair style
+%musculature
+%height
+%body type
+\newcommand{\appearance}[7]
+{
+    \textbf{Skin Color:} #1
+
+    \textbf{Eye Color:} #2
+
+    \textbf{Hair Color:} #3
+
+    \textbf{Hair Style:} #4
+
+    \textbf{Musculature:} #5
+
+    \textbf{Height:} #6
+
+    \textbf{Body Type:} #7
+}
+
+\newcommand{\stealth}{\textit{stealth}}{}
+
+\newcommand{\player}{\name{}}
+
+\newcommand{\bumadj}{\textcolor{blue}{plump}}
+
+\newcommand{\muscleadj}{\textcolor{blue}{firm}}
+
+\newcommand{\pajama}{pajama}
+\newcommand{\trousers}{trousers}
+\newcommand{\cladbottom}[1]{\textcolor{blue}{\if#1\pajama pink pajama pants-clad\else trousers-clad\fi}}
+
+\newcommand{\liftlower}{\textcolor{blue}{lower}}
+\newcommand{\lowerlift}{\textcolor{blue}{lift}}
+\newcommand{\liftslowers}{\textcolor{blue}{lowers}}
+
+\newcommand{\pajamabottoms}{\textcolor{blue}{pink pajama pants}}
+
+%Doesn't actually do anything. Just indicates that we should add the first argument to the list of marks for the player
+\newcommand{\bummarks}[1]{}
+
+\newcommand{\lowerslifts}[1]{\textcolor{blue}{lowers}}
+
+%Doesn't do anything. Just a marker so that the python script knows to generate a random integer from 1 to the specified number.
+\newcommand{\random}[1]{random(4)}
+
+
