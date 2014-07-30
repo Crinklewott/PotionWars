@@ -38,7 +38,7 @@ class Firebolt(p.Combat):
         super(Firebolt, self).__init__(attacker, defenders)
         self.name = 'Firebolt'
         self.description = 'Flings a small bolt of fire at a single opponent.' 
-        self.effectFormula = 'DAMAGE: 2 | 2 * (magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 2 -> 2 * (magic - enemy magic)'
         self.numTargets = 1
         self.tier = Firebolt.tier
         self.minDamage = 2 
@@ -68,7 +68,7 @@ class Icebolt(p.Combat):
         super(Icebolt, self).__init__(attacker, defenders)
         self.name = 'Icebolt'
         self.description = 'Flings a small icicle at a single opponent.' 
-        self.effectFormula = 'DAMAGE: 3 | 3 * (magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 3 -> 3 * (magic - enemy magic)'
         self.numTargets = 1
         self.tier = Icebolt.tier
         self.minDamage = 3 
@@ -97,7 +97,7 @@ class Magicbolt(p.Combat):
         super(Magicbolt, self).__init__(attacker, defenders)
         self.name = 'Magicbolt'
         self.description = 'Flings a small bolt of raw magic at a single opponent.' 
-        self.effectFormula = 'DAMAGE: 4 | 4 * (magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 4 -> 4 * (magic - enemy magic)'
         self.numTargets = 1
         self.tier = Magicbolt.tier
         self.minDamage = 4
@@ -135,7 +135,7 @@ class Weaken(p.Status):
         super(Weaken, self).__init__(attacker, defenders)
         self.name = 'Weaken'
         self.description = 'Wraps your enemy in a field that interferes with the implicit magic responsible for lending strength to their muscles, making them physically weaker and slower.'
-        self.effectFormula = 'EFFECT: -2 penalty to Strength and Dexterity\nSUCCESS CHANCE (%): 40 | 15 * (resilience - enemy resilience) | 98\n DURATION: 3 | 2*(magic - enemy magic)'
+        self.effectFormula = 'EFFECT: -2 penalty to Strength and Dexterity\nSUCCESS CHANCE (%): 50 | 15 * (resilience - enemy resilience) | 98\n DURATION: 3 | 2*(magic - enemy magic)'
         self.numTargets = 1
         self.rawMagic = True
         self.tier = Weaken.tier
@@ -147,7 +147,7 @@ class Weaken(p.Status):
         self.minDuration = 3
         self.magicMultiplier = 1
         self.grappleStatus = combatAction.GRAPPLER_ONLY
-        self.minProbability = 40
+        self.minProbability = 50
         self.maxProbability = 98
 
     def effect_statement(self, defender):
@@ -183,7 +183,7 @@ class DistortMagic(p.Status):
         super(DistortMagic, self).__init__(attacker, defenders)
         self.name = 'Distort Magic'
         self.description = 'Wraps your enemy in a field that interferes with the target\'s ability to cast and protect against spells.'
-        self.effectFormula = 'EFFECT: -2 penalty to Talent and Willpower\nSUCCESS CHANCE (%): 40 | 15 * (resilience - enemy resilience) | 95\n DURATION: 3 | 2 *(magic - enemy magic)'
+        self.effectFormula = 'EFFECT: -2 penalty to Talent and Willpower\nSUCCESS CHANCE (%): 50 | 15 * (resilience - enemy resilience) | 95\n DURATION: 3 | 2 *(magic - enemy magic)'
         self.numTargets = 1
         self.rawMagic = True
         self.tier = DistortMagic.tier
@@ -195,7 +195,7 @@ class DistortMagic(p.Status):
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.expertise = ADVANCED
         self.maxProbability = 95
-        self.minProbability = 40
+        self.minProbability = 50
         self.minDuration = 3
 
 
@@ -674,7 +674,7 @@ class Lightningbolt(p.Combat):
         super(Lightningbolt, self).__init__(attacker, defenders)
         self.name = 'Lightningbolt'
         self.description = 'Unleashes a trio of lightning bolts from the caster\'s fingertips. Does as much damage as firebolt, but affects up to 3 enemies at once. Unfortunately, casting this spell while grappling would hurt the caster as much as the target, so it can\'t be cast when the caster is grappling.' 
-        self.effectFormula = 'DAMAGE: 2 | 2 * (magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 2 -> 2 * (magic - enemy magic)'
         self.numTargets = 3
         self.tier = Lightningbolt.tier
         self.minDamage = 2 
@@ -705,7 +705,7 @@ class Thunderbolt(p.Combat):
         super(Thunderbolt, self).__init__(attacker, defenders)
         self.name = 'Thunderbolt'
         self.description = 'A more powerful version of Lightningbolt. Does as much damage as Icebolt to up to 3 enemies.' 
-        self.effectFormula = 'DAMAGE: 3 | 3 * (magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 3 -> 3 * (magic - enemy magic)'
         self.numTargets = 3
         self.tier = Thunderbolt.tier
         self.minDamage = 3 
@@ -735,7 +735,7 @@ class Magicstrike(p.Combat):
         super(Magicstrike, self).__init__(attacker, defenders)
         self.name = 'Magic Strike'
         self.description = 'What the average spellcaster can do with lightning, a specialist can do with far more powerful (but volatile) raw magical energy. In addition to being more powerful and more efficient then Thunderbolt, this spell can be cast when grappled. Unfortunately, iron provides protection against this spell.' 
-        self.effectFormula = 'DAMAGE: 4 | 4 * (magic - enemy magic)'
+        self.effectFormula = 'DAMAGE: 4 -> 4 * (magic - enemy magic)'
         self.numTargets = 3
         self.tier = Magicstrike.tier
         self.minDamage = 4 

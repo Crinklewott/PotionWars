@@ -363,6 +363,13 @@ class Person(universal.RPGObject):
         state['spellList'] = [[(allSpells[tier].index((get_basic_spell(tier, action_type_to_spell_type(spell.actionType)), 
             get_advanced_spell(tier, action_type_to_spell_type(spell.actionType)), get_expert_spell(tier, action_type_to_spell_type(spell.actionType)))), spell.expertise) 
             for spell in self.spellList[tier]] for tier in range(len(self.spellList)) if self.spellList[tier] is not None]
+        quickSpellList = []
+        for spell in state['quickSpells']:
+            try:
+                quickSpellList.append(spell.name)
+            except AttributeError:
+                pass
+        state['quickSpells'] = quickSpellList
         print("state's spell list!")
         print(state['spellList'])
         return state
@@ -373,6 +380,9 @@ class Person(universal.RPGObject):
         print(state['spellList'])
         state['spellList'] = [[allSpells[tier][index][expertise] for (index, expertise) in state['spellList'][tier]] for tier in range(len(state['spellList']))]
         state['spellList'].extend([None for i in range(universal.NUM_TIERS - len(state['spellList']))])
+        state['quickSpells'] = [get_spell(name) for name in state['quickSpells']]
+        while len(state['quickSpells']) < 12:
+            state['quickSpells'].append(None)
         self.__dict__.update(state)
         assert(self.spellList != [])
         print('done settingt state!')
@@ -1690,6 +1700,13 @@ NO_MAGIC = -1
 
 #This is a list of list tuples. Each list of tuples is all the spells in that particular tier.
 allSpells = [None for i in range(universal.NUM_TIERS)]
+
+def get_spell(name):
+    for spellTier in allSpells:
+        for spellTuple in spellTier:
+            for spell in spellTuple:
+                if spell.name == name:
+                    return spell
 COMBAT_INDEX = 0
 STATUS_INDEX = 1
 BUFF_INDEX = 2
@@ -1944,10 +1961,11 @@ class Combat(Spell):
                 print('magicMultiplier: ' + str(self.magicMultiplier))
                 print('magic_attack: ' + str(attacker.magic_attack()))
                 print('magic_defense: ' + str(defender.magic_defense(self.rawMagic)))
-                damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-                print('damage: ' + str(damage))
-                if damage < self.minDamage:
+                try:
+                    damage = random.randint(self.minDamage, self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic)))
+                except ValueError:
                     damage = self.minDamage
+                print('damage: ' + str(damage))
             defender.receives_damage(damage)
             effects.append(damage)
             if damage == 0:
@@ -2281,6 +2299,7 @@ class SpectralSpanking(Spectral):
         self.probModifier = 30
         self.secondaryStat = SpectralSpanking.secondaryStat
         self.minDamage = 2
+        self.minDuration = 2
 
 
     def effect(self, inCombat=True, allies=None, enemies=None, severity=0):
@@ -2304,7 +2323,11 @@ class SpectralSpanking(Spectral):
         defender = self.defenders[0]
         attacker = self.attacker
         damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
+        if damage < self.minDamage:
+            damage = self.minDamage
         duration = self.resilienceMultiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier(self.rawMagic) + severity)
+        if duration < self.minDuration:
+            duration = minDuration
         resultStatement = []
         effects = []
         effectString = self.effect_statement(defender)

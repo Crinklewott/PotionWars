@@ -328,9 +328,29 @@ class BreakGrappleAction(CombatAction):
             wa = attacker.weapon()
             wd = defender.weapon()
             grappleABonus = wa.grappleAttemptDefense + max(attacker.warfare(), attacker.grapple()) - attacker.attack_penalty()
-            grappleDBonus = wd.grapple_bonus() + defender.grapple() - defender.attack_penalty()
+            grappleDBonus = wd.grapple_bonus() // 2 + defender.grapple() - defender.attack_penalty()
+            print('wa grapple attempt defense:')
+            print(wa.grappleAttemptDefense)
+            print('max attacker warfare, grapple:')
+            print(max(attacker.warfare(), attacker.grapple()))
+            print('attack penalty:')
+            print(attacker.attack_penalty())
+            print('defender grapple bonus:')
+            print(wd.grapple_bonus())
+            print('defender grapple:')
+            print(defender.grapple())
+            print('defender attack penalty:')
+            print(defender.attack_penalty())
+            print('attacker:')
+            print(grappleABonus)
+            print('defender:')
+            print(grappleDBonus)
             success = rand(grappleABonus)
+            print('success:')
+            print(success)
             failure = rand(grappleDBonus)
+            print('failure:')
+            print(failure)
             if failure <= success:
                 attacker.break_grapple()
                 return (' '.join([attacker.printedName, 'breaks the grapple with', defender.printedName + '!']), [True], self)
@@ -451,7 +471,7 @@ class ThrowAction(CombatAction):
         attacker = self.attacker
         grappler = self.defenders[0]
         defender = self.defenders[1]
-        damRange = (grappler.health() * .03 if grappler.health() * .1 > 1 else 1, grappler.health() * .1 if grappler.health() * .2 > 1 else 1)
+        damRange = (grappler.health() * .1 if grappler.health() * .1 > 1 else 1, grappler.health() * .1 if grappler.health() * .2 > 1 else 1)
         dam = 0
         dam1 = 0
         opponents = enemies if self.attacker in allies else allies

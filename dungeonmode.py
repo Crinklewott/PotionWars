@@ -297,8 +297,8 @@ class Dungeon(townmode.Room):
     dungeonMap can be a tuple of tuple of strings, or a tuple of DungeonFloors and dungeonEvents can be a tuple of tuple of functions, or a tuple of FloorEvents.
     The dungeon also takes as an optional argument the direction the player should face when starting off in the dungeon. The direction defaults to north.
     """
-    def __init__(self, name, dungeonMap, dungeonEvents, direction=NORTH, description="", visibility=[], adjacent=None, characters=None, after_arrival=None,
-            bgMusic=None, enemies=None, maxEnemies=None, ambushChance=None):
+    def __init__(self, name, dungeonMap, dungeonEvents, direction=NORTH, description="", visibility=None, adjacent=None, characters=None, after_arrival=None,
+            bgMusic=None, enemies=None, maxEnemies=None, ambushChance=None, encounterRates=None):
         super(Dungeon, self).__init__(name, description, adjacent, characters, after_arrival, bgMusic)
         self.direction = direction
         self.coordinates = (-1, -1, -1)
@@ -315,11 +315,13 @@ class Dungeon(townmode.Room):
                 count += 1
         if dungeonMap is not None:
             count = 0
+            if not encounterRates:
+                encounterRates = [5, 5]
             for floor in dungeonMap:
-                if visibility == []:
-                    self.dungeonMap[count] = floor if type(floor) == DungeonFloor else DungeonFloor(floor, self.dungeonEvents[count])
+                if visibility is None:
+                    self.dungeonMap[count] = floor if type(floor) == DungeonFloor else DungeonFloor(floor, self.dungeonEvents[count], encounterRate=encounterRates[count])
                 else:
-                    self.dungeonMap[count] = floor if type(floor) == DungeonFloor else DungeonFloor(floor, self.dungeonEvents[count], visibility[count])
+                    self.dungeonMap[count] = floor if type(floor) == DungeonFloor else DungeonFloor(floor, self.dungeonEvents[count], visibility[count], encounterRate=encounterRates[count])
                 if enemies is not None:
                     self.dungeonMap[count].enemies = enemies
                 if maxEnemies is not None:

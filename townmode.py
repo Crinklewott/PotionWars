@@ -515,7 +515,7 @@ def modify_chosen_spell_interpreter(keyEvent):
         num = universal.FUNCTION_KEYS.index(keyEvent.key)
     except ValueError:
         if keyEvent.key == K_BACKSPACE:
-            modify_quick_spells()
+            modify_quick_spells(chosenPerson)
         elif keyEvent.key == K_s:
             select_new_quick_spell()
     else:

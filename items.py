@@ -266,7 +266,7 @@ class Weapon(Item):
     def display(self):
         displayString = super(Weapon, self).display()
         return '\n'.join([displayString, 
-            'Damage:  ' + str(self.minDamage + self.genericBonus) + ' - ' + str(self.maxDamage + self.genericBonus), 
+            'Damage:  ' + str(self.minDamage + self.genericBonus) + ' -> ' + str(self.maxDamage + self.genericBonus), 
             'grapple attempt: ' + str(self.grappleAttempt + self.genericBonus), 
             'grapple attempt defense: ' + str(self.grappleAttemptDefense + self.genericBonus), 
             'grapple bonus: ' + str(self.grappleBonus + self.genericBonus), 
@@ -309,7 +309,7 @@ class Knife(Weapon):
     combatant is forced to keep their distance.
     """
     weaponType = 'knife'
-    def __init__(self, name, description, price=0, minDamage=1, maxDamage=5, grappleAttempt=2, grappleAttemptDefense=-2, grappleBonus=2, armslengthBonus=-2, genericBonus=0,
+    def __init__(self, name, description, price=0, minDamage=1, maxDamage=5, grappleAttempt=1, grappleAttemptDefense=-1, grappleBonus=1, armslengthBonus=-1, genericBonus=0,
             enchantments=None, maxEnchantment=4):
         super(Knife, self).__init__(name, description, price, minDamage, maxDamage, grappleAttempt, grappleAttemptDefense, grappleBonus, armslengthBonus, genericBonus,
                 enchantments, maxEnchantment)
@@ -343,8 +343,8 @@ class Spear(Weapon):
     """
     weaponType = 'spear'
     def __init__(self, name, description, price=0, minDamage=1, maxDamage=5, 
-            grappleAttempt=-1, grappleAttemptDefense=2, grappleBonus=-2,
-            armslengthBonus=2, genericBonus=0, enchantments=None, maxEnchantment=4):
+            grappleAttempt=-1, grappleAttemptDefense=1, grappleBonus=-1,
+            armslengthBonus=1, genericBonus=0, enchantments=None, maxEnchantment=4):
         super(Spear, self).__init__(name, description, price, minDamage, maxDamage, 
                 grappleAttempt, grappleAttemptDefense, grappleBonus,
                 armslengthBonus, genericBonus, enchantments=enchantments, maxEnchantment=maxEnchantment)

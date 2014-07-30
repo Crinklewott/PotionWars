@@ -1143,7 +1143,7 @@ class Necia(p.Person):
 
     def set_default_stats(self):
         if universal.DEBUG:
-            self.set_all_stats(strength=4, dexterity=4, talent=3, alertness=4, willpower=2, health=41, mana=20)
+            self.set_all_stats(strength=3, dexterity=3, talent=2, alertness=3, willpower=1, health=30, mana=20)
         else:
             self.set_all_stats(strength=3, dexterity=4, talent=2, alertness=4, willpower=2, health=30, mana=20)
 
@@ -3593,6 +3593,7 @@ def display_text_start_next_scene(delayTime):
 
 def start_scene_1_episode_1(loading=False):
     print('starting_scene_1')
+    universal.state.set_init_scene(init_episode_1_scene_1)
     assert(universal.state.player)
     edge = universal.state.get_room(edgeOfAvaricum)
     if not loading:
@@ -4146,6 +4147,7 @@ def niceStraightBare_qf():
 niceStraightBare.quip_function = niceStraightBare_qf    
 
 def start_scene_2_episode_1(loading=False):
+    universal.state.set_init_scene(init_episode_1_scene_2)
     carlita = universal.state.get_character('Carlita.person')
     carlita.litany = spankCarlita.index
     if not loading:
@@ -5720,10 +5722,11 @@ def e0_6_1():
                     '''cane the lot of them when this was done?'''], justification=0)
                 universal.say(format_text([['''Or,''', heshe(), '''could cast Spectral Spanking now. Why wait until the attack was done?''', HeShe(), 
                 '''would probably forget anyway.'''],
-                ['''Does''', name(), '''cast spectral spanking on the helpless Taironans?''']
-                ['\p']
+                ['''Does''', name(), '''cast spectral spanking on the helpless Taironans?'''],
+                ['\p'],
                     ['''1. Yes'''],
                     ['''2. No.''']]), justification=0)
+                set_commands(['(#) Select a number.'])
                 set_command_interpreter(e0_6_1_caning_revenge_interpreter)
             elif 'spectral_spanked_Taironans' in keywords():
                 universal.say(format_text([['''One of the hanging Taironans gasps when he sees''', name() + ".", '''"Oh, no, please no more we're sorry, honest!"'''],
@@ -6141,7 +6144,7 @@ def e0_6_1_interpreter(keyEvent):
             [universal.format_line(['''The hand doesn't stop there however, and with a quick tug, yanks''', names(), p.underwearpanties(), '''down to''', hisher(), '''knees,''',
                 '''completely baring''', hisher(), '''bottom to the menacing cane.''']) if universal.state.player.clothing_below_the_waist().armorType != items.Underwear.armorType and 
                 universal.state.player.underwear() != items.emptyUnderwear else
-                universal.format_line([name(), '''gnaws nervously on''', hisher(), '''lower lip lands two sharp slaps to''', hisher(), 
+                universal.format_line([name(), '''gnaws nervously on''', hisher(), '''lower lip lands as the hand lands two sharp slaps to''', hisher(), 
                     '''exposed derrier before vanishing.'''])]]), justification=0)
             universal.say('\p')
             universal.say(universal.format_text([['''1. "Wait, wait I'm sorry, I'm sorry, I won't do it again, please don't cane me!"'''], 
@@ -7602,7 +7605,14 @@ def spank_necia(allies, enemies, won):
                         '''takes slow, deep breaths, and tries not to throw up.''']), justification=0)
             if 'Mai_defends_armory' in keywords():
                 necia_ambush()
+                print('done invoking necia ambush!')
                 episode.allEpisodes[universal.state.player.currentEpisode].next_scene()
+                print('current episode:')
+                print(episode.allEpisodes[universal.state.player.currentEpisode].name)
+                print('all episodes:')
+                print(episode.allEpisodes)
+                print('next scene:')
+                print(episode.allEpisodes[universal.state.player.currentEpisode].next_scene)
                 return
             else:
                 if 'chastised_warslinger' in keywords():
@@ -7819,6 +7829,7 @@ def necia_wimpy_spanked():
 
 
 def necia_ambush():
+    print('invoking necia_ambush!')
     add_keyword('necia_ambush')
     universal.say(universal.format_text([[''' The Vengador chuckles, and gives''', names(), '''vulnerable bum a sharp slap. "Now-hey!"'''],
         ['''There is a pitter-patter of bare feet on stone, and the rough, grating sound of sandals scraping against stone.''', name(), '''glances over''', hisher(), '''shoulder. Mai has appeared out of''',
@@ -7984,7 +7995,6 @@ def necia_chastised_lost_spank():
 def necia_spanking_you_over():
     add_keyword('spanked_by_Necia')
     episode.allEpisodes[universal.state.player.currentEpisode].next_scene()
-
 
 
 def necia_mercenary_interpreter(keyEvent):
@@ -8459,7 +8469,6 @@ floor0Events = (
         (None, None, None, None, None, None, None, None, None, None)   #0
     )
 
-floor0
 
 floorEvents = [floor0Events, floor1Events]
 backOfGuild = dungeonmode.Dungeon('Guild', [floor0, floor1], floorEvents, bgMusic= textCommands.INTENSE, 
@@ -8476,6 +8485,10 @@ def end_scene_2_episode_1():
 
 
 def start_scene_3_episode_1(loading=False):
+    print('starting scene 3!')
+    universal.state.set_init_scene(init_episode_1_scene_3)
+    backOfGuild = universal.state.get_room('Guild')
+    adventurersGuild = universal.state.get_room("Adventurer's Guild")
     backOfGuild.remove_character(universal.state.player)
     adventurersGuild.add_character(universal.state.player)
     southGuard = universal.state.get_character('Guard.person')
@@ -12913,6 +12926,8 @@ def ep1_roland():
                     
 #-----------------------------------------------End Episode 1: Tension---------------------------------------------------------------------
 episode1 = episode.Episode(1, 'Tension', scenes=[episode1Scene1, episode1Scene2, episode1Scene3], titleTheme=textCommands.VENGADOR) 
+print('episode 1 next_scene:')
+print(episode1.next_scene)
 
 #----------------------------------------------Episode 2: Back Alleys-------------------------------------------------------------------
 def initialize_episode_2():
@@ -12949,3 +12964,17 @@ episode2Scene1 = episode.Scene('Episode 2 Scene 1', start_scene_1_episode_2, end
 episode2 = episode.Episode(2, 'Back Alleys', scenes=[episode2Scene1])
 #--------------------------------------------End Episode 2: Back Alleys-------------------------------------------------------------------------
 episode1.nextEpisode = episode2
+
+def init_episode_1_scene_1():
+    global episode1
+    if episode1.currentSceneIndex != 0:
+        episode1.currentSceneIndex = 0
+
+def init_episode_1_scene_2():
+    global episode1
+    if episode1.currentSceneIndex != 1:
+        episode1.currentSceneIndex = 1
+def init_episode_1_scene_3():
+    global episode1
+    if episode1.currentSceneIndex != 2:
+        episode1.currentSceneIndex = 2

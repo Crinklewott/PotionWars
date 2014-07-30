@@ -785,6 +785,8 @@ def select_action(enemy):
             allActions.append(combatAction.BreakAllysGrappleAction)
         allActions.extend([spell.__class__ for spell in enemy.flattened_spell_list() if spell.grappleStatus != combatAction.ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY and 
             spell.grappleStatus != combatAction.ONLY_WHEN_GRAPPLED and spell.cost <= enemy.current_mana()])
+    print('difficulty:')
+    print(get_difficulty())
     if get_difficulty() == HAND:
         return hand_ai(enemy, allActions)
     elif get_difficulty() == STRAP or get_difficulty() == CANE:
@@ -891,7 +893,6 @@ def strap_cane_ai(enemy):
     #We want to guarantee that the magicActions contain only spells when weighting them for the cane difficulty.
     chosenActionClass.extend([combatAction.DefendAction for statName in enemy.status_names() if statusEffects.is_negative(enemy.get_status(statName))])
     chosenAction = chosenActionClass[random.randrange(0, len(chosenActionClass))]
-    print(chosenActionClass)
     print('chosenActionClass:')
     print(chosenActionClass)
     if get_difficulty() == CANE:
@@ -1482,7 +1483,7 @@ def specialization_bonus(ally, i):
         bonus = 3 * person.HEALTH_SCALE if i == HEALTH or i == MANA else 3
     return bonus
 
-HIGH_STAT_PENALTY = .25
+HIGH_STAT_PENALTY = .1
 def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious):
     """
     Takes as argument the function that should be invoked after leveling up is complete.

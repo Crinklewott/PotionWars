@@ -52,7 +52,7 @@ class StatusEffect(universal.RPGObject):
         self.duration = duration
         self.name = name
         self.combatOnly = combatOnly
-        self.isNegative = True
+        self.isNegative = isNegative
 
     @abc.abstractmethod
     def inflict_status(self, person):
@@ -271,10 +271,10 @@ class DefendStatus(StatusEffect):
         print('inflicting defense status.')
         print('stats before defense:')
         print(p.primaryStats)
-        p.set_stat(STRENGTH, p.strength() + 3)
-        p.set_stat(DEXTERITY, p.dexterity() + 3)
-        p.set_stat(WILLPOWER, p.willpower() + 3)
-        p.set_stat(TALENT, p.talent() + 3)
+        p.set_stat(STRENGTH, p.strength() + 2)
+        p.set_stat(DEXTERITY, p.dexterity() + 2)
+        p.set_stat(WILLPOWER, p.willpower() + 2)
+        p.set_stat(TALENT, p.talent() + 2)
         print('stats after defense:')
         print(p.primaryStats)
         return
@@ -283,10 +283,10 @@ class DefendStatus(StatusEffect):
         print('reversing defense status.')
         print('stats before reversing defense:')
         print(p.primaryStats)
-        p.set_stat(STRENGTH, p.strength() - 3)
-        p.set_stat(DEXTERITY, p.dexterity() - 3)
-        p.set_stat(WILLPOWER, p.willpower() - 3)
-        p.set_stat(TALENT, p.talent() - 3)
+        p.set_stat(STRENGTH, p.strength() - 2)
+        p.set_stat(DEXTERITY, p.dexterity() - 2)
+        p.set_stat(WILLPOWER, p.willpower() - 2)
+        p.set_stat(TALENT, p.talent() - 2)
         print('stats after reversing defense:')
         print(p.primaryStats)
         return

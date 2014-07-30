@@ -340,7 +340,6 @@ def quit():
 HAND = 0
 STRAP = 1 
 CANE = 2
-difficulty = 0
 def set_difficulty(diff):
     global state
     state.difficulty = diff
@@ -830,6 +829,15 @@ class State(object):
         self.rooms = {}
         self.items = {}
         self.difficulty = None
+        self.init_scene = None
+
+    def set_init_scene(self, init_scene):
+        self.init_scene = init_scene
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self.init_scene()
+
 
     """
         def add_position(self, position):
