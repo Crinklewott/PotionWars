@@ -49,8 +49,6 @@ import pwenemies
 import sys
 import textCommands
 
-
-
 def spanked_episode_1():
     return one_in_keywords(['Ildri_spanked_you_unjustly', 'spanked_by_Airell', 'spanked_by_Cosima', 'Maria_spanked_you', 'spectral_caned', 'met_Mai', 
         'spanked_by_Necia'])
@@ -498,6 +496,7 @@ def marias_home_before_arrival():
 def marias_home_after_arrival():
     universal.say_title("Maria's Home")
     maria = universal.state.get_character('Maria.person')
+    mariasHome = universal.state.get_room("Maria's Home")
     if mariasHome.has(maria) and universal.state.player.currentEpisode == episode1.name:
         mariasHome.description = format_text([mariasHomeDesc, ['''Maria is hunched over the small firepit, making some stew. She glances up as''', name(), 
             '''enters.''']])
@@ -512,7 +511,7 @@ def marias_home_after_arrival():
         mariasHome.description = format_text([mariasHome.description, [''' If''', name(), '''wishes,''', heshe(), 
             '''can Rest, and put an end to this seemingly neverending day.''']])
     if mariasHome.boarding:
-        townmode.rest_mode()
+        townmode.rest_mode(mariasHome)
     else:
         townmode.town_mode()
 
@@ -561,13 +560,14 @@ def guild_bedroom_before_arrival():
     return True
 
 def guild_bedroom_after_arrival():
+    guildBedroom = universal.state.get_room('Bedroom')
     thisEpisode = episode.allEpisodes[universal.state.player.currentEpisode]  
     if universal.state.player.currentEpisode == episode1.name and thisEpisode.currentSceneIndex == 2:
         if not universal.format_line(['''If''', name(), '''wishes,''', heshe(), '''can rest, and put an end to this seemingly neverending day.''']) in guildBedroom.description:
             guildBedroom.description = universal.format_text([guildBedroom.description, universal.format_line(['''If''', name(), '''wishes,''', heshe(), 
                 '''can rest, and put an end to this seemingly neverending day.'''])])
     if guildBedroom.boarding:
-        townmode.rest_mode()
+        townmode.rest_mode(guildBedroom)
     else:
         townmode.town_mode()
 
@@ -1153,8 +1153,6 @@ necia.learn_spell(spells_PotionWars.firebolt)
 necia.learn_spell(spells_PotionWars.icebolt) 
 necia.learn_spell(spells_PotionWars.weaken) 
 necia.learn_spell(spells_PotionWars.distortMagic) 
-print("necia's spells")
-print(necia.spellList)
 
 necia.equip(itemspotionwars.qualityDagger)
 necia.equip(itemspotionwars.trousers)
@@ -8514,6 +8512,7 @@ def start_scene_3_episode_1(loading=False):
     adventurersGuild = universal.state.get_room("Adventurer's Guild")
     carlita = universal.state.get_character('Carlita.person')
     exitLeft(carlita, adventurersGuild)
+    mariasHome = universal.state.get_room("Maria's Home")
     if not 'Elise_shows_you_around' in keywords():
         shrine = universal.state.get_room('Shrine')
         exitLeft(elise, shrine)
@@ -8989,10 +8988,12 @@ adrian_request_bed.children = [adrian_request_bed_yes, adrian_request_bed_no]
 adrian_request_bed_yes.comment = '''"Yes."'''
 def adrian_request_bed_yes_qf():
     add_keyword('boarding_with_Adrian')
+    guildBedroom = universal.state.get_room('Bedroom')
     townmode.set_bedroom(guildBedroom)
     guildBedroom.boarding = True
     print(guildBedroom.boarding)
     remove_keyword('boarding_with_Maria')
+    mariasHome = universal.state.get_room("Maria's Home")
     mariasHome.boarding = False
     adrian_request_bed_yes.quip = universal.format_text([['''"Excellent," says Adrian. "Go straight back to the end of the hallway, and then right, into the dining room. On the far end of the dining room is a''',
         '''door. Through that door is a hallway lined with doors. You'll be in the third room on the right. Lucky for you, it's currently empty."'''],
@@ -9719,7 +9720,7 @@ def elise_end_episode_1_qf():
             '''Samantha. She was in Bonda, you know? Makes her a little sensitive about the whole thing. Also, I heard about the attack on the''',
             '''Adventurer's Guild. Are you alright? Those thugs didn't hurt you, did they?"''']])
         elise_end_episode_1.children = [ep1_elise_dont_worry, ep1_elise_talk_with_Sister_Samantha]
-        elise_end_episode_1.music = [textCommands.ELISE, CARRIE]
+        elise_end_episode_1.music = [textCommands.ELISE, textCommands.CARRIE]
         return
     elise_end_episode_1.quip = universal.format_text([['''\m"Hey," says Elise, smiling broadly as she approaches''', name() + ".", '''Gone is the bulky blue''',
         '''Sister's dress. In its place is a high-cut, rather tight kelly-green dress that extends about halfway down her shins. It's cut to maximize her small bust,''',
@@ -9743,7 +9744,7 @@ def elise_end_episode_1_qf():
     #print('setting elises end episode 1 music.')
     #print(CARRIE)
     elise_end_episode_1.quip = universal.format_text([elise_end_episode_1.quip, carrie_arrival()])
-    elise_end_episode_1.music = [textCommands.ELISE, CARRIE]
+    elise_end_episode_1.music = [textCommands.ELISE, textCommands.CARRIE]
     if universal.state.player.is_female():
         elise_end_episode_1.children = [ep1_elise_prank, ep1_elise_no_prank]
     elif universal.state.player.is_male():
@@ -9767,7 +9768,7 @@ def elise_dont_worry_yes_qf():
     add_keyword('Elise_shows_you_around')
     elise_dont_worry_yes.quip = universal.format_text([['''Elise claps her hands together, and grins. "Wonderful. Now, we're just waiting on Carrie."'''],
         carrie_arrival()])
-    elise_dont_worry_yes.music = [CARRIE]
+    elise_dont_worry_yes.music = [textCommands.CARRIE]
     if universal.state.player.is_female():
         elise_dont_worry_yes.children = [ep1_elise_prank, ep1_elise_no_prank]
     elif universal.state.player.is_male():
@@ -10035,7 +10036,7 @@ def ep1_elise_shake_qf():
 ep1_elise_shake.quip_function = ep1_elise_shake_qf
 
 def ep1_elise_carrie_banter(node):
-    node.music = [textCommands.CARLITA, CARRIE]
+    node.music = [textCommands.CARLITA, textCommands.CARRIE]
     return universal.format_text([
         ['''Elise narrows her eyes. "Carrie, Dan's out of town right now."'''],
         ['''"Exactly," says Carrie, her mischievous grin lighting up her face.'''],
@@ -10631,7 +10632,7 @@ ep1_elise_prank.children = [ep1_elise_prank_sorry, ep1_elise_prank_angry]
 ep1_elise_no_prank = Node(282)
 ep1_elise_no_prank.comment = '''Just wait for Carrie and Elise to return.'''
 def ep1_elise_no_prank_qf():
-    ep1_elise_no_prank.music = [textCommands.CARLITA, CARRIE]
+    ep1_elise_no_prank.music = [textCommands.CARLITA, textCommands.CARRIE]
     ep1_elise_no_prank.quip = universal.format_text([[name(), '''shrugs in the water. Probably shouldn't. It's not like it was that big of a deal anyway; she'd''',
         '''spent her whole life bathing in the public bath houses of Chengue, so nudity in front of other people (men and women!) is hardly new. Besides,''',
         '''Carrie's dress looks like it's made of wool. Well-made or not, dumping her in the warm tub runs a serious risk of clothing shrinkage.'''],
@@ -10923,12 +10924,12 @@ def ep1_elise_dressed(node):
 
 def ep1_tavern_scene(node):
     try:
-        node.music.append(CARRIE)
+        node.music.append(textCommands.CARRIE)
     except AttributeError:
         if node.music is None:
-            node.music = [CARRIE]
+            node.music = [textCommands.CARRIE]
         else:
-            node.music = [node.music, CARRIE]
+            node.music = [node.music, textCommands.CARRIE]
     quip = universal.format_text([['''\mThe three make their way down towards the south edge of town, between Avaricum Square and the middle class housing. They''',
         '''stop outside of a large wooden building. The building is brightly lit with small, hovering balls of multi-colored flames.''', 
         '''The high-pitched, fevered, yet faintly haunting sound of a well-played harpsichord wafts out of the building.'''],
@@ -11429,7 +11430,7 @@ ep1_tavern_outgoing_dont_rub.quip_function = ep1_tavern_outgoing_dont_rub_qf
         
 
 def ep1_elise_sing(node):
-    songs = [textCommands.ELISE, textCommands.OMINOUS, textCommands.ROLAND, textCommands.CARLITA, textCommands.GUARDS, textCommands.CATALIN, textCommands.CARLITA, textCommands.ROLAND, textCommands.CATALIN, textCommands.ROLAND, textCommands.CARLITA, textCommands.ELISE, CARRIE, textCommands.ROLAND, CARRIE]  
+    songs = [textCommands.ELISE, textCommands.OMINOUS, textCommands.ROLAND, textCommands.CARLITA, textCommands.GUARDS, textCommands.CATALIN, textCommands.CARLITA, textCommands.ROLAND, textCommands.CATALIN, textCommands.ROLAND, textCommands.CARLITA, textCommands.ELISE, textCommands.CARRIE, textCommands.ROLAND, textCommands.CARRIE]  
     try:
         node.music.extend(songs)
     except AttributeError:
@@ -12257,9 +12258,11 @@ def ep1_maria_live_question():
 ep1_maria_live.comment = '''"Sure."'''
 def ep1_maria_live_qf():
     add_keyword('boarding_with_Maria')
+    mariasHome = universal.state.get_room("Maria's Home")
     townmode.set_bedroom(mariasHome)
     mariasHome.boarding = True
     remove_keyword('boarding_with_Adrian')
+    guildBedroom = universal.state.get_room("Bedroom")
     guildBedroom.boarding = False
     ep1_maria_live.quip = universal.format_text([['''Maria grins. "Excellent. Anyway, I'm going to go on ahead. I'll see you soon, alright?"''']])
     if not 'Marias_home' in keywords(): 
@@ -12277,7 +12280,6 @@ def ep1_maria_live_qf():
         avaricumSquare = universal.state.get_room('Avaricum Square')
         return (universal.acknowledge, [townmode.go, avaricumSquare])
     else:
-        mariasHome = universal.state.get_room("Maria's Home")
         return (universal.acknowledge, [townmode.go, mariasHome])
     maria = universal.state.get_character('Maria.person')
     exitLeft(maria)
@@ -12778,7 +12780,7 @@ def ep1_maria_spank_light_qf():
             '''but you did have my own good in mind."'''],
         ['''Maria gratefully returns the hug. "Thank you."'''],
         ['''"Just don't do it again," says''', name() + "."],
-        ep1_maria_live_question(ep1_maria_spank_light)])
+        ep1_maria_live_question()])
 ep1_maria_spank_light.quip_function = ep1_maria_spank_light_qf
 
 ep1_maria_spank_light.children = [ep1_maria_live, ep1_maria_dont_live]
@@ -12926,8 +12928,6 @@ def ep1_roland():
                     
 #-----------------------------------------------End Episode 1: Tension---------------------------------------------------------------------
 episode1 = episode.Episode(1, 'Tension', scenes=[episode1Scene1, episode1Scene2, episode1Scene3], titleTheme=textCommands.VENGADOR) 
-print('episode 1 next_scene:')
-print(episode1.next_scene)
 
 #----------------------------------------------Episode 2: Back Alleys-------------------------------------------------------------------
 def initialize_episode_2():
@@ -12974,6 +12974,8 @@ def init_episode_1_scene_2():
     global episode1
     if episode1.currentSceneIndex != 1:
         episode1.currentSceneIndex = 1
+
+
 def init_episode_1_scene_3():
     global episode1
     if episode1.currentSceneIndex != 2:

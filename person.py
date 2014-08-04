@@ -2327,7 +2327,7 @@ class SpectralSpanking(Spectral):
             damage = self.minDamage
         duration = self.resilienceMultiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier(self.rawMagic) + severity)
         if duration < self.minDuration:
-            duration = minDuration
+            duration = self.minDuration
         resultStatement = []
         effects = []
         effectString = self.effect_statement(defender)

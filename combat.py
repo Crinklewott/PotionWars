@@ -420,9 +420,9 @@ def increase_stat_chance():
     for action in chosenActions:
         increaseStat = action.attacker.chanceIncrease
         if action.attacker in allies:
-                increaseStat[action.primaryStat] += 8 if increaseStat[action.primaryStat] < 16 else 4
+                increaseStat[action.primaryStat] += 8 if increaseStat[action.primaryStat] < 8 else 4
                 try:
-                    increaseStat[action.spellType] += 4 if increaseStat[action.spellType] < 8 else 2
+                    increaseStat[action.spellType] += 4 if increaseStat[action.spellType] < 4 else 2
                 except AttributeError:
                     continue
                 try:

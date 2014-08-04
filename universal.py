@@ -11,7 +11,7 @@ import Queue
 from pygame.locals import *
 import os
 
-DEBUG = True
+DEBUG = False
 SAVE_DELIMITER = '%%%'
 
 
@@ -766,6 +766,32 @@ def format_text(text, doubleSpaced=True):
         sys.exit()
     return '\n\n'.join(textList) if doubleSpaced else '\n'.join(textList)
 
+def format_text_no_space(text, doubleSpaced=True):
+    """
+    Given a list of (lists of) text, returns the text joined using '\n\n' as a separator. Note that any lists of text that are contained in text are joined without a space.
+    So,
+    the list ['Hi!', ['I am', 'a list!'], 'Good-bye!'] would be returned as a single string of the form:
+    Hi!
+
+    Iamalist!
+
+    Good-Bye!
+
+    This is typically used by the auto-generated code, because it's easier to replace latex commands without worrying about context.
+    """
+    textList = []
+    try:
+        for line in text:
+            if type(line) is list:
+                textList.append(''.join(line))
+            else:
+                textList.append(line)
+    except TypeError, e:
+        print(e)
+        print(text)
+        sys.exit()
+    return '\n\n'.join(textList) if doubleSpaced else '\n'.join(textList)
+
 def quit_interpreter(keyEvent):
     """
     A simple interpreter whose only command is for quitting. Useful for debugging.
@@ -836,8 +862,10 @@ class State(object):
 
     def __setstate__(self, state):
         self.__dict__ = state
-        self.init_scene()
-
+        try:
+            self.init_scene()
+        except TypeError:
+            pass
 
     """
         def add_position(self, position):

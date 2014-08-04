@@ -1,10 +1,11 @@
-import episode1
 import sp_rpg_engine
 import logging, logging.handlers
 import universal
 import titleScreen
 import textCommands
 import pygame
+import episode1
+import episode2
 
 universal.set_author('Andrew Russell')
 universal.set_programmer('Andrew Russell')

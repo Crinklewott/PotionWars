@@ -87,9 +87,11 @@ def display_acknowledgments():
     universal.say_title('Acknowledgments')
     universal.get_screen().blit(universal.get_background(), universal.get_world_view().topleft)
     universal.say(format_text([['Code, Story, Concept: Andrew Russell'], 
-        ['Coded in Python using the Pygame engine: pygame.org'],
+        ['Editor: Emily'],
+        ['Beta Testers: Uninventive, Johny741'],
         ['Images:'],
         ['  title screen image: Rak'],
+        ['  Episode 1 titlecard: Lys'],
         #['Sound Effects: Filippo Vicarelli. Downloaded from his website: noiseforfun.com'],
         #['Dungeon step: Click Switch'],
         ['Music: Filippo Vicarelli. Purchased through his website: playonloop.com.'], 
@@ -97,7 +99,7 @@ def display_acknowledgments():
         ['  Title Theme: The Challenge'],
         ['  Episode 1 Titlecard: Bridge over Darkness'],
         ["  Vengador's Theme: Antique Market"],
-        ["  Guard's Theme: War Victimis"],
+        ["  Guard's Theme: War Victims"],
         ['  Avaricum Theme: Spiritual Path'],
         ['  Battle Theme: The Chase'],
         ["  Peaceful Theme(Adventurer's Guild): Jesu"],
@@ -110,6 +112,7 @@ def display_acknowledgments():
         ["  Catalin's Theme: Sadistic Game"],
         ["  Roland's Theme: Risky Plan"],
         ["  Elise's Theme: Land of Peace"],
+        ['Coded in Python using the Pygame engine: pygame.org'],
         ]
         ))
     acknowledge(title_screen, None)

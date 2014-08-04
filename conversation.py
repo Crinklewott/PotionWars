@@ -30,12 +30,17 @@ def converse_with(person, previousModeIn):
     print(conversationPartner.name)
     if person.litany is not None:
         litany = person.litany
-    else:
+    elif person.defaultLitany is not None:
         litany = person.defaultLitany
+    else:
+        litany = emptyLitany
     global previousMode
     previousMode = previousModeIn
     say_title(person.printedName)
     say_node(litany)
+
+emptyLitany = Node(0)
+emptyLitany.quip = '''There is nothing more to be said.'''
 
 def say_node(litanyIndex):
     #This may appear redundant, but it's possible for a node's quip_function to immediately invoke a different node, without going through the player. In that case,

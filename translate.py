@@ -17,6 +17,12 @@ You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+#TODO: This only works when the player is the only character with dynamic clothing.
+#Before the second episode is done, we'll need to implement a way to call liftlower, etc. on
+#other characters.
+
+#TODO: Handle \child, handle \continue
+
 """
 Usage notes:
     In order to use this translation program, you need two things:
@@ -25,20 +31,41 @@ Usage notes:
     you run this script).
 """
 
+
+import string
+import re
+
+class TranslateError(Exception):
+    pass
+
 IMPORTS = ['import universal', 'import textCommands', 'import person', 'import items', 'import pwenemies', 'import dungeonmode', 'import itemspotionwars']
 TAB = '    '
 DEBUG = True
-def translate(fileName, charRoomFile, episodeName, nodeNum, tab=TAB, imports=None):
+def translate(fileName, charRoomFile, episodeName, nodeNum, tab=TAB, imports=None): 
+    envBegin = {r'\begin{node}', r'\begin{childnode}'}
+    envEnd = {r'\end{node}', r'\end{childnode}'}
     with open(fileName, 'r') as transcript:
         tex = transcript.readlines()
-
+        count = 0
+        texLen = len(tex)
+        #We're inserting new strings into tex, so we need to be able to account for the changing length of tex.
+        while count < texLen:
+            tex[count] = replace_underscores(string.strip(tex[count]))
+            if any(envCommand in tex[count] for envCommand in envBegin):
+                tex.insert(count+1, '')
+                texLen += 1
+            if any(envCommand in tex[count] for envCommand in envEnd):
+                tex.insert(count, '')
+                count += 1
+                texLen += 1
+            count += 1
     if imports and not ' '.join(['import', charRoomFile]) in imports:    
-        pythonCode = imports + [' '.join(['import', charRoomFile])]
+        pythonCode = imports + [' '.join(['import', charRoomFile])] 
     elif imports:
         pythonCode = list(imports)
     else:
         pythonCode = ['import', charRoomFile]
-
+    pythonCode.append('\n')
     texIter = iter(tex) 
     sceneCount = 1
     nodeCount = nodeNum
@@ -46,51 +73,378 @@ def translate(fileName, charRoomFile, episodeName, nodeNum, tab=TAB, imports=Non
     try:
         while True:
             scan_to_scene_start(texIter)
-            process_scene_start(pythonCode, texIter)
-            while True:
-                scan_to_node_or_scene_end(texIter)
-                if r'\begin{node}' in line or r'\begin{childnode}' in line:
-                    nodeCount += 1
-                    process_node(pythonCode, texIter, nodeCount)
-                elif r'\begin{closeScene}' in line:
-                    process_scene_end(pythonCode, texIter)
-                    break
+            startSceneCode = []
+            process_scene_start(startSceneCode, texIter, sceneCount, episodeName)
+            process_scene(pythonCode, startSceneCode, texIter, nodeCount, episodeName, sceneCount)
+            pythonCode.extend(startSceneCode)
+            sceneCount += 1
     except StopIteration:
+        pythonCode.append('\n')
+        pythonCode.extend(startSceneCode)
         return pythonCode
 
 
-def scan_to_scene_start(texIter, line):
+def replace_underscores(line):
+    return line.replace(r'\_', '_')
+
+def scan_to_scene_start(texIter):
     line = next(texIter)
-    while r'\begin{openScene}' != line:
+    while r'\begin{openScene}' != string.strip(line):
         line = next(texIter)
 
 
-def process_scene_start(texIter, pythonCode):
-    scan_to_code_block(texIter)
-    pythonCode.append(''.join(['def start_scene_', sceneCount, '_', episodeName, '(', 'loading=False', '):']))
+def process_scene_start(pythonCode, texIter, sceneCount, episodeName):
+    pythonCode.append(''.join(['def start_scene_', str(sceneCount), '_', episodeName, '(', 'loading=False', '):']))
     line = next(texIter)
-    while '\end{openScene}' != line:
+    while '\end{openScene}' != string.strip(line):
         append_to_function(pythonCode, line)
+        line = next(texIter)
 
+
+def process_scene(pythonCode, startSceneCode, texIter, nodeCount, episodeName, sceneCount):
+    """
+    Generates the nodes for the current scene. Note that for reasons of keeping things simple, this function assumes that the scene always begins in townmode. In particular, if the scene begins
+    with the player "talking to herself," then the previousModeIn of conversation.converse_with is townmode.town_mode.
+    """
+    pythonCode.append('\n')
+    start_scene_code = ''.join(['def ', '_'.join(['init', episodeName, str(sceneCount)]), '():'])
+    pythonCode.append(''.join(['def ', '_'.join(['init', episodeName, str(sceneCount)]), '():']))
+    line = next(texIter)
+    lastLineStartScene = ''
+    while True:
+        while not r'\begin{node}' in line and not r'\begin{childnode}' in line and not r'\begin{closeScene}' in line:
+            line = next(texIter)
+        if r'\begin{node}' in line:
+            nodeCount += 1
+            args = get_args(texIter, line, 4)
+            args = [arg.replace(' ', '_') for arg in args][1:]
+            if args[2].lower() == 'self':
+                character = 'universal.state.player'
+                lastLineStartScene = 'conversation.converse_with(universal.state.player, townmode.town_mode)'  
+            else: 
+                character = ''.join(['universal.state.get_character(', args[2], '.person', ')'])
+            process_node(pythonCode, texIter, nodeCount, r'\end{node}', args)
+            append_to_function(startSceneCode, ''.join([character, '.litany = ', 'conversation.allNodes[', str(nodeCount), ']']))
+        elif r'\begin{childnode}' in line:
+            nodeCount += 1
+            args = get_args(texIter, line, 2)
+            args = [arg.replace(' ', '_') for arg in args][1:]
+            process_node(pythonCode, texIter, nodeCount, r'\end{childnode}', args)
+        elif r'\begin{closeScene}' in line:
+            process_scene_end(pythonCode, texIter)
+        line = next(texIter)
+    append_to_function(startSceneCode, lastLineStartScene)
+      
 
 def scan_to_code_block(texIter):
     line = next(texIter)
-    while r'\begin{code}' != line:
+    while r'\begin{code}' != string.strip(line):
         line = next(texIter)
+
 
 def process_code_block(pythonCode, texIter, tab):
     line = next(texIter)
-    while r'\end{code}' != line:
+    origLine = line
+    while not r'\end{code}' in line:
         append_to_function(pythonCode, line, tab)
-
-def scan_to_node_or_scene_end(texIter):
-    line = next(texIter)
-    while not r'\begin{node}' in line and not r'\begin{childnode}' in line and not r'\begin{closeScene}' in line:
         line = next(texIter)
 
-def process_node(pythonCode, texIter, nodeCount):        
+def process_node(pythonCode, texIter, nodeCount, endCommand, args, tab=TAB):
+    line = next(texIter)
+    #First argument is the "node" argument. We don't need that.
+    append_to_function(pythonCode, ' '.join([args[0],'=', 'Node(', str(nodeCount), ')\n']), tab) 
+    append_to_function(pythonCode, ''.join(['def ', args[0], '_quip_function():']), tab)
+    tabs = 2*tab
+    text = []
+    #&&&
+    #TODO: Recognize \child and do something with it.
+    prevLineEmpty = False
+    while endCommand != line:
+        if r'\begin{code}' in line:
+            process_code_block(pythonCode, texIter, 2*tab)
+        else:
+            if line:
+                text.append(line)
+                prevLineEmpty = False
+            elif prevLineEmpty:
+                pass
+            else:
+                text.append(line)
+                prevLineEmpty = True
+        try:
+            line = next(texIter)
+        except StopIteration:
+            raise TranslateError(' '.join(['End of file before end of:', args[0]]))
+    code = ' '.join([args[0] + '.quip', '=', 'format_text_no_space(['])
+    text = combine_paragraphs(text)
+    translate_commands(text, tab, args[0])
+    codeFound = False
+    for line in text:
+        splitLine = line.split(' ')
+        if 'code' == splitLine[0]:
+            codeFound = True
+            code = ''.join([code, ' '.join(splitLine[1:]), '\n'])
+        else:
+            code = ''.join([code, "['''", line, "'''],\n"])
+    if not codeFound:
+        code = ''.join([code, '])'])
+    append_to_function(pythonCode, code, tabs)
+    append_to_function(pythonCode, ''.join(['\n', tab, args[0], '.quip_function = ', args[0], '_quip_function']))
 
 
+#Note: This isn't sufficient for other characters. This will become important when other people can join the group, and their clothing can be modified. However, those we'll have to handle differently.
+#We can't do a simple map look-up because we don't know what the name of the character is. We'll need to do something with regular expressions, probably similar to what we do below with \bummarks.
+#Of course, doing that for even a fraction of the commands below (we won't have to worry about the hisher, HisHer, etc... at least not until we have more than one player-defined protagonist) will be
+#tedious. We'll need to find a way to do it more generally.
+inlineCommands = {
+    r'\hisher{}':"''', person.hisher(), '''",  
+    r'\HisHer{}':"''', person.HisHer(), '''",  
+    r'\himher{}':"''', person.himher(), '''",  
+    r'\HimHer{}':"''', person.HimHer(), '''",  
+    r'\heshe{}':"''', person.heshe(), '''",  
+    r'\HeShe{}':"''', person.HeShe(), '''",  
+    r'\heshell{}':"''', person.heshell(), '''",  
+    r'\HeShell{}':"''', person.HeShell(), '''",  
+    r'\himselfherself{}':"''', person.himselfherself(), '''",  
+    r'\HimselfHerself{}':"''', person.HimselfHerself(), '''",  
+    r'\mistermiss{}':"''', person.mistermiss(), '''",  
+    r'\MisterMiss{}':"''', person.MisterMiss(), '''",  
+    r'\manwoman{}':"''', person.manwoman(), '''",  
+    r'\ManWoman{}':"''', person.ManWoman(), '''",  
+    r'\hishers{}':"''', person.hishers(), '''",  
+    r'\HisHers{}':"''', person.HisHers(), '''",  
+    r'\boygirl{}':"''', person.boygirl(), '''",  
+    r'\BoyGirl{}':"''', person.BoyGirl(), '''",  
+    r'\manlady{}':"''', person.manlady(), '''",  
+    r'\ManLady{}':"''', person.ManLady(), '''",  
+    r'\kingqueen{}':"''', person.kingqueen(), '''",  
+    r'\KingQueen{}':"''', person.KingQueen(), '''",  
+    r'\lordlady{}':"''', person.lordlady(), '''",  
+    r'\LordLady{}':"''', person.LordLady(), '''",  
+    r'\brothersister{}':"''', person.brothersister(), '''",  
+    r'\BrotherSister{}':"''', person.BrotherSister(), '''",  
+    r'\menwomen{}':"''', person.menwomen(), '''",  
+    r'\MenWomen{}':"''', person.MenWomen(), '''",  
+    r'\sirmaam{}':"''', person.sirmaam(), '''",  
+    r'\SirMaam{}':"''', person.SirMaam(), '''",  
+    r'\bastardbitch{}':"''', person.bastardbitch(), '''",  
+    r'\BastardBitch{}':"''', person.BastardBitch(), '''",  
+    r'\weapon{}':"''', universal.state.player.weapon().name, '''",  
+    r'\name{}':"''', universal.state.player.name, '''",  
+    r'\names{}':"''', universal.state.player.name, 's', '''",
+    r'\weapon{}':"''', universal.state.player.weapon(), '''",
+    r'\player{}':"universal.state.player",
+    r'\name{}':"''', universal.state.player.name, '''",
+    r'\names{}': "''', universal.state.player.name, ''''s''', '''",
+    r'\cladbottom{\pajama}': "''', universal.state.player.clad_bottom(pajama=True), '''",
+    r'\cladbottom{\trousers}': "''', universal.state.player.clad_bottom(), '''",
+    r'\muscleadj{}': "''', universal.state.player.muscle_adj(), '''",
+    r'\bumadj{}': "''', universal.state.player.bum_adj(), '''",
+    r'\liftlower{}': "''', person.liftlower(universal.state.player.lower_clothing()), '''",
+    r'\lowerlift{}': "''', person.lowerlift(universal.state.player.lower_clothing()), '''",
+    r'\liftslowers{}': "''', person.liftlower(universal.state.player.lower_clothing()), 's', '''",
+    r'\lowerslifts{}': "''', person.lowerslifts(universal.state.player.lower_clothing()), 's', '''",
+    r'\liftlower{underwear}': "''', person.liftlower(universal.state.player.underwear()), '''",
+    r'\lowerlift{underwear}': "''', person.lowerlift(universal.state.player.underwear()), '''",
+    r'\liftslowers{underwear}': "''', person.liftlower(universal.state.player.underwear()), 's', '''",
+    r'\lowerslifts{underwear}': "''', person.lowerslifts(universal.state.player.underwear()), 's', '''",
+    r'\liftlower{pajamas}': "''', person.liftlower(universal.state.player.pajama_bottom()), '''",
+    r'\lowerlift{pajamas}': "''', person.lowerlift(universal.state.player.pajama_bottom()), '''",
+    r'\liftslowers{pajamas}': "''', person.liftlower(universal.state.player.pajama_bottom()), 's', '''",
+    r'\lowerslifts{pajamas}': "''', person.lowerslifts(universal.state.player.pajama_bottom()), 's', '''",
+    r'\pajamabottoms{}': "''', universal.state.player.pajama_bottom().name, '''",
+    r'\stealth{}': "universal.state.player.stealth()",
+    r'\warfare{}': "universal.state.player.warfare()",
+    r'\magic{}': "universal.state.player.magic()",
+    r'\grapple{}': "universal.state.player.grapple()",
+    r'\resilience{}': "universal.state.player.resilience()",
+    } 
+
+def translate_commands(text, tab, nodeName):
+    #Bleagh. This is an ugly function.
+    #TODO: childif statements
+    count = 0
+    for count in range(len(text)):
+        for key in inlineCommands:
+            text[count] = text[count].replace(key, inlineCommands[key])
+        #\cond{test}{text if true}{text if false}
+        try:
+            nextCond = text[count].index(r'\condelif')
+        except ValueError:
+            pass
+        else:
+            replace_condelif(text, count, tab, nodeName, nextCond)
+        try:
+            nextCond = text[count].index(r'\cond')
+        except ValueError:
+            pass
+        else:
+            replace_cond(text, count, tab, nodeName, nextCond)
+        try:
+            bummarks = text[count].index(r'\bummarks')
+        except ValueError:
+            pass
+        else:
+            args = get_args(iter(text[count:]), text[count][bummarks:], 2)
+            text[count] = ''.join(["'''])", '\n', tab])
+            if args[0] == 'player':
+                text[count] = ''.join([text[count], 
+                    'universal.state.player.marks.append(', "'''", args[1], "'''"])
+            else:
+                text[count] = ''.join([text[count],
+                    'universal.state.get_character(', args[0], ')', '.marks.append(', "'''", args[1], "''')"])
+            text[count] = ''.join([text[count], '\n', tab, 'format_text_no_space([', nodeName, ".quip, ['''"])
+        try:
+            randIndex = text[count].index(r'\random')
+        except ValueError:
+            pass
+        else:
+            randomRE = re.compile(r'\\random{\d+}')
+            lineSplit = re.split(randomRE, text[count])
+            args = get_args([text[count][randIndex:]], text[count][randIndex:], 1)
+            text[count] = ''.join([lineSplit[0], ' random.randint(', args[0], ') ', lineSplit[1]])
+        try:
+            childIfIndex = text[count].index(r'\childif')
+        except ValueError:
+            pass
+        else:
+            args = get_args(iter(text[count:]), text[count][childIfIndex:], 2) 
+            args[1] = string.replace(args[1], ' ', '_')
+            text[count] = ''.join(['code ',
+                "])\n", 2*tab,
+                nodeName, '.quip = ""\n', 2*tab,
+                'if ', args[0], ':\n',3*tab,
+                    nodeName, '.children = ', args[1], '.children\n', 3*tab,
+                    'conversation.say_node(', args[1], ')\n', 3*tab])
+        try:
+            childElifIndex = text[count].index(r'\childelif')
+        except ValueError:
+            pass
+        else:
+            args = get_args(iter(text[count:]), text[count][childElifIndex:], 2) 
+            args[1] = string.replace(args[1], ' ', '_')
+            text[count] = ''.join(['code ', 2*tab,
+                'elif ', args[0], ':\n',3*tab,
+                    nodeName, '.children = ', args[1], '.children\n', 3*tab,
+                    'conversation.say_node(', args[1], ')\n'])
+                    #Necessary because we are automatically appending '''] to the end of everything.
+        count += 1
+
+#This and replace_condelif can almost but not quite be abstracted, because of the difference in constructing the if statement. -_-
+def replace_cond(text, count, tab, nodeName, nextCond):
+    #\cond{test}{text if true}{text if false}
+    while nextCond >= 0:
+        args = get_args(iter(text), text[count], 3)
+        endCondIndex, splitLine = split_around_conditional(text[count], r'\cond', 3)
+        text[count] = ''.join([splitLine[0], "''']])", '\n', 
+            2*tab, 'if ', args[0], ':\n', 
+                3*tab, nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''", args[1], "'''", ']])', '\n', 
+            2*tab, 'else:\n', 
+                3*tab, nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''" + args[2], "''']])\n", 
+            2*tab, nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''" + splitLine[1]])
+        nextCond = text[count][endCondIndex:].find(r'\cond')
+
+def replace_condelif(text, count, tab, nodeName, nextCond):
+    #\condelif{test}{text if true}{test2}{text if test false, test2 true}{text if test false and test2 false}
+    cond = r'\condelif'
+    while nextCond >= 0:
+        args = get_args(iter(text), text[count], 5)
+        endCondIndex, splitLine = split_around_conditional(text[count], cond, 5)
+        text[count] = ''.join([splitLine[0], "''']])", '\n', 2*tab, 
+            'if ', args[0], ':\n', 3*tab, 
+                nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''", args[1], "'''", ']])', '\n', 2*tab, 
+            'elif ', args[2], ':\n',
+                3*tab, nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''", args[3], "'''", ']])', '\n', 2*tab, 
+            'else:\n', 
+                3*tab, nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''" + args[4], "''']])\n", 2*tab,
+            nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''" + splitLine[1]])
+        nextCond = text[count][endCondIndex:].find(cond)
+
+
+def split_around_conditional(line, cond, numArgsToFind):
+    """
+    Given a line, returns a tuple containing the index of the last bracket of the last argument of the condition, and the text before and after the condition statement.
+    This function assumes that the argument cond is a substring of line.
+    """
+    #This is also ugly. Man, language translation is an ugly business. Language designers are pretty impressive people. 
+    condIndex = line.index(cond)
+    splitList = [line[:condIndex]]
+    bracesCount = 0
+    numArgs = 0
+    endCondIndex = 0
+    #Iterate through each character, tracking number of braces we've seen. Every time we hit zero, we've reached the end of a cond argument.
+    #Once we've hit the last cond argument, we grab everything after it.
+    for char in line[condIndex:]:
+        if char == '{':
+            bracesCount += 1
+        elif char == '}':
+            bracesCount -= 1
+            if not bracesCount:
+                numArgs += 1
+                if numArgs == numArgsToFind:
+                    break
+        endCondIndex += 1      
+    splitList.append(line[condIndex+endCondIndex+1:])
+    return (endCondIndex, splitList)
+
+
+    
+
+def combine_paragraphs(text):
+    combinedPars = []
+    textIter = iter(text)
+    paragraph = ''
+    line = next(textIter)
+    while True:
+        while line:
+            paragraph = ' '.join([paragraph, line]) if paragraph else line
+            try:
+                line = next(textIter)
+            except StopIteration:
+                break
+        combinedPars.append(paragraph)
+        paragraph = ''
+        try:
+            line = next(textIter)
+        except StopIteration:
+            return combinedPars
+    
+
+
+
+
+
+
+def get_args(texIter, line, numArgs):
+    args = []
+    origLine = line
+    while len(args) < numArgs:
+        while not '{' in line:
+            try:
+                line = next(texIter)
+            except StopIteration:
+                raise TranslateError('Not enough arguments for: ' + origLine + '.')
+        startBraceIndex = line.index('{')
+        if '}' in line:
+            endBraceIndex = line.index('}')
+            args.append(line[startBraceIndex+1:endBraceIndex])
+        else:
+            args.append(line[startBraceIndex+1:])
+            while not '}' in line:
+                args[-1] = ''.join([args[-1], line])
+                try:
+                    line = next(texIter)
+                except StopIteration:
+                    raise TranslateError('End brace for argument of: ' + origLine + ' not found.')
+            endBraceIndex = line.index('}')
+            args[-1] = ''.join([args[-1], line[:endBraceIndex]])
+        nextArg = line[endBraceIndex+1:]
+        line = nextArg if nextArg else next(texIter)
+    return args
+        
+
+def process_scene_end(pythonCode, texIter):
+    pass
 
 
 def append_to_function(code, newLine, tab=TAB):
@@ -100,8 +454,9 @@ def append_to_function(code, newLine, tab=TAB):
 
 if DEBUG:
     import os
-    pythonCode = translate(os.path.join('transcripts', 'episode2.tex'), 'episode2CharRooms.py', 'episode_2', 320, imports=IMPORTS)
-    print(pythonCode)
+    pythonCode = translate(os.path.join('transcripts', 'episode2.tex'), 'episode2CharRooms', 'episode_2', 320, imports=IMPORTS)
+    with open('episode2.py', 'w') as episode2:
+        episode2.write('\n'.join(pythonCode))
 
 
     
