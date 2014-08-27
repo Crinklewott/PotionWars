@@ -75,9 +75,17 @@ def begin_game(episode):
     while 1:
         #screen.blit(commandSurface, commandView.topleft)
         #pygame.draw.rect(commandSurface, LIGHT_GREY, commandView, 5)
+        #Technically, this for loop is silly now, because I'm only allowing one event in
+        #queue at a time. (Search for CLEAR) 
         for event in pygame.event.get():
             if event.type == KEYUP:
-                universal.get_command_interpreter()(event)
+                if event.key == K_LSUPER or event.key == K_RSUPER: 
+                    pygame.display.iconify()
+                else:
+                    #CLEAR
+                    #This will have to be changed if I ever implement something that requires rapid key combinations.
+                    pygame.event.clear()
+                    universal.get_command_interpreter()(event)
             elif event.type == QUIT:
                 music.close_music_files()
                 import os

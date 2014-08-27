@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+#This code is rank shit. I really really need to create a proper AST and then do transformations on that AST. But I'm a lazy bum and don't want to work on that right now.
+
 #TODO: This only works when the player is the only character with dynamic clothing.
 #Before the second episode is done, we'll need to implement a way to call liftlower, etc. on
 #other characters.
@@ -38,7 +40,7 @@ import re
 class TranslateError(Exception):
     pass
 
-IMPORTS = ['import universal', 'import textCommands', 'import person', 'import items', 'import pwenemies', 'import dungeonmode', 'import itemspotionwars']
+IMPORTS = ['import universal', 'import textCommands', 'import person', 'import items', 'import pwenemies', 'import dungeonmode', 'import itemspotionwars', 'import random', 'import conversation']
 TAB = '    '
 DEBUG = True
 def translate(fileName, charRoomFile, episodeName, nodeNum, tab=TAB, imports=None): 
@@ -59,8 +61,8 @@ def translate(fileName, charRoomFile, episodeName, nodeNum, tab=TAB, imports=Non
                 count += 1
                 texLen += 1
             count += 1
-    if imports and not ' '.join(['import', charRoomFile]) in imports:    
-        pythonCode = imports + [' '.join(['import', charRoomFile])] 
+    if imports and not ' '.join(['from', charRoomFile, 'import *']) in imports:    
+        pythonCode = imports + [' '.join(['from', charRoomFile, 'import *'])] 
     elif imports:
         pythonCode = list(imports)
     else:
@@ -152,12 +154,11 @@ def process_code_block(pythonCode, texIter, tab):
 def process_node(pythonCode, texIter, nodeCount, endCommand, args, tab=TAB):
     line = next(texIter)
     #First argument is the "node" argument. We don't need that.
-    append_to_function(pythonCode, ' '.join([args[0],'=', 'Node(', str(nodeCount), ')\n']), tab) 
+    append_to_function(pythonCode, ' '.join([args[0],'=', 'conversation.Node(', str(nodeCount), ')\n']), tab) 
     append_to_function(pythonCode, ''.join(['def ', args[0], '_quip_function():']), tab)
     tabs = 2*tab
     text = []
     #&&&
-    #TODO: Recognize \child and do something with it.
     prevLineEmpty = False
     while endCommand != line:
         if r'\begin{code}' in line:
@@ -175,19 +176,22 @@ def process_node(pythonCode, texIter, nodeCount, endCommand, args, tab=TAB):
             line = next(texIter)
         except StopIteration:
             raise TranslateError(' '.join(['End of file before end of:', args[0]]))
-    code = ' '.join([args[0] + '.quip', '=', 'format_text_no_space(['])
+    code = ' '.join([args[0] + '.quip', '=', 'universal.format_text_no_space(['])
     text = combine_paragraphs(text)
     translate_commands(text, tab, args[0])
     codeFound = False
     for line in text:
         splitLine = line.split(' ')
         if 'code' == splitLine[0]:
+            if not codeFound:
+                #Need to delete the last linebreak and comma.
+                code = ''.join([code[:-2], '])\n'])
             codeFound = True
             code = ''.join([code, ' '.join(splitLine[1:]), '\n'])
         else:
             code = ''.join([code, "['''", line, "'''],\n"])
     if not codeFound:
-        code = ''.join([code, '])'])
+        code = ''.join([code[:-2], '])\n'])
     append_to_function(pythonCode, code, tabs)
     append_to_function(pythonCode, ''.join(['\n', tab, args[0], '.quip_function = ', args[0], '_quip_function']))
 
@@ -258,11 +262,11 @@ inlineCommands = {
     r'\magic{}': "universal.state.player.magic()",
     r'\grapple{}': "universal.state.player.grapple()",
     r'\resilience{}': "universal.state.player.resilience()",
+    r'\keywords{}': "universal.state.player.keywords"
     } 
 
 def translate_commands(text, tab, nodeName):
     #Bleagh. This is an ugly function.
-    #TODO: childif statements
     count = 0
     for count in range(len(text)):
         for key in inlineCommands:
@@ -288,12 +292,13 @@ def translate_commands(text, tab, nodeName):
             args = get_args(iter(text[count:]), text[count][bummarks:], 2)
             text[count] = ''.join(["'''])", '\n', tab])
             if args[0] == 'player':
-                text[count] = ''.join([text[count], 
-                    'universal.state.player.marks.append(', "'''", args[1], "'''"])
+                text[count] = ''.join(['code ', '\n', 2*tab,
+                    "universal.state.player.marks.append(''.join(['''", args[1], "'''])", ")"])
             else:
-                text[count] = ''.join([text[count],
-                    'universal.state.get_character(', args[0], ')', '.marks.append(', "'''", args[1], "''')"])
-            text[count] = ''.join([text[count], '\n', tab, 'format_text_no_space([', nodeName, ".quip, ['''"])
+                text[count] = ''.join(['code ', '\n', 2*tab,
+                    'universal.state.get_character(', "''.join([", args[0], "])",  ')', '.marks.append(', "'''", args[1], "''')"])
+            #This forces bummarks to appear after all node text.
+            #text[count] = ''.join([text[count], '\n', tab, 'universal.format_text_no_space([', nodeName, ".quip, ['''"])
         try:
             randIndex = text[count].index(r'\random')
         except ValueError:
@@ -310,8 +315,7 @@ def translate_commands(text, tab, nodeName):
         else:
             args = get_args(iter(text[count:]), text[count][childIfIndex:], 2) 
             args[1] = string.replace(args[1], ' ', '_')
-            text[count] = ''.join(['code ',
-                "])\n", 2*tab,
+            text[count] = ''.join(['code ',2*tab,
                 nodeName, '.quip = ""\n', 2*tab,
                 'if ', args[0], ':\n',3*tab,
                     nodeName, '.children = ', args[1], '.children\n', 3*tab,
@@ -323,11 +327,34 @@ def translate_commands(text, tab, nodeName):
         else:
             args = get_args(iter(text[count:]), text[count][childElifIndex:], 2) 
             args[1] = string.replace(args[1], ' ', '_')
+            #The word code is necessary because we are automatically appending '''] to the end of everything, and we don't want to do that for code. Yes, this code is rapidly turning into a massive
+            #pile of hacks. Shut up!
             text[count] = ''.join(['code ', 2*tab,
                 'elif ', args[0], ':\n',3*tab,
                     nodeName, '.children = ', args[1], '.children\n', 3*tab,
-                    'conversation.say_node(', args[1], ')\n'])
-                    #Necessary because we are automatically appending '''] to the end of everything.
+                    'conversation.say_node(', args[1], '.index)\n'])
+        try:
+            continueIndex = text[count].index(r'\continue')
+        except ValueError:
+            pass
+        else:
+            args = get_args(iter(text[count:]), text[count][continueIndex], 2)
+            args[1] = string.replace(args[1], ' ', '_')
+            text[count] = ''.join(['code ', 2*tab, 
+                nodeName, '.children = ', args[1], '.children\n', 2*tab,
+                'conversation.say_node(', args[1], '.index)\n'])
+        try:
+            childIndex = text[count].index(r'\child')
+        except ValueError:
+            pass
+        else:
+            comment, responseName = get_args(iter(text[count:]), text[count][childIndex], 2)
+            comment = ''.join(["'''", comment, "'''"])
+            responseName = string.replace(responseName, ' ', '_')
+            text[count] = ''.join(['code ', 2*tab,
+                nodeName, '.add_player_comment(', comment, ')\n', 2*tab,
+                nodeName, '.add_child(', responseName, ')'])
+
         count += 1
 
 #This and replace_condelif can almost but not quite be abstracted, because of the difference in constructing the if statement. -_-
@@ -338,10 +365,10 @@ def replace_cond(text, count, tab, nodeName, nextCond):
         endCondIndex, splitLine = split_around_conditional(text[count], r'\cond', 3)
         text[count] = ''.join([splitLine[0], "''']])", '\n', 
             2*tab, 'if ', args[0], ':\n', 
-                3*tab, nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''", args[1], "'''", ']])', '\n', 
+                3*tab, nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''", args[1], "'''", ']])', '\n', 
             2*tab, 'else:\n', 
-                3*tab, nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''" + args[2], "''']])\n", 
-            2*tab, nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''" + splitLine[1]])
+                3*tab, nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''" + args[2], "''']])\n", 
+            2*tab, nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''" + splitLine[1]])
         nextCond = text[count][endCondIndex:].find(r'\cond')
 
 def replace_condelif(text, count, tab, nodeName, nextCond):
@@ -352,12 +379,12 @@ def replace_condelif(text, count, tab, nodeName, nextCond):
         endCondIndex, splitLine = split_around_conditional(text[count], cond, 5)
         text[count] = ''.join([splitLine[0], "''']])", '\n', 2*tab, 
             'if ', args[0], ':\n', 3*tab, 
-                nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''", args[1], "'''", ']])', '\n', 2*tab, 
+                nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''", args[1], "'''", ']])', '\n', 2*tab, 
             'elif ', args[2], ':\n',
-                3*tab, nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''", args[3], "'''", ']])', '\n', 2*tab, 
+                3*tab, nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''", args[3], "'''", ']])', '\n', 2*tab, 
             'else:\n', 
-                3*tab, nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''" + args[4], "''']])\n", 2*tab,
-            nodeName, '.quip = ', 'format_text_no_space([[', nodeName, '.quip,', "'''" + splitLine[1]])
+                3*tab, nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''" + args[4], "''']])\n", 2*tab,
+            nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''" + splitLine[1]])
         nextCond = text[count][endCondIndex:].find(cond)
 
 
@@ -439,7 +466,13 @@ def get_args(texIter, line, numArgs):
             endBraceIndex = line.index('}')
             args[-1] = ''.join([args[-1], line[:endBraceIndex]])
         nextArg = line[endBraceIndex+1:]
-        line = nextArg if nextArg else next(texIter)
+        if nextArg:
+            line = nextArg
+        else:
+            try:
+                line = next(texIter)
+            except StopIteration:
+                break
     return args
         
 

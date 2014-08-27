@@ -1,5 +1,12 @@
 Thank you for downloading the source-code for Pandemonium Cycle: The Potion Wars. I hope you enjoy it!
 
+
+IMPORTANT NOTE: The dill module is NOT written by me. Pyinstaller was not playing nice with a certain part of the dill code that I didn't need, so I had to go in and
+comment out that code. Therefore, in order to make sure that the game runs when turned into an executable, I had to include the dill python code in with the rest of the 
+code. I've included my slighytly modified version in order to allow others to turn my engine into an executable without having to deal with any weird-ass errors. For the 
+license, and readme for dill, see the folder dillInfo.
+
+
 ----------------------------------------------Looking at the code-----------------------------------------------------------------------------
 This source code is the result of about six months of crazy coding by a single individual (me). As such, it's more than a little bit messy. PotionWars.py contains the 
 text for the first episode, so that would probably be the best place to start looking if you want to tinker with the source code. I've tried to make the filenames and

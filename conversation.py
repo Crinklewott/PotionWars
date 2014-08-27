@@ -17,7 +17,6 @@ along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 import universal
 from universal import *
-import music
 
 conversationPartner = None
 previousConversation = None
@@ -39,14 +38,23 @@ def converse_with(person, previousModeIn):
     say_title(person.printedName)
     say_node(litany)
 
-emptyLitany = Node(0)
-emptyLitany.quip = '''There is nothing more to be said.'''
 
 def say_node(litanyIndex):
     #This may appear redundant, but it's possible for a node's quip_function to immediately invoke a different node, without going through the player. In that case,
     #we need to make sure that the current litany of the conversationPartner is properly updated.
+    global previousMode
     conversationPartner.litany = litanyIndex
-    litany = allNodes[litanyIndex]
+    try:
+        litany = allNodes[litanyIndex]
+    except KeyError:
+        try:
+            litany = allNodes[litanyIndex.index]
+        except KeyError:
+            say("There is nothing to be said.")
+            acknowledge(previousMode, ())
+            return
+        else:
+            conversationPartner.litany = litanyIndex.index
     function = None
     args = None
     executeImmediately = False
@@ -85,7 +93,7 @@ def say_node(litanyIndex):
         universal.say('\p')
         try:
             universal.say('\n'.join([str(i) + '. ' + comment for (i, comment) in zip([i for i in range(1, len(playerComments)+1)], playerComments)]), justification=0)
-        except TypeError, e:
+        except TypeError:
             raise TypeError
         set_commands(['(#)Select a number.'])
         set_command_interpreter(converse_with_interpreter)
@@ -151,6 +159,7 @@ class Node(universal.RPGObject):
         self.comment = None
         self.index = index
         self.music = None
+        assert not index in allNodes, "Index %d is already taken." % index 
         allNodes[index] = self
 
     def add_child(self, child):
@@ -178,4 +187,6 @@ class Node(universal.RPGObject):
                 self.music = [self.music, song]
 
 
+emptyLitany = Node(0)
+emptyLitany.quip = '''There is nothing more to be said.'''
 

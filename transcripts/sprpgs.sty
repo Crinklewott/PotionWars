@@ -113,17 +113,16 @@
 %Fifth Argument: Result if both if-else and elif-check are false
 \newcommand{\condelif}[5]{\ifx\truth\true \textcolor{blue}{#2}\else \ifx\truth\falsetrue \textcolor{cyan}{#4}\else\textcolor{magenta}{#5} \fi \fi}
 
-%First argument is the location at which the node is taking place. Second argument is the person you are speaking to. Third argument is the name of the node.
+%Second argument is the location at which the node is taking place. Third argument is the person you are speaking to. First argument is the name of the node.
 %The name of the node is used as the label for this particular node.
 \newenvironment{node}[3]
 {
     \section*{\arabic{Nodecount}}
     \addtocounter{Nodecount}{1}
-    \emph{Location: #1}
+    \emph{Location: #2}
 
-    \emph{Speaking With: #2}
-    \newcommand{\nodeArg}{#3}
-    \label{#3}
+    \emph{Speaking With: #3}
+    \label{#1}
 }
 {
 }
@@ -143,6 +142,9 @@
 \newcommand{\child}[2]{\hyperref[#2]{#1}}
 
 \newcommand{\childif}[2]{\child{#1}{#2}}
+%Identical to childif as far as LaTeX is concerned. However, in Python, this command tells us to use elif #1: #2 rather than if #1: #2, allowing us to define checks for the nodes that aren't necessarily
+%mutually exclusive.
+\newcommand{\childelif}[2]{\child{#1}{#2}}
 
 \newcommand{\continue}[2]{\child{#1}{#2}}
 
@@ -152,7 +154,9 @@
 \newenvironment{code}{\comment}{\endcomment}
 
 %Doesn't actually do anything, except mark that we're starting a scene.
-\newenvironment{openScene}{\chapter*{Episode \episode{} Scene \arabic{Scenecount}}}{}
+\newenvironment{openScene}{\chapter*{Episode \episode{} Scene \arabic{Scenecount}}
+\comment}
+{\endcomment}
 
 \newenvironment{closeScene}{}{}
 
@@ -219,6 +223,8 @@
 
 \newcommand{\player}{\name{}}
 
+\newcommand{\keywords}{keywords}
+
 \newcommand{\bumadj}{\textcolor{blue}{plump}}
 
 \newcommand{\muscleadj}{\textcolor{blue}{firm}}
@@ -234,7 +240,8 @@
 \newcommand{\pajamabottoms}{\textcolor{blue}{pink pajama pants}}
 
 %Doesn't actually do anything. Just indicates that we should add the first argument to the list of marks for the player
-\newcommand{\bummarks}[1]{}
+%Note: In order for this command to be translated properly, it must appear after ALL NODE TEXT. ONLY OTHER SPRPG COMMANDS MAY APPEAR AFTER THIS.
+\newcommand{\bummarks}[2]{}
 
 \newcommand{\lowerslifts}[1]{\textcolor{blue}{lowers}}
 

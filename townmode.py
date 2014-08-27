@@ -27,23 +27,27 @@ def town_mode(sayDescription=True):
     universal.set_command_interpreter(town_mode_interpreter)
     music.play_music(room.bgMusic)
 
-def rest_mode(bedroom, sayDescription=True):
+def rest_mode(bedroomIn=None, sayDescription=True):
+    if bedroomIn is None:
+        bedroomIn = universal.state.bedroom
     town_mode(sayDescription)
-    universal.set_commands(['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', '(C)lean', '(R)oom Actions'] if bedroom.boarding else 
-            ['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', '(C)lean'])
+    if bedroomIn:
+        universal.set_commands(['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', '(R)oom Actions'] if bedroomIn.boarding else 
+                ['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', '(C)lean'])
     universal.set_command_interpreter(bedroom_interpreter)
 
+
+#TODO: Fix problems with (S)tore Item
 def bedroom_actions():
-    universal.set_commands(['(C)lean', '(R)est', '(B)raid Hair', '(S)tore Item'])
+    universal.set_commands(['(C)lean', '(R)est', '(B)raid Hair', '<==Back']) #'(S)tore Item', '<==Back'])
     universal.set_command_interpreter(bedroom_actions_interpreter)
 
 def set_bedroom(bedroomIn):
-    global bedroom
-    bedroom = bedroomIn
+    universal.state.bedroom = bedroomIn
 
 def bedroom_interpreter(keyEvent):
-    global bedroom
     global previousMode
+    bedroom = universal.state.bedroom
     previousMode = rest_mode
     if keyEvent.key == K_r and bedroom.boarding:
         bedroom_actions()
@@ -51,27 +55,31 @@ def bedroom_interpreter(keyEvent):
         town_mode_interpreter(keyEvent, rest_mode)
 
 def bedroom_actions_interpreter(keyEvent):
+    bedroom = universal.state.bedroom
     if keyEvent.key == K_r:
         bedroom.sleep()
     elif keyEvent.key == K_b:
         style_character()
     elif keyEvent.key == K_c:
         bedroom.clean()
-    elif keyEvent.key == k_s:
+    elif keyEvent.key == K_s and False:
         bedroom.store_items()
+    elif keyEvent.key == K_BACKSPACE:
+        rest_mode(bedroom)
 
 def style_character():
         universal.say_title('Whose hair should be styled?')
-        universal.say(universal.numbered_list(universal.state.party.members), justification=0)
+        universal.say(universal.numbered_list([member.printedName for member in universal.state.party.members]), justification=0)
         set_command_interpreter(universal.SELECT_NUMBER_BACK_COMMAND)
         set_command_interpreter(style_character_interpreter)
 chosenPerson = None
 def style_character_interpreter(keyEvent):
+    bedroom = universal.state.bedroom
     try:
         num = int(universal.key_name(keyEvent)) - 1
     except ValueError:
         if keyEvent.key == K_BACKSPACE:
-            rest_mode()
+            rest_mode(bedroom)
     else:
         global chosenPerson
         try:
@@ -82,7 +90,7 @@ def style_character_interpreter(keyEvent):
             say_title(format_line(['How should', chosenPerson.name + "'s", '''hair be styled?''']))
             if chosenPerson.hairLength == 'short':
                 hairStyles = person.SHORT_HAIR_STYLE
-            universal.say(universal.numbered_list(chosenPerson.hair_styles()), justification=0)
+            universal.say('\n'.join(universal.numbered_list(chosenPerson.hair_styles())), justification=0)
             set_command_interpreter(style_hair_interpreter)
             set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
 
@@ -91,7 +99,8 @@ def style_hair_interpreter(keyEvent):
         num = int(universal.key_name(keyEvent)) - 1
     except ValueError:
         if keyEvent.key == K_BACKSPACE:
-            rest_mode()
+            bedroom = universal.state.bedroom
+            rest_mode(bedroom)
     else:
         global chosenPerson
         try:
@@ -99,8 +108,8 @@ def style_hair_interpreter(keyEvent):
         except IndexError:
             return
         else:
-            universal.say(format_line([chosenPerson.name, format_line(['''frees''', hisher(chosenPerson), '''hair.''']) if chosenPerson.hair_styles()[num] == 'down' else
-                format_line(['''pulls''', hisher(chosenPerson), '''hair into''', '''some cute pigtails''' if chosenPerson.hair_styles()[num] == 'pigtails' else 
+            universal.say(format_line([chosenPerson.name, format_line(['''frees''', person.hisher(chosenPerson), '''hair.''']) if chosenPerson.hair_styles()[num] == 'down' else
+                format_line(['''pulls''', person.hisher(chosenPerson), '''hair into''', '''some cute pigtails''' if chosenPerson.hair_styles()[num] == 'pigtails' else 
                     format_line(['''a''', chosenPerson.hair_styles()[num]]) + "."])]), justification=0)
 
 
@@ -239,7 +248,7 @@ class Bedroom(Room):
     def mode(self, sayDescription=True):
         return rest_mode(self, sayDescription)
 
-    def store_items():
+    def store_items(self):
         universal.say_title('Stored Items')
         universal.say(', '.join(universal.numbered_list(self.items)))
         set_commands(['(#)View Item', '(Enter) View Inventory', '<==Back'])
@@ -261,7 +270,7 @@ class Bedroom(Room):
         print('boarding:')
         print(self.boarding)
         if self.boarding:
-            rest_mode()
+            rest_mode(self)
         else:
             town_mode()
 
@@ -283,19 +292,20 @@ class Bedroom(Room):
         #rest.
         print('called sleep')
         try:
-            import PotionWars
+            import episode1
         except ImportError, e:
             print('-------------------ImportError!--------------------')
             print(e)
             self.clean_check()
         else:
             print('checking episode!')
-            if person.get_PC().currentEpisode.name == PotionWars.episode1.name:
+            #Horrible, horrible hack. Must figure out a better way of implementing this kind of thing.
+            if universal.state.player.currentEpisode == "Tension":
                 if 'taking_Carrie_home' in person.get_PC().keywords:
-                    PotionWars.ep1_carrie_sex()
+                    episode1.ep1_carrie_sex()
                 else:
                     print('calling ep1_catalin')
-                    PotionWars.ep1_catalin()
+                    episode1.ep1_catalin()
             else:
                 self.clean_check()
                 universal.say(universal.format_text([[person.get_PC().name, '''plops down in''', person.hisher(), '''nice bed, and sleeps the night away.''']]), justification=0)
@@ -386,7 +396,7 @@ def display_inventory_item_interpreter(keyEvent):
 
 
 def store_items_interpreter(keyEvent):
-    global chosenItemIndex
+    global chosenItemIndex, bedroom
     try:
         chosenItemIndex = int(universal.key_name(keyEvent)) - 1
     except ValueError:
@@ -837,7 +847,6 @@ def select_destination(previousModeIn):
         universal.set_commands(['(#) Select destination', '<==Back'])
     else:
         universal.set_commands(['<==Back'])
-    global previousMode
     previousMode = previousModeIn
     universal.set_command_interpreter(select_destination_interpreter)
 

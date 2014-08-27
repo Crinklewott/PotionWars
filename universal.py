@@ -549,7 +549,9 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
             acknowledged = False
             while not acknowledged: 
                 for event in pygame.event.get():
-                    if event.type == KEYUP and event.key == K_RETURN:
+                    if event.type == KEYUP and (event.key == K_LSUPER or event.key == K_RSUPER):
+                        pygame.display.iconify()
+                    elif event.type == KEYUP and event.key == K_RETURN:
                         acknowledged = True
                         break
                     elif event.type == KEYUP and event.key == K_BACKSPACE and DEBUG:
@@ -653,6 +655,8 @@ def acknowledge(function, *args):
     set_commands(['(Enter) to continue.'])
 
 def acknowledge_interpreter(keyEvent):
+    print(postAcknowledgeFunction)
+    print(postAcknowledgeArgs)
     if keyEvent.key == K_RETURN:
         if postAcknowledgeArgs == ((),):
             postAcknowledgeFunction()
@@ -862,6 +866,9 @@ class State(object):
 
     def __setstate__(self, state):
         self.__dict__ = state
+        #Quick and dirty hack because I'm too fucking lazy to modify my save file. Note: Write save interpreter!
+        #if not self.bedroom:
+            #self.bedroom = self.get_room("Maria's Home")
         try:
             self.init_scene()
         except TypeError:
