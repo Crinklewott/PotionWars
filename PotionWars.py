@@ -27,6 +27,7 @@ errorLog = logging.getLogger("errors")
 pygame.init()
 
 errorLog.setLevel(logging.ERROR)
+episode1.episode1.nextEpisode = episode2.episode2
 with open("errors.log", 'a') as f:
     pass
 errorLog.addHandler(logging.FileHandler("errors.log"))

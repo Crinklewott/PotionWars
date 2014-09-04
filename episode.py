@@ -79,6 +79,7 @@ class Episode(universal.RPGObject):
         else:
             self.scenes[self.currentSceneIndex].endScene(*endingSceneArgs)
         universal.state.player.currentEpisode = self.nextEpisode.name
+        set_post_title_card(allEpisodes[universal.state.player.currentEpisode].init)
         allEpisodes[universal.state.player.currentEpisode].start_episode()
 
     def next_scene(self, previousSceneArgs=(), startingSceneArgs=()):
@@ -97,6 +98,8 @@ class Episode(universal.RPGObject):
         print(self.scenes[self.currentSceneIndex].startScene)
         print('startingSceneArgs:')
         print(startingSceneArgs)
+        if self.scenes[self.currentSceneIndex].init_scene:
+            self.scenes[self.currentSceneIndex].init_scene()
         if startingSceneArgs is ():
             self.scenes[self.currentSceneIndex].startScene()
         else:
@@ -123,6 +126,7 @@ class Scene(universal.RPGObject):
         self.startScene = startScene
         self.endScene = endScene
         allScenes[name] = self
+        self.init_scene = None
 
     def _save(self):
         raise NotImplementedError()

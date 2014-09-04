@@ -40,14 +40,15 @@ import re
 class TranslateError(Exception):
     pass
 
-IMPORTS = ['import universal', 'import textCommands', 'import person', 'import items', 'import pwenemies', 'import dungeonmode', 'import itemspotionwars', 'import random', 'import conversation']
+IMPORTS = ['import universal', 'import textCommandsMusic', 'import person', 'import items', 'import pwenemies', 'import dungeonmode', 'import itemspotionwars', 'import random', 'import conversation',
+        'import episode', 'import townmode']
 TAB = '    '
 DEBUG = True
-def translate(fileName, charRoomFile, episodeName, nodeNum, tab=TAB, imports=None): 
+def translate(fileName, charRoomFile, episodeName, nodeNum, title, episodeNum, titleTheme, tab=TAB, imports=None): 
     envBegin = {r'\begin{node}', r'\begin{childnode}'}
     envEnd = {r'\end{node}', r'\end{childnode}'}
     with open(fileName, 'r') as transcript:
-        tex = transcript.readlines()
+        tex = [line for line in transcript.readlines() if line.strip()[0] != '%']
         count = 0
         texLen = len(tex)
         #We're inserting new strings into tex, so we need to be able to account for the changing length of tex.
@@ -61,8 +62,8 @@ def translate(fileName, charRoomFile, episodeName, nodeNum, tab=TAB, imports=Non
                 count += 1
                 texLen += 1
             count += 1
-    if imports and not ' '.join(['from', charRoomFile, 'import *']) in imports:    
-        pythonCode = imports + [' '.join(['from', charRoomFile, 'import *'])] 
+    if imports and not ' '.join(['import', charRoomFile]) in imports:    
+        pythonCode = imports + [' '.join(['import', charRoomFile])] 
     elif imports:
         pythonCode = list(imports)
     else:
@@ -71,19 +72,30 @@ def translate(fileName, charRoomFile, episodeName, nodeNum, tab=TAB, imports=Non
     texIter = iter(tex) 
     sceneCount = 1
     nodeCount = nodeNum
-
-    try:
-        while True:
+    while True:
+        startSceneCode = []
+        try:
             scan_to_scene_start(texIter)
-            startSceneCode = []
             process_scene_start(startSceneCode, texIter, sceneCount, episodeName)
-            process_scene(pythonCode, startSceneCode, texIter, nodeCount, episodeName, sceneCount)
-            pythonCode.extend(startSceneCode)
-            sceneCount += 1
-    except StopIteration:
-        pythonCode.append('\n')
+            process_scene(pythonCode, startSceneCode, texIter, nodeCount, episodeName, sceneCount, episodeNum, charRoomFile)
+        except StopIteration:
+            break
         pythonCode.extend(startSceneCode)
-        return pythonCode
+        sceneCount += 1
+    pythonCode.append('\n')
+    pythonCode.extend(startSceneCode)
+    pythonCode.append('\n')
+    pythonCode.extend([''.join(['episode', str(episodeNum), 'Scene', str(num+1), ' = ', 'episode.Scene(', "'", str(episodeName), ' Scene ', str(num+1), "', ", 'start_scene_', str(num+1), '_', episodeName, ', ', 
+        'end_scene_', str(num+1), '_', episodeName, ')']) for num in range(sceneCount-1)])
+    pythonCode.extend([''.join(['episode', str(episodeNum), 'Scene', str(num+1), '.init_scene = ', 'init_', episodeName, '_', 'scene_', str(num+1)]) for num in range(sceneCount-1)])
+    pythonCode.append(''.join(["\n\ndef init_episode_", str(episodeNum), "():"]))
+    firstSceneName = ''.join(['episode', str(episodeNum), 'Scene1'])
+    append_to_function(pythonCode, ''.join(['''if universal.state.location == universal.state.get_room("offStage"):\n''', 2*tab,
+        firstSceneName, '.init_scene()\n', 2*tab,
+        'episode', str(episodeNum), '.start_episode()']))
+    pythonCode.append(''.join(['\n\nepisode', str(episodeNum), ' = ', 'episode.Episode(', str(episodeNum), ', "', title, '", ', 'scenes=[', ', '.join([''.join(['episode', str(episodeNum), 'Scene', 
+        str(num+1)]) for num in range(sceneCount-1)]), '], init=init_episode_', str(episodeNum), ', titleTheme=', titleTheme, ')']))
+    return pythonCode
 
 
 def replace_underscores(line):
@@ -96,26 +108,42 @@ def scan_to_scene_start(texIter):
 
 
 def process_scene_start(pythonCode, texIter, sceneCount, episodeName):
-    pythonCode.append(''.join(['def start_scene_', str(sceneCount), '_', episodeName, '(', 'loading=False', '):']))
+    pythonCode.append(''.join(['\n\ndef start_scene_', str(sceneCount), '_', episodeName, '(', 'loading=False', '):']))
+    append_to_function(pythonCode, ''.join(['universal.state.set_init_scene(init_', episodeName, '_scene_', str(sceneCount), ')']))
     line = next(texIter)
     while '\end{openScene}' != string.strip(line):
         append_to_function(pythonCode, line)
         line = next(texIter)
 
+def process_scene_end(pythonCode, texIter, sceneCount, episodeName):
+    pythonCode.append(''.join(['\n\ndef end_scene_', str(sceneCount), '_', episodeName, '():']))
+    append_to_function(pythonCode, 'pass')
+    line = next(texIter)
+    while '\end{closeScene}' != string.strip(line):
+        append_to_function(pythonCode, line)
+        line = next(texIter)
 
-def process_scene(pythonCode, startSceneCode, texIter, nodeCount, episodeName, sceneCount):
+
+def process_scene(pythonCode, startSceneCode, texIter, nodeCount, episodeName, sceneCount, episodeNum, charRoomFile):
     """
     Generates the nodes for the current scene. Note that for reasons of keeping things simple, this function assumes that the scene always begins in townmode. In particular, if the scene begins
     with the player "talking to herself," then the previousModeIn of conversation.converse_with is townmode.town_mode.
     """
     pythonCode.append('\n')
-    start_scene_code = ''.join(['def ', '_'.join(['init', episodeName, str(sceneCount)]), '():'])
-    pythonCode.append(''.join(['def ', '_'.join(['init', episodeName, str(sceneCount)]), '():']))
+    start_scene_code = [''.join(['def ', '_'.join(['init', episodeName, 'scene', str(sceneCount)]), '():'])]
+    append_to_function(start_scene_code, ''.join(['episode', str(episodeNum), '.currentSceneIndex = ', str(sceneCount-1), ' if episode', str(episodeNum), '.currentSceneIndex != ', str(sceneCount-1), 
+        ' else ', 'episode', str(episodeNum), '.currentSceneIndex']))
+    append_to_function(start_scene_code, ''.join([charRoomFile, '.build_chars()']))
+    append_to_function(start_scene_code, ''.join([charRoomFile, '.build_rooms()']))
+    pythonCode.append('\n'.join(start_scene_code))
     line = next(texIter)
     lastLineStartScene = ''
     while True:
         while not r'\begin{node}' in line and not r'\begin{childnode}' in line and not r'\begin{closeScene}' in line:
-            line = next(texIter)
+            try:
+                line = next(texIter)
+            except StopIteration:
+                break
         if r'\begin{node}' in line:
             nodeCount += 1
             args = get_args(texIter, line, 4)
@@ -126,15 +154,18 @@ def process_scene(pythonCode, startSceneCode, texIter, nodeCount, episodeName, s
             else: 
                 character = ''.join(['universal.state.get_character(', args[2], '.person', ')'])
             process_node(pythonCode, texIter, nodeCount, r'\end{node}', args)
-            append_to_function(startSceneCode, ''.join([character, '.litany = ', 'conversation.allNodes[', str(nodeCount), ']']))
+            append_to_function(startSceneCode, ''.join([character, '.litany = ',  str(nodeCount)]))
         elif r'\begin{childnode}' in line:
             nodeCount += 1
             args = get_args(texIter, line, 2)
             args = [arg.replace(' ', '_') for arg in args][1:]
             process_node(pythonCode, texIter, nodeCount, r'\end{childnode}', args)
         elif r'\begin{closeScene}' in line:
-            process_scene_end(pythonCode, texIter)
-        line = next(texIter)
+            process_scene_end(pythonCode, texIter, sceneCount, episodeName)
+        try:
+            line = next(texIter)
+        except StopIteration:
+            break
     append_to_function(startSceneCode, lastLineStartScene)
       
 
@@ -146,7 +177,7 @@ def scan_to_code_block(texIter):
 
 def process_code_block(pythonCode, texIter, tab):
     line = next(texIter)
-    origLine = line
+    #origLine = line
     while not r'\end{code}' in line:
         append_to_function(pythonCode, line, tab)
         line = next(texIter)
@@ -200,7 +231,7 @@ def process_node(pythonCode, texIter, nodeCount, endCommand, args, tab=TAB):
 #We can't do a simple map look-up because we don't know what the name of the character is. We'll need to do something with regular expressions, probably similar to what we do below with \bummarks.
 #Of course, doing that for even a fraction of the commands below (we won't have to worry about the hisher, HisHer, etc... at least not until we have more than one player-defined protagonist) will be
 #tedious. We'll need to find a way to do it more generally.
-inlineCommands = {
+inlineCommandsPlayer = {
     r'\hisher{}':"''', person.hisher(), '''",  
     r'\HisHer{}':"''', person.HisHer(), '''",  
     r'\himher{}':"''', person.himher(), '''",  
@@ -233,10 +264,10 @@ inlineCommands = {
     r'\SirMaam{}':"''', person.SirMaam(), '''",  
     r'\bastardbitch{}':"''', person.bastardbitch(), '''",  
     r'\BastardBitch{}':"''', person.BastardBitch(), '''",  
-    r'\weapon{}':"''', universal.state.player.weapon().name, '''",  
+    r'\weaponName{}':"''', universal.state.player.weapon().name, '''",  
     r'\name{}':"''', universal.state.player.name, '''",  
     r'\names{}':"''', universal.state.player.name, 's', '''",
-    r'\weapon{}':"''', universal.state.player.weapon(), '''",
+    r'\weapon{}':"''', universal.state.player.weapon().name, '''",
     r'\player{}':"universal.state.player",
     r'\name{}':"''', universal.state.player.name, '''",
     r'\names{}': "''', universal.state.player.name, ''''s''', '''",
@@ -244,18 +275,18 @@ inlineCommands = {
     r'\cladbottom{\trousers}': "''', universal.state.player.clad_bottom(), '''",
     r'\muscleadj{}': "''', universal.state.player.muscle_adj(), '''",
     r'\bumadj{}': "''', universal.state.player.bum_adj(), '''",
-    r'\liftlower{}': "''', person.liftlower(universal.state.player.lower_clothing()), '''",
-    r'\lowerlift{}': "''', person.lowerlift(universal.state.player.lower_clothing()), '''",
-    r'\liftslowers{}': "''', person.liftlower(universal.state.player.lower_clothing()), 's', '''",
-    r'\lowerslifts{}': "''', person.lowerslifts(universal.state.player.lower_clothing()), 's', '''",
-    r'\liftlower{underwear}': "''', person.liftlower(universal.state.player.underwear()), '''",
-    r'\lowerlift{underwear}': "''', person.lowerlift(universal.state.player.underwear()), '''",
-    r'\liftslowers{underwear}': "''', person.liftlower(universal.state.player.underwear()), 's', '''",
-    r'\lowerslifts{underwear}': "''', person.lowerslifts(universal.state.player.underwear()), 's', '''",
-    r'\liftlower{pajamas}': "''', person.liftlower(universal.state.player.pajama_bottom()), '''",
-    r'\lowerlift{pajamas}': "''', person.lowerlift(universal.state.player.pajama_bottom()), '''",
-    r'\liftslowers{pajamas}': "''', person.liftlower(universal.state.player.pajama_bottom()), 's', '''",
-    r'\lowerslifts{pajamas}': "''', person.lowerslifts(universal.state.player.pajama_bottom()), 's', '''",
+    r'\liftlower{}': "''', items.liftlower(universal.state.player.lower_clothing()), '''",
+    r'\lowerlift{}': "''', items.lowerlift(universal.state.player.lower_clothing()), '''",
+    r'\liftslowers{}': "''', items.liftlower(universal.state.player.lower_clothing()), '''",
+    r'\lowerslifts{}': "''', items.lowerslifts(universal.state.player.lower_clothing()), '''",
+    r'\liftlower{underwear}': "''', items.liftlower(universal.state.player.underwear()), '''",
+    r'\lowerlift{underwear}': "''', items.lowerlift(universal.state.player.underwear()), '''",
+    r'\liftslowers{underwear}': "''', items.liftlower(universal.state.player.underwear()), 's', '''",
+    r'\lowerslifts{underwear}': "''', items.lowerslifts(universal.state.player.underwear()), 's', '''",
+    r'\liftlower{pajamas}': "''', items.liftlower(universal.state.player.pajama_bottom()), '''",
+    r'\lowerlift{pajamas}': "''', items.lowerlift(universal.state.player.pajama_bottom()), '''",
+    r'\liftslowers{pajamas}': "''', items.liftslower(universal.state.player.pajama_bottom()), '''",
+    r'\lowerslifts{pajamas}': "''', items.lowerslifts(universal.state.player.pajama_bottom()), '''",
     r'\pajamabottoms{}': "''', universal.state.player.pajama_bottom().name, '''",
     r'\stealth{}': "universal.state.player.stealth()",
     r'\warfare{}': "universal.state.player.warfare()",
@@ -263,15 +294,87 @@ inlineCommands = {
     r'\grapple{}': "universal.state.player.grapple()",
     r'\resilience{}': "universal.state.player.resilience()",
     r'\keywords{}': "universal.state.player.keywords"
+    }
+
+inlineCommands = {
+    r'\hisher{':"''', person.hisher(universal.state.get_character(",  
+    r'\HisHer{':"''', person.HisHer(universal.state.get_character(",  
+    r'\himher{':"''', person.himher(universal.state.get_character(",  
+    r'\HimHer{':"''', person.HimHer(universal.state.get_character(",  
+    r'\heshe{':"''', person.heshe(universal.state.get_character(",  
+    r'\HeShe{':"''', person.HeShe(universal.state.get_character(",  
+    r'\heshell{':"''', person.heshell(universal.state.get_character(",  
+    r'\HeShell{':"''', person.HeShell(universal.state.get_character(",  
+    r'\himselfherself{':"''', person.himselfherself(universal.state.get_character(",  
+    r'\HimselfHerself{':"''', person.HimselfHerself(universal.state.get_character(",  
+    r'\mistermiss{':"''', person.mistermiss(universal.state.get_character(",  
+    r'\MisterMiss{':"''', person.MisterMiss(universal.state.get_character(",  
+    r'\manwoman{':"''', person.manwoman(universal.state.get_character(",  
+    r'\ManWoman{':"''', person.ManWoman(universal.state.get_character(",  
+    r'\hishers{':"''', person.hishers(universal.state.get_character(",  
+    r'\HisHers{':"''', person.HisHers(universal.state.get_character(",  
+    r'\boygirl{':"''', person.boygirl(universal.state.get_character(",  
+    r'\BoyGirl{':"''', person.BoyGirl(universal.state.get_character(",  
+    r'\manlady{':"''', person.manlady(universal.state.get_character(",  
+    r'\ManLady{':"''', person.ManLady(universal.state.get_character(",  
+    r'\kingqueen{':"''', person.kingqueen(universal.state.get_character(",  
+    r'\KingQueen{':"''', person.KingQueen(universal.state.get_character(",  
+    r'\lordlady{':"''', person.lordlady(universal.state.get_character(",  
+    r'\LordLady{':"''', person.LordLady(universal.state.get_character(",  
+    r'\brothersister{':"''', person.brothersister(universal.state.get_character(",  
+    r'\BrotherSister{':"''', person.BrotherSister(universal.state.get_character(",  
+    r'\menwomen{':"''', person.menwomen(universal.state.get_character(",  
+    r'\MenWomen{':"''', person.MenWomen(universal.state.get_character(",  
+    r'\sirmaam{':"''', person.sirmaam(universal.state.get_character(",  
+    r'\SirMaam{':"''', person.SirMaam(universal.state.get_character(",  
+    r'\bastardbitch{':"''', person.bastardbitch(universal.state.get_character(",  
+    r'\BastardBitch{':"''', person.BastardBitch(universal.state.get_character(",  
+    r'\weaponName{':"''', items.weapon_name(",  
+    r'\weapon{':"''', items.weapon_name(",
+    r'\cladbottom{\pajama}{': "''', items.clad_pajama_bottom(",
+    r'\cladbottom{\trousers}': "''', items.clad_bottom(",
+    r'\muscleadj{': "''', person.muscle_adj(",
+    r'\bumadj{': "''', person.bum_adj(",
+    r'\liftlower{': "''', items.liftlower(items.lower_clothing(",
+    r'\lowerlift{': "''', items.lowerlift(items.lower_clothing(",
+    r'\liftslowers{': "''', items.liftslowers(items.lower_clothing(",
+    r'\lowerslifts{': "''', items.lowerslifts(items.lower_clothing(",
+    r'\liftlower{underwear}{': "''', items.liftlower(items.underwear(",
+    r'\lowerlift{underwear}{': "''', items.lowerlift(items.underwear(",
+    r'\liftslowers{underwear}{': "''', items.liftlower(items.underwear(",
+    r'\lowerslifts{underwear}{': "''', items.lowerslifts(items.underwear(",
+    r'\liftlower{pajamas}{': "''', items.liftlower(items.pajama_bottom(",
+    r'\lowerlift{pajamas}{': "''', items.lowerlift(items.pajama_bottom(",
+    r'\liftslowers{pajamas}{': "''', items.liftslowers(items.pajama_bottom(",
+    r'\lowerslifts{pajamas}{': "''', items.lowerslifts(items.pajama_bottom(",
+    r'\pajamabottoms{': "''', items.pajama_bottom(",
+    r'\stealth{': "person.stealth(",
+    r'\warfare{': "person.warfare(",
+    r'\magic{': "person.magic(",
+    r'\grapple{': "person.grapple(",
+    r'\resilience{': "person.resilience(",
     } 
 
 def translate_commands(text, tab, nodeName):
     #Bleagh. This is an ugly function.
     count = 0
     for count in range(len(text)):
-        for key in inlineCommands:
-            text[count] = text[count].replace(key, inlineCommands[key])
+        for key in inlineCommandsPlayer:
+            text[count] = text[count].replace(key, inlineCommandsPlayer[key])
         #\cond{test}{text if true}{text if false}
+        for key in inlineCommands:
+            keyIndex = text[count].find(key)
+            numLParen = inlineCommands[key].count('(')
+            while keyIndex >= 0:
+                rBracketIndex = text[count].find('}', keyIndex)
+                commandArg = text[count][keyIndex+len(key):rBracketIndex]
+                commandArg = ''.join(['"', commandArg, '"'])
+                command = ''.join([inlineCommands[key], commandArg])
+                text[count] = text[count].replace(key, command, 1)
+                text[count] = text[count].replace('}', ')', numLParen)
+                lenNewCommand = sum([keyIndex, len(command), numLParen])
+                text[count] = ''.join([text[count][:keyIndex], text[count][keyIndex:keyIndex+lenNewCommand], ", '''", text[count][keyIndex+lenNewCommand:]])
+                keyIndex = text[count].find(key)
         try:
             nextCond = text[count].index(r'\condelif')
         except ValueError:
@@ -307,7 +410,7 @@ def translate_commands(text, tab, nodeName):
             randomRE = re.compile(r'\\random{\d+}')
             lineSplit = re.split(randomRE, text[count])
             args = get_args([text[count][randIndex:]], text[count][randIndex:], 1)
-            text[count] = ''.join([lineSplit[0], ' random.randint(', args[0], ') ', lineSplit[1]])
+            text[count] = ''.join([lineSplit[0], ' random.randint(0, ', args[0], ') ', lineSplit[1]])
         try:
             childIfIndex = text[count].index(r'\childif')
         except ValueError:
@@ -476,8 +579,6 @@ def get_args(texIter, line, numArgs):
     return args
         
 
-def process_scene_end(pythonCode, texIter):
-    pass
 
 
 def append_to_function(code, newLine, tab=TAB):
@@ -487,7 +588,7 @@ def append_to_function(code, newLine, tab=TAB):
 
 if DEBUG:
     import os
-    pythonCode = translate(os.path.join('transcripts', 'episode2.tex'), 'episode2CharRooms', 'episode_2', 320, imports=IMPORTS)
+    pythonCode = translate(os.path.join('transcripts', 'episode2.tex'), 'episode2CharRooms', 'episode_2', 326, 'Back Alleys', 2, "textCommandsMusic.CARLITA", imports=IMPORTS)
     with open('episode2.py', 'w') as episode2:
         episode2.write('\n'.join(pythonCode))
 

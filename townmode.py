@@ -351,6 +351,13 @@ def clear_rooms():
     for room in allRooms:
         allRooms[room].clear_characters()
 offStage = Room('offStage', "If you're seeing this, it means you've reached the end of the content.")
+def after_arrival_offstage():
+    nextEpisode = episode.allEpisodes[universal.state.player.currentEpisode]
+    episode.set_post_title_card(nextEpisode.init)
+    episode.allEpisodes[universal.state.player.currentEpisode].start_episode()
+
+    
+offStage.after_arrival = after_arrival_offstage
 person.set_PC(person.PlayerCharacter("DEFAULT", person.FEMALE))
 person.set_party(person.Party([person.get_PC()]))
 offStage.add_character(person.get_PC())
@@ -830,7 +837,11 @@ def load_game(loadNameIn=None, preserveLoadName=True):
         if not preserveLoadName:
             #global loadName
             loadName = ''
-        go(universal.state.location)
+        if universal.state.location == universal.state.get_room("offStage"):
+            episode.allEpisodes[universal.state.player.currentEpisode].start_episode(False)
+        else:
+            go(universal.state.location)
+
 
 
 def select_destination(previousModeIn):

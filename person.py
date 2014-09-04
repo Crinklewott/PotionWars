@@ -357,9 +357,9 @@ class Person(universal.RPGObject):
     def __getstate__(self):
         state = self.__dict__.copy()
         known_spells = [[] for i in range(universal.NUM_TIERS)]
-        print(self)
-        print("'s spell list!")
-        print(self.spellList)
+        #print(self)
+        #print("'s spell list!")
+        #print(self.spellList)
         state['spellList'] = [[(allSpells[tier].index((get_basic_spell(tier, action_type_to_spell_type(spell.actionType)), 
             get_advanced_spell(tier, action_type_to_spell_type(spell.actionType)), get_expert_spell(tier, action_type_to_spell_type(spell.actionType)))), spell.expertise) 
             for spell in self.spellList[tier]] for tier in range(len(self.spellList)) if self.spellList[tier] is not None]
@@ -370,24 +370,38 @@ class Person(universal.RPGObject):
             except AttributeError:
                 pass
         state['quickSpells'] = quickSpellList
-        print("state's spell list!")
-        print(state['spellList'])
+        #print("state's spell list!")
+        #print(state['spellList'])
         return state
 
     def __setstate__(self, state):
-        import traceback
-        print(traceback.print_stack())
-        print(state['spellList'])
+        #import traceback
+        #print(traceback.print_stack())
+        #print(state['spellList'])
         state['spellList'] = [[allSpells[tier][index][expertise] for (index, expertise) in state['spellList'][tier]] for tier in range(len(state['spellList']))]
         state['spellList'].extend([None for i in range(universal.NUM_TIERS - len(state['spellList']))])
         state['quickSpells'] = [get_spell(name) for name in state['quickSpells']]
         while len(state['quickSpells']) < 12:
             state['quickSpells'].append(None)
+
+        #While writing text for episode 2, I realized that I should have a separate object for DropSeatPajamas. The following code is a bit of a patch in order to ensure that
+        #people who have the drop seat pajamas have an object of the correct type, even if they're loading a save from before I changed the type of the drop seat pajamas (note that there was
+        #only one type of drop seat pajama before I made the change. 
+        try:
+            import itemspotionwars
+        except ImportError:
+            pass
+        else:
+            pajamaTop = state['equipmentList'][PAJAMA_TOP]
+            if pajamaTop.name == itemspotionwars.dropSeatPJs and pajamaTop.armorType != items.DropSeatPajamas.armorType:
+                state['equipmentList'][PAJAMA_TOP] = items.DropSeatPajamas(pajamaTop.name, pajamaTop.description, pajamaTop.price)
+                state['equipmentList'][PAJAMA_BOTTOM] = state['equipmentList'][PAJAMA_TOP]
+                        
         self.__dict__.update(state)
         assert(self.spellList != [])
-        print('done settingt state!')
-        print(self.spellList)
-        print(self)
+        #print('done settingt state!')
+        #print(self.spellList)
+        #print(self)
         self.spellList = state['spellList']
 
 
@@ -445,11 +459,11 @@ class Person(universal.RPGObject):
 
     def bum_adj(self):
         if self.bodyType == 'slim':
-            adjList = ['small', 'petite', 'slim']
+            adjList = ['small', 'petite', 'heart-shaped']
         elif self.bodyType == 'average':
-            adjList = ['heart-shaped', 'round', 'curved']
+            adjList = ['plump', 'round', 'curved']
         elif self.bodyType == 'voluptuous':
-            adjList = ['plump', 'ample', 'curvaceous']
+            adjList = ['ample', 'curvaceous', 'large']
         elif self.bodyType == 'heavyset':
             adjList = ['fleshy', 'wide', 'expansive']
         return random.choice(adjList)
@@ -480,6 +494,11 @@ class Person(universal.RPGObject):
         return self.musculature == 'muscular'
     
     #HEIGHTS = ['short', 'average', 'tall', 'huge']
+    #Height dimensions:
+    #short: 5' - 4"
+    #average: 5' 5" - 5' 9"
+    #tall : 5' 10" - 6'"
+    #huge : over 6'
     def dwarfs(self, char):
         return HEIGHTS.index(self.height) - HEIGHTS.index(char.height) >= 3
 
@@ -1477,6 +1496,7 @@ selectedNum = None
 NUM_DIGITS = 3
 def character_viewer_interpreter(keyEvent):     
     global equipNum
+    global selectedNum
     #set_commands(['(S)pells, (E)quip, (#)View Item, (W)eapon, S(H)irt, (L)ower Clothing, (U)nderwear, <==Back']) 
     if keyEvent.key == K_BACKSPACE and equipNum != '':
         equipNum = equipNum[:-1]
@@ -1530,7 +1550,6 @@ def character_viewer_interpreter(keyEvent):
         commandList = []
         if len(currentPerson.equipmentList) <= num and currentPerson.inventory[num - len(currentPerson.equipmentList)].is_equippable():
             commandList.append('(Enter) Equip')
-            global selectedNum
             selectedNum = num - len(currentPerson.equipmentList)
         elif num < len(currentPerson.equipmentList): 
             commandList.append('(Enter) Unequip')
@@ -2631,4 +2650,29 @@ def LadLass(person=None):
     if person is None:
         person = universal.state.player
     return choose_string(person, 'Lad', 'Lass')
+
+
+#The following functions are used to simplify the LaTeX to Python translation. 
+
+def muscle_adj(personName):
+    return universal.state.get_character(personName).muscle_adj()
+
+def bum_adj(personName):
+    return universal.state.get_character(personName).bum_adj()
+
+
+def stealth(personName):
+    return universal.stat.get_character(personName).stealth()
+
+def warfare(personName):
+    return universal.stat.get_character(personName).warfare()
+
+def magic(personName):
+    return universal.stat.get_character(personName).magic()
+
+def grapple(personName):
+    return universal.stat.get_character(personName).grapple()
+
+def resilience(personName):
+    return universal.stat.get_character(personName).resilience()
 

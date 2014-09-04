@@ -462,13 +462,10 @@ def request_height():
         return round(inches * NUM_METERS_IN_INCH, 2)
     universal.say_title('Select Height')
     height = universal.numbered_list([h + ':' for h in person.HEIGHTS])
-    increment = NUM_INCHES_IN_FOOT //  len(person.HEIGHTS) 
-    heightNums = []
-    for i in range(len(height)):
-        bottom = 5*12 + increment * i
-        top =  5*12 + increment * (i + 1)
-        heightNums.append(''.join([str(bottom // NUM_INCHES_IN_FOOT), "'", str(bottom % NUM_INCHES_IN_FOOT), '"', ' (', str(inches_to_meters(bottom)), 'm)', ' - ', 
-            str(top // NUM_INCHES_IN_FOOT), "'", str(top % NUM_INCHES_IN_FOOT), '"', ' (', str(inches_to_meters(top)), 'm)']))
+    heightNums = [''.join(['''5' - 5' 4" (''', str(inches_to_meters(60)), 'm - ', str(inches_to_meters(64)), '''m) ''']),
+            ''.join(['''5' 4" - 5' 8" (''', str(inches_to_meters(64)), 'm - ', str(inches_to_meters(68)), '''m) ''']),
+            ''.join(['''5' 8" - 6'" (''', str(inches_to_meters(68)), 'm - ', str(inches_to_meters(72)), '''m) ''']),
+            ''.join(['''over 6' (''', str(inches_to_meters(72)), '''m)'''])]
     heightNums = '\n'.join(heightNums)
     height = '\n'.join(height)
     print('---------------height------------------')

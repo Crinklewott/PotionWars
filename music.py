@@ -114,6 +114,7 @@ def play_music(fileObject, fadeoutTime=250, wait=False):
                     fadeoutThread.join()
             else:
                 pygame.mixer.music.load(fileObject)
+                pygame.mixer.music.set_volume(0.4)
                 pygame.mixer.music.play(-1)
             currentMusic = fileObject
 

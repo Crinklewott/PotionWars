@@ -1506,6 +1506,7 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
                 ally.chanceIncrease[i] += (20 * ((maxStats[i] - ally.get_stat(i)) // 5)) if ally.chanceIncrease[i] > 0 and maxStats[i] > ally.get_stat(i) else 0 
                 ally.chanceIncrease[i] = ally.apply_specialization(i, ally.chanceIncrease[i])
                 if ally.get_stat(i) >= maxStats[i] + specialization_bonus(ally, i):
+                    #If your character already has a significantly higher stat than your opponent, the chances of increasing that stat drop off drastically
                     ally.chanceIncrease[i] *= HIGH_STAT_PENALTY
                 #print('chanceIncrease for ' + ally.name + ' after end of combat bonuses.') 
                 #print(ally.chanceIncrease)
@@ -1514,8 +1515,8 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
                 print(ally.chanceIncrease[i])
             except TypeError:
                 print('spell school: ' + str(i))
-            #If your character already has a significantly higher stat than your opponent, the chances of increasing that stat drop off drastically
-            statChance = ally.chanceIncrease[i] #+ (100 if universal.DEBUG else 0)
+            #The higher your stat, the lower the chances of increasing it, your stats hit max at 100. 
+            statChance = ally.chanceIncrease[i] * (((100 - ally.get_stat(i)) / 100) if i < COMBAT_MAGIC else 1)  #+ (100 if universal.DEBUG else 0)
             #print('chance to increase:' + str(statChance))
             success = random.randint(1, 100)
             #print('success:' + str(success))

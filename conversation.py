@@ -24,9 +24,11 @@ previousMode = None
 maxIndex = 0
 SPLIT = -50
 def converse_with(person, previousModeIn):
+    print('invoking converse_with')
     global conversationPartner
     conversationPartner = person
     print(conversationPartner.name)
+    print(conversationPartner.litany)
     if person.litany is not None:
         litany = person.litany
     elif person.defaultLitany is not None:
@@ -43,18 +45,25 @@ def say_node(litanyIndex):
     #This may appear redundant, but it's possible for a node's quip_function to immediately invoke a different node, without going through the player. In that case,
     #we need to make sure that the current litany of the conversationPartner is properly updated.
     global previousMode
+    print('invoking say_node')
     conversationPartner.litany = litanyIndex
     try:
         litany = allNodes[litanyIndex]
     except KeyError:
+        print('keyError!')
+        print(litanyIndex)
         try:
             litany = allNodes[litanyIndex.index]
         except KeyError:
+            print('keyError!')
+            print(litanyIndex.index)
             say("There is nothing to be said.")
             acknowledge(previousMode, ())
             return
         else:
             conversationPartner.litany = litanyIndex.index
+    print('conversationPartner.litany:')
+    print(conversationPartner.litany)
     function = None
     args = None
     executeImmediately = False
@@ -163,11 +172,15 @@ class Node(universal.RPGObject):
         allNodes[index] = self
 
     def add_child(self, child):
-        if not child in self.children:
+        if not self.children:
+            self.children = [child]
+        elif not child in self.children:
             self.children.append(child)
 
     def add_player_comment(self, comment):
-        if not comment in self.playerComments:
+        if not self.playerComments:
+            self.playerComments = [comment]
+        elif not comment in self.playerComments:
             self.playerComments.append(comment)
 
     def _save(self):

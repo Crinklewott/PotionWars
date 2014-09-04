@@ -399,6 +399,15 @@ class PajamaTop(Pajamas):
         char._set_pajama_top(emptyPajamaTop)
         char.take_item(self)
 
+
+class DropSeatPajamas(FullPajamas):
+    armorType = 'dropseat pajamas'
+    
+    def __init__(self, name, description, price):
+        super(DropSeatPajamas).__init__(name, description, price)
+        self.armorType = DropSeatPajamas.armorType
+
+
 class PajamaBottom(Pajamas):
     armorType = 'pajama bottom'
     def __init__(self, name, description, price):
@@ -415,6 +424,7 @@ class PajamaBottom(Pajamas):
     def equip(self, char):
         char.unequip(char.pajama_bottom(), False)
         char._set_pajama_bottom(self)
+
     
 class PajamaPants(PajamaBottom):
     armorType = 'pajama pants'
@@ -502,4 +512,47 @@ emptyPajamaTop = PajamaTop('Topless', 'Who needs to sleep with a top on?', 0)
 emptyPajamaBottom = PajamaBottom('Bottomless', 'Who needs to sleep with a bottom on?', 0)
 
 emptyEquipment = [emptyItem, emptyWeapon, emptyUpperArmor, emptyLowerArmor, emptyUnderwear, emptyPajamaTop, emptyPajamaBottom]
+
+#The purpose of the following functions is to simplify the latex translation for when trying to get the equipment of arbitrary characters.
+def weapon(personName):
+    return universal.state.get_character(personName).weapon()
+
+def underwear(personName):
+    return universal.state.get_character(personName).underwear()
+
+def lower_clothing(personName):
+    return universal.state.get_character(personName).lower_clothing()
+
+def upper_clothing(personName):
+    return universal.state.get_character(personName).upper_clothing()
+
+def pajama_top(personName):
+    return universal.state.get_character(personName).pajama_top()
+
+def pajama_bottom(personName):
+    return universal.state.get_character(personName).pajama_bottom()
+
+def weapon_name(personName):
+    return universal.state.get_character(personName).weapon().name
+
+def underwear_name(personName):
+    return universal.state.get_character(personName).underwear().name
+
+def lower_clothing_name(personName):
+    return universal.state.get_character(personName).lower_clothing().name
+
+def upper_clothing_name(personName):
+    return universal.state.get_character(personName).upper_clothing().name
+
+def pajama_top_name(personName):
+    return universal.state.get_character(personName).pajama_top().name
+
+def pajama_bottom_name(personName):
+    return universal.state.get_character(personName).pajama_bottom().name
+
+def clad_bottom(personName):
+    return universal.state.get_character(personName).clad_bottom()
+
+def clad_pajama_bottom(personName):
+    return universal.state.get_character(personName).clad_bottom(pajama=True)
 

@@ -58,6 +58,7 @@
 \newcommand{\bastardbitch}{\ifx\gender\female bastard\else bitch\fi}
 \newcommand{\BastardBitch}{\ifx\gender\female Bastard\else Bitch\fi}
 \newcommand{\weapon}{sword}
+\newcommand{\weaponName}{sword}
 
 %If that automatically hyperlinks between the if statement and the ending fi. Useful for large if's that might span multiple pages, making it possible for the reader
 %to lose track of what sitation they're in.
@@ -145,6 +146,9 @@
 %Identical to childif as far as LaTeX is concerned. However, in Python, this command tells us to use elif #1: #2 rather than if #1: #2, allowing us to define checks for the nodes that aren't necessarily
 %mutually exclusive.
 \newcommand{\childelif}[2]{\child{#1}{#2}}
+
+%See comment above
+\newcommand{\childelse}[2]{\child{#1}{#2}}
 
 \newcommand{\continue}[2]{\child{#1}{#2}}
 

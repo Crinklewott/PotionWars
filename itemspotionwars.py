@@ -170,7 +170,7 @@ comfyShorts = items.PajamaBottom('comfy shorts', 'A pair of soft, comfy short sh
 
 largeShirt = items.FullPajamas('large shirt', 'A comfortable shirt that reaches about halfway down your thighs. Great for sleeping in.', 3)
 
-dropSeatPJs = items.FullPajamas('drop seat pajamas', 
+dropSeatPJs = items.DropSeatPajamas('drop seat pajamas', 
     format_line(['A one-piece, full body set of comfy pajamas. Great for cooler nights. Comes with a dropseat to make midnight bathroom rooms as painless as possible.']),
     6)
 

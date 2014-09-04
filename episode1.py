@@ -191,10 +191,12 @@ titleScreen.set_opening_crawl(textCommands.CHURCH)
 edgeOfAvaricum = Room('Edge of Avaricum', "The road is overflowing with people, mostly merchants and farmers bringing their goods to market. Scattered amongst them is a much sadder crowd: Taironan refugees fleeing the strife of the Potion Riots. Many stumble down the road with dead eyes and ragged clothing, hunched under the weight of their children and few precious possessions. Just down the road is the city of Avaricum, the most powerful Carnutian city-state in this region of the One-Thousand-Twenty-Four. Several guards stand on either side of the road studying the people making their way into the Outer City.", bgMusic=textCommands.VENGADOR)
 
 def enterLeft(character, room):
+    offStage = universal.state.get_room('offStage')
     offStage.remove_character(character)
     room.add_character(character)
 
 def exitLeft(character, room):
+    offStage = universal.state.get_room('offStage')
     room.remove_character(character)
     offStage.add_character(character)
 
@@ -4237,10 +4239,12 @@ def e1_2_3():
         '''in the southern wall, through which''', name(), '''can see the raging melee. Two massive ovens line the far wall.  Directly to the west, between''', name(),
         '''and the ovens, is a tall, muscular, golden-haired, fair-skinned woman, likely about the age of Adrian. She is wearing an apron, a short-sleeve tunic,''',
         '''trousers, and a heavy pair of boots.'''],
-        ['''Bent over the counter, her skirt around her ankles, and her round, protruding bottom exposed to the air, is a Taironan woman about''', names(), '''age.''']])
+        ['''Bent over the counter, her skirt around her ankles, and her round, protruding bottom exposed to the air, is a Taironan woman about''', names(), '''age, maybe a few years older.''',
+            '''The woman has rich, dark caramel skin, very similar in shade to''', names() + ".", '''Though hard to tell, it looks like the woman is a little on the short side of average.''',
+            '''She has shoulder-length hair black hair, and relatively small, eyes the same shade as her hair. In contrast to her height, her breasts are a little on the large side of average.''']])
     if not 'Ildri_event' in keywords():
         cookText = universal.format_text([cookText, ['''The cook is vigorously paddling the young woman's bottom with a wooden spatula. The woman is kicking, flailing, and''',
-            '''howling at the top of her lungs.'''],
+            '''howling at the top of her lungs, her plump bottom wobbling beneath the large spatula.'''],
         ['''"How dare you attack my kitchen like this. You want to harass Adrian, fine. But you leave. My. Kitchen. Alone." The cook punctuates the last few words''',
         '''with several particularly hard smacks to the woman's sitspots. The Taironan pounds her toes against the counter and wails.''']])
     universal.say(cookText)
@@ -8660,6 +8664,8 @@ def end_scene_3_episode_1():
     """
     Here is where we have the conversation with Catalin.
     """
+    import episode2
+    episode.set_post_title_card(episode2.start_scene_1_episode_2)
 
 episode1Scene3 = episode.Scene('Episode 1 Scene 3', start_scene_3_episode_1, end_scene_3_episode_1)
 
@@ -12958,6 +12964,7 @@ def ep1_roland():
 episode1 = episode.Episode(1, 'Tension', scenes=[episode1Scene1, episode1Scene2, episode1Scene3], titleTheme=textCommands.VENGADOR) 
 
 #----------------------------------------------Episode 2: Back Alleys-------------------------------------------------------------------
+"""
 def initialize_episode_2():
     pass
 
@@ -12968,7 +12975,7 @@ def start_scene_1_episode_2(loading=False):
         'Meanwhile, Carrie is becoming a full Sister! Will', universal.state.player.name, 'be able to attend the ceremony (or at least make it to the after party)? Will', heshe(universal.state.player), 'even want to?\n\n Tune in next time to learn the answers to these questions and more!'], music=[music.THEME])
     universal.set_commands('Press Enter to save')
     universal.set_command_interpreter(end_content_interpreter)
-
+"""
 def end_content_interpreter(keyEvent):    
     townmode.go(offStage)
     clear_screen()
@@ -12987,10 +12994,12 @@ def end_content_mode():
 def end_scene_1_episode_2():
     pass
 
+"""
 episode2Scene1 = episode.Scene('Episode 2 Scene 1', start_scene_1_episode_2, end_scene_1_episode_2)
 episode2 = episode.Episode(2, 'Back Alleys', scenes=[episode2Scene1])
 #--------------------------------------------End Episode 2: Back Alleys-------------------------------------------------------------------------
 episode1.nextEpisode = episode2
+"""
 
 def init_episode_1_scene_1():
     global episode1

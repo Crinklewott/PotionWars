@@ -866,6 +866,8 @@ class State(object):
 
     def __setstate__(self, state):
         self.__dict__ = state
+        #Forces the version of the location stored in the state, and the version in the rooms function to agree.
+        self.location = self.rooms[self.location.name]
         #Quick and dirty hack because I'm too fucking lazy to modify my save file. Note: Write save interpreter!
         #if not self.bedroom:
             #self.bedroom = self.get_room("Maria's Home")
@@ -945,7 +947,14 @@ class State(object):
         try:
             return self.characters[character.get_id()]
         except AttributeError:
-            return self.characters[character]
+            try:
+                return self.characters[character]
+            except KeyError:
+                try:
+                    return self.characters[''.join([character, '.person'])]
+                except KeyError:
+                    return self.characters[''.join([character, '.playerCharacter'])]
+
 
 state = State()
 

@@ -4,11 +4,15 @@ import titleScreen
 
 
 def enterLeft(character, room):
+    offStage = universal.state.get_room('offStage')
     offStage.remove_character(character)
     room.add_character(character)
+
 def exitLeft(character, room):
+    offStage = universal.state.get_room('offStage')
     room.remove_character(character)
     offStage.add_character(character)
+
 def name():
     return universal.state.player.name
 
