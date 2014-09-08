@@ -49,7 +49,7 @@ GRAPPLING = 5
 BALANCED = 6
 """
 
-MAGIC_PER_TIER = 10
+TALENT_PER_TIER = 10
 
 allStats = [universal.WARFARE, universal.MAGIC, universal.RESILIENCE, universal.GRAPPLE, universal.STEALTH, universal.HEALTH, universal.MANA, universal.CURRENT_HEALTH, 
         universal.CURRENT_MANA]
@@ -393,7 +393,7 @@ class Person(universal.RPGObject):
             pass
         else:
             pajamaTop = state['equipmentList'][PAJAMA_TOP]
-            if pajamaTop.name == itemspotionwars.dropSeatPJs and pajamaTop.armorType != items.DropSeatPajamas.armorType:
+            if pajamaTop.name == itemspotionwars.dropSeatPJs.name and pajamaTop.armorType != items.DropSeatPajamas.armorType:
                 state['equipmentList'][PAJAMA_TOP] = items.DropSeatPajamas(pajamaTop.name, pajamaTop.description, pajamaTop.price)
                 state['equipmentList'][PAJAMA_BOTTOM] = state['equipmentList'][PAJAMA_TOP]
                         
@@ -434,7 +434,7 @@ class Person(universal.RPGObject):
             return BUTT_HAIR_STYLE
 
     def risque(self):
-        risqueLevel = sum(equipment.risque for equipment in self.equipmentList if not isinstance(equipment.Weapon))
+        risqueLevel = sum(equipment.risque for equipment in self.equipmentList if not isinstance(equipment, items.Weapon))
         #If the lower clothing isn't baring, then we can't see the underwear, so its risque level doesn't matter.
         if not self.lower_clothing().baring:
             risqueLevel -= self.underwear().risque
@@ -467,6 +467,14 @@ class Person(universal.RPGObject):
         elif self.bodyType == 'heavyset':
             adjList = ['fleshy', 'wide', 'expansive']
         return random.choice(adjList)
+
+    def quiver(self):
+        if self.musculature == 'soft':
+            adjList = ['ripple', 'jump', 'flatten']
+        elif self.musculature == 'fit':
+            adjList = ['spasm', 'bounce', 'shake']
+        elif self.musculature == 'muscular':
+            adjList = ['quiver', 'bob', 'shiver']
 
     def is_slim(self):
         return self.bodyType == 'slim'
@@ -532,6 +540,9 @@ class Person(universal.RPGObject):
     #HAIR_LENGTH = ['short', 'shoulder-length', 'back-length', 'butt-length']
     def short_hair(self):
         return self.hairLength == 'short'
+
+    def long_hair(self):
+        return self.shoulder_hair() or self.back_hair() or self.butt_hair()
 
     def shoulder_hair(self):
         return self.hairLength == 'shoulder-length'
@@ -710,7 +721,7 @@ class Person(universal.RPGObject):
         self.has_fighting_style(fightingStyle)
 
     def set_specialization(self, specialization):
-        self.specialization == specialization
+        self.specialization = specialization
 
     def is_specialized_in(self, specialization):
         return self.specialization == specialization
@@ -726,7 +737,7 @@ class Person(universal.RPGObject):
         self.level = level
 
     def set_gender(self, genderIn):
-        self.gender = gender
+        self.gender = genderIn
 
     def set_stat(self, stat, num):
         self.primaryStats[stat] = num
@@ -758,7 +769,7 @@ class Person(universal.RPGObject):
         #TODO: Change how quickly a person's spell tiers increases.
         self.increase_stat(stat, increment)
         oldTier = self.tier
-        self.tier = self.magic() // MAGIC_PER_TIER
+        self.tier = self.talent() // TALENT_PER_TIER
         if self.tier > oldTier:
             magicSchool = get_spell_index(self.specialization) if self.specialized_in_magic() else -1
             if magicSchool >= 0:
@@ -766,8 +777,8 @@ class Person(universal.RPGObject):
                 universal.say(universal.format_line(['\n' + self.name, 'has learned the', allSpells[self.tier][magicSchool][0].name, 'spell!']))
 
     def reduce_stat(self, stat, increment): 
-        decrease_stat(self, stat, increment)
-        tier = self.magic() // MAGIC_PER_TIER
+        self.decrease_stat(stat, increment)
+        tier = self.magic() // TALENT_PER_TIER
 
     def specialized_in_magic(self):
         return self.specialization == COMBAT_MAGIC or self.specialization == STATUS_MAGIC or self.specialization == BUFF_MAGIC or self.specialization == SPECTRAL_MAGIC
@@ -922,7 +933,7 @@ class Person(universal.RPGObject):
             self.default_stats()
         else:
             self.primaryStats = copy.deepcopy(primaryStats) 
-        self.tier = self.magic() // MAGIC_PER_TIER
+        self.tier = self.talent() // TALENT_PER_TIER
 
     def default_stats(self):
         """
@@ -1023,6 +1034,9 @@ class Person(universal.RPGObject):
     def lower_clothing(self):
         return self.equipmentList[LOWER_CLOTHING]
 
+
+    def is_pantsless(self):
+        return self.lower_clothing().name == items.emptyLowerArmor.name
     def worn_lower_clothing(self):
         return self.lower_clothing().name if self.lower_clothing() != items.emptyLowerArmor else self.underwear().name
 
@@ -2303,7 +2317,7 @@ class SpectralSpanking(Spectral):
         self.cost = SpectralSpanking.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.description = 'Conjures \'hands\' of raw magic. One hand grabs the target and lifts them into the air. The other lands a number of swats on the target\'s backside. Once the spanking is done, the first hand lifts the target up, and throws them into the ground. The spanking leaves your opponent distracted and humiliated, giving them a -1 penalty to all stats.'
-        self.effectFormula = 'DURATION: 2 | 2 * (resilience - enemy resilience)\nDAMAGE: 1 | (magic - enemy magic),\nSuccess (%): 40 | 30 * (magic - enemy magic) | 95'
+        self.effectFormula = 'DURATION: 2 | 2 * (resilience - enemy resilience)\nDAMAGE: 1 | (magic - enemy magic),\nSuccess (%): 50 | 35 * (magic - enemy magic) | 95'
         self.numTargets = 1
         self.magicMultiplier = 1
         self.resilienceMultiplier = 2
@@ -2314,8 +2328,8 @@ class SpectralSpanking(Spectral):
         self.tier = SpectralSpanking.tier
         self.expertise = BASIC
         self.maxProbability = 95
-        self.minProbability = 40
-        self.probModifier = 30
+        self.minProbability = 50
+        self.probModifier = 35
         self.secondaryStat = SpectralSpanking.secondaryStat
         self.minDamage = 2
         self.minDuration = 2
@@ -2347,6 +2361,8 @@ class SpectralSpanking(Spectral):
         duration = self.resilienceMultiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier(self.rawMagic) + severity)
         if duration < self.minDuration:
             duration = self.minDuration
+        print('spectral spanking duration:')
+        print(duration)
         resultStatement = []
         effects = []
         effectString = self.effect_statement(defender)
@@ -2356,13 +2372,17 @@ class SpectralSpanking(Spectral):
             effects.append((0, 0))
         else:
             successProbability = self.probModifier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
+            print(successProbability)
             if successProbability < self.minProbability:
                 successProbability = self.minProbability
             if successProbability > self.maxProbability:
                 successProbability = self.maxProbability
+            print('spectral spanking success probability:')
             success = random.randint(1, 100)
+            print('success:')
+            print(success)
             if success <= successProbability:
-                defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED))
+                defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration=duration))
                 defender.receives_damage(damage)
                 resultStatement.append(self.success_statement(defender))
                 effects.append(damage)
@@ -2659,6 +2679,9 @@ def muscle_adj(personName):
 
 def bum_adj(personName):
     return universal.state.get_character(personName).bum_adj()
+
+def quiver(personName):
+    return universal.state.player.get_character(personName).quiver()
 
 
 def stealth(personName):

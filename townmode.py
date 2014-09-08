@@ -838,7 +838,10 @@ def load_game(loadNameIn=None, preserveLoadName=True):
             #global loadName
             loadName = ''
         if universal.state.location == universal.state.get_room("offStage"):
-            episode.allEpisodes[universal.state.player.currentEpisode].start_episode(False)
+            try:
+                episode.allEpisodes[universal.state.player.currentEpisode].start_episode(False)
+            except KeyError:
+                return
         else:
             go(universal.state.location)
 

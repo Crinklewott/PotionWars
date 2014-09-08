@@ -71,7 +71,7 @@ shortShorts = items.Shorts('short shorts', "A pair of skintight shorts that bare
 holeyTrousers = items.Pants('holey trousers', 'A pair of ragged, borderline unwearable trousers. There is a massive hole in the left knee, the right leg stops in a frayed mess just pass the knee, and the waist is held up with a threadbare rope.')
 
 #---------------------------------------items.Skirts------------------------------------
-combatSkirt = items.Skirt('combat skirt', 'A skirt that extends down to just shy of the knees. There is the faintest hint of magic. Not much, but enough that the skirt likely provides some limited combat protection, despite being made of cloth.', price=5, attackDefense=2)
+combatSkirt = items.Skirt('combat skirt', 'A skirt that extends down to just shy of the knees. There is the faintest hint of magic. Not much, but enough that the skirt likely provides some limited combat protection.', price=5, attackDefense=2)
 
 plainSkirt = items.Skirt('skirt', 'A simple cotton skirt that extends down to just past the knees.', 
         price=5)
@@ -82,11 +82,13 @@ miniSkirt = items.Skirt('miniskirt', 'A tight leather skirt that extends about h
 pencilSkirt = items.Skirt('pencil skirt', 'A narrow, black skirt that extends just past the knees. The skirt has a slit in back to minimize movement restriction.',
         price=5, risque=1)
 
+alondrasSkirt = items.Skirt("Alondra's Skirt", "A plain wool skirt borrowed from Alondra", price=0, risque=0)
+
 #------------------------------------items.Underwear-------------------------------------
 modestUnderwear = items.Underwear("underwear", universal.format_line(['A plain, modest pair of underwear that', 'covers the entire bottom.']), price=3)
 
-silkPanties = items.Underwear('silk panties', universal.format_line(['A very well-made and comfortable pair of',
-    'black silk panties that leave the lower-half of a woman\'s bottom exposed.']), price=50, baring=True, risque=2)
+silkPanties = items.Underwear('silk panties', universal.format_line(["A very well-made and comfortable pair of",
+    "black silk panties that leave the lower-half of one's bottom exposed."]), price=50, baring=True, risque=2)
 
 underShorts = items.Underwear('undershorts', universal.format_line(['A pair of shorts that extend about a quarter',
     'of the way down the thigh. Such shorts are often worn underneath skirts to better protect', 

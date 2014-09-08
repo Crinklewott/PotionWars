@@ -1066,7 +1066,7 @@ class SpectralStrapping(p.SpectralSpanking):
         self.cost = SpectralStrapping.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.description = 'Conjures a \'hand\' and \'strap\' made of raw magic. The hand grabs the target and lifts them into the air. The strap lands a number of swats on the target\'s backside. Once the spanking is done, the hand lifts the target up, and throws them into the ground.'
-        self.effectFormula = 'HUMILIATION DURATION: 2 | 2* (resilience - enemy resilience)' + str(spanking.LEATHER_STRAP_SEVERITY) + '\nDAMAGE: 3 | 3 * (magic - enemy magic)\nSuccess (%): 40 | 32 * (magic - enemy magic) | 96'
+        self.effectFormula = 'HUMILIATION DURATION: 2 | 2* (resilience - enemy resilience)' + str(spanking.LEATHER_STRAP_SEVERITY) + '\nDAMAGE: 3 | 3 * (magic - enemy magic)\nSuccess (%): 55 | 37 * (magic - enemy magic) | 96'
         self.numTargets = 1
         self.magicMultiplier = 2
         self.resilienceMultiplier = 2
@@ -1076,47 +1076,14 @@ class SpectralStrapping(p.SpectralSpanking):
         self.rawMagic = True
         self.tier = SpectralStrapping.tier 
         self.expertise = ADVANCED
-        self.probModifier = 32
-        self.minProbability = 40
+        self.probModifier = 45
+        self.minProbability = 37
         self.maxProbability = 96
         self.minDamage = 4
         
 
     def effect(self, inCombat=True, allies=None, enemies=None, severity=spanking.LEATHER_STRAP_SEVERITY):
         return super(SpectralStrapping, self).effect(inCombat, allies, enemies, severity)
-        """
-        opponents = enemies if attacker in allies else opponents
-        currentDefenders = list(defenders)
-        effects
-        for defender in defenders:
-            if not defender in opponents:
-                availableOpponents = [opp for opp in opponents if opp not in currentDefenders]
-                if availableOpponents == []:
-                    continue
-                else:
-                    defender = availableOpponents[random.randrange(0, len(availableOpponents))]
-                    currentDefenders.append(defender)
-        defender = self.defenders[0]
-        attacker = self.attacker
-        damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-        numSmacks = self.smackMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-        duration = self.resilienceMultiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier() + spanking.LEATHER_STRAP_SEVERITY)
-        resultStatement = []
-        resultStatement.extend(self.effect_statement(defender))
-        if defender.ignores_spell(self):
-            resultStatement.extend(self.immune_statement(defender))
-        else:
-            successProbability = 32 * (attacker.magic_attack() - enemy.magic_defense(self.rawMagic))
-            if successProbability < 40:
-                successProbability = 40
-            elif successProbability > 96:
-                successProbability = 96
-            success = random.randint(1, 100)
-            if success < successProbability:
-                defender.is_inflicted_with(statusEffects.build_status(self.statusInflicted, numSmacks))
-                defender.receives_damage(damage)
-                resultStatement.extend(success_statement(defender))
-                """
 
     def effect_statement(self, defender):
         attacker = self.attacker
@@ -1158,7 +1125,7 @@ class SpectralCaning(p.SpectralSpanking):
         self.cost = SpectralCaning.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.description = 'Conjures a \'hand\' and \'cane\' made of raw magic. The hand grabs the target and lifts them into the air. The cane lands a number of swats on the target\'s backside. Once the caning is done, the hand lifts the target up, and throws them into the ground.'
-        self.effectFormula = 'HUMILIATION DURATION: 2 | 2* (resilience - enemy resilience))' + str(spanking.CANE_SEVERITY) + '\nDAMAGE: 4 | 4 * (magic - enemy magic)\nSUCCESS (%): 40 | 35 * (magic - enemy magic) | 97'
+        self.effectFormula = 'HUMILIATION DURATION: 2 | 2* (resilience - enemy resilience))' + str(spanking.CANE_SEVERITY) + '\nDAMAGE: 4 | 4 * (magic - enemy magic)\nSUCCESS (%): 60 | 38 * (magic - enemy magic) | 97'
         self.numTargets = 1
         self.magicMultiplier = 4
         self.smackMultiplier = 5
@@ -1169,8 +1136,8 @@ class SpectralCaning(p.SpectralSpanking):
         self.effectClass = combatAction.ALL
         self.statusInflicted = statusEffects.HUMILIATED
         self.rawMagic = True
-        self.probModifier = 35
-        self.minProbability = 40
+        self.probModifier = 38
+        self.minProbability = 60
         self.maxProbability = 97
         self.minDamage = 4
 

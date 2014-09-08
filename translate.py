@@ -267,6 +267,8 @@ inlineCommandsPlayer = {
     r'\weaponName{}':"''', universal.state.player.weapon().name, '''",  
     r'\name{}':"''', universal.state.player.name, '''",  
     r'\names{}':"''', universal.state.player.name, 's', '''",
+    r'\nickname{}':"''', universal.state.player.nickname, '''",  
+    r'\nicknames{}':"''', universal.state.player.nickname, 's', '''",
     r'\weapon{}':"''', universal.state.player.weapon().name, '''",
     r'\player{}':"universal.state.player",
     r'\name{}':"''', universal.state.player.name, '''",
@@ -275,6 +277,7 @@ inlineCommandsPlayer = {
     r'\cladbottom{\trousers}': "''', universal.state.player.clad_bottom(), '''",
     r'\muscleadj{}': "''', universal.state.player.muscle_adj(), '''",
     r'\bumadj{}': "''', universal.state.player.bum_adj(), '''",
+    r'\quiver{}': "''', universal.state.player.quiver(), '''",
     r'\liftlower{}': "''', items.liftlower(universal.state.player.lower_clothing()), '''",
     r'\lowerlift{}': "''', items.lowerlift(universal.state.player.lower_clothing()), '''",
     r'\liftslowers{}': "''', items.liftlower(universal.state.player.lower_clothing()), '''",
@@ -288,6 +291,7 @@ inlineCommandsPlayer = {
     r'\liftslowers{pajamas}': "''', items.liftslower(universal.state.player.pajama_bottom()), '''",
     r'\lowerslifts{pajamas}': "''', items.lowerslifts(universal.state.player.pajama_bottom()), '''",
     r'\pajamabottoms{}': "''', universal.state.player.pajama_bottom().name, '''",
+    r'\underwear{}':"''', universal.state.player.underwear().name, '''",
     r'\stealth{}': "universal.state.player.stealth()",
     r'\warfare{}': "universal.state.player.warfare()",
     r'\magic{}': "universal.state.player.magic()",
@@ -347,12 +351,13 @@ inlineCommands = {
     r'\lowerlift{pajamas}{': "''', items.lowerlift(items.pajama_bottom(",
     r'\liftslowers{pajamas}{': "''', items.liftslowers(items.pajama_bottom(",
     r'\lowerslifts{pajamas}{': "''', items.lowerslifts(items.pajama_bottom(",
-    r'\pajamabottoms{': "''', items.pajama_bottom(",
+    r'\underwear{':"''', items.underwear_name(",
+    r'\pajamabottoms{': "''', items.pajama_bottom_name(",
     r'\stealth{': "person.stealth(",
     r'\warfare{': "person.warfare(",
     r'\magic{': "person.magic(",
     r'\grapple{': "person.grapple(",
-    r'\resilience{': "person.resilience(",
+    r'\resilience{': "person.resilience("
     } 
 
 def translate_commands(text, tab, nodeName):

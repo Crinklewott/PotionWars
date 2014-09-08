@@ -8,6 +8,7 @@ import townmode
 ildri = None
 kitchen = None
 deidre = None
+alondra = None
     #def __init__(self, name, gender, defaultLitany, litany, description="", printedName=None, 
     #        coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle='', marks=None,
     #        musculature='', hairLength='', height='', bodyType=''): 
@@ -25,9 +26,9 @@ deidre = None
 #SHORT_HAIR_STYLE = ['down']
 #SHOULDER_HAIR_STYLE = SHORT_HAIR_STYLE + ['ponytail', 'braid', 'pigtail', 'bun']
 def build_chars():
-    global ildri, deidre
+    global ildri, deidre, alondra
     try:
-        ildri = universal.state.get_character('Ildri')
+        ildri = universal.state.get_character('Ildri.person')
     except KeyError:
         ildri = person.Person('Ildri', person.FEMALE, None, None, ' '.join(["Ildri is a towering, muscular, golden-haired, and fair-skinned woman. She looks to be about the same age as Adrian. She is",
             "wearing an apron, a",
@@ -46,11 +47,18 @@ def build_chars():
         ildri.height = 'huge'
         ildri.bodyType = 'voluptuous'
     try: 
-        deidre = universal.state.get_character('Deidre')
+        deidre = universal.state.get_character('Deidre.person')
     except KeyError:
         deidre = person.Person('Deidre', person.FEMALE, None, None, ''.join(["A tall, slender woman with frizzy, shoulder-length blonde hair pulled back into a bun. She has piercing blue eyes, and",
             "carries herself with rod-straight posture. A black beret sits on top of her head."]), specialization=universal.STATUS_MAGIC, order=person.first_order, skinColor="peach", eyeColor="blue",
-            hairColor="blonde", hairLength="shoulder-length", hairStyle="bun", height="tall", bodyType="slim")
+            hairColor="blonde", hairLength="shoulder-length", hairStyle="bun", height="tall", bodyType="slim", muscular="fit")
+    try:
+        alondra = universal.state.get_character('Alondra.person')
+    except KeyError:
+        alondra = person.Person('Alondra', person.FEMALE, None, None, ''.join(['''Alondra is a Taironan woman with rich, dark caramel skin, . She is a little on the short side of average.''',
+            '''She has shoulder-length hair black hair, and relatively small eyes, dark brown eyes. In contrast to her height, her breasts are a little on the large side of average.''',
+            '''She has a round, protruding bottom that rolls enticingly when she walks.''']), specialization=universal.STEALTH, order=person.second_order, skinColor="caramel", eyeColor="brown",
+            hairColor="black", hairLength="shoulder-length", hairStyle="down", height="average", bodyType="voluptuous", musculature="soft")
 
 
        

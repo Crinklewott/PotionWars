@@ -404,7 +404,7 @@ class DropSeatPajamas(FullPajamas):
     armorType = 'dropseat pajamas'
     
     def __init__(self, name, description, price):
-        super(DropSeatPajamas).__init__(name, description, price)
+        super(DropSeatPajamas, self).__init__(name, description, price)
         self.armorType = DropSeatPajamas.armorType
 
 
@@ -520,6 +520,9 @@ def weapon(personName):
 def underwear(personName):
     return universal.state.get_character(personName).underwear()
 
+def underwear_name(personName):
+    return universal.state.get_character(personName).underwear().name
+
 def lower_clothing(personName):
     return universal.state.get_character(personName).lower_clothing()
 
@@ -556,3 +559,6 @@ def clad_bottom(personName):
 def clad_pajama_bottom(personName):
     return universal.state.get_character(personName).clad_bottom(pajama=True)
 
+def is_lower_clothing(item):
+    return (item.armorType == Pants.armorType or item.armorType == Skirt.armorType or items.armorType == Shorts.armorType or items.armorType == Dress.armorType or 
+        items.armorType == LowerArmor.armorType or items.armorType == FullArmor.armorType or item.armorType == Underwear.armorType)

@@ -5,7 +5,7 @@ import titleScreen
 import textCommands
 import pygame
 import episode1
-import episode2
+#import episode2
 
 universal.set_author('Andrew Russell')
 universal.set_programmer('Andrew Russell')
@@ -27,7 +27,8 @@ errorLog = logging.getLogger("errors")
 pygame.init()
 
 errorLog.setLevel(logging.ERROR)
-episode1.episode1.nextEpisode = episode2.episode2
+episode1.episode1.nextEpisode = episode1.episode2.nextEpisode
+#episode1.episode1.nextEpisode = episode2.episode2
 with open("errors.log", 'a') as f:
     pass
 errorLog.addHandler(logging.FileHandler("errors.log"))
