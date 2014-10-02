@@ -59,6 +59,8 @@ qualityBlouse = items.Shirt('blouse', 'A well-made blouse with a hint of protect
 
 bra = items.Shirt('bra', format_line(['Recent research has shown that people who wear shirts are baby-eating, Mother-hating scum who are secretly planning to steal''',
 '''your husband's sword. Be a true Avaricumite. Wear nothing but a bra today (and pants. Or a teeny tiny skirt. Or just panties.)!''']))
+
+blueVest = items.Shirt('blue vest', 'A bright blue vest and white undershirt, cut in the style of outfits worn by young boys in the middle and upper classes.', price=10)
 #--------------------------------------Lower Armor--------------------------------
 
 #--------------------------------------items.Pants-------------------------------------
@@ -69,6 +71,8 @@ shorts = items.Shorts('shorts', 'A pair of knee-length cotton shorts.', price=5)
 shortShorts = items.Shorts('short shorts', "A pair of skintight shorts that barely cover one's bottom.", price=5, risque=2)
 
 holeyTrousers = items.Pants('holey trousers', 'A pair of ragged, borderline unwearable trousers. There is a massive hole in the left knee, the right leg stops in a frayed mess just pass the knee, and the waist is held up with a threadbare rope.')
+
+blueShorts = items.Shorts('blue shorts', 'A pair of blue shorts cut in a style similar to what young boys wear in the middle and upper classes.', price=10)
 
 #---------------------------------------items.Skirts------------------------------------
 combatSkirt = items.Skirt('combat skirt', 'A skirt that extends down to just shy of the knees. There is the faintest hint of magic. Not much, but enough that the skirt likely provides some limited combat protection.', price=5, attackDefense=2)
@@ -83,6 +87,8 @@ pencilSkirt = items.Skirt('pencil skirt', 'A narrow, black skirt that extends ju
         price=5, risque=1)
 
 alondrasSkirt = items.Skirt("Alondra's Skirt", "A plain wool skirt borrowed from Alondra", price=0, risque=0)
+
+cutoffShorts = items.Shorts('cut off shorts', "A pair of cut-off leather shorts that barely cover one's bottom.", price=0, risque=3)
 
 #------------------------------------items.Underwear-------------------------------------
 modestUnderwear = items.Underwear("underwear", universal.format_line(['A plain, modest pair of underwear that', 'covers the entire bottom.']), price=3)
@@ -126,6 +132,8 @@ sunDress = items.Dress('sun dress', 'A low-cut cotton dress  that extends to abo
 
 deidresDress = items.Dress("Deidre's dress", "A black dress with red trim made from high quality cotton. The dress is floor-length on Deidre, and is cut to balance professionalism with showing off Deidre's average bust, shapely hips and long legs. Though an elegant dress, it can interfere with combat and other highly physical activities.", 
         attackDefense=4, attackPenalty=1)
+
+pinkDress = items.Dress('pink dress', 'A modest pink dress cut in a style similar to what young children of the middle and upper classes tend to wear.', price=20)
 
 
 #------------------------Robes----------------------------------------

@@ -119,8 +119,9 @@ class Room(universal.RPGObject):
     player is allowed to go there. Otherwise the player is not.
     """
     def __init__(self, name, description="", adjacent=None, characters=None, 
-            after_arrival=None, bgMusic=None, before_arrival=None):
+            after_arrival=None, bgMusic=None, before_arrival=None, leaving=None):
         self.name = name
+        self.leaving = leaving
         if bgMusic is None:
             self.bgMusic = music.TOWN
         else:
@@ -877,6 +878,10 @@ def select_destination_interpreter(keyEvent):
             go(currentRoom.adjacent[num-1])
 
 def go(room, party=None, sayDescription=True):
+    try:
+        universal.state.location.leaving()    
+    except (TypeError, AttributeError):       
+        pass
     try:
         if room.before_arrival():
             perform_go(room, party, sayDescription)

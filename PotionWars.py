@@ -2,7 +2,7 @@ import sp_rpg_engine
 import logging, logging.handlers
 import universal
 import titleScreen
-import textCommands
+import textCommandsMusic
 import pygame
 import episode1
 #import episode2

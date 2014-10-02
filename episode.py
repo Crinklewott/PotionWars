@@ -46,6 +46,7 @@ class Episode(universal.RPGObject):
         global postTitleCardFunction, postTitleCardFuncArgs
         universal.get_screen().fill(universal.DARK_GREY)
         music.play_music(self.titleTheme)
+        universal.state.player.clear_marks()
         universal.display_text('Episode ' + str(self.num) + ':\n' + self.name, universal.get_world_view(), universal.get_world_view().midleft, isTitle=True)
         """
         if startingSceneArgs is None:

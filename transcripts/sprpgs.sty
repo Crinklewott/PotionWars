@@ -13,16 +13,18 @@
 \sectionfont{\centering}
 
 \newcounter{Scenecount}
-\setcounter{Scenecount}{1}
+\setcounter{Scenecount}{0}
 
 \newcounter{Nodecount}
-\setcounter{Nodecount}{1}
+\setcounter{Nodecount}{0}
 
 \newcommand{\gender}{f}
 \newcommand{\episode}{2}
 \newcommand{\female}{f}
 \newcommand{\name}{\ifx\gender\female Juliana\else Julian\fi}
 \newcommand{\names}{\ifx\gender\female Juliana's\else Julian's\fi}
+\newcommand{\nickname}{\ifx\gender\female Juli\else Jul\fi}
+\newcommand{\nicknames}{\ifx\gender\female Juli's\else Jul's\fi}
 \newcommand{\hisher}{\ifx\gender\female her\else his\fi} 
 \newcommand{\HisHer}{\ifx\gender\female Her\else His\fi}
 \newcommand{\himher}{\ifx\gender\female her\else him\fi}
@@ -54,11 +56,17 @@
 \newcommand{\menwomen}{\ifx\gender\female women\else men\fi}
 \newcommand{\MenWomen}{\ifx\gender\female Women\else Men\fi}
 \newcommand{\sirmaam}{\ifx\gender\female maam\else sir\fi}
-\newcommand{\SirMaam}{\ifx\gender\female Sir\else Maam\fi}
-\newcommand{\bastardbitch}{\ifx\gender\female bastard\else bitch\fi}
-\newcommand{\BastardBitch}{\ifx\gender\female Bastard\else Bitch\fi}
+\newcommand{\SirMaam}{\ifx\gender\female Maam\else Sir\fi}
+\newcommand{\bastardbitch}{\ifx\gender\female bitch \else bastard\fi}
+\newcommand{\BastardBitch}{\ifx\gender\female Bitch\else Bastard\fi}
+\newcommand{\sondaughter}{\ifx\gender\female daughter\else son\fi}
+\newcommand{\SonDaughter}{\ifx\gender\female Daughter\else Son\fi}
+\newcommand{\underwearpanties}{\ifx\gender\female panties\else underwear\fi}
 \newcommand{\weapon}{sword}
 \newcommand{\weaponName}{sword}
+\newcommand{\itthem}[1]{it}
+\newcommand{\itthey}[1]{it}
+\newcommand{\shirt}{tunic}
 
 %If that automatically hyperlinks between the if statement and the ending fi. Useful for large if's that might span multiple pages, making it possible for the reader
 %to lose track of what sitation they're in.
@@ -102,37 +110,46 @@
 %}
 
 \newcommand{\truth}{true}
+\newcommand{\True}{True}
 \newcommand{\falsetrue}{falsetrue}
 \newcommand{\true}{true}
 %Used for short one or two liners that don't have a chance of spanning multiple pages. Can also be used if you don't want the fancy hyperlinks of condif
 %cond is short for conditional.
 \newcommand{\cond}[3]{\ifx\truth\true \textcolor{blue}{#2}\else \textcolor{magenta}{#3}\fi}
+%elif for cond above. when using econd, the third argument of cond should be empty. Similarly, when chaining econds together, the third argument should only have something if it's the last econd.
+\newcommand{\econd}[3]{\ifx\truth\false \textcolor{blue}{#3}\else \fi}
 %First argument: if-check
 %Second argument: Result if if-check is true
 %Third Argument: elif-check
 %Fourth Argument: Result if if-check is false and elif-check is true
 %Fifth Argument: Result if both if-else and elif-check are false
-\newcommand{\condelif}[5]{\ifx\truth\true \textcolor{blue}{#2}\else \ifx\truth\falsetrue \textcolor{cyan}{#4}\else\textcolor{magenta}{#5} \fi \fi}
+%\newcommand{\condelif}[5]{\ifx\truth\true \textcolor{blue}{#2}\else \ifx\truth\falsetrue \textcolor{cyan}{#4}\else\textcolor{magenta}{#5} \fi \fi}
 
 %Second argument is the location at which the node is taking place. Third argument is the person you are speaking to. First argument is the name of the node.
 %The name of the node is used as the label for this particular node.
-\newenvironment{node}[3]
+\newenvironment{node}[4]
 {
+    \refstepcounter{Nodecount}
     \section*{\arabic{Nodecount}}
-    \addtocounter{Nodecount}{1}
-    \emph{Location: #2}
+    %\addtocounter{Nodecount}{1}
+    \textit{Location: #2}
 
-    \emph{Speaking With: #3}
+    \textit{Speaking With: #3}
+
+    \textit{Author: #4}
     \label{#1}
 }
 {
 }
 
-\newenvironment{childnode}[1]
+\newenvironment{childnode}[2]
 {
+    \refstepcounter{Nodecount}
     \section*{\arabic{Nodecount}}
-    \addtocounter{Nodecount}{1}
+    \textit{Author: #2}
+    %\addtocounter{Nodecount}{1}
     \label{#1}
+
 }
 {}
 
@@ -140,25 +157,29 @@
     
 
 %First argumnt is the reference the child should link to (i.e. the node that contains the text of the child), second argument is the text displayed.
-\newcommand{\child}[2]{\hyperref[#2]{#1}}
+\newcommand{\child}[2]{\hyperref[#2]{#1 \emph{Turn to Section \ref{#2}}}}
 
 \newcommand{\childif}[2]{\child{#1}{#2}}
 %Identical to childif as far as LaTeX is concerned. However, in Python, this command tells us to use elif #1: #2 rather than if #1: #2, allowing us to define checks for the nodes that aren't necessarily
 %mutually exclusive.
-\newcommand{\childelif}[2]{\child{#1}{#2}}
+\newcommand{\childelif}[2]{\ifx #1True \child{Otherwise}{#2}\else\child{#1}{#2}\fi}
 
 %See comment above
-\newcommand{\childelse}[2]{\child{#1}{#2}}
+\newcommand{\childelse}[1]{\child{True}{#1}}
 
-\newcommand{\continue}[2]{\child{#1}{#2}}
+\newcommand{\continue}[1]{\child{Continue}{#1}}
 
-\newcommand{\keyword}[1]{\name{} gains the \emph{keyword} #1}
+\newcommand{\keyword}[1]{\textcolor{magenta}{\name{} gains the \emph{keyword} #1}}
+\newcommand{\remkeyword}[1]{\textcolor{magenta}{\name{} loses the \emph{keyword} #1}}
 
 %Used for when I need to add any sort of complicated python code directly. Does not show up in the transcript.
 \newenvironment{code}{\comment}{\endcomment}
 
 %Doesn't actually do anything, except mark that we're starting a scene.
-\newenvironment{openScene}{\chapter*{Episode \episode{} Scene \arabic{Scenecount}}
+\newenvironment{openScene}{
+    \refstepcounter{Scenecount}
+    \chapter*{Episode \episode{}
+    Scene \arabic{Scenecount}}
 \comment}
 {\endcomment}
 
@@ -231,10 +252,15 @@
 
 \newcommand{\bumadj}{\textcolor{blue}{plump}}
 
+\newcommand{\quiver}{\textcolor{blue}{quiver}}
+
+\newcommand{\quivering}{\textcolor{blue}{quivering}}
+
 \newcommand{\muscleadj}{\textcolor{blue}{firm}}
 
 \newcommand{\pajama}{pajama}
 \newcommand{\trousers}{trousers}
+\newcommand{\underwear}{thong}
 \newcommand{\cladbottom}[1]{\textcolor{blue}{\if#1\pajama pink pajama pants-clad\else trousers-clad\fi}}
 
 \newcommand{\liftlower}{\textcolor{blue}{lower}}
@@ -242,8 +268,9 @@
 \newcommand{\liftslowers}{\textcolor{blue}{lowers}}
 
 \newcommand{\pajamabottoms}{\textcolor{blue}{pink pajama pants}}
+\newcommand{\pajamas}{\textcolor{blue}{large shirt}}
 
-%Doesn't actually do anything. Just indicates that we should add the first argument to the list of marks for the player
+%Doesn't actually do anything. Just indicates that we should add the second argument to the list of marks for the character specified in the first argument.
 %Note: In order for this command to be translated properly, it must appear after ALL NODE TEXT. ONLY OTHER SPRPG COMMANDS MAY APPEAR AFTER THIS.
 \newcommand{\bummarks}[2]{}
 

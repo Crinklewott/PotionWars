@@ -56,7 +56,7 @@ def build_chars():
         alondra = universal.state.get_character('Alondra.person')
     except KeyError:
         alondra = person.Person('Alondra', person.FEMALE, None, None, ''.join(['''Alondra is a Taironan woman with rich, dark caramel skin, . She is a little on the short side of average.''',
-            '''She has shoulder-length hair black hair, and relatively small eyes, dark brown eyes. In contrast to her height, her breasts are a little on the large side of average.''',
+            '''She has shoulder-length hair black hair, and relatively small, dark brown eyes. In contrast to her height, her breasts are a little on the large side of average.''',
             '''She has a round, protruding bottom that rolls enticingly when she walks.''']), specialization=universal.STEALTH, order=person.second_order, skinColor="caramel", eyeColor="brown",
             hairColor="black", hairLength="shoulder-length", hairStyle="down", height="average", bodyType="voluptuous", musculature="soft")
 
@@ -71,9 +71,11 @@ def build_rooms():
     except KeyError:
         kitchen = townmode.Room("Kitchen", ' '.join(["The kitchen is a rather large room with two long, waist-high counters running through the middle. Along the sides of the walls are a few small",
             "tables and",
-            "stools. A pair of massive hearths sit at the far end, a pair of turnspit megapnosauri are lying next to the hearth. Their heads come up, and they gurgle happily as", 
+            "stools. A pair of massive hearths sit at the far end, a pair of turnspit coelophysii are lying next to the hearth. Their heads come up, and they gurgle happily as", 
             universal.state.player.name,
             "enters. There is a large hole in the south wall. The hole has been braced with several hastily carved timbers, and a few thick furs have been draped over it, so that",
             "customers can't peer directly into the back of the guild. A pair of high windows sit on the western wall on either side of the hearth."]), universal.state.get_room("Adventurer's Guild"),
             None, None, textCommandsMusic.LIGHT_HEARTED, None)
+        if 'boarding_with_Adrian' in textCommandsMusic.keywords():
+            kitchen.add_adjacent(universal.state.get_room("Bedroom"))
 

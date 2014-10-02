@@ -4233,7 +4233,7 @@ def e1_2_3():
         '''scattered about the floor. There are two gaping holes''',
         '''in the southern wall, through which''', name(), '''can see the raging melee. Two massive ovens line the far wall.  Directly to the west, between''', name(),
         '''and the ovens, is a tall, muscular, golden-haired, fair-skinned woman, likely about the age of Adrian. She is wearing an apron, a short-sleeve tunic,''',
-        '''trousers, and a heavy pair of boots.'''],
+        '''trousers, and a heavy pair of boots. Beneath the apron, wrapped around her generous hips, is a large red sash.'''],
         ['''Bent over the counter, her skirt around her ankles, and her round, protruding bottom exposed to the air, is a Taironan woman about''', names(), '''age, maybe a few years older.''',
             '''The woman has rich, dark caramel skin, very similar in shade to''', names() + ".", '''Though hard to tell, it looks like the woman is a little on the short side of average.''',
             '''She has shoulder-length hair black hair, and relatively small, dark brown eyes. In contrast to her height, her breasts are a little on the large side of average.''']])
@@ -4607,7 +4607,7 @@ def ep1_paloma_otk_hand(keyEvent):
         if num == 1:
             ep1_paloma_spanking_end()
         elif num == 2:
-            universal.say(format_text([[name(), '''takes Paloma's right ankle, and slips the healer's wool slipper off her foot.''', HeShe(),  '''experimentally slaps''',
+            universal.say(format_text([[name(), '''takes Paloma's right ankle, and slips the healer's cotton slipper off her foot.''', HeShe(),  '''experimentally slaps''',
             '''the slipper''',
                 '''against''', hisher(), '''hand. A thin strip of leather runs along the bottom of the slipper, adding a bit of sting to the slip, and making a very''',
                 '''intimidating slapping sound.'''],
@@ -6822,7 +6822,7 @@ def e0_3_5():
     if not 'met_Mai' in keywords():
         universal.say_title('Stealth Maze')
         universal.say(universal.format_text([[name(), '''tenses as''', heshe(), '''enters the room. Unlike the others, this is not a large, wide open space. Rather, it is a dark,''',
-            '''claustrophobic maze. The whole maze has the feeling of a forest where the birds have suddenly gone quiet.'''],
+            '''claustrophobic maze. The whole maze has the feeling of a forest where the archaeopteryx have suddenly gone quiet.'''],
             [name(), '''glances over''', hisher(), '''shoulder at the door, and considers the wisdom of continuing into these dark corridors.\n\n''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
     else:
@@ -7089,6 +7089,7 @@ def mai_spanking_interpreter(keyEvent):
                                         '''rapid pattern on Mai's large, jiggling bottom. Mai squeals, kicks, and wiggles in''', names(), '''grip, but doesn't try to break it (which''',
                                         name(), '''is reasonably certain she could do).'''],
                                 [name(), '''pauses, and rubs''', hisher(), '''palm against''', hisher(), '''leg in an attempt to ease the sting. "Madre, you have a hard bottom."''']]), justification=0)
+                        """
                         if universal.state.player.is_soft():
                             universal.say(universal.format_text([['''\n\n"100 squat thrusts everyday," says Mai smugly.''', '''"You should join me. I noticed more than a little jiggle to your''',
                             '''wiggle''' if universal.state.player.is_female() else '''walk''', '''when I was spanking you earlier."'''],
@@ -7111,11 +7112,12 @@ def mai_spanking_interpreter(keyEvent):
                             universal.set_command_interpreter(mai_squat_thrusts_interpreter)
                             universal.set_commands(['(#) Select a number.'])
                         else:
-                            universal.say(universal.format_text([['''"Sure doesn't feel that way," mutters Mai.'''],
-                                ['''"Trust me, it is."'''],
-                                [name(), '''lays on another good fifty smacks or so, the elf's plump bottom bouncing and rocking beneath the hard blows. "Alright, I''',
-                                    '''think that's enough."'''],
-                                ['''Mai straightens, and rubs her bottom gingerly. "These are some nice stripes. I'll wear them with pride."''']]), justification=0)
+                        """
+                        universal.say(universal.format_text([['''"Sure doesn't feel that way," mutters Mai.'''],
+                            ['''"Trust me, it is."'''],
+                            [name(), '''lays on another good fifty smacks or so, the elf's plump bottom bouncing and rocking beneath the hard blows. "Alright, I''',
+                                '''think that's enough."'''],
+                            ['''Mai straightens, and rubs her bottom gingerly. "These are some nice stripes. I'll wear them with pride."''']]), justification=0)
                             convince_mai()    
         elif num == 3 and itemspotionwars.woodenSpoon in inventory():
             universal.say(universal.format_text([[name(), '''removes the wooden spoon from''', hisher(), '''pack, and slaps it against''', hisher(), '''palm. "Get back over!"'''],
@@ -8052,7 +8054,7 @@ def necia_spar_interpreter(keyEvent):
         return
     if num == 1:
         universal.say(universal.format_text([['''"I think that's enough," says''', name() + ",", '''freeing the woman from''', hisher(), '''grasp. "Next time you want to spar, we set up rules, first."'''],
-            ['''The woman sags onto her knees, and hikes her trousers back up, wincing a little as the rough wool scrapes against her tender bottom.''']]), justification=0)
+            ['''The woman sags onto her knees, and hikes her trousers back up, wincing a little as the rough cotton scrapes against her tender bottom.''']]), justification=0)
         necia_spanking_over()
     elif num == 2:
         universal.say(universal.format_text([[name(), '''pulls''', hisher(), '''wooden spoon from''', hisher(), '''pack.'''],
@@ -8067,7 +8069,7 @@ def necia_spar_interpreter(keyEvent):
                 '''vainly on the arm wrapped around her waist. Her yelps come more and more frequently, until she's yelping after every blow.'''],
             ['''Finally,''', name(), '''stops. "Have you learned your lesson?"'''],
             ['''The Vengador nods quickly. "Sparring needs rules."'''],
-            ['''"Good."''', name(), '''lets the woman go. The Vengador slumps to her knees, and tugs her rough woolen trousers back up over her bruised, aching bottom.''']]), justification=0)
+            ['''"Good."''', name(), '''lets the woman go. The Vengador slumps to her knees, and tugs her rough leather trousers back up over her bruised, aching bottom.''']]), justification=0)
         necia_spanking_over()
     elif num == 3 and itemspotionwars.leatherBelt in inventory():
         universal.say(universal.format_text([[name(), '''lets go of the woman, and lets her slump down onto her knees, clutching at her sore bottom and moaning. But then,''', name(), 
@@ -8559,7 +8561,7 @@ def scene_3_guild():
             ['''The cots are filled with men and women, mostly Taironans in ragged clothing.''',
                 '''There are quite a few adventurers as well. Moving about the cots are grim-faced men and women. Some of them wear leather''',
                 '''breastplates, while others are clad in chain shirts. Some carry spears, and others rest their hands lightly on large war daggers''',
-                '''at their hips. All of them have a badge in the shape of a stylized blue hawk with wings uplifted on their left shoulders. The city''',
+                '''at their hips. All of them have a badge in the shape of a stylized blue archaeopteryx with wings uplifted on their left shoulders. The city''',
                 '''guard.'''],
             [name(), '''hears a cry coming from outside. It sounds familiar.''', name(), '''swings''', hisher(), '''feet around, and stands up.'''],
             ['''"You shouldn't really be-"'''],
@@ -8614,7 +8616,7 @@ def scene_3_guild():
             '''charred, frozen, and marked by various other signs of magic. Men and women in finely made armor rush about, some gathering''',
             '''samples of the magic damage, others interrogating adventurers and Vengadores. Some wear''',
             '''leather breastplates, while others chain shirts. Some carry spears, and others lightly rest palms on the hilts of long war daggers.''',
-            '''All of them wear a patch on their upper-left shoulder in the shape of a stylized blue hawk with wings lifted towards the sky. City''',
+            '''All of them wear a patch on their upper-left shoulder in the shape of a stylized blue archaeopteryx with wings lifted towards the sky. City''',
             '''guards.'''],
             ['''Two of the guards spot''', name() + ".", '''They let out cries of warning and lower their spears.'''],
             ['''"Don't move," barks one of the guards, while half a dozen others rush up. "You're under arrest."'''],
@@ -8638,7 +8640,7 @@ def scene_3_guild():
         ['''A bearded man stands in the center of the room. He is of average height, and build. He has short-cut brown hair and a''',
         '''thick brown beard. He stands straight and tall, one hand resting on the pommel of his sword (the cross-guard of which is reminiscent of a''',
         '''soaring eagle), and the other behind his back. He is wearing an elaborate set of plate armor. On the chest of his armor is a''',
-        '''large, stylized blue hawk with wings outstretched towards the sky. He also wears a full blue cape. His brown eyes sweep over the room, taking''',
+        '''large, stylized blue archaeopteryx with wings outstretched towards the sky. He also wears a full blue cape. His brown eyes sweep over the room, taking''',
         '''in everything. They briefly meet''', names(), '''before sweeping past''', himher(), '''and focusing on the hole in the wall.''',
          '''A tall, blond''',
         '''woman in a slender black''',
@@ -8736,7 +8738,7 @@ def questioning():
         ['''After a few minutes, the tall blonde woman approaches. "Hello, my name is Deidre."\n\n''']]), justification=0, music=[textCommandsMusic.GUARDS])
     if 'charmed_by_Deidre' in keywords():
         universal.say(universal.format_text([['''"Yes, we've met," says''', name(), '''flatly.'''],
-            ['''"Indeed, which is why Sir Roland sent me to talk to you," says Deidre, gesturing towards the man with the blue bird emblazoned on his''',
+            ['''"Indeed, which is why Sir Roland sent me to talk to you," says Deidre, gesturing towards the man with the blue archaeopteryx emblazoned on his''',
                 '''chest. "So, let's get started."'''],
             ['''The puppeteer's eyes seem to flash.'''],
             ['''"No, wait-"''']]), justification=0)
@@ -9252,7 +9254,7 @@ def ep1_peter_spanking_panties_lesbian_qf():
         else:
             ep1_peter_spanking_panties_lesbian.quip = format_txt([['''"Alright, then," says Peter, setting the chair in the middle of the room, and sitting down. He pats his thigh. "Over my knee."'''],
                 [name(), '''approaches Peter.''', HeShe(), '''slips the gag into''', hisher(), '''mouth, then slides across Peter's lap, the rough''',
-                    '''wool of the smith's trousers scraping harshly against''', hisher(), p.underwearpanties() + "."]])
+                    '''Iguanadon leather of the smith's trousers scraping harshly against''', hisher(), p.underwearpanties() + "."]])
         if universal.state.player.numSpankings > 0:
             ep1_peter_spanking_panties_lesbian.quip = universal.format_text([ep1_peter_spanking_panties_lesbian.quip, 
                 ['''"Well," says Peter, his callused hand lightly running over''', names(), '''bruises.''',
@@ -9447,7 +9449,7 @@ def ep1_peter_spanking_panties_qf():
         else:
             ep1_peter_spanking_panties.quip = format_txt([['''"Alright, then," says Peter, setting the chair in the middle of the room, and sitting down. He pats his thigh. "Over my knee."'''],
                 [name(), '''approaches Peter''', hisher(), '''legs suddenly feeling very weak.''', HeShe(), '''slips the gag into''', hisher(), '''mouth, then slides across Peter's lap, the rough''',
-                    '''wool his trousers rubbing against the thin fabric of''', hisher(), p.underwearpanties() + "."]])
+                    '''Iguanadon leather of his trousers rubbing against the thin fabric of''', hisher(), p.underwearpanties() + "."]])
         if universal.state.player.numSpankings > 0:
             ep1_peter_spanking_panties.quip = universal.format_text([ep1_peter_spanking_panties.quip, 
                 ['''"Well," says Peter, his callused hand lightly running over''', names(), '''bruises.''',
@@ -9508,12 +9510,12 @@ def ep1_peter_bare_spanking():
             '''the trousers, approaches, and bends across Peter's lap.''']) if wearing_pants() else universal.format_line(['''tugs''', hisher(), 
                 universal.state.player.lower_clothing().name, '''up over''', hisher(), '''hips, making sure to wiggle''', hisher(), '''hips in the process. Then,''', 
                 heshe(), '''approaches Peter, and bends down across Peter's lap.''']), HeShe(), '''flushes and squirms as''', hisher(), 
-                '''bare hips and nether regions press up against the rough wool of Peter's trousers.''']])
+                '''bare hips and nether regions press up against the rough Iguanadon leather of Peter's trousers.''']])
     else:
         quip = universal.format_text([quip, [name(), '''takes the thin material of''', hisher(), p.underwearpanties(), '''and in a slow, smooth, sensuous, motion''',
             '''pushes the''', universal.state.player.underwear().name, '''down to''', hisher(), '''ankles.''', HeShe(), '''raises each foot in turn, and pulls the bit''',
             '''of fabric off''', hisher(), '''feet. Then,''', heshe(), '''approaches Peter, and bends over his lap,''', hisher(),'''naked hips and''',
-            '''nether regions slowly rubbing against the rough fabric of Peter's woolen trousers.''']])
+            '''nether regions slowly rubbing against the rough fabric of Peter's scaled trousers.''']])
     if universal.state.player.numSpankings > 0:
         quip = universal.format_text([quip, ['''"Well," says Peter, his callused hand running gingerly over''', names(), '''bruises.''',
             '''"Looks like you've already been thoroughly spanked today."'''],
@@ -9974,9 +9976,9 @@ def carrie_arrival():
         '''manages to achieve the same sexy balance between being firm and wobbly. She is''',
         '''wearing a''',
         '''low-cut, tight, rich purple dress that extends to about halfway down her thighs. The dress shows off her medium-sized breasts, draws attention to her''',
-        '''long legs, and hugs the curves of her hips. Her legs are sheathed in a pair of black wool tights. She is wearing her shoulder-length blonde''',
+        '''long legs, and hugs the curves of her hips. Her legs are sheathed in a pair of black cotton tights. She is wearing her shoulder-length blonde''',
         '''hair down, with the tips curled. On her feet are a pair''',
-        '''of black wool slippers.'''],
+        '''of black cotton slippers.'''],
         ['''"Lovely as always," says Elise, smiling. "Though if some of the more conservative Sisters caught you wearing that, your evening would take''',
             '''a sharp turn for the unpleasant."'''],
         ['''Carrie's grin turns mischievous. "And they haven't even seen what I'm wearing under this, yet." Then, she turns her attention to''', name() + 
@@ -10108,7 +10110,7 @@ def ep1_elise_carrie_come_in_qf():
         ['''"You became a Sister two weeks ago!"'''],
         ['''There's another smack.'''],
         ['''"Gah, fine, fine."'''],
-        ['''The door opens a crack, and a black shirt and black trousers made of fine wool are pushed into the room, before the door closes''',
+        ['''The door opens a crack, and a black shirt and black trousers made of fine cotton are pushed into the room, before the door closes''',
             '''again.'''], ep1_night_on_the_town(ep1_elise_carrie_come_in)])
 ep1_elise_carrie_come_in.quip_function = ep1_elise_carrie_come_in_qf
     
@@ -10123,7 +10125,7 @@ def ep1_elise_carrie_thanks_qf():
         ['''"You became a Sister two weeks ago!"'''],
         ['''There's another smack.'''],
         ['''"Gah, fine, fine."'''],
-        ['''The door opens a crack, and a black shirt and black trousers made of fine wool are pushed into the room, along with a pair of black boots,''',
+        ['''The door opens a crack, and a black shirt and black trousers made of fine cotton are pushed into the room, along with a pair of black boots,''',
         '''before the door to closes again.'''], ep1_night_on_the_town(ep1_elise_carrie_thanks)])
 ep1_elise_carrie_thanks.quip_function = ep1_elise_carrie_thanks_qf
 
@@ -10239,7 +10241,7 @@ def ep1_elise_prank_sorry_qf():
         ['''"But you love making dresses-" says Elise.'''],
         ['''"Doesn't mean I want them damaged," snaps Carrie.'''],
         ['''"Oh come on, the water hardly damages-" begins Elise.'''],
-        ['''"Are you kidding? This is wool!" cries Carrie, throwing her arms in the air, and splashing water all over the place. "I'll be lucky if it''',
+        ['''"Are you kidding? This is cotton!" cries Carrie, throwing her arms in the air, and splashing water all over the place. "And this is pretty hot water! I'll be lucky if it''',
         '''only shrinks three sizes! This dress took me two years to make, and now she's ruined it in less than a second! This was my first time''',
         '''wearing it too, and now all that work is wasted, and I really wanted to celebrate your ascension, and I've been making this dress for''',
         '''exactly that, and-"'''],
@@ -10287,7 +10289,7 @@ def ep1_elise_prank_sorry_spank_qf():
         ['''"I could hear this ruckus from all the way in my office," says Sister Samantha, her stern gaze washing over the three young women. "Care to''',
             '''tell me what's going on?"'''],
         ['''Carrie gives''', names(), '''bottom a sharp slap. "This jerk didn't take kindly to being bathed, so she shoved me in the tub. While I was''',
-            '''wearing a wool dress that took me years to make!"'''],
+            '''wearing a cotton dress that took me years to make!"'''],
         ['''"Bull! I shoved you in the tub, because you stripped and tossed me in with neither warning nor permission," snaps''', name() + "."],
         ['''"Well, what did you think was going to happen when we led you into a bathing room?" says Carrie.'''],
         ['''"Enough." Sister Samantha's voice cuts through the squabbling like a hot knife. She turns her gaze on Elise, who''',
@@ -10650,7 +10652,7 @@ def ep1_elise_no_prank_qf():
     ep1_elise_no_prank.music = [textCommandsMusic.CARLITA, textCommandsMusic.CARRIE]
     ep1_elise_no_prank.quip = universal.format_text([[name(), '''shrugs in the water. Probably shouldn't. It's not like it was that big of a deal anyway; she'd''',
         '''spent her whole life bathing in the public bath houses of Chengue, so nudity in front of other people (men and women!) is hardly new. Besides,''',
-        '''Carrie's dress looks like it's made of wool. Well-made or not, dumping her in the warm tub runs a serious risk of clothing shrinkage.'''],
+        '''Carrie's dress looks like it's made of cotton. Well-made or not, dumping her in the warm tub runs a serious risk of clothing shrinkage.'''],
         ['''So,''', name(), '''floats in the water for a few minutes, letting the sweat, dirt, and dried blood slough off of her body. She lets out a long,''',
             '''deep sigh.'''],
         ['''\m"No, please I told you everything. Please you have to believe me, don't take me there, don't let them in my head. Please!"'''],
@@ -10953,7 +10955,7 @@ def ep1_tavern_scene(node):
         ['''"Just a fancy variant of Spectral Light," says Carrie dismissively. "A parlor trick that just about anyone with a minimum of spectral''',
             '''talent can learn. Come on!"'''],
         ['''The three push into the tavern. The place is filled to bursting with a variety of men and women, all Carnutians. The men are all dressed in''',
-            '''practical, but well-maintained wool and leathers, while the women wear wool dresses, and skirts in a variety of colors and styles.''',
+            '''practical, but well-maintained cotton and leathers, while the women wear cotton dresses, and skirts in a variety of colors and styles.''',
             '''Though none of them are quite as nice as Elise's or Carrie's, they're still very close.'''],
         ['''"Hey ladies," says the bouncer, a massive, muscle-bound man''' + (''' larger even than Peter.''' if 'visited_blacksmith' in keywords() else
             '''.'''), '''"You going to sing tonight, Miss Elise?"'''],
@@ -11791,7 +11793,7 @@ def ep1_return_to_Church(node):
             '''outfit like that."'''],
         ['''"They were going to find out anyway," says Roland. "Only now, they'll also hear that I caught you. Also, in the next few days, I'll make sure word gets''',
             '''out of the very intense spanking I'm going to give you.''',
-            '''Now, instead of being some low-born brat with delusions of standing whose successfully pulled the wool over her fiance's eyes, you're a low-born brat''',
+            '''Now, instead of being some low-born brat with delusions of standing whose successfully pulled the cotton over her fiance's eyes, you're a low-born brat''',
             '''whose a little rough around the edges, but whose fiance is working tirelessly to help her achieve her potential as a Sister and a lady."'''],
         ['''"Well, maybe I don't care what they think." Elise stops, crosses her arms over her chest, and pouts. "Maybe they can all go get buried."'''],
         ['''Roland also stops and sighs patiently. "Honey, do you want our future children to be respected? Do you want them to have friends, find good spouses, and live''',
@@ -12564,15 +12566,42 @@ def ep1_carrie_sex():
     music.play_music(textCommandsMusic.ELISE)
     universal.say(universal.format_text([[name(), '''plops down on''', hisher(), ('''blankets''' if 'boarding_with_Maria' else '''bed''') + 
         (''', wincing as his sore bottom brushes against the blankets.''' if universal.state.player.numSpankings >0 else '''.'''),
-        '''Carrie lays facedown across his lap, grinding''',
-        '''her hips against his leg.'''],
+        '''Carrie lays facedown across his lap, grinding''', '''her hips against his leg.'''],
         ['''"Umm..." says''', name() + ",", '''suddenly becoming very conscious of certain bits of his anatomy.'''],
         ['''Carrie looks over her shoulder at him and pouts. She reaches back, and very slowly tugs her dress up over her hips, revealing her red, bruised, angry,''',
         '''round, succulent bottom (which her tiny thong does nothing to obscure). "Look at what Sister Samantha did to me! Isn't she just the meanest thing you ever''',
-        '''did see?"'''],
-        ['''"Maybe," says''', name() + ",", '''smiling playfully. He begins gently rubbing Carrie's warm, soft, ravaged cheeks. "But you are the brattiest thing I''',
-        '''ever did see.''',
-            '''Seems to me like you two belong together."'''],
+        '''did see?"''']]))
+        if 'boarding_with_Adrian' in keywords():
+            universal.say(universal.format_text([['''Before''', name(), '''could respond, there's a shifting sound, and someone sits up in the bed across from''', name() + "."],
+            ['''Carrie flips her dress back over her bottom, but doesn't get off of''', names(), '''lap. "Coulda told me you had a roommate."'''],
+            ['''"I didn't-"'''],
+            ['''"Sorry about that," mumbles the person in the other bed. With a start,''', name(), '''realizes that it's Alondra, the Vengador-turned-kitchen-girl. "Ildri sort of decided we'd make good roommates, seeing''',
+                '''as we got along so well after the attack. Didn't decide that until you'd left, though. Give me a minute, and I'll get out of your way."'''],
+            ['''"You don't-I mean, we could always find somewhere else-" stutters''', name() + "."],
+            ['''"Oh, that's no fun," says Carrie. She flashes a grin at Alondra. "Let's just have a threesome!"'''],
+            [name(), '''and Alondra both stare at Carrie.'''],
+            ['''"What?" says Carrie. "I'm buzzing, I'm randy, and you've got a great chest."'''],
+            ['''Alondra glances down at her chest, currently clad in an oversized nightgown. "How can you tell?"''']
+            ['''"Cause you don't look like a beanpole, despite wearing something at least three times too big," says Carrie.'''],
+            ['''"Is there anything on two legs you aren't willing to sleep with?" asks''', name() + "."],
+            ['''"Sure," says Carrie. She starts counting her fingers. "Elise, 'cause she's basically my sister, and sleeping with your sister is weird. Sister Samantha, 'cause she's the closest''',
+                '''thing I have to a mother, and sleeping with your mother figure is weird. Roland, 'cause you know, best friend's fiance. In fact, anyone whose already taken because that's just''',
+                '''bad mojo. Unless both partners are involved. That can be fun. Umm, people with wrinkly skin 'cause that's gross. Faeries because they're tiny, and I'd crush them or something.''',
+                '''People who've passed the buzzed stage and gone into drunk, 'cause drunk people make terrible lovers. Patients at the hospital, because that's not cool. Let's see-"'''],
+            ['''"Alright, I get the idea," says''', name() + "."],
+            ['''"Thanks for the 'offer,'" says Alondra, clambering out of bed. "But I think I'll pass. Let me put on a skirt, and I'll just go look at the stars for a while. Let me know when you're''',
+                '''done, alright?"'''],
+            ['''"It's because I'm ugly isn't it?" says Carrie, pouting.'''],
+            ['''Alondra hesitates in the middle of pulling her skirt out of a chest at the base of her bed. "You are either very weird, or very drunk. I'm not sure which. I mean, doesn't your''',
+            '''Church-"'''],
+            ['''"Yeah, but they're all stuffy and no fun," says Carrie, grinding against''', names(), '''lap. "If the Mother didn't want me to have fun, she wouldn't have made men and women both''',
+            '''so cursed beautiful."'''],
+            ['''Alondra chuckles as she finishes pulling on her skirt. "Can't argue with that. Have fun, you two."'''],
+            ['''Alondra steps out, quietly closing the door behind her.'''],
+            ['''"Now, where were we?" says Carrie. She peels her dress back off her bottom, bringing her bobbing bare cheeks back into view. She bounces lightly up and down on''', names(), 
+                '''lap, making her cheeks jiggle hypnotically. "Right, you were agreeing with me about how Sister Samantha is the meanest person you ever did see."''']]))
+        universal.say(universal.format_text([['''"Well I don't know," says''', name() + ",", '''smiling playfully. He begins gently rubbing Carrie's warm, soft, ravaged cheeks. "After all, you are the brattiest thing I''',
+        '''ever did see. Seems to me like you two belong together."'''],
         ['''Carrie's pout deepens. Her bottom pushes up against''', names(), '''hand. "You're mean too. I think you should make it up to me, by cooling my bottom a''',
             '''little."'''],
         ['\p'],

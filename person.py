@@ -257,7 +257,7 @@ MUSCULATURE = ['soft', 'fit', 'muscular']
 HAIR_LENGTH = ['short', 'shoulder-length', 'back-length', 'butt-length']
 
 SHORT_HAIR_STYLE = ['down']
-SHOULDER_HAIR_STYLE = SHORT_HAIR_STYLE + ['ponytail', 'braid', 'pigtail', 'bun']
+SHOULDER_HAIR_STYLE = SHORT_HAIR_STYLE + ['ponytail', 'braid', 'pigtails', 'bun']
 BACK_HAIR_STYLE = SHOULDER_HAIR_STYLE
 BUTT_HAIR_STYLE = BACK_HAIR_STYLE
 
@@ -476,6 +476,14 @@ class Person(universal.RPGObject):
         elif self.musculature == 'muscular':
             adjList = ['quiver', 'bob', 'shiver']
 
+    def quivering(self):
+        if self.musculature == 'soft':
+            adjList = ['rippling', 'jumping', 'flattening']
+        elif self.musculature == 'fit':
+            adjList = ['spasming', 'bouncing', 'shaking']
+        elif self.musculature == 'muscular':
+            adjList = ['quivering', 'bobbing', 'shivering']
+
     def is_slim(self):
         return self.bodyType == 'slim'
 
@@ -503,15 +511,10 @@ class Person(universal.RPGObject):
     
     #HEIGHTS = ['short', 'average', 'tall', 'huge']
     #Height dimensions:
-    #short: 5' - 4"
+    #short: 5' - 5'4"
     #average: 5' 5" - 5' 9"
     #tall : 5' 10" - 6'"
     #huge : over 6'
-    def dwarfs(self, char):
-        return HEIGHTS.index(self.height) - HEIGHTS.index(char.height) >= 3
-
-    def towers_over(self, char):
-        return HEIGHTS.index(self.height) - HEIGHTS.index(char.height) >= 2
 
     def is_average_or_shorter(self):
         return HEIGHTS.index(self.height) <= HEIGHTS.index('average')
@@ -525,17 +528,50 @@ class Person(universal.RPGObject):
     def is_huge_or_shorter(self):
         return HEIGHTS.index(self.height) <= HEIGHTS.index('huge')
 
+    def is_short(self):
+        return self.height == 'short'
+
+    def is_average(self):
+        return self.height == 'average'
+
+    def is_tall(self):
+        return self.height == 'tall'
+
+    def is_huge(self):
+        return self.height == 'huge'
+
+    def is_short_or_taller(self):
+        return self.is_short() or self.is_average() or self.is_tall() or self.is_huge()
+
+    def is_average_or_taller(self):
+        return self.is_average() or self.is_tall() or self.is_huge()
+
+    def is_tall_or_taller(self):
+        return self.is_tall() or self.is_huge()
+
+    def is_huge_or_taller(self):
+        return self.is_huge()
+
+
+    def dwarfs(self, char):
+        return HEIGHTS.index(self.height) - HEIGHTS.index(char.height) >= 3
+
+    def towers_over(self, char):
+        return HEIGHTS.index(self.height) - HEIGHTS.index(char.height) >= 2
+
     def taller_than(self, char):
         return HEIGHTS.index(self.height) - HEIGHTS.index(char.height) >= 1
 
-    def shorter_than(self, char):
-        return - (HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 1
+    def dwarfed_by(self, char):
+        return -(HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 3
 
     def towered_over_by(self, char):
         return - (HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 2
 
-    def dwarfed_by(self, char):
-        return -(HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 3
+    def shorter_than(self, char):
+        return - (HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 1
+
+
 
     #HAIR_LENGTH = ['short', 'shoulder-length', 'back-length', 'butt-length']
     def short_hair(self):
@@ -658,6 +694,9 @@ class Person(universal.RPGObject):
             return id(self) == id(other) or self.get_id() == other.get_id()
         except AttributeError:
             return False
+
+    def add_mark(self, mark):
+        self.marks.append(mark)
 
 #----------------------------------------------------------------Abstract Methods---------------------------------------------------------------------
     #abstractmethod
@@ -1360,6 +1399,12 @@ class Person(universal.RPGObject):
                 'Underwear: ' + self.underwear().name]))
         return format_text(appearance)
 
+    def clear_marks(self):
+        self.marks = []
+
+    def remove_mark(self):
+        self.marks.pop() 
+
 equipNum = ''
 selectedPerson = None
 def equip_interpreter(keyEvent):
@@ -1465,6 +1510,10 @@ class PlayerCharacter(Person):
 
     def had_spanking_reversed_by(self, person):
         person.reversed_spanking_of(self)
+           
+    def add_mark(self, mark):
+        super(PlayerCharacter, self).add_mark(mark)
+        self.numSpankings += 1
 
     def _save(self):
         raise NotImplementedError()
@@ -2671,6 +2720,16 @@ def LadLass(person=None):
         person = universal.state.player
     return choose_string(person, 'Lad', 'Lass')
 
+def sondaughter(person=None):
+    if person is None:
+        person = universal.state.player
+    return choose_string(person, 'son', 'daughter')
+
+def SonDaughter(person=None):
+    if person is None:
+        person = universal.state.player
+    return choose_string(person, 'Son', 'Daughter')
+
 
 #The following functions are used to simplify the LaTeX to Python translation. 
 
@@ -2682,6 +2741,9 @@ def bum_adj(personName):
 
 def quiver(personName):
     return universal.state.player.get_character(personName).quiver()
+
+def quivering(personName):
+    return universal.state.player.get_character(personName).quivering()
 
 
 def stealth(personName):

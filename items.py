@@ -474,6 +474,12 @@ def itthem(armor):
     else:
         return "it"
 
+def itthey(armor):
+    if armor.armorType == Pants.armorType or armor.armorType == Shorts.armorType:
+        return "they"
+    else:
+        return "it"
+
 def isare(armor):
     if armor.armorType == Pants.armorType or armor.armorType == Shorts.armorType:
         return "are"

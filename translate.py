@@ -48,7 +48,7 @@ def translate(fileName, charRoomFile, episodeName, nodeNum, title, episodeNum, t
     envBegin = {r'\begin{node}', r'\begin{childnode}'}
     envEnd = {r'\end{node}', r'\end{childnode}'}
     with open(fileName, 'r') as transcript:
-        tex = [line for line in transcript.readlines() if line.strip()[0] != '%']
+        tex = [line for line in transcript.readlines() if line.strip() == '' or line.strip()[0] != '%']
         count = 0
         texLen = len(tex)
         #We're inserting new strings into tex, so we need to be able to account for the changing length of tex.
@@ -157,7 +157,7 @@ def process_scene(pythonCode, startSceneCode, texIter, nodeCount, episodeName, s
             append_to_function(startSceneCode, ''.join([character, '.litany = ',  str(nodeCount)]))
         elif r'\begin{childnode}' in line:
             nodeCount += 1
-            args = get_args(texIter, line, 2)
+            args = get_args(texIter, line, 3)
             args = [arg.replace(' ', '_') for arg in args][1:]
             process_node(pythonCode, texIter, nodeCount, r'\end{childnode}', args)
         elif r'\begin{closeScene}' in line:
@@ -262,6 +262,7 @@ inlineCommandsPlayer = {
     r'\MenWomen{}':"''', person.MenWomen(), '''",  
     r'\sirmaam{}':"''', person.sirmaam(), '''",  
     r'\SirMaam{}':"''', person.SirMaam(), '''",  
+    r'\underwearpanties{}':"''', person.underwearpanties(), '''",  
     r'\bastardbitch{}':"''', person.bastardbitch(), '''",  
     r'\BastardBitch{}':"''', person.BastardBitch(), '''",  
     r'\weaponName{}':"''', universal.state.player.weapon().name, '''",  
@@ -278,6 +279,7 @@ inlineCommandsPlayer = {
     r'\muscleadj{}': "''', universal.state.player.muscle_adj(), '''",
     r'\bumadj{}': "''', universal.state.player.bum_adj(), '''",
     r'\quiver{}': "''', universal.state.player.quiver(), '''",
+    r'\quivering{}': "''', universal.state.player.quivering(), '''",
     r'\liftlower{}': "''', items.liftlower(universal.state.player.lower_clothing()), '''",
     r'\lowerlift{}': "''', items.lowerlift(universal.state.player.lower_clothing()), '''",
     r'\liftslowers{}': "''', items.liftlower(universal.state.player.lower_clothing()), '''",
@@ -291,13 +293,17 @@ inlineCommandsPlayer = {
     r'\liftslowers{pajamas}': "''', items.liftslower(universal.state.player.pajama_bottom()), '''",
     r'\lowerslifts{pajamas}': "''', items.lowerslifts(universal.state.player.pajama_bottom()), '''",
     r'\pajamabottoms{}': "''', universal.state.player.pajama_bottom().name, '''",
+    r'\pajamas{}': "''', universal.state.player.pajama_top().name, '''",
     r'\underwear{}':"''', universal.state.player.underwear().name, '''",
+    r'\shirt{}':"''', universal.state.player.shirt().name, '''",
     r'\stealth{}': "universal.state.player.stealth()",
     r'\warfare{}': "universal.state.player.warfare()",
     r'\magic{}': "universal.state.player.magic()",
     r'\grapple{}': "universal.state.player.grapple()",
     r'\resilience{}': "universal.state.player.resilience()",
-    r'\keywords{}': "universal.state.player.keywords"
+    r'\keywords{}': "universal.state.player.keywords",
+    r'\sondaughter{}': "''', person.sondaughter(), '''",
+    r'\SonDaughter{}': "''', person.SonDaughter(), '''",
     }
 
 inlineCommands = {
@@ -335,7 +341,7 @@ inlineCommands = {
     r'\BastardBitch{':"''', person.BastardBitch(universal.state.get_character(",  
     r'\weaponName{':"''', items.weapon_name(",  
     r'\weapon{':"''', items.weapon_name(",
-    r'\cladbottom{\pajama}{': "''', items.clad_pajama_bottom(",
+    r'\cladbottom{\pajama{}}{': "''', items.clad_pajama_bottom(",
     r'\cladbottom{\trousers}': "''', items.clad_bottom(",
     r'\muscleadj{': "''', person.muscle_adj(",
     r'\bumadj{': "''', person.bum_adj(",
@@ -381,6 +387,22 @@ def translate_commands(text, tab, nodeName):
                 text[count] = ''.join([text[count][:keyIndex], text[count][keyIndex:keyIndex+lenNewCommand], ", '''", text[count][keyIndex+lenNewCommand:]])
                 keyIndex = text[count].find(key)
         try:
+            itthem = text[count].index(r'\itthem')
+        except ValueError:
+            pass
+        else:
+            args = get_args(iter(text[count:]), text[count][itthem:], 1)
+            text[count] = ''.join(['code ', '\n', 2*tab,
+                "items.itthem(", args[0], ")"])
+        try:
+            itthey = text[count].index(r'\itthey')
+        except ValueError:
+            pass
+        else:
+            args = get_args(iter(text[count:]), text[count][itthey:], 1)
+            text[count] = ''.join(['code ', '\n', 2*tab,
+                "items.itthey(", args[0], ")"])
+        try:
             nextCond = text[count].index(r'\condelif')
         except ValueError:
             pass
@@ -393,20 +415,48 @@ def translate_commands(text, tab, nodeName):
         else:
             replace_cond(text, count, tab, nodeName, nextCond)
         try:
+            nextEcond = text[count].index(r'\econd')
+        except ValueError:
+            pass
+        else:
+            print('Found econd')
+            print(text[count])
+            replace_econd(text, count, tab, nodeName, nextEcond)
+        try:
             bummarks = text[count].index(r'\bummarks')
         except ValueError:
             pass
         else:
             args = get_args(iter(text[count:]), text[count][bummarks:], 2)
-            text[count] = ''.join(["'''])", '\n', tab])
+            #text[count] = ''.join(["'''])", '\n', tab])
             if args[0] == 'player':
-                text[count] = ''.join(['code ', '\n', 2*tab,
-                    "universal.state.player.marks.append(''.join(['''", args[1], "'''])", ")"])
+                text[count] = ''.join(['code ', text[count], '\n', 2*tab, 'textCommandsMusic.increment_spankings_taken()'])
+                text[count] = ''.join(['code ', text[count], '\n', 2*tab,
+                    "universal.state.player.add_mark(''.join(['''", args[1], "'''])", ")"])
             else:
                 text[count] = ''.join(['code ', '\n', 2*tab,
-                    'universal.state.get_character(', "''.join([", args[0], "])",  ')', '.marks.append(', "'''", args[1], "''')"])
+                    'universal.state.get_character(', args[0], ').add_mark(', "'''", args[1], "''')"])
             #This forces bummarks to appear after all node text.
             #text[count] = ''.join([text[count], '\n', tab, 'universal.format_text_no_space([', nodeName, ".quip, ['''"])
+        try:
+            keyword = text[count].index(r'\keyword')
+        except ValueError:
+            pass
+        else:
+            args = get_args(iter(text[count:]), text[count][keyword:], 1)
+            #text[count] = ''.join(["'''])", '\n', tab])
+            text[count] = ''.join(['code ', '\n', 2*tab,
+                "universal.state.player.add_keyword(", args[0], ")"])
+        try:
+            keyword = text[count].index(r'\remkeyword')
+        except ValueError:
+            pass
+        else:
+            args = get_args(iter(text[count:]), text[count][keyword:], 1)
+            #text[count] = ''.join(["'''])", '\n', tab])
+            text[count] = ''.join(['code ', '\n', 2*tab,
+                "universal.state.player.remove_keyword(", args[0], ")"])
+        
         try:
             randIndex = text[count].index(r'\random')
         except ValueError:
@@ -446,11 +496,11 @@ def translate_commands(text, tab, nodeName):
         except ValueError:
             pass
         else:
-            args = get_args(iter(text[count:]), text[count][continueIndex], 2)
-            args[1] = string.replace(args[1], ' ', '_')
+            args = get_args(iter(text[count:]), text[count][continueIndex], 1)
+            args[0] = string.replace(args[0], ' ', '_')
             text[count] = ''.join(['code ', 2*tab, 
-                nodeName, '.children = ', args[1], '.children\n', 2*tab,
-                'conversation.say_node(', args[1], '.index)\n'])
+                nodeName, '.children = ', args[0], '.children\n', 2*tab,
+                'conversation.say_node(', args[0], '.index)\n'])
         try:
             childIndex = text[count].index(r'\child')
         except ValueError:
@@ -471,13 +521,31 @@ def replace_cond(text, count, tab, nodeName, nextCond):
     while nextCond >= 0:
         args = get_args(iter(text), text[count], 3)
         endCondIndex, splitLine = split_around_conditional(text[count], r'\cond', 3)
-        text[count] = ''.join([splitLine[0], "''']])", '\n', 
-            2*tab, 'if ', args[0], ':\n', 
-                3*tab, nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''", args[1], "'''", ']])', '\n', 
-            2*tab, 'else:\n', 
+        text[count] = ''.join([splitLine[0], "''']])", '\n', 2*tab, 
+            'if ', args[0], ':\n', 3*tab, 
+                nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''", args[1], "'''", ']])', '\n']) 
+        if args[2]:
+            text[count] = ''.join([text[count], 2*tab, 'else:\n', 
                 3*tab, nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''" + args[2], "''']])\n", 
             2*tab, nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''" + splitLine[1]])
         nextCond = text[count][endCondIndex:].find(r'\cond')
+
+
+def replace_econd(text, count, tab, nodeName, nextCond):
+    #\econd{test}{text if true}{text if false}
+    print('replacing econd')
+    print(text)
+    while nextCond >= 0:
+        args = get_args(iter(text), text[count], 3)
+        endCondIndex, splitLine = split_around_conditional(text[count], r'\cond', 3)
+        text[count] = ''.join([splitLine[0], "''']])", '\n', 2*tab, 
+            'elif ', args[0], ':\n', 3*tab, 
+                nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''", args[1], "'''", ']])', '\n']) 
+        if args[2]:
+            text[count] = ''.join([text[count], 2*tab, 'else:\n', 
+                3*tab, nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''" + args[2], "''']])\n", 
+            2*tab, nodeName, '.quip = ', 'universal.format_text_no_space([[', nodeName, '.quip,', "'''" + splitLine[1]])
+        nextCond = text[count][endCondIndex:].find(r'\econd')
 
 def replace_condelif(text, count, tab, nodeName, nextCond):
     #\condelif{test}{text if true}{test2}{text if test false, test2 true}{text if test false and test2 false}
@@ -593,9 +661,9 @@ def append_to_function(code, newLine, tab=TAB):
 
 if DEBUG:
     import os
-    pythonCode = translate(os.path.join('transcripts', 'episode2.tex'), 'episode2CharRooms', 'episode_2', 326, 'Back Alleys', 2, "textCommandsMusic.CARLITA", imports=IMPORTS)
+    pyCode = translate(os.path.join('transcripts', 'test.tex'), 'episode2CharRooms', 'episode_2', 326, 'Back Alleys', 2, "textCommandsMusic.CARLITA", imports=IMPORTS)
     with open('episode2.py', 'w') as episode2:
-        episode2.write('\n'.join(pythonCode))
+        episode2.write('\n'.join(pyCode))
 
 
     
