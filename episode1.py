@@ -4282,7 +4282,7 @@ def e1_2_1():
                 cookText = universal.format_text([cookText, ['''But then the woman's heavy hand comes down on''', names(), '''lower back, pinning''', himher(), '''firmly to''',
                 '''the counter. "Hang on there, young''', manlady() + ".", '''Just because you're not a raider, doesn't mean you don't need a proper spanking."'''],
                 ['''"What do you mean?"''', names(), '''voice squeaks, to''', hisher(), '''abject humiliation. "I haven't done anything."'''],
-                ['''"It's less what you've done, and more what you're not wearing," says the cook. Her heavy boots tug gently on the''', underwear, '''currently''',
+                ['''"It's less what you've done, and more what you're not wearing," says the cook. Her heavy boots tug gently on the''', underwear.name, '''currently''',
                     '''clumped around''', names(), '''ankles. "I can't help but notice that you're running around in nothing but your underwear. Care to explain why''',
                     '''you didn't bother putting on some pants this morning?"'''],
                 [name(), '''laughs uneasily. "Oh that, well, I uhh, it's kind of funny-"'''],
@@ -5214,7 +5214,7 @@ failedToHelpPaloma.quip_function = failedToHelpPaloma_qf
 helpPalomaClever.comment = '''"You know, we're getting spanked over at the entrance. We need all the help we could get out there."'''           
 def helpPalomaClever_qf():
     add_keyword('helped_Paloma')
-    if universal.state.player.resilience() > 2:
+    if universal.state.player.willpower() > 2:
         helpPalomaClever.quip = universal.format_text([['''The amazon frowns, and looks over her shoulder at''', name() + ".", '''"I find that hard to believe. Our express''',
         '''orders were to raid the armory-"'''],
         [name(), '''gives the amazon's heavily muscled bottom a hard slap.'''],
@@ -5258,7 +5258,7 @@ def helpPalomaClever_qf():
         ['''"Told you," mutters the other woman, standing and facing''', name() + "."],
         ['''The amazon smirks. "What do you say we bend this naughty little''', boygirl(universal.state.player), '''over and thrash''', himher(), ''''till''', heshe(), '''can't think''',
         '''straight?"''']])
-    return (combat.fight, ([spellSlinger, warrior], save_the_healer, dungeonmode.dungeon_mode, False, None, True))
+        return (combat.fight, ([spellSlinger, warrior], save_the_healer, dungeonmode.dungeon_mode, False, None, True))
 helpPalomaClever.quip_function = helpPalomaClever_qf
 
 palLost = Node(225)
@@ -7118,7 +7118,7 @@ def mai_spanking_interpreter(keyEvent):
                             [name(), '''lays on another good fifty smacks or so, the elf's plump bottom bouncing and rocking beneath the hard blows. "Alright, I''',
                                 '''think that's enough."'''],
                             ['''Mai straightens, and rubs her bottom gingerly. "These are some nice stripes. I'll wear them with pride."''']]), justification=0)
-                            convince_mai()    
+                        convince_mai()    
         elif num == 3 and itemspotionwars.woodenSpoon in inventory():
             universal.say(universal.format_text([[name(), '''removes the wooden spoon from''', hisher(), '''pack, and slaps it against''', hisher(), '''palm. "Get back over!"'''],
             ['''Mai, who has begun to rise, glances over her shoulder at''', name() + ".", '''"But, the switch-"'''],
@@ -12571,7 +12571,7 @@ def ep1_carrie_sex():
         ['''Carrie looks over her shoulder at him and pouts. She reaches back, and very slowly tugs her dress up over her hips, revealing her red, bruised, angry,''',
         '''round, succulent bottom (which her tiny thong does nothing to obscure). "Look at what Sister Samantha did to me! Isn't she just the meanest thing you ever''',
         '''did see?"''']]))
-        if 'boarding_with_Adrian' in keywords():
+    if 'boarding_with_Adrian' in keywords():
             universal.say(universal.format_text([['''Before''', name(), '''could respond, there's a shifting sound, and someone sits up in the bed across from''', name() + "."],
             ['''Carrie flips her dress back over her bottom, but doesn't get off of''', names(), '''lap. "Coulda told me you had a roommate."'''],
             ['''"I didn't-"'''],
@@ -12600,7 +12600,7 @@ def ep1_carrie_sex():
             ['''Alondra steps out, quietly closing the door behind her.'''],
             ['''"Now, where were we?" says Carrie. She peels her dress back off her bottom, bringing her bobbing bare cheeks back into view. She bounces lightly up and down on''', names(), 
                 '''lap, making her cheeks jiggle hypnotically. "Right, you were agreeing with me about how Sister Samantha is the meanest person you ever did see."''']]))
-        universal.say(universal.format_text([['''"Well I don't know," says''', name() + ",", '''smiling playfully. He begins gently rubbing Carrie's warm, soft, ravaged cheeks. "After all, you are the brattiest thing I''',
+    universal.say(universal.format_text([['''"Well I don't know," says''', name() + ",", '''smiling playfully. He begins gently rubbing Carrie's warm, soft, ravaged cheeks. "After all, you are the brattiest thing I''',
         '''ever did see. Seems to me like you two belong together."'''],
         ['''Carrie's pout deepens. Her bottom pushes up against''', names(), '''hand. "You're mean too. I think you should make it up to me, by cooling my bottom a''',
             '''little."'''],
@@ -13030,7 +13030,7 @@ def end_scene_1_episode_2():
 episode2Scene1 = episode.Scene('Episode 2 Scene 1', start_scene_1_episode_2, end_scene_1_episode_2)
 episode2 = episode.Episode(2, 'Back Alleys', scenes=[episode2Scene1])
 #--------------------------------------------End Episode 2: Back Alleys-------------------------------------------------------------------------
-#episode1.nextEpisode = episode2
+episode1.nextEpisode = episode2
 
 def init_episode_1_scene_1():
     global episode1

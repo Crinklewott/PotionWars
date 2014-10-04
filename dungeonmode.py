@@ -61,7 +61,8 @@ directionSurface.fill(universal.DARK_GREY)
 def set_dungeon_commands(dungeon=None):
     #import traceback
     #traceback.print_stack()   
-    set_commands(['(P)arty', '(S)ave', '(Q)uick Save', '(M)odify Quick Spells', '(L)oad', 't(I)tle Screen', '(C)ast', '(Esc)Quit'])
+    commandColors = [LIGHT_GREY] * 8
+    universal.set_commands(['(P)arty', '(S)ave', '(Q)uick Save', '(M)odify Quick Spells', '(L)oad', 't(I)tle Screen', '(C)ast', '(Esc)Quit'])
     print(dungeon)
     print(dungeon.coordinates)
     if dungeon is not None:
@@ -70,14 +71,18 @@ def set_dungeon_commands(dungeon=None):
         column = dungeon.coordinates[2]
         square = dungeon[floor][row][column][HERE]
         if has_char('e', square):
-            set_commands(['(E)xit'] + get_commands())
+            commandColors.insert(0, BLUE)
+            universal.set_commands(['(E)xit'] + get_commands(), commandColors)
         if has_char('u', square):
             changingFloors = True
-            set_commands(['(U)p'] + get_commands())
+            commandColors.insert(0, GREEN) 
+            universal.set_commands(['(U)p'] + get_commands(), commandColors)
         if has_char('d', square):
             print('Going down.')
             changingFloors = True
-            set_commands(['(D)own'] + get_commands())
+            commandColors.insert(0, GREEN)
+            print(commandColors)
+            universal.set_commands(['(D)own'] + get_commands(), commandColors)
 
 def print_dir(direction):
     if direction == NORTH:
@@ -144,8 +149,10 @@ class DungeonFloor(universal.RPGObject):
         Implements a single floor. See the documentation for Dungeon for details.
         Floor should be a tuple of tuple of strings, events a list of list of functions.
     """
-    def __init__(self, floor, events, visibility=4, encounterRate=5, enemies=None, maxEnemies=2, ambushChance=5):
+    def __init__(self, floor, events=None, visibility=4, encounterRate=5, enemies=None, maxEnemies=2, ambushChance=5):
         self.floor = floor
+        if not events:
+            events = []
         self.events = events
         self.height = len(floor)
         self.visibility = visibility
@@ -360,7 +367,7 @@ class Dungeon(townmode.Room):
         for floor in dungeonMap:
             self.dungeonMap.append(floor if type(floor) == DungeonFloor else DungeonFloor(floor))
 
-    def set_dungeon_events(dungeonEvents):
+    def set_dungeon_events(self, dungeonEvents):
         self.dungeonEvents = []
         for floorEvents in dungeonEvents:
             self.dungeonMap.append(floorEvents if type(floorEvents) == FloorEvents else FloorEvents(floorEvents))
@@ -448,13 +455,21 @@ class Dungeon(townmode.Room):
         flush_text(13)
         pygame.draw.rect(coordinateSurface, LIGHT_GREY, pygame.Rect(coordTopLeft, (coordinateSurface.get_rect().width, coordinateSurface.get_rect().height + 5)), 5)
         direction = print_dir(self.direction)
-        say_title(direction, surface=directionSurface)
+        print('my square:')
+        print(self.get_square(self.coordinates))
+        localDirSurface = directionSurface
+        if has_char('u', self.get_square(self.coordinates)[0]) or has_char('d', self.get_square(self.coordinates)[0]):
+            direction = "Stairs"
+            localFontSize = pygame.font.SysFont(universal.FONT_LIST, universal.TITLE_SIZE).size(direction)
+            localDirSurface = pygame.Surface((localFontSize[0] + (localFontSize[1] - localFontSize[0]) + 75, localFontSize[1] + 15))
+            localDirSurface.fill(universal.DARK_GREY)
+        say_title(direction, surface=localDirSurface)
         flush_text(13)
-        pygame.draw.rect(directionSurface, LIGHT_GREY, pygame.Rect(directionSurface.get_rect().topleft, directionSurface.get_rect().size), 5)
+        pygame.draw.rect(localDirSurface, LIGHT_GREY, pygame.Rect(localDirSurface.get_rect().topleft, localDirSurface.get_rect().size), 5)
         get_screen().blit(coordinateSurface, (get_world_view().midbottom[0] - coordinateSurface.get_rect().width // 2,
             get_world_view().midbottom[1] - coordinateSurface.get_rect().height))
-        get_screen().blit(directionSurface, (get_world_view().midbottom[0] - directionSurface.get_rect().width // 2, get_world_view().midbottom[1] - 
-            (coordinateSurface.get_rect().height + directionSurface.get_rect().height)))
+        get_screen().blit(localDirSurface, (get_world_view().midbottom[0] - localDirSurface.get_rect().width // 2, get_world_view().midbottom[1] - 
+            (coordinateSurface.get_rect().height + localDirSurface.get_rect().height)))
 
     def print_visible_column(self, visibleArea):
         mapColumn = []
@@ -543,32 +558,25 @@ class Dungeon(townmode.Room):
     def draw_events(self, leftCoordinates, pLeftCoordinates, pRightCoordinates, rightCoordinates, square):
         top = False
         bottom = False
-        if has_char('e', square):
-            bColor = GREEN
+        if has_char('e', square) or has_char('s', square):
+            bColor = BLUE
             bottom = True
         elif has_char('d', square):
-            bColor = SLATE_GREY
+            bColor = GREEN
             bottom = True
-        elif has_char('*', square) or has_char('s', square):
-            bColor = BLUE
+        elif has_char('*', square):
+            bColor = YELLOW
             bottom = True
         elif has_char('!', square):
             bColor = RED
             bottom = True
         if has_char('u', square):
-            tColor = SLATE_GREY
+            tColor = GREEN
             top = True
         if bottom:
-            pygame.draw.line(get_screen(), bColor, leftCoordinates[1], rightCoordinates[1], 5)
-            pygame.draw.line(get_screen(), bColor, pLeftCoordinates[1], pRightCoordinates[1], 5)
-            #pygame.draw.line(get_screen(), bColor, leftCoordinates[1], pLeftCoordinates[1], 5)
-            #pygame.draw.line(get_screen(), bColor, leftCoordinates[1], pRightCoordinates[1], 5)
-            #pygame.draw.line(get_screen(), bColor, rightCoordinates[1], pLeftCoordinates[1], 5)
+            pygame.draw.polygon(get_screen(), bColor, [leftCoordinates[1], pLeftCoordinates[1], rightCoordinates[1], pRightCoordinates[1]])
         if top:
-            pygame.draw.line(get_screen(), tColor, leftCoordinates[0], rightCoordinates[0], 5)
-            pygame.draw.line(get_screen(), tColor, pLeftCoordinates[0], pRightCoordinates[0], 5)
-            #pygame.draw.line(get_screen(), tColor, leftCoordinates[0], pLeftCoordinates[0], 5)
-            #pygame.draw.line(get_screen(), tColor, rightCoordinates[0], pRightCoordinates[0], 5)
+            pygame.draw.polygon(get_screen(), tColor, [leftCoordinates[0], pLeftCoordinates[0], rightCoordinates[0], pRightCoordinates[0]])
 
     def draw_wall_help(self, start, wallAngle, stepsAhead, left, square):   
         neg = -1
@@ -682,17 +690,17 @@ class Dungeon(townmode.Room):
             event = True
             self.encounter()
         if has_char('e', square):
-            set_commands(get_commands())
+            universal.set_commands(get_commands())
             if self.dungeonEvents[floor][row][column] is not None:
                 event = True
                 self.dungeonEvents[floor][row][column]()
         if has_char('u', square):
             changingFloors = 1
-            set_commands(get_commands())
+            universal.set_commands(get_commands())
         if has_char('d', square):
             print('Going down.')
             changingFloors = -1
-            set_commands(get_commands())
+            universal.set_commands(get_commands())
         if not event and random.randint(0, 99) < self[floor].encounterRate:
             self.encounter()
         elif not event:
@@ -777,7 +785,7 @@ def post_combat_spanking(allies, enemies, won):
     say_title("Spanking Time")
     universal.say('Select an enemy to spank:\n')
     universal.say('\n'.join(numbered_list([enemy.printedName for enemy in enemies])))
-    set_commands(['(#) Select an enemy.', '(Esc) To not spank anyone'])
+    universal.set_commands(['(#) Select an enemy.', '(Esc) To not spank anyone'])
     set_command_interpreter(post_combat_spanking_interpreter)
     global defeatedEnemies
     defeatedEnemies = enemies
@@ -817,7 +825,7 @@ def dungeon_interpreter(keyEvent):
         clear_screen()
         select_character_to_cast()
     elif keyEvent.key == K_p:
-        set_commands(['(#)Character', '<==Back'])
+        universal.set_commands(['(#)Character', '<==Back'])
         clear_screen()
         say_title('Party:')
         universal.say('\t'.join(['Name:', 'Health:', 'Mana:\n\t',]), columnNum=3)
@@ -851,7 +859,7 @@ def select_character_interpreter(keyEvent):
         per.character_sheet(dungeon_mode)
 
 def select_character_to_cast():
-    set_commands(['(#)Character', '<==Back'])
+    universal.set_commands(['(#)Character', '<==Back'])
     clear_screen()
     say_title('Select Character to Cast Spell:')
     universal.say('\t'.join(['Name:', 'Health:', 'Mana:\n\t',]), columnNum=3)
@@ -899,7 +907,7 @@ def display_spells(tier):
         say(availableSpells[0])
         acknowledge(selectedSlinger.display_tiers, display_tiers_interpreter_dungeon)
     else:
-        set_commands(['(#) Select a spell.', '<==Back'])
+        universal.set_commands(['(#) Select a spell.', '<==Back'])
         set_command_interpreter(select_spell_interpreter)
 
 chosenSpell = None
@@ -915,7 +923,7 @@ def select_spell_interpreter(keyEvent):
             return
         say_title(chosenSpell.name)
         say(person.get_party().display_party())
-        set_commands([ ' '.join(['(#) Select', str(chosenSpell.numTargets), 'target' + ('s.' if chosenSpell.numTargets > 1 else '.')]), '<==Back'])
+        universal.set_commands([ ' '.join(['(#) Select', str(chosenSpell.numTargets), 'target' + ('s.' if chosenSpell.numTargets > 1 else '.')]), '<==Back'])
         set_command_interpreter(select_targets_interpreter)
 
 targetList = []
@@ -929,7 +937,7 @@ def select_targets_interpreter(keyEvent):
         else:
             targetList = targetList[:-1]
             numTargets = chosenSpell.numTargets - len(targetList)
-            set_commands([ ' '.join(['(#) Select', str(numTargets), 'target' + ('s.' if numTargets > 1 else '.')]), '<==Back'])
+            universal.set_commands([ ' '.join(['(#) Select', str(numTargets), 'target' + ('s.' if numTargets > 1 else '.')]), '<==Back'])
     elif keyEvent.key in NUMBER_KEYS:
         playerInput = int(pygame.key.name(keyEvent.key)) - 1
         try:
@@ -937,7 +945,7 @@ def select_targets_interpreter(keyEvent):
         except IndexError:
             return
         numTargets = chosenSpell.numTargets - len(targetList)
-        set_commands([ ' '.join(['(#) Select', str(numTargets), 'target' + ('s.' if numTargets > 1 else '.')]), '<==Back'])
+        universal.set_commands([ ' '.join(['(#) Select', str(numTargets), 'target' + ('s.' if numTargets > 1 else '.')]), '<==Back'])
     if chosenSpell.numTargets == len(targetList):
         spellResult = chosenSpell.__class__(selectedSlinger, targetList).effect(inCombat=False, allies=person.get_party())
         selectedSlinger.uses_mana(chosenSpell.cost)
@@ -959,7 +967,7 @@ def confirm_cast_interpreter(keyEvent):
     elif keyEvent.key == K_n:
         targetList = targetList[:-1]
         numTargets = chosenSpell.numTargets - len(targetList)
-        set_commands([ ' '.join(['(#) Select', str(numTargets), 'target' + ('s.' if numTargets > 1 else '.')]), '<==Back'])
+        universal.set_commands([ ' '.join(['(#) Select', str(numTargets), 'target' + ('s.' if numTargets > 1 else '.')]), '<==Back'])
         set_command_interpreter(select_targets_interpreter)
 
 def start_coordinate(dungeon):

@@ -383,12 +383,19 @@ def next_character():
     if activeIndex < len(allies) - 1:
         activeAlly = allies[activeIndex+1]
     else:
-        get_screen().blit(get_background(), (0, 0))
-        say_title('Confirm Actions')
-        for action in chosenActions:
-            universal.say(print_action(action) + '\n\n') 
-        set_commands(['(Enter) Begin Round', '<==Back'])
-        set_command_interpreter(begin_round_interpreter)
+        display_round_confirmation()
+
+def display_round_confirmation():
+    get_screen().blit(get_background(), (0, 0))
+    say_title('Confirm Actions')
+    for action in chosenActions:
+        universal.say(print_action(action) + '\n\n') 
+    if universal.state.instant_combat:
+        universal.say('Combat messages are printed all at once.')
+    else:
+        universal.say('There is a delay before printing each combat message.')
+    set_commands(['(Enter) Begin Round', '(T)oggle combat delay', '<==Back'])
+    set_command_interpreter(begin_round_interpreter)
 
 
 def print_action(action):
@@ -449,6 +456,9 @@ def begin_round_interpreter(keyEvent):
             ambush = 0
         increase_stat_chance()
         start_round(chosenActions)
+    elif keyEvent.key == K_t:
+        universal.state.instant_combat = not universal.state.instant_combat
+        display_round_confirmation()
     elif keyEvent.key == K_BACKSPACE:
         if DEBUG:
             chosenActions = []
@@ -1031,7 +1041,7 @@ def weight_status_buff(enemy, chosenActionClass):
             allStatus = [action for action in chosenActionClass if hasattr(action, 'statusInflicted') and action.targetType == combatAction.ALL]
             attackActions = []
             spellActions = []
-            for attacker in filter(lambda x : x in opponents, actionsInflicted.keys()):
+            for attacker in (att for att in actionsInflicted.keys() if att in opponents):
                 attackActions.extend([actionPair for actionPair in actionsInflicted[attacker] if (isinstance(actionPair[ACTION], combatAction.AttackAction) or 
                     isinstance(actionPair[ACTION], combatAction.GrappleAction) or isinstance(actionPair[ACTION], combatAction.ThrowAction) or
                     isinstance(actionPair[ACTION], combatAction.BreakAllysGrappleAction))])
@@ -1127,11 +1137,11 @@ def select_targets(chosenAction, enemy):
             targets.extend([target for i in range(target.health() - target.current_health())])
     elif isBuff:
         if chosenAction.effectClass == combatAction.WARRIORS_GRAPPLERS:
-            targets = [target for target in targets if not target.is_inflicted_with(chosenAction.statusInflicted) and (target.is_specialized_in(person.ATTACKING) or 
-                target.is_specialized_in(person.GRAPPLING) or target.is_specialized_in(person.BALANCED))]
+            targets = [target for target in targets if not target.is_inflicted_with(chosenAction.statusInflicted) and (target.is_specialized_in(universal.WARFARE) or 
+                target.is_specialized_in(universal.GRAPPLE) or target.is_specialized_in(universal.BALANCED))]
         elif chosenAction.effectClass == combatAction.SPELL_SLINGERS:
             targets = [target for target in targets if not target.is_inflicted_with(chosenAction.statusInflicted) and (target.is_specialized_in_magic() or 
-                target.is_specialized_in(person.BALANCED))]
+                target.is_specialized_in(universal.BALANCED))]
         elif chosenAction.effectClass == combatAction.ALL:
             targets = [target for target in targets if not target.is_inflicted_with(chosenAction.statusInflicted)]
     elif isSpectral:
@@ -1340,7 +1350,10 @@ def print_round_results():
     set_commands([('None')])
     global resultIndex
     if resultIndex == len(actionResults):
-        end_round()
+        if universal.state.instant_combat:
+            universal.acknowledge(end_round, ())
+        else:
+            end_round()
     else:
         actionResult = actionResults[resultIndex]
         say_title('Combat!')
@@ -1349,25 +1362,29 @@ def print_round_results():
             if result.strip() == '':
                 continue
             print('result: ' + result)
-            if actionResult[3]:
-                say_delay(result + "\n", overwritePrevious=True)
+            if universal.state.instant_combat:
+                universal.say(result + '\n')
             else:
-                say_delay(result + "\n", overwritePrevious=False)
-            if len(actionResultSplit) > 1 and actionResultSplit[-1] != result:
-                pass
-                for i in range(0, 5):
-                    delaySplit = delay // 5
-                    pygame.time.delay(delaySplit)
+                if actionResult[3]:
+                    universal.say_delay(result + "\n", overwritePrevious=True)
+                else:
+                    universal.say_delay(result + "\n", overwritePrevious=False)
+                if len(actionResultSplit) > 1 and actionResultSplit[-1] != result:
+                    pass
+                    for i in range(0, 5):
+                        delaySplit = delay // 5
+                        pygame.time.delay(delaySplit)
         resultIndex += 1
-        if actionResult[3]:
+        if actionResult[3] and not universal.state.instant_combat:
         #If the action is a spanking, then we need to give the player plenty of time to enjoy it. 
             acknowledge(print_round_results, ())
             #print_round_results()
         else:
-            for i in range(0, 5):
-            #This is so that we can respond faster to the user pressing the enter key. 
-                delaySplit = delay // 5
-                pygame.time.delay(delaySplit)
+            if not universal.state.instant_combat:
+                for i in range(0, 5):
+                #This is so that we can respond faster to the user pressing the enter key. 
+                    delaySplit = delay // 5
+                    pygame.time.delay(delaySplit)
             print_round_results()
 
 defeatedAllies = []
@@ -1568,7 +1585,7 @@ def learn_spell(ally, spellSchool):
                 unknownSpells.append(person.allSpells[i][spellIndex][0])    
             elif not ally.knows_spell(person.allSpells[i][spellIndex][1]):
                 unknownSpells.append(person.allSpells[i][spellIndex][1])    
-            elif ally.specialization == spellSchool and not ally.knows_spell(Person.allSpells[i][spellIndex][2]):
+            elif ally.specialization == spellSchool and not ally.knows_spell(person.allSpells[i][spellIndex][2]):
                 unknownSpells.append(person.allSpells[i][spellIndex][2])    
         except TypeError:
             continue

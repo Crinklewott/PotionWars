@@ -190,9 +190,10 @@ def opening_crawl():
     #delay_short()
     universal.say_replace(['''Pandemonium Cycle: The Potion Wars is intended for adults only. Spanking and other erotic content depicted are fantasies and intended for''',
     '''adults only. Nothing in this game should be interpreted as''', 
-    '''advocating any form of non-consensual spanking or the spanking of minors.''',
+    '''advocating any form of non-consensual spanking or the spanking of minors. I firmly believe that non-consensual violence in any relationship is abuse.''',
     '''\n-Andrew Russell''',
-    '''\n\nTo skip the opening crawl (which will begin shortly), press Enter at any time.'''])
+    '''\n\nTo skip the opening crawl (which will begin shortly), press Enter at any time.\n\n''',
+    '''This game does make some use of colors to provide information. If you are colorblind, please let me know so that I can develop alternatives. Thank you.'''])
     display_crawl()
     delay()
     if not skip:

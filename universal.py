@@ -10,6 +10,7 @@ import sys, pygame, textrect, abc
 import Queue
 from pygame.locals import *
 import os
+import math
 
 DEBUG = False
 SAVE_DELIMITER = '%%%'
@@ -51,6 +52,7 @@ HEALTH = 5
 MANA = 6
 CURRENT_HEALTH = 7
 CURRENT_MANA = 8
+
 COMBAT_MAGIC = 9
 STATUS_MAGIC = 10
 BUFF_MAGIC = 11
@@ -168,22 +170,48 @@ def set_command_interpreter(ci):
 def get_command_interpreter():
     return commandInterpreter
 
-def set_commands(newCommands):
+commandColors = []
+def set_commands(newCommands, colors=None):
     """
-        Set the commands to be used by the player. Raises a ValueError if the number of commands passed exceeds 9 (the maximum number that can be displayed).
+        Set the commands to be used by the player. Also allows the player to set the color of each command. If colors is not given, then the commands default to LIGHT_GREY. Note the colors must be a 
+        list, where colors[i] is the color of newCommands[i]. 
+        Raises a ValueError if the number of commands passed exceeds 9 (the maximum number that can be displayed).
     """
-    global commands
+    global commands 
+    global commandColors
+    print('commands:')
+    print(commands)
+    print('colors to be used:')
+    print(colors)
+    import traceback
+    traceback.print_stack()
     if commands != newCommands:
         clear_commands()
     if not type(newCommands) == list:
         commands = [newCommands]
+        if colors and not type(colors) == list:
+            commandColors = [colors]
+        elif colors:
+            commandColors = colors
+        else:
+            commandColors = [LIGHT_GREY]
     elif len(newCommands) > 9:
         raise ValueError('Number of commands cannot exceed 9. Problem commands: ' + ', '.join(newCommands))
     else:
         commands = newCommands
+        #(LIGHT_GREY,) is necessary as opposed to LIGHT_GREY in order to ensure that we get len(commands) copies of LIGHT_GREY, rather than the numbers in the tuple that LIGHT_GREY represents.
+        commandColors = colors if colors else [LIGHT_GREY] * len(commands)
+    print('commandColors')
+    print(commandColors)
 
 def get_commands():
+    """
+    Returns a pair containing the list of commands, and the list of associated commandColors.
+    """
     return commands
+
+def get_command_colors():
+    return commandColors
 
 #textToDisplay is a list of 4-tuples. The first element is the text. The second element is the size. The third element is whether or not the text should be italic. The
 #fourth element is whether or not the text should be bold.
@@ -356,9 +384,10 @@ BLACK = (0,0,0)
 DARK_GREY = (10, 10, 10)
 LIGHT_GREY = (200, 200, 200)
 WHITE = (250,250,250)
-GREEN = (0, 100, 0)
-RED = (100, 0, 0)
-BLUE = (25, 25, 125)
+RED = (100, 50, 50)
+GREEN = (50, 100, 50)
+BLUE = (50, 50, 100)
+YELLOW = (100, 100, 50)
 SLATE_GREY = (49, 79, 79)
 
 background = None
@@ -462,6 +491,7 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
         numSeparateColumns = len(columns)
         lineNum = 0
         previousCommands = get_commands()
+        previousColors = get_command_colors()
         while columnCount < numSeparateColumns:
             column = columns[columnCount]
             #Need to wrap back around to the first column.
@@ -534,7 +564,7 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
                     pageLength += 1
                     newPage = ''
         if pageLength > 1 and pageCount < pageLength-1:
-            import traceback
+            #import traceback
             #traceback.print_stack()
             if DEBUG:
                 set_commands(['(Enter) to continue.', '<==Back', '(Esc) Skip'])
@@ -567,7 +597,7 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
                         global playedMusic
                         playedMusic.queue.clear()
                         break
-        set_commands(previousCommands)
+        set_commands(previousCommands, previousColors)
         pageCount += 1 
 
 worldView = None
@@ -702,43 +732,78 @@ class RPGObject(object):
         """
         raise NotImplementedError()
 
+
 def display_commands():
-        commandList = get_commands()
-        set_column_number(1)
+        commandSurface = pygame.Surface((commandView.width, commandView.height))
+        LEFT_MARGIN = commandView.width // 10
+        cmdList = get_commands()
+        cmdColors = get_command_colors()
         global chosenSurface
         chosenSurface = screen
-        if commandList != None:
-            leftCommandList = commandList[0:len(commandList):3]
-            middleCommandList = commandList[1:len(commandList):3]
-            rightCommandList = commandList[2:len(commandList):3]    
-            if len(commandList) % 3 == 1:
+        font = pygame.font.SysFont(FONT_LIST, DEFAULT_SIZE)
+        accumulatedHeight = 0
+        if cmdList:
+            leftCommandList = cmdList[0:len(cmdList):3]
+            leftCommandColors = cmdColors[0:len(cmdColors):3]
+            middleCommandList = cmdList[1:len(cmdList):3]
+            middleCommandColors = cmdColors[1:len(cmdColors):3]
+            rightCommandList = cmdList[2:len(cmdList):3]    
+            rightCommandColors = cmdColors[2:len(cmdColors):3]    
+            if len(cmdList) % 3 == 1:
                 try:
                     middleCommandList.append(leftCommandList.pop())  
                 except AttributeError: 
                     print('The following command is not a list, like it should be: ' + middleCommandList + '. Make sure you wrapped your most recent command in a list.')
                     return
-            elif len(commandList) % 3 == 2:
+                else:
+                    try:
+                        middleCommandColors.append(leftCommandColors.pop())
+                    except AttributeError:
+                        print('The following color is not a list, like it should be: ' + str(middleCommandColors) + '. Make sure you wrapped your most recent command in a list.')
+                        return
+            elif len(cmdList) % 3 == 2:
                 try:
                     rightCommandList.append(middleCommandList.pop())
                 except AttributeError: 
                     print('The following command is not a list, like it should be: ' + rightCommandList + '. Make sure you wrapped your most recent command in a list.')
                     return
-            if leftCommandList != None:
-                display_text('\n'.join([''] + leftCommandList), leftCommandView, leftCommandView.topleft, justification=1)
-            else:
-                display_text('', leftCommandView, leftCommandView.topleft)
-            if middleCommandList != None:
-                display_text('\n'.join([''] + middleCommandList), middleCommandView, middleCommandView.topleft, justification=1)
-            else:
-                display_text('', middleCommandView, middleCommandView.topleft)
-            if rightCommandList != None:    
-                display_text('\n'.join([''] + rightCommandList), rightCommandView, rightCommandView.topleft, justification=1)
-            else:
-                display_text('', rightCommandView, rightCommandView.topleft, justification=1)
-        else:
-            display_text('', leftCommandView, leftCommandView.topleft, justification=1)
-            display_text('', middleCommandView, middleCommandView.topleft, justification=1)
-            display_text('', rightCommandView, rightCommandView.topleft, justification=1)
+                else:
+                    try:
+                        rightCommandColors.append(middleCommandColors.pop())
+                    except AttributeError:
+                        print('The following color is not a list, like it should be: ' + str(rightCommandColors) + '. Make sure you wrapped your most recent command in a list.')
+                        return
+            lenLongestList = max(len(leftCommandList), len(rightCommandList), len(middleCommandList))
+            if leftCommandList:
+                position = (LEFT_MARGIN, font.size(leftCommandList[0])[1])
+                for command, color in zip(leftCommandList, leftCommandColors):
+                    if color == LIGHT_GREY:
+                        font.set_bold(False)
+                    else:
+                        font.set_bold(True)
+                    textSurface = font.render(command, True, color, BLACK)
+                    commandSurface.blit(textSurface, position)
+                    position = (position[0], position[1] + int(math.floor(font.size(command)[1] * 3 / lenLongestList)))
+            if middleCommandList:
+                position = (LEFT_MARGIN + commandView.width // 3, font.size(middleCommandList[0])[1])
+                for command, color in zip(middleCommandList, middleCommandColors):
+                    textSurface = font.render(command, True, color, BLACK)
+                    commandSurface.blit(textSurface, position)
+                    position = (position[0], position[1] + int(math.floor(font.size(command)[1] * 3 / lenLongestList)))
+            if rightCommandList:    
+                position = (LEFT_MARGIN + 2 * commandView.width // 3, font.size(rightCommandList[0])[1])
+                for command, color in zip(rightCommandList, rightCommandColors):
+                    textSurface = font.render(command, True, color, BLACK)
+                    commandSurface.blit(textSurface, position)
+                    position = (position[0], position[1] + int(math.floor(font.size(command)[1] * 3 / lenLongestList)))
+            screen.blit(commandSurface, commandView.topleft)
+            #else:
+                #display_text('', rightCommandView, rightCommandView.topleft, justification=1)
+        #else:
+            #textSurface = textrect.render_textrect(columnNoM, font, rect, LIGHT_GREY, DARK_GREY, justification)
+            #display_text('', leftCommandView, leftCommandView.topleft, justification=1)
+            #display_text('', middleCommandView, middleCommandView.topleft, justification=1)
+            #display_text('', rightCommandView, rightCommandView.topleft, justification=1)
 
 
 def format_line(text):
@@ -860,6 +925,7 @@ class State(object):
         self.items = {}
         self.difficulty = None
         self.init_scene = None
+        self.instant_combat = True
 
     def set_init_scene(self, init_scene):
         self.init_scene = init_scene
@@ -871,6 +937,8 @@ class State(object):
         #Quick and dirty hack because I'm too fucking lazy to modify my save file. Note: Write save interpreter!
         #if not self.bedroom:
             #self.bedroom = self.get_room("Maria's Home")
+        if not 'instant_combat' in state: 
+            self.instant_combat = True
         try:
             self.init_scene()
         except TypeError:
