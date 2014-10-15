@@ -7,7 +7,6 @@ import re
 import conversation
 import music
 import episode
-import dill
 import copy
 import textrect
 from pygame.locals import *
@@ -119,18 +118,23 @@ class Room(universal.RPGObject):
     player is allowed to go there. Otherwise the player is not.
     """
     def __init__(self, name, description="", adjacent=None, characters=None, 
-            after_arrival=None, bgMusic=None, before_arrival=None, leaving=None):
+            after_arrival=None, bgMusic=None, bgMusicName="", before_arrival=None, leaving=None):
         self.name = name
         self.leaving = leaving
         if bgMusic is None:
             self.bgMusic = music.TOWN
+            self.bgMusicName = "music.TOWN"
         else:
             self.bgMusic = bgMusic
-        if not type(description) is list:
-            self.description = [description]
+            self.bgMusicName = bgMusicName
+        self.description = ' '.join(description) if not isinstance(description, str) else description
+        if not isinstance(adjacent, list):
+            if adjacent:
+                self.adjacent = [adjacent]
+            else:
+                self.adjacent = []
         else:
-            self.description = description
-        self.adjacent = adjacent
+            self.adjacent = adjacent
         if characters is None:
             self.characters = {}
         else:
@@ -139,6 +143,60 @@ class Room(universal.RPGObject):
         self.before_arrival = before_arrival
         universal.state.add_room(self)
 
+    @staticmethod
+    def add_data(data, saveData):
+        saveData.extend(["Room Data:", data])
+
+    def save(self):
+        saveData = []
+        Room.add_data(self.name, saveData)
+        Room.add_data(self.bgMusicName, saveData)
+        Room.add_data(self.description.strip(), saveData)
+        adjList = [room.name for room in self.adjacent]
+        if adjList:
+            Room.add_data('\n'.join(adjList), saveData)
+        else:
+            Room.add_data('', saveData)
+        if self.characters:
+            Room.add_data('\n'.join(charName for charName in self.characters), saveData)
+        else:
+            Room.add_data('', saveData)
+        return '\n'.join(saveData)
+
+    @staticmethod
+    def load(loadData, room):
+        rest = ""
+        try:
+            _, name, bgMusicName, description, adjacent, characters, rest = loadData.split("Room Data:")
+        except ValueError:
+            _, name, bgMusicName, description, adjacent, characters = loadData.split("Room Data:")
+        print("rest of room:")
+        print(rest)
+        print("characters:")
+        print(characters)
+        room.name = name.strip()
+        room.description = description.strip()
+        room.bgMusicName = bgMusicName.strip()
+        if bgMusicName.strip():
+            moduleName, musicName = bgMusicName.strip().split('.')
+            module = sys.modules[moduleName]
+            room.bgMusic = getattr(module, musicName)
+        adjacent = [roomName.strip() for roomName in adjacent.split('\n') if roomName.strip()]
+        room.adjacent = [universal.state.get_room(roomName) for roomName in adjacent]
+        characters = [charName.strip() for charName in characters.split('\n') if charName.strip()]
+        room.characters = {}
+        for charName in characters:
+            room.characters[charName] = universal.state.get_character(charName)
+        #Note: This is a terrible approach, and breaks the whole object-oriented thing. A much better approach would be to save the type of object, and have the state object call the appropriate version.
+        #But whatevs. I'm lazy.
+        if rest and "Bedroom Only:" in rest:
+            Bedroom.load(rest, room)
+        elif rest and "Dungeon Only:" in rest:
+            import dungeonmode
+            dungeonmode.Dungeon.load(rest, room)
+
+
+
 
     def __getstate__(self):
         state = copy.copy(self.__dict__)
@@ -146,6 +204,7 @@ class Room(universal.RPGObject):
             state['bgMusic'] = [name for name, song in music.musicFiles.items() if song == self.bgMusic][0]
         except IndexError:
             state['bgMusic'] = None 
+        print(state)
         return state
 
     def __setstate__(self, state):
@@ -232,9 +291,9 @@ class Room(universal.RPGObject):
         raise NotImplementedError()
 
 class Bedroom(Room):
-    def __init__(self, name, description="", adjacent=None, characters=None, before_arrival=None, bgMusic=None, punishment=None, punisher=None, weeklyTasks=None,
+    def __init__(self, name, description="", adjacent=None, characters=None, before_arrival=None, bgMusic=None, bgMusicName=None, punishment=None, punisher=None, weeklyTasks=None,
             after_arrival=None):
-        super(Bedroom, self).__init__(name, description, adjacent, characters, self.after_arrival, bgMusic, before_arrival)
+        super(Bedroom, self).__init__(name, description, adjacent, characters, self.after_arrival, bgMusic, bgMusicName, before_arrival)
         self.dayNum = 1
         self.dirtiness = 0
         self.numTransgressions = 0
@@ -245,6 +304,42 @@ class Bedroom(Room):
         self.after_after_arrival = after_arrival
         self.boarding = False
         self.items = []
+
+    @staticmethod
+    def add_data(data, saveData):
+        saveData.extend(["Bedroom Data:", data])
+
+    def save(self):
+        saveData = [super(Bedroom, self).save(), "Room Data:", 'Bedroom Only:']
+        Bedroom.add_data(str(self.dayNum), saveData)
+        Bedroom.add_data(str(self.dirtiness), saveData)
+        Bedroom.add_data(str(self.numTransgressions), saveData)
+        #It may be the case that "punisher" is a function that returns the desired punisher, based upon some property of the player (i.e. gender), in which case we invoke the 
+        #function.
+        try:
+            Bedroom.add_data(self.punisher().name, saveData)
+        except TypeError:
+            try:
+                Bedroom.add_data(self.punisher.name, saveData)
+            except AttributeError:
+                Bedroom.add_data("None", saveData)
+        Bedroom.add_data(str(self.boarding), saveData)
+        Bedroom.add_data('\n'.join(item.save() for item in self.items), saveData)
+        return '\n'.join(saveData)
+
+    @staticmethod
+    def load(loadData, bedroom):
+        _, dayNum, dirtiness, numTransgressions, punisherName, boarding, itemList = loadData.split("Bedroom Data:")
+        bedroom.dayNum = int(dayNum.strip())
+        bedroom.dirtiness = int(dirtiness.strip())
+        bedroom.numTransgressions = int(numTransgressions.strip())
+        bedroom.punisher = None if punisherName.strip() == "None" else universal.state.get_character(punisherName.strip())
+        print("Loading bedroom:")
+        print(bedroom.name)
+        print(boarding)
+        bedroom.boarding = boarding.strip() == "True"
+        bedroom.items = [universal.state.get_item(itemName) for itemName in itemList]
+
 
     def mode(self, sayDescription=True):
         return rest_mode(self, sayDescription)
@@ -333,6 +428,7 @@ class Bedroom(Room):
 
     def tooDirty(self):
         return self.dirtiness > 3
+
 
     def clean(self):
         if person.get_PC().current_health() < person.get_PC().health() // 2 or person.get_PC().current_mana() < person.get_PC().mana() // 2:
@@ -450,7 +546,6 @@ def get_current_room(room):
 def town_mode_interpreter(keyEvent, previousModeIn=None):
     if previousModeIn is None:
         previousModeIn = town_mode
-    party = person.get_party()
     global previousMode
     if keyEvent.key == K_ESCAPE:
         confirm_quit(previousMode)
@@ -472,9 +567,14 @@ def town_mode_interpreter(keyEvent, previousModeIn=None):
         previousMode = previousModeIn
         universal.set_commands(['(#)Character', '<==Back'])
         universal.say_title('Characters:')
-        universal.say('\t'.join(['Name:', 'Health:', 'Mana:\n\t',]), columnNum=3)
-        universal.say(party.display_party(), columnNum=3)
+        #universal.say(''.join(['Name:', universal.tab("Name:"), 'Health:', universal.tab("Health:"), 'Mana:\n']))
+        universal.say('\t'.join(['Name:', 'Health:', 'Mana:\n\t']), columnNum=3)
+        print("displaying party:")
+        print(universal.state.party.display_party())
+        universal.say(universal.state.party.display_party(), columnNum=3)
         universal.set_command_interpreter(select_character_interpreter)
+
+
 
 def select_char_quickspells(previousModeIn):
     universal.clear_screen()
@@ -733,7 +833,7 @@ def save_game(saveName, previousModeIn=None, preserveSaveName=True):
     if saveName.split('.')[-1] != 'sav':
         saveName += '.sav'
     with open(os.path.join(saveDirectory, saveName), 'wb') as saveFile:
-        dill.dump(universal.state, saveFile)
+        universal.state.save(saveFile)
         saveFile.flush()
     global showTitleScreen, previousMode
     if quitting:
@@ -825,16 +925,12 @@ def load_game(loadNameIn=None, preserveLoadName=True):
         loadName = loadNameIn
     try:
         with open(os.path.join(saveDirectory, loadName), 'rb') as loadFile:
-            universal.set_state(dill.load(loadFile))
+            universal.state.load(loadFile)
     except IOError:
         universal.say([loadName, 'does not exist!'])
         acknowledge(load, returnTo)
     else:
         assert(person.get_PC().name != '')
-        try:
-            episode.allEpisodes[universal.state.player.currentEpisode].init()
-        except (TypeError, KeyError):
-            pass
         if not preserveLoadName:
             #global loadName
             loadName = ''

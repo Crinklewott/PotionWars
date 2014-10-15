@@ -184,7 +184,7 @@ def set_commands(newCommands, colors=None):
     print('colors to be used:')
     print(colors)
     import traceback
-    traceback.print_stack()
+    #traceback.print_stack()
     if commands != newCommands:
         clear_commands()
     if not type(newCommands) == list:
@@ -236,6 +236,11 @@ textJustification = 1
 chosenSurface = None
 postSayPair = None
 playedMusic = Queue.Queue()
+TAB = 5 * '        '
+
+def tab(word):
+    return ''.join(' ' for i in range(len(TAB) - len(word) % len(TAB)))
+
 def say(text, columnNum=1, justification=1, fontSize=36, italic=False, bold=False, 
         surface=None, music=None):
     """
@@ -542,7 +547,9 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
                     import music
                     global playedMusic
                     try:
+                        print("Playing music:")
                         nextSong = playedMusic.get_nowait()
+                        print(nextSong)
                         music.play_music(nextSong)
                     except Queue.Empty:
                         print("------You tried to add a music flag '\m', but didn't also include some music. Text that generated the exception:------")
@@ -696,7 +703,7 @@ def acknowledge_interpreter(keyEvent):
 
 class RPGObject(object):
     """
-        This is the class that ALL object types in my games should inherit from. It includes two abstract methods: _save and _load. The first is an instance method, the
+        This is the class that ALL object types in my games should inherit from. It includes two abstract methods: save and load. The first is an instance method, the
         second is a class method.
     """
 
@@ -722,13 +729,16 @@ class RPGObject(object):
         return ' '.join([RPGObject.endLabel, str(type(self))])
 
     @abc.abstractmethod
-    def _save(self):
-        return self.begin_text()
+    def save(self):
+        """
+        Returns a string containing the data of this object. Each data element is on a separate line.
+        """
+        raise NotImplementedError
     
     @staticmethod
-    def _load(dataList):
+    def load(dataList, obj):
         """
-            Given a list of strings containing the data about this object, returns a constructed object of the appropriate type with the appropriate state. 
+            Given a list of strings, containing the data about this object, and the current version of the object, updates the object to the appropriate state. 
         """
         raise NotImplementedError()
 
@@ -835,6 +845,25 @@ def format_text(text, doubleSpaced=True):
         sys.exit()
     return '\n\n'.join(textList) if doubleSpaced else '\n'.join(textList)
 
+
+def format_text_translate(text):
+    """
+    Given a list of (lists of) text, returns the text joined using '' as a separator. Note that any lists of text that are contained in text are joined using a space.
+    Used by the translated python code in order to provide better control over when we get paragraph separators.
+    """
+    textList = []
+    try:
+        for line in text:
+            if type(line) is list:
+                textList.append(' '.join(line))
+            else:
+                textList.append(line)
+    except TypeError, e:
+        print(e)
+        print(text)
+        sys.exit()
+    return ''.join(textList)
+
 def format_text_no_space(text, doubleSpaced=True):
     """
     Given a list of (lists of) text, returns the text joined using '\n\n' as a separator. Note that any lists of text that are contained in text are joined without a space.
@@ -926,6 +955,75 @@ class State(object):
         self.difficulty = None
         self.init_scene = None
         self.instant_combat = True
+        self.reset = None
+
+    def save(self, saveFile):
+        saveData = []
+        saveData.append("State Data:")
+        saveData.append(self.player.save())
+        saveData.append("State Data:")
+        for name, char in self.characters.iteritems():
+            if not char is self.player:
+                saveData.append("Character:")
+                saveData.append(name)
+                saveData.append(char.save())
+        saveData.append("State Data:")
+        for name, room in self.rooms.iteritems():
+            saveData.append("Room:")
+            saveData.append(name)
+            saveData.append(room.save())
+        saveData.append("State Data:")
+        saveData.append(self.bedroom.name if self.bedroom else "None")
+        saveData.append("State Data:")
+        saveData.extend(member.get_id() for member in self.party)
+        saveData.append("State Data:")
+        saveData.append(self.location.name)
+        saveData.append("State Data:")
+        for name, item in self.items.iteritems():
+            saveData.append("Item:")
+            saveData.append(name)
+            saveData.append(item.save())
+        saveData.append("State Data:")
+        saveData.append(str(self.difficulty))
+        saveFile.write('\n'.join(saveData))
+
+    def load(self, loadFile):
+        import episode, person, townmode, items
+        fileData = '\n'.join(loadFile.readlines())
+        #Note: The first entry in the list is just the empty string.
+        _, player, characters, rooms, bedroom, party, location, itemList, difficulty = fileData.split('State Data:')
+        person.PlayerCharacter.load(player, self.player)   
+        if self.player.currentEpisode:
+            currentEpisode = episode.allEpisodes[self.player.currentEpisode]
+            currentEpisode.init()
+            currentScene = currentEpisode.scenes[currentEpisode.currentSceneIndex]
+            currentScene.startScene(True)
+        characters = [charData.strip() for charData in characters.split("Character:") if charData.strip()]
+        for charData in characters:
+           name, _, charData = charData.partition('\n')
+           try:
+               person.Person.load(charData, self.characters[name.strip()])
+           except KeyError:
+               pass
+        rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
+        for roomData in rooms:
+           name, _, roomData = roomData.partition('\n')
+           townmode.Room.load(roomData, self.rooms[name])
+        if bedroom.strip() != "None":
+            self.bedroom = self.rooms[bedroom.strip()] 
+        party = party.strip().split('\n')
+        party = [name.strip() for name in party if name.strip()]
+        self.party = person.Party([self.player if memberName == self.player.get_id() else self.characters[memberName] for memberName in party])
+        self.location = self.rooms[location.strip()]
+        itemList = [itemName.strip() for itemName in itemList.split("Item:") if itemName.strip()]
+        for itemData in itemList:
+            name, _, itemData = itemData.partition('\n')
+            items.Item.load(itemData, self.items[name])
+        try:
+            self.difficulty = int(difficulty.strip())
+        except ValueError:
+            self.difficulty = None
+
 
     def set_init_scene(self, init_scene):
         self.init_scene = init_scene
@@ -972,10 +1070,14 @@ class State(object):
                 del self.episodes[episode.name]
             except KeyError:
                 return
+
     """
 
     def add_item(self, item):
         self.items[item.name] = item
+
+    def get_item(self, itemName):
+        return self.items[itemName]
 
     def remove_item(self, item):
         try:
@@ -984,9 +1086,6 @@ class State(object):
             return
 
     def add_room(self, room):
-        print('adding room:')
-        print(room)
-        print(room.characters)
         self.rooms[room.name] = room
 
     def remove_room(self, room):
@@ -1004,6 +1103,9 @@ class State(object):
     def add_character(self, character):
         self.characters[character.get_id()] = character
 
+    def replace_character(self, character):
+        self.add_character(character)
+
     def remove_character(self, character):
         try:
             del self.characters[character.get_id()]
@@ -1011,7 +1113,6 @@ class State(object):
             return
 
     def get_character(self, character):
-        print(self.characters)
         try:
             return self.characters[character.get_id()]
         except AttributeError:

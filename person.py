@@ -279,14 +279,18 @@ class Person(universal.RPGObject):
     """
     def __init__(self, name, gender, defaultLitany, litany, description="", printedName=None, 
             coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle='', marks=None,
-            musculature='', hairLength='', height='', bodyType=''): 
+            musculature='', hairLength='', height='', bodyType='', identifier=None): 
         self.name = name
         self.gender = gender
         self.previousTarget = 0
         if type(description) is list:
-            self.description = description
+            print("Found a list!")
+            print(description)
+            self.description = '\n'.join(description)
         else:
-            self.description = [description]
+            self.description = description
+        print(self.name)
+        assert(not isinstance(self.description, list))
         #A mapping from the name of the status, to the actual status, and the duration.     
         self.statusList = {}
         if rawName is None:
@@ -352,6 +356,7 @@ class Person(universal.RPGObject):
             self.marks = []
         else:
             self.marks = marks
+        self.identifier = identifier
         universal.state.add_character(self)
 
     def __getstate__(self):
@@ -683,7 +688,11 @@ class Person(universal.RPGObject):
         Returns a string that consists of a person's name annotated with their type (in this case person). This is to ensure that id's are distinct, even if the 
         player happens to give their character the same name as another character in the game (because player characters will be appended with 'playerCharacter').
         """
-        return self.rawName + ".person"
+        if self.identifier:
+            rawName = self.rawName + str(self.identifier)
+        else:
+            rawName = self.rawName
+        return rawName + ".person"
 
     def __eq__(self, other):
         """
@@ -1301,11 +1310,172 @@ class Person(universal.RPGObject):
         return self.shirt().attackDefense + self.lower_clothing().attackDefense + self.underwear().attackDefense + defenseBonus
     
 
-    def _save(self):
-        raise NotImplementedError()
     @staticmethod
-    def _load(data, personType='person'):
-        raise NotImplementedError()
+    def add_data(data, saveData):
+        """
+        Given a string containing data about self, appends "Person:" and the data to saveData.
+        """
+        saveData.extend(["Person Data:", data])
+
+    def save(self):
+        """
+        Returns a string containing the important data of this character.
+        """
+        saveData = []
+        Person.add_data(self.name.strip(), saveData)
+        Person.add_data(str(self.gender), saveData)
+        Person.add_data(self.description.strip(), saveData)
+        statusList = []
+        for statusName, statusTuple in self.statusList.iteritems():
+            status, duration = statusTuple
+            statusList.extend(["Status:", statusName, status.save()])
+        Person.add_data('\n'.join(statusList), saveData)
+        Person.add_data(self.rawName.strip(), saveData)
+        spellNames = []
+        for tier in self.spellList:
+            if tier:
+                spellNames.append(', '.join([spell.name for spell in tier]))
+            else:
+                spellNames.append('None')
+        Person.add_data('\n'.join(spellNames), saveData) 
+        itemList = []
+        for item in self.inventory:
+            itemList.extend(["Item:", item.name, item.save()])
+        Person.add_data('\n'.join(itemList), saveData)
+        equipmentList = []
+        for equipment in self.equipmentList:
+            equipmentList.extend(["Equipment:", equipment.name, equipment.save()])
+        Person.add_data('\n'.join(equipmentList), saveData)
+        Person.add_data('\n'.join([str(stat) for stat in self.primaryStats]), saveData)
+        Person.add_data(str(self.tier), saveData)
+        Person.add_data(str(self.specialization), saveData)
+        Person.add_data('\n'.join([spell.name for spell in self.ignoredSpells]), saveData)
+        Person.add_data(str(self.combatType), saveData) 
+        try:
+            Person.add_data(str(self.litany.index), saveData)
+        except AttributeError:
+            Person.add_data(str(self.litany), saveData)
+        try:
+            Person.add_data(str(self.defaultLitany.index), saveData)
+        except AttributeError:
+            Person.add_data(str(self.defaultLitany), saveData)
+        Person.add_data(str(self.coins), saveData)
+        Person.add_data(str(self.specialization), saveData)
+        Person.add_data(str(self.order), saveData)
+        Person.add_data('\n'.join([spell.name if spell else "None" for spell in self.quickSpells]), saveData)
+        Person.add_data(str(self.printedName), saveData)
+        Person.add_data(str(self.emerits), saveData)
+        Person.add_data(str(self.demerits), saveData)
+        Person.add_data(str(self.hairLength), saveData)
+        Person.add_data(str(self.bodyType), saveData)
+        Person.add_data(str(self.height), saveData)
+        Person.add_data(str(self.musculature), saveData)
+        Person.add_data(str(self.bumStatus), saveData)
+        welts = [welt.strip() for welt in self.welts if welt.strip()]
+        if welts:
+            Person.add_data('\n'.join(welts), saveData)
+        else:
+            Person.add_data('', saveData)
+        Person.add_data(str(self.skinColor), saveData)
+        Person.add_data(str(self.hairColor), saveData)
+        Person.add_data(str(self.eyeColor), saveData)
+        Person.add_data(str(self.hairStyle), saveData)
+        marks = [mark.strip() for mark in self.marks if mark.strip()]
+        if marks:
+            Person.add_data('\n'.join(self.marks), saveData)
+        else:
+            Person.add_data('', saveData)
+        return '\n'.join(saveData)
+
+    @staticmethod
+    def load(data, person):
+        #Note: First entry in the list is the empty string.
+        data = data.strip()
+        _, name, gender, description, statuses, rawName, spellNames, inventory, equipmentList, stats, tier, specialization, ignoredSpells, combatType, litany, defaultLitany, coins, specialization, \
+                order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, hairStyle, marks = \
+                data.split("Person Data:")
+        person.name = name.strip()
+        person.description = description.strip()
+        person.gender = int(gender.strip())
+        person.specialization = int(specialization.strip())
+        person.statusList = {}
+        if statuses.strip():
+            statuses = statuses.split("Status:")
+            for status in statuses:
+                name, _, statusData = status.partition('\n')
+                statusEffect = statusEffects.build_status(name)
+                statusEffects.StatusEffect.load(status, statusEffect)
+                person.statusList[name] = (statusEffect, statusEffect.duration)
+        person.rawName = rawName.strip()
+        if spellNames.strip():
+            person.clear_spells()
+            spellTiers = spellNames.split('\n')
+            spellTiers = [spellName.strip() for spellName in spellTiers if spellName.strip()]
+            for spells in spellTiers:
+                spells = spells.split(',')
+                for spellName in spells:
+                    spellName = spellName.strip()
+                    if spellName != "None":
+                        spell = get_spell(spellName)
+                        person.learn_spell(spell)
+        person.inventory = []
+        if inventory.strip():
+            inventory = [item.strip() for item in inventory.split("Item:") if item.strip()]
+            for itemData in inventory:
+                name, _, itemData = itemData.partition('\n')
+                items.Item.load(itemData, universal.state.get_item(name))
+                person.take_item(universal.state.get_item(name))
+        equipmentList = [equipment.strip() for equipment in equipmentList.split("Equipment:") if equipment.strip()]
+        person.equipmentList = [items.emptyWeapon, items.emptyUpperArmor, items.emptyLowerArmor, items.emptyUnderwear, items.emptyPajamaTop, items.emptyPajamaBottom]
+        for equipmentData in equipmentList:
+            name, _, equipmentData = equipmentData.partition('\n')
+            items.Item.load(equipmentData, universal.state.get_item(name))
+            person.equip(universal.state.get_item(name))
+        stats = [stat.strip() for stat in stats.split('\n') if stat.strip()] 
+        person.primaryStats = [int(stat.strip()) for stat in stats]
+        person.tier = int(tier.strip())
+        person.specialization = int(specialization.strip())
+        ignoredSpells = [spellName.strip() for spellName in ignoredSpells if spellName.strip()]
+        person.ignoredSpells = []
+        if ignoredSpells:
+            person.ignoredSpells = [get_spell(spellName.strip()) for spellName in ignoredSpells]
+        if combatType.strip() != "None":
+            person.combatType = int(combatType.strip())
+        if litany.strip() != "None":
+            person.litany = int(litany.strip())
+        person.coins = int(coins.strip())
+        if 'zeroth_order' in order:
+            person.order = zeroth_order
+        elif 'first_order' in order:
+            person.order = first_order
+        elif 'second_order' in order:
+            person.order = second_order
+        elif 'third_order' in order:
+            person.order = third_order
+        elif 'fourth_order' in order:
+            person.order = fourth_order
+        elif 'fifth_order' in order:
+            person.order = fifth_order
+        elif 'sixth_order' in order:
+            person.order = sixth_order
+        else:
+            raise Exception(''.join([order, 'is not a valid order, according to the load function for people.']))
+        quickSpells = [spellName.strip() for spellName in quickSpells.split('\n') if spellName.strip()]
+        person.quickSpells = [None if spellName.strip() == "None" else get_spell(spellName.strip()) for spellName in quickSpells]
+        person.printedName = printedName.strip()
+        person.emerits = int(emerits.strip())
+        person.demerits = int(demerits.strip())
+        person.hairLength = hairLength.strip()
+        person.bodyType = bodyType.strip()
+        person.height = height.strip()
+        person.musculature = musculature.strip()
+        person.bumStatus = int(bumStatus.strip())
+        person.welts = welts.split('\n')
+        person.skinColor = skinColor.strip()
+        person.hairColor = hairColor.strip()
+        person.eyeColor = eyeColor.strip()
+        person.hairStyle = hairStyle.strip()
+        person.marks = marks.split('\n')
 
     def character_sheet_spells(self):
         return '\n'.join(['Name: ' + self.name, 'Order: ' + order_name(self.order),  self.display_stats(), 'Spells: ', self.display_spells()])
@@ -1458,7 +1628,7 @@ class PlayerCharacter(Person):
     This is only allowed for the player character because there should be only one in any given episode (though there's no reason why there couldn't be more than one across
     the entire game, so long as the two never fight each other).
     """
-    def __init__(self, name, gender, description="", currentEpisode=None, order=sixth_order, nickname=""):
+    def __init__(self, name, gender, description="", currentEpisode=None, order=zeroth_order, nickname=""):
         super(PlayerCharacter, self).__init__(name, gender, None, None, description=description, order=zeroth_order, rawName='$$$universal.state.player$$$', skinColor='rich caramel',
                 eyeColor='brown', hairColor='dark brown')
         self.keywords = []
@@ -1471,6 +1641,50 @@ class PlayerCharacter(Person):
         self.viewedSlot = None
         self.reputation = 0
 
+    @staticmethod
+    def add_data(data, saveData):
+        saveData.extend(["Player Data:", data])
+
+    def save(self):
+        saveString = super(PlayerCharacter, self).save()
+        saveData = [saveString, "Player Character Only:"]
+        print("saving keywords:")
+        print(self.keywords)
+        PlayerCharacter.add_data('\n'.join(keyword.strip() for keyword in self.keywords if keyword.strip()), saveData)
+        PlayerCharacter.add_data(str(self.currentEpisode), saveData)
+        import episode
+        try:
+            PlayerCharacter.add_data(str(episode.allEpisodes[self.currentEpisode].currentSceneIndex), saveData)
+        except KeyError:
+            PlayerCharacter.add_data('', saveData)
+        PlayerCharacter.add_data(str(self.numSpankings), saveData)
+        PlayerCharacter.add_data(str(self.numSpankingsGiven), saveData)
+        PlayerCharacter.add_data(str(self.fakeName), saveData)
+        PlayerCharacter.add_data(str(self.nickname), saveData)
+        PlayerCharacter.add_data(str(self.reputation), saveData)
+        return '\n'.join(saveData)
+
+    @staticmethod
+    def load(loadData, player):
+        personData, _, playerCharacterData = loadData.partition("Player Character Only")
+        Person.load(personData, player)
+        loadData = playerCharacterData
+        _, keywords, currentEpisode, currentSceneIndex, numSpankings, numSpankingsGiven, fakeName, nickname, reputation = loadData.split("Player Data:")
+        player.keywords = [keyword.strip() for keyword in keywords.split('\n') if keyword.strip()]
+        print("loading keywords")
+        print(player.keywords)
+        player.currentEpisode = currentEpisode.strip()
+        print(player.currentEpisode)
+        if player.currentEpisode == "None":
+            player.currentEpisode = None
+        else:
+            episode.allEpisodes[player.currentEpisode].currentSceneIndex = int(currentSceneIndex.strip())
+        player.numSpankings = int(numSpankings.strip())
+        player.numSpankingsGiven = int(numSpankingsGiven.strip())
+        player.fakeName = fakeName.strip()
+        player.nickname = nickname.strip()
+        player.reputation = int(reputation.strip())
+
 
 
 
@@ -1478,7 +1692,11 @@ class PlayerCharacter(Person):
 
 
     def get_id(self):
-        return self.rawName + ".playerCharacter"
+        if self.identifier:
+            rawName = self.rawName + str(self.identifier)
+        else:
+            rawName = self.rawName
+        return rawName + ".playerCharacter"
 
     def set_fake_name(self):
         if self.gender == FEMALE:
@@ -1515,8 +1733,6 @@ class PlayerCharacter(Person):
         super(PlayerCharacter, self).add_mark(mark)
         self.numSpankings += 1
 
-    def _save(self):
-        raise NotImplementedError()
 
     @staticmethod
     def _load(dataList):
@@ -1734,19 +1950,20 @@ class Party(universal.RPGObject):
         memberNames = [': '.join([member.printedName, member.status_string()]) for member in self]
         if showHP:
             partyTxt = ['\t'.join([target(n, arrow(n, allyIndex), targetedIndices) + '. '
-                + memberName, str(member.current_health()) + '/' + str(member.health()), 
-                str(member.current_mana()) + '/' + str(member.mana())]) 
+                + memberName, str(member.current_health()) + '/' + str(member.health()), str(member.current_mana()) + '/' + str(member.mana())])
                 for (n, member, memberName) in zip([i for i in range(1, len(self.members)+1)], self.members, memberNames)]
             if grappling:
-                partyTxt = ['\t'.join([memTxt, display_person(mem.grapplingPartner)]) 
-                    for (memTxt, mem) in zip(partyTxt, self.members)]
-            return '\n'.join(partyTxt)
+                partyTxt = ['\t'.join([memTxt, display_person(mem.grapplingPartner)]) for (memTxt, mem) in zip(partyTxt, self.members)]
+            return '\n\t'.join(partyTxt)
         else:
-            return '\t'.join([target(n, arrow(n, allyIndex), targetedIndices) + '. ' + 
-                '\n' + memberName for (n, member, memberName) in 
+            return '\t'.join([target(n, arrow(n, allyIndex), targetedIndices) + '. ' + '\n'
+                + memberName for (n, member, memberName) in 
                 zip([i for i in range(1, len(self.members)+1)], self.members, memberNames)])
+
+
     def display(self):
         return display_party(self)
+
 
     def avg_stealth(self):
         return sum([member.stealth() for member in self.members]) / len(self)
@@ -1780,7 +1997,7 @@ NUM_SPELL_TYPES = 4
 
 NO_MAGIC = -1
 
-#This is a list of list tuples. Each list of tuples is all the spells in that particular tier.
+#This is a list of list of tuples. Each list of tuples is all the spells in that particular tier.
 allSpells = [None for i in range(universal.NUM_TIERS)]
 
 def get_spell(name):

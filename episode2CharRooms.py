@@ -50,8 +50,8 @@ def build_chars():
         deidre = universal.state.get_character('Deidre.person')
     except KeyError:
         deidre = person.Person('Deidre', person.FEMALE, None, None, ''.join(["A tall, slender woman with frizzy, shoulder-length blonde hair pulled back into a bun. She has piercing blue eyes, and",
-            "carries herself with rod-straight posture. A black beret sits on top of her head."]), specialization=universal.STATUS_MAGIC, order=person.first_order, skinColor="peach", eyeColor="blue",
-            hairColor="blonde", hairLength="shoulder-length", hairStyle="bun", height="tall", bodyType="slim", muscular="fit")
+            " carries herself with rod-straight posture. A black beret sits on top of her head."]), specialization=universal.STATUS_MAGIC, order=person.first_order, skinColor="peach", eyeColor="blue",
+            hairColor="blonde", hairLength="shoulder-length", hairStyle="bun", height="tall", bodyType="slim", musculature="fit")
     try:
         alondra = universal.state.get_character('Alondra.person')
     except KeyError:
@@ -66,16 +66,18 @@ def build_chars():
 
 def build_rooms():
     global kitchen
+    print("starting to build kitchen")
     try:
         kitchen = universal.state.get_room('Kitchen')
+        print("Kitchen found!")
     except KeyError:
+        print("Building kitchen!")
         kitchen = townmode.Room("Kitchen", ' '.join(["The kitchen is a rather large room with two long, waist-high counters running through the middle. Along the sides of the walls are a few small",
             "tables and",
             "stools. A pair of massive hearths sit at the far end, a pair of turnspit coelophysii are lying next to the hearth. Their heads come up, and they gurgle happily as", 
             universal.state.player.name,
             "enters. There is a large hole in the south wall. The hole has been braced with several hastily carved timbers, and a few thick furs have been draped over it, so that",
-            "customers can't peer directly into the back of the guild. A pair of high windows sit on the western wall on either side of the hearth."]), universal.state.get_room("Adventurer's Guild"),
-            None, None, textCommandsMusic.LIGHT_HEARTED, None)
+            "customers can't peer directly into the back of the guild. A pair of high windows sit on the western wall on either side of the hearth."]), [universal.state.get_room("Adventurer's Guild")],
+            None, None, textCommandsMusic.LIGHT_HEARTED, "textCommandsMusic.LIGHT_HEARTED", None)
         if 'boarding_with_Adrian' in textCommandsMusic.keywords():
             kitchen.add_adjacent(universal.state.get_room("Bedroom"))
-

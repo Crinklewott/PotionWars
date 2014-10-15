@@ -32,6 +32,25 @@ class Enchantment(universal.RPGObject):
         self.stat = stat
         self.bonus = bonus
 
+    @staticmethod
+    def add_data(data, saveData):
+        saveData.extend(["Enchantment Data:", data])
+
+    def save(self):
+        saveData = []
+        Enchantment.add_data(str(self.cost), saveData)
+        Enchantment.add_data(str(self.stat), saveData)
+        Enchantment.add_data(str(self.bonus), saveData)
+        return '\n'.join(saveData)
+
+    @staticmethod
+    def load(enchantmentData, enchantment):
+        _, cost, stat, bonus = enchantmentData.split("Enchantment Data:")
+        enchantment.cost = int(cost.strip())
+        enchantment.stat = int(stat.strip()) 
+        enchantment.bonus = int(bonus.strip())
+
+
     def display(self):
         return ''.join(['+', str(self.bonus), ' ', universal.stat_name(self.stat)])
 
@@ -51,6 +70,48 @@ class Item(universal.RPGObject):
         self.enchantments = [] if enchantments is None else enchantments
         self.maxEnchantment = maxEnchantment
         universal.state.add_item(self)
+
+    @staticmethod
+    def add_data(data, saveData):
+        saveData.extend(["Item Data:", data])
+
+    def save(self):
+        saveData = []
+        Item.add_data(self.name, saveData)
+        Item.add_data(self.description, saveData)
+        Item.add_data(str(self.attackPenalty), saveData)
+        Item.add_data(str(self.attackDefense), saveData)
+        Item.add_data(str(self.castingPenalty), saveData)
+        Item.add_data(str(self.magicDefense), saveData)
+        Item.add_data('\n'.join(enchantment.save() for enchantment in self.enchantments), saveData)
+        Item.add_data(str(self.maxEnchantment), saveData) 
+        return '\n'.join(saveData)
+
+    @staticmethod
+    def load(itemData, item):
+        rest = []
+        try:
+            _, name, description, attackPenalty, attackDefense, castingPenalty, magicDefense, enchantments, maxEnchantment, rest = itemData.split("Item Data:")
+        except ValueError:
+            _, name, description, attackPenalty, attackDefense, castingPenalty, magicDefense, enchantments, maxEnchantment = itemData.split("Item Data:")
+        item.name = name.strip()
+        item.description = description.replace('\n', ' ')
+        item.attackPenalty = int(attackPenalty.strip())
+        item.attackDefense = int(attackDefense.strip())
+        item.castingPenalty = int(castingPenalty.strip())
+        item.magicDefense = int(magicDefense.strip())
+        if enchantments.strip():
+            enchantments = enchantments.split("Enchantment:")
+            item.enchantments = [Enchantment() for enchantment in enchantments]
+            for enchantment, enchantmentData in zip(item.enchantments, enchantments):
+                Enchantment.load(enchantmentData, enchantment)
+        #&&& Need to handle the loading of subclasses.
+        if rest:
+            if "Armor Only:" in rest:
+                Armor.load(rest, item)
+            elif "Weapon Only:" in rest:
+                Weapon.load(rest, item)
+
 
 
     def enchantment_level(self):
@@ -109,6 +170,26 @@ class Armor(Item):
         self.armorType = 'armor'
         self.risque = 0
 
+    @staticmethod
+    def add_data(data, saveData):
+        saveData.extend(["Armor Data:", data])
+
+    def save(self):
+        saveData = [super(Armor, self).save(), "Item Data:", "Armor Only:"]
+        Armor.add_data(str(self.risque), saveData)
+        return '\n'.join(saveData)
+
+    @staticmethod
+    def load(armorData, armor):
+        rest = ""
+        try:
+            _, risque, rest = armorData.split("Armor Data:")
+        except ValueError:
+            _, risque = armorData.split("Armor Data:")
+        armor.risque = int(risque.strip())
+        if rest and "Lower Only:" in rest:
+            LowerArmor.load(rest, armor)
+
     def is_equippable(self):
         return True
      
@@ -121,7 +202,7 @@ class UpperArmor(Armor):
     armorType = 'chest armor'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6, risque=0):
         super(UpperArmor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
-        self.armorType = 'chest armor'
+        self.armorType = UpperArmor.armorType
 
     def equip(self, char):
         char.unequip(char.shirt())
@@ -165,7 +246,6 @@ class Dress(FullArmor):
     def __init__(self, name, description, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, price=0, enchantments=None, maxEnchantment=18, risque=0):
         super(Dress, self).__init__(name, description, attackDefense, attackPenalty, castingPenalty, magicDefense, price, enchantments, maxEnchantment, risque)
         self.armorType = 'dress'
-    pass
 
 class Robe(Dress):
     armorType = 'dress'
@@ -178,6 +258,20 @@ class LowerArmor(Armor):
             baring=False):
         super(LowerArmor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
         self.baring = False
+
+    @staticmethod
+    def add_data(data, saveData):
+        saveData.extend(["Lower Data:", data])
+
+    def save(self):
+        saveData = [super(LowerArmor, self).save(), "Armor Data:", "Lower Only:", "Lower Data:"]
+        LowerArmor.add_data(str(self.baring), saveData)
+        return '\n'.join(saveData)
+
+    @staticmethod
+    def load(armorData, armor):
+        _, lowerOnly, baring = armorData.split("Lower Data:")
+        armor.baring = baring.strip() == "True"
     #def down_up
 
     def unequip(self, char, couldBeNaked=True):
@@ -259,6 +353,33 @@ class Weapon(Item):
         self.armslengthBonus = armslengthBonus
         self.genericBonus = genericBonus
         self.weaponType = Weapon.weaponType
+
+    @staticmethod
+    def add_data(data, saveData):
+        saveData.extend(["Weapon Data:", data])
+
+    def save(self):
+        saveData = [super(Weapon, self).save(), "Item Data:", 'Weapon Only:']
+        Weapon.add_data(str(self.minDamage), saveData)
+        Weapon.add_data(str(self.maxDamage), saveData)
+        Weapon.add_data(str(self.grappleAttempt), saveData)
+        Weapon.add_data(str(self.grappleAttemptDefense), saveData)
+        Weapon.add_data(str(self.grappleBonus), saveData)
+        Weapon.add_data(str(self.armslengthBonus), saveData)
+        Weapon.add_data(str(self.genericBonus), saveData)
+        return '\n'.join(saveData)
+
+    @staticmethod
+    def load(weaponData, weapon):
+        print(weaponData)
+        _, minDamage, maxDamage, grappleAttempt, grappleAttemptDefense, grappleBonus, armslengthBonus, genericBonus = weaponData.split("Weapon Data:")
+        weapon.minDamage = int(minDamage.strip())
+        weapon.maxDamage = int(maxDamage.strip())
+        weapon.grappleAttempt = int(grappleAttempt.strip())
+        weapon.grappleAttemptDefense = int(grappleAttemptDefense.strip())
+        weapon.grappleBonus = int(grappleBonus.strip())
+        weapon.armslengthBonus = int(armslengthBonus.strip())
+        weapon.genericBonus = int(genericBonus.strip())
 
     def is_equippable(self):
         return True

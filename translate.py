@@ -17,8 +17,6 @@ You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-#This code is rank shit. I really really need to create a proper AST and then do transformations on that AST. But I'm a lazy bum and don't want to work on that right now.
-
 #TODO: This only works when the player is the only character with dynamic clothing.
 #Before the second episode is done, we'll need to implement a way to call liftlower, etc. on
 #other characters.
@@ -58,6 +56,7 @@ inlineCommandsPlayer = {
     r'\MisterMiss{}':"person.MisterMiss()",  
     r'\manwoman{}':"person.manwoman()",  
     r'\ManWoman{}':"person.ManWoman()",  
+    r'\trousers{}':"universal.state.player.lower_clothing().name",
     r'\hishers{}':"person.hishers()",  
     r'\HisHers{}':"person.HisHers()",  
     r'\boygirl{}':"person.boygirl()",  
@@ -79,13 +78,11 @@ inlineCommandsPlayer = {
     r'\BastardBitch{}':"person.BastardBitch()",  
     r'\weaponName{}':"universal.state.player.weapon().name",  
     r'\name{}':"universal.state.player.name",  
-    r'\names{}':"universal.state.player.name, 's'",
+    r'\names{}':'''universal.state.player.name, "'s"''',
     r'\nickname{}':"universal.state.player.nickname",  
     r'\nicknames{}':"universal.state.player.nickname, 's'",
     r'\weapon{}':"universal.state.player.weapon().name",
     r'\player{}':"universal.state.player",
-    r'\name{}':"universal.state.player.name",
-    r'\names{}': "universal.state.player.name, ''''s'''",
     r'\cladbottom{\pajama}': "universal.state.player.clad_bottom(pajama=True)",
     r'\cladbottom{\trousers}': "universal.state.player.clad_bottom()",
     r'\muscleadj{}': "universal.state.player.muscle_adj()",
@@ -107,7 +104,7 @@ inlineCommandsPlayer = {
     r'\pajamabottoms{}': "universal.state.player.pajama_bottom().name",
     r'\pajamas{}': "universal.state.player.pajama_top().name",
     r'\underwear{}':"universal.state.player.underwear().name",
-    r'\shirt{}':"universal.state.player.shirt().name, '''",
+    r'\shirt{}':"universal.state.player.shirt().name",
     r'\stealth{}': "universal.state.player.stealth()",
     r'\warfare{}': "universal.state.player.warfare()",
     r'\magic{}': "universal.state.player.magic()",
@@ -170,6 +167,7 @@ inlineCommands = {
     r'\liftslowers{pajamas}{': "items.liftslowers(items.pajama_bottom(",
     r'\lowerslifts{pajamas}{': "items.lowerslifts(items.pajama_bottom(",
     r'\underwear{':"items.underwear_name(",
+    r'\trousers{': "items.lower_clothing_name(",
     r'\pajamabottoms{': "items.pajama_bottom_name(",
     r'\stealth{': "person.stealth(",
     r'\warfare{': "person.warfare(",
@@ -178,15 +176,28 @@ inlineCommands = {
     r'\resilience{': "person.resilience("
     }
 
-def get_args(texIter, line, numArgs):
+def get_args(cmd, numArgs):
+    """
+    Given a list of strings containing at least one element (the command whose arguments need to be extracted), and the number of arguments
+    to be extracted, returns a list of length numArgs containing the arguments to cmd.
+
+    TODO: I should rewrite this. It's a relic of my exceedingly clever "Let's pass an iterator all over the place!" (impossible to read) premature optimization. Currently instead of just iterating
+    through all the lines in cmd, and doing different things depending on whether we've seen a brace or not (or if we've extracted all the arguments or not) it manually steps through the iterator.
+    """
+    #Checks to make sure I didn't accidentally pass in a string instead of a list of strings
+    #assert(not isinstance(cmd, str))
+    #Checks to make sure I actually passed in a command.
+    #assert(cmd[0].strip()[0] == '\\')
+    assert(not isinstance(cmd, str))
     args = []
-    origLine = line
+    texIter = iter(cmd)
+    line = next(texIter)
     while len(args) < numArgs:
         while not '{' in line:
             try:
                 line = next(texIter)
             except StopIteration:
-                raise TranslateError('Not enough arguments for: ' + origLine + '.')
+                raise TranslateError('Not enough arguments for: ' + cmd[0] + '.')
         startBraceIndex = line.index('{')
         if '}' in line:
             endBraceIndex = line.index('}')
@@ -198,7 +209,7 @@ def get_args(texIter, line, numArgs):
                 try:
                     line = next(texIter)
                 except StopIteration:
-                    raise TranslateError('End brace for argument of: ' + origLine + ' not found.')
+                    raise TranslateError('End brace for argument of: ' + cmd[0] + ' not found.')
             endBraceIndex = line.index('}')
             args[-1] = ''.join([args[-1], line[:endBraceIndex]])
         nextArg = line[endBraceIndex+1:]
@@ -210,6 +221,7 @@ def get_args(texIter, line, numArgs):
             except StopIteration:
                 break
     return args
+
         
 
 
@@ -220,7 +232,6 @@ def append_to_function(code, newLine, tab=TAB):
 
 
 DEBUG = True
-texCmdPattern = re.compile((r'\\\w+\{\w*\}'))
 def translate(fileName, charRoomFile, episodeName, nodeNum, title, episodeNum, titleTheme, tab=TAB, imports=None): 
     """
     1. Split around the environments (so from begin to end)
@@ -228,59 +239,396 @@ def translate(fileName, charRoomFile, episodeName, nodeNum, title, episodeNum, t
     3. Each element in the resulting list corresponds to an element in a line of the format_text. Though some commands may require us to stop and start format_line, many can just be replaced 
     inline. And really, some, like the \(e)cond commands, we could probably turn into inline if-statements.
     """
-    code = IMPORTS + [' '.join(['import', charRoomFile])]
-    return code + translate_envs(environment_split(fileName), nodeNum, episodeNum)
+    code = IMPORTS + [' '.join(['from', charRoomFile, 'import *'])]
+    scenes, translatedCode = translate_envs(split_environments(fileName), nodeNum, episodeNum)
+    code.extend(translatedCode)
+    for sceneName in scenes:
+        code.append(''.join([sceneName, ' = ', 'episode.Scene(', '"' + sceneName + '", ', 'start_', sceneName, ', end_', sceneName, ')']))
+    code.append(''.join(['def init_episode_', str(episodeNum), '():\n', TAB, 'build_chars()\n', TAB, 'build_rooms()']))
+    code.append(''.join(['episode', str(episodeNum), ' = episode.Episode(', str(episodeNum), ', ', '"' + title + '"', ', scenes=[', ', '.join(scenes), '], titleTheme=', titleTheme, ', ',
+        'init=', 'init_episode_', str(episodeNum), ')']))
+    return code
 
 def translate_envs(envs, nodeNum, episodeNum):
     """
-    Given an sprpgs-latex environment, returns a string containing the translated code.
+    Given a list of sprpgs-latex environments, returns a list of strings containing the translated code of the list of environments.
     """
-    code = []
+    openSceneCode = []
+    nodeCode = []
+    scenes = []
+    sceneNames = []
     sceneNum = 1
+    newLineTab = '\n' + TAB
     for env in envs:
-        if 'node' in env[HEADER]:
-            code.append(translate_node(env, nodeNum))
-            nodeNum += 1
-        elif 'openScene' in env[HEADER]:
-            code.append(translate_open_scene(env, episodeNum, sceneNum))
-            sceneNum += 1
+        if 'openScene' in env[HEADER]:
+            openSceneCode.extend(translate_open_scene(env, episodeNum, sceneNum))
+            openSceneCode.append(''.join([TAB, "universal.state.set_init_scene(init_episode_", str(episodeNum), "_scene_", str(sceneNum), ')']))
+            openSceneCode.append(''.join([TAB, "init_episode_", str(episodeNum), "_scene_", str(sceneNum), "()"]))
+            nodeCode.append(''.join(['def init_episode_', str(episodeNum), "_scene_", str(sceneNum), "():"]))
+            sceneNames.append(''.join(['scene_', str(sceneNum), '_episode_', str(episodeNum)]))
         elif 'childnode' in env[HEADER]:
-            code.append(translate_childnode(env, nodeNum))
+            env = (env[HEADER], remove_line_wrapping(env[BODY]))
+            nodeCode.extend(translate_childnode(env, nodeNum))
+            nodeNum += 1
+        elif 'node' in env[HEADER]:
+            env = (env[HEADER], remove_line_wrapping(env[BODY]))
+            newSceneCode, newNodeCode = translate_node(env, nodeNum)
+            openSceneCode.extend(newSceneCode)
+            #nodeCode.extend(''.join([TAB, line]) for line in newNodeCode)
+            nodeCode.extend(newNodeCode)
             nodeNum += 1
         elif 'closeScene' in env[HEADER]:
-            code.append(translate_close_scene(env))
+            scenes.extend(openSceneCode + nodeCode + translate_close_scene(env, episodeNum, sceneNum))
+            openSceneCode = []
+            nodeCode = []
+            sceneNum += 1
         else:
             raise Exception("Don't have a translation for " + env[HEADER])
-    return code
+    return (sceneNames, scenes)
+
+def remove_line_wrapping(body):
+    """
+    Given a list of lines representing a node or childnode's body, returns a copy of the list of lines with all line wrappings removed. A line wrapping is defined as lines of text that are separated 
+    by a single newline. If there are 
+    two newlines in a row, then they are treated as separate lines. In short, all paragraphs are condensed into single lines. This simplifies the processing of commands, because we don't have to
+    worry about commands carrying over onto more than one line.
+    """
+    noWrap = []
+    newLine = True
+    for line in body:
+        line = line.strip()
+        if line:
+            if newLine:
+                noWrap.append(line)
+            else:
+                noWrap[-1] = ' '.join([noWrap[-1], line])
+            newLine = False
+        else:
+            newLine = True
+    return noWrap
+
+
+
+
+
+
 
 def translate_open_scene(env, episodeNum, sceneNum):
-    code = '_'.join(['def start_scene', str(sceneNum), 'episode', str(episodeNum) + '(loading=False):\n'])
-    code += ''.join(line for line in env[BODY])
+    code = ['_'.join(['def start_scene', str(sceneNum), 'episode', str(episodeNum) + '(loading=False):']), TAB + 'pass']
+    code.append(''.join(line for line in env[BODY]))
     return code
 
-def translate_close_scene(env):
-    return '\n'.join(env[BODY])
+def translate_close_scene(env, episodeNum, sceneNum):
+    code = ['_'.join(['def end_scene', str(sceneNum), 'episode', str(episodeNum) + '(loading=False):']), TAB + 'pass']
+    code.append(''.join(line for line in env[BODY]))
+    return code
 
 
-
-
-
+texCmdPattern = re.compile(r'(\\\w+\{\w*\})')
 def translate_node(env, nodeNum):
-    #&&&
-    return '\n'.join(env[BODY])
+    """
+    The node environment syntax: \\begin{node}{nodeName}{Location}{Speaker}{Author}
+    Note five arguments including the first (node). Of these, the only two that we care about in this code are nodeName, and Speaker. Location and Author are for the benefit of people reading the
+    transcript (it is assumed that the character will be manually moved into the appropriate location somewhere in the transcript Tex).
+    Given the latex code to be translated, and the node number, returns an ordered pair:
+    1. A list of lines of Python code to be added to the latest openScene code that assigns the new node to the Speaker's litany.
+    2. A list of lines of Python code that builds the node defined by this environment.
+    """
+    _, nodeName, _, speaker,_  = get_args([env[HEADER]], 5)
+    tabLine = TAB + '\n'
+    nodeName = '_'.join(nodeName.split())
+    if speaker.lower() == 'self':
+        openSceneCode = [''.join([TAB, 'universal.state.player.litany = ', 'conversation.allNodes[', str(nodeNum), ']'])]
+        openSceneCode.append(TAB + 'conversation.converse_with(universal.state.player, townmode.town_mode)')
+    else:
+        openSceneCode = [''.join([TAB, 'universal.state.get_character(', '"' + speaker, '.person").litany = ', 'conversation.allNodes[', str(nodeNum), ']'])]
+    nodeCode = [''.join([TAB, nodeName, ' = ', 'conversation.Node(', str(nodeNum), ')']), 
+                ''.join([TAB, 'def ', nodeName + '_quip_function():'])]
+    body = env[BODY]
+
+    #If the first text in the environment is a command, then it will be replaced by Python code, in which case we don't want to start a string. Otherwise, we're starting with text, in which
+    #case we do want to start with the tripe quotes for a line.
+    nodeCode.extend(translate_node_body(body, nodeName))
+    nodeCode.append(''.join([TAB, nodeName, '.quip_function = ', nodeName, '_quip_function']))
+    return (openSceneCode, nodeCode)
+
+def translate_node_body(body, nodeName):
+    """
+    Given a list of lines containing the body of the (child)node , and the name of the node, returns a list of python statements that implement the quip function for this node.
+    """
+    nodeCode = []
+    translatedText = [''.join([TAB * 2, nodeName, '.quip = ', "universal.format_text_translate([["])]
+    body, code = split_text_code(body) 
+    children, playerComments = extract_children(code)
+    #Note: Continue is included in childIfs, because \continue can be viewed as a special case. A single childif with a check of "True."
+    executingChildIfs = extract_childifs(code, nodeName)
+    executingStateModifiers = extract_state_modifiers(code)
+    executingRawCode = extract_raw_code(code)
+    if body:
+        for index, line in enumerate(body):
+            line = re.split(texCmdPattern, line)
+            line = [chunk for chunk in line if chunk]
+            line = translate_player_specific_inline_commands(line, inlineCommandsPlayer, inlineCommands)
+            line = translate_inline_commands(line, inlineCommands)
+            line = translate_conds(line)
+            if index == 0:
+                translatedText[-1] += ''.join([", ".join(line), ']'])
+            else:
+                translatedText.append(''.join(['[', ", ".join(line), ']']))
+        translatedText[-1] += '])' 
+    else:
+        translatedText[-1] += "'''''']])"
+    threeTabsNewLine = '\n' + TAB * 3
+    twoTabsNewLine = '\n' + TAB * 2
+    #Note that we're moving all of the raw code to the beginning of the node. Therefore, though they are executed in the order they are defined, they are NOT executed in the position of the 
+    #text that they are written.
+    nodeCode.append(twoTabsNewLine.join(executingRawCode))
+    nodeCode.append(',\n'.join(translatedText))
+    nodeCode.append(''.join([2 * TAB, nodeName, '.children = [', ', '.join(children), ']']))  
+    nodeCode.append(''.join([2 * TAB, nodeName, '.playerComments = [', ','.join(playerComments), ']']))
+    nodeCode.append(twoTabsNewLine + twoTabsNewLine.join(executingChildIfs))
+    nodeCode.append(twoTabsNewLine.join(executingStateModifiers))
+    return nodeCode
+
+
+
+CODE_COMMANDS = [r'\child', r'\childif', r'\bummarks', r'\keyword', r'\continue'] 
+
+def split_text_code(body):
+    """
+    Given an iterable of strings (representing lines of laTeX), returns an ordered pair of lists of strings containing:
+    1. The actual marked up text to be printed.
+    2. LaTeX commands that alter the state of the program, or control the control path through the dialogue (in particular, the \\keyword, \\bummarks, \\\child, \\\child(el)if, \\code, and 
+    \\continue commands)
+    """
+    text = []
+    code = []
+    inCodeEnv = False
+    for line in body:
+        if inCodeEnv and '\\end{code}' == line.strip():
+            inCodeEnv = False
+            code.append(line)
+        elif inCodeEnv:
+            code.append(line)
+        elif '\\begin{code}' == line.strip():
+            inCodeEnv = True
+            code.append(line)
+        elif any(codeCmd in line for codeCmd in CODE_COMMANDS):
+            code.append(line)
+        else:
+            text.append(line)
+    return (text, code)
+
+def extract_children(texCode):
+    """
+    Given an iterable of lists of strings (representing lines of laTeX that have been split around the LateX commands), returns a pair. Each pair contains the following:
+    1. nodeNames: A list of the names of the nodes referred to by all the \\child commands in texCode. Note that all spaces in the node names are replaced with underscores.
+    2. playerResponses: A list of the player's responses.
+    If every child command is well-formed, then we have the guarantee that playerResponses[i] is the response that triggers nodeNames[i] for all i.
+    """
+    childrenArgs = [get_args([text], 2) for text in texCode if '\\child' in text and not '\\childif' in text and not '\\childelif' in text]
+    childrenNames = ['_'.join(args[1].split()) for args in childrenArgs]
+    playerComments = ["'''" + args[0] + "'''" for args in childrenArgs]
+    return (childrenNames, playerComments)
+
+def extract_childifs(texCode, nodeName):
+    """
+        Given an iterable of strings (representing lines of LaTeX), returns a list of Python code statements that execute all of the \\child(el)if 
+        commands in the node.
+        Note: We consider \\continue a childif command because logically, it can be viewed as a special case, where we have a single childif with a "True" test.
+    """
+    code = []
+    childIfArgs = []
+    continueStmt = ''
+    for line in texCode:
+        if 'childif' in line or 'childelif' in line:
+            childIfArgs.append(get_args([line], 2) + ['elif' if '\\childelif' in line else 'if'])
+    if not childIfArgs:
+       #Since there should only be one continue statement per node, we don't need to search through the entire node. We can stop as soon as we hit "continue."
+       for line in texCode:
+           if '\\continue' in line:
+               continueStmt = line
+               break
+       if continueStmt:
+           continueNode = get_args([continueStmt], 1)[0]
+           #Note: We could just use replace, but that's not as stable, because the naive way would only replace one space with one underscore. This approach is more stable. I could probably
+           #use a regular expression with the regular expression variant of replace. Plus, these names are all going to be short (always less than 20 words, almost always less than 10), which is nowhere
+           #near long enough for efficiency to matter.
+           continueNode = '_'.join(continueNode.split())
+           code.append(''.join([nodeName, '.children = ', continueNode, '.children']))
+           code.append(''.join(['conversation.say_node(', continueNode, '.index)']))
+    for test, node, ifElif in childIfArgs:
+        node = '_'.join(node.split())
+        code.extend([''.join([ifElif, ' ', test, ':']), 
+                   ''.join([TAB, nodeName, '.children = ', node, '.children']),
+                    ''.join([TAB, 'conversation.say_node(', node, '.index)'])])
+    return code                            
+
+def extract_state_modifiers(texCode):
+    """
+    Given an iterable of lists of strings (representing lines of laTeX that have been split around the LateX commands), returns a list of Python code statements that execute all of the latex statements 
+    that directly modify the game's state.
+    In particular, this includes the \\keyword command that adds a keyword to the player's list of keywords, and \\bummarks that adds a bum mark to a character.
+    """
+    stateModifiers = []
+    for line in texCode:
+        #The { is necessary to distinguish from the \keywords command that represents the player's actual list of keywords
+        stateModifiers.extend(textChunk for textChunk in line if '\\keyword{' in textChunk or '\\bummarks' in textChunk)
+    return stateModifiers
+
+
+def extract_raw_code(texCode):
+    """
+    Given an iterable of lists of strings (representing lines of laTeX that have been split around the LateX commands), returns a list of Python code statements that appear in any of the code 
+    environments in the node.
+    In particular, this includes the \\keyword command that adds a keyword to the player's list of keywords, and \\bummarks that adds a bum mark to a character.
+    """
+    rawCode = []
+    inCodeEnv = False
+    for line in texCode:
+        rawCode.append('')
+        if inCodeEnv and not '\\end{code}' == line.strip():
+            rawCode[-1] += line.strip()
+        elif '\\end{code}' == line.strip():
+            inCodeEnv = False
+        elif '\\begin{code}' == line.strip():
+            inCodeEnv = True
+    return rawCode
+
+
+
+
+
+
+
+
+def translate_player_specific_inline_commands(line, commands, otherInlineCommands):
+    translatedCommands = []
+    for text in line:
+        if text in commands:
+            translatedCommands.append(commands[text])
+        else:
+            pass
+            translatedCommands.append(text if '=' in text else "'''" + text + "'''")
+    return translatedCommands
+
+def translate_inline_commands(line, commands):
+    """
+    Given a list of strings such that in-line latex commands are separate from plain text, returns a list of strings that replaces those in-line commands that apply to characters other than the player 
+    (i.e. actually have arguments associated with them) into the appropriate python command. 
+    Note: Currently this only allows one-argument commands (i.e. hisher{person}, KingQueen{person})
+    """
+    translatedText = []
+    for textChunk in line:
+        if textChunk in commands:
+            person = get_args(textChunk, 1)[0]
+            translatedText.append(''.join([commands[textChunk], person, ')']))
+        else:
+            translatedText.append(textChunk)
+    return translatedText
+
+    
+
+pythonCodeRE = re.compile(r'universal\.\w+|person\.\w+|items\.\w+')
+def translate_conds(line):
+    """
+    Given a list of strings (representing a line of partially translated latex code split around latex commands), returns a list of strings with the cond, econd commands translated.
+    """
+    inCond = False
+    translatedText = []
+    lineText = []
+    indexLastArg = 0
+    condStartIndex = 0
+    econdFound = False
+    for index, textChunk in enumerate(line):
+        if '\\cond' in textChunk or '\\econd' in textChunk:
+            econdFound = '\\econd' in textChunk
+            condIndex = textChunk.find('\\cond')
+            if condIndex == -1:
+                condIndex = textChunk.find('\\econd')
+            preCond = textChunk[:condIndex]
+            if preCond:
+                translatedText.append("'''" + preCond.replace("'''", "") + "'''")
+            condStartIndex = index
+            check, trueText, falseText, postCond, indexLastArg = get_args_cond(line[index:], 3)
+            trueText = [text if pythonCodeRE.search(text) else "'''" + text.replace("'''", "") + "'''" for text in trueText]
+            falseText = [text if pythonCodeRE.search(text) else "'''" + text.replace("'''", "") + "'''" for text in falseText]
+            check = ''.join(check)
+            trueText = ''.join(['universal.format_line([', ', '.join(trueText), '])'])
+            falseText = ''.join(['universal.format_line([', ', '.join(falseText), '])']) if falseText else "''"
+            translatedText.append(''.join([trueText, ' if ', check, ' else ', falseText]))
+            if postCond:
+                translatedText.append("'''" + postCond.replace("'''", "") + "'''")
+        else:
+            if not index or index > indexLastArg + condStartIndex:
+                translatedText.append(textChunk)
+                indexLastArg = 0
+                condStartIndex = 0
+    if not econdFound:
+        translatedText[0] = r"'\n\n' + " + translatedText[0]
+                
+    return translatedText
+
+
+def get_args_cond(line, numArgs):
+    """
+    Given a list of chunks of text split around latex commands, that begins with the cond or econd command, returns a list of length numArgs+2 containing the arguments, any remaining chunk of
+    text after the last argument, and the index in the string at which the last argument was found.
+    """
+    inArg = False
+    args = []
+    currentArg = []
+    lineLength = len(line)
+    index = 0
+    for index, textChunk in enumerate(line):
+        textChunk = textChunk.split('{')
+        textChunk = textChunk[1:] if '\\cond' in textChunk[0] or '\\econd' in textChunk[0] else textChunk
+        for text in textChunk:
+            endBraceIndex = text.find('}')
+            currentArg.append(text[:endBraceIndex] if endBraceIndex > -1 else text)
+            if endBraceIndex > -1:
+                args.append(currentArg)
+                currentArg = []
+                if len(args) == numArgs:
+                    args.append(text[endBraceIndex+1:])
+                    args.append(index)
+                    return args
+    raise TranslateError("Invalid number of arguments for: " + str(line))
+
+
+        
+
 
 def translate_childnode(env, nodeNum):
-    return '\n'.join(env[BODY])
+    """
+    Given a childnode environment, and the number of the current node, returns a list of python code statements that create the Node, and defines the quip function.
+    """
+    _, nodeName, _ = get_args([env[HEADER]], 3)  
+    nodeName = '_'.join(nodeName.split())
+    nodeCode = [''.join([TAB, nodeName, ' = conversation.Node(', str(nodeNum), ')']),
+               ''.join([TAB, 'def ', nodeName, '_quip_function():'])]
+    nodeCode.extend(translate_node_body(env[BODY], nodeName))
+    nodeCode.append(''.join([TAB, nodeName, '.quip_function = ', nodeName, '_quip_function']))
+    return nodeCode
+
 
 
 HEADER = 0
 BODY = 1
 
-def environment_split(fileName):
+def split_environments(fileName):
+    """
+    Given latex source defining an sprpg transcript, returns a list of pairs:
+    1. The first element (the header) of the pair is the line that defines the environment. This line begins with "\\begin", and contains a list of 1 or more arguments in curly brackets.
+    2. The second element (the body) is a list of strings. Each element of the list is a line inside the environment:
+    """
     environments = []
-    with open(fileName, 'r') as file:
+    with open(fileName, 'r') as texFile:
         beginFound = False
-        for line in file:
+        for line in texFile:
+            if line.strip() and line.strip()[0] == '%':
+                continue
+            line = string.replace(line, r'\_', '_')
             if '\\begin{' in line and not ignored_environment(line):
                 beginFound = True
                 currentEnvironment = (line, [])
@@ -298,7 +646,7 @@ def ignored_environment(line):
 
 if DEBUG:
     import os
-    pyCode = translate(os.path.join('transcripts', 'episode2.tex'), 'episode2CharRooms', 'episode_2', 326, 'Back Alleys', 2, "textCommandsMusic.CARLITA", imports=IMPORTS)
+    pyCode = translate(os.path.join('transcripts', 'episode2.tex'), 'episode2CharRooms', 'episode_2', 327, 'Back Alleys', 2, "textCommandsMusic.LUCILLA", imports=IMPORTS)
     with open('episode2.py', 'w') as episode2:
         episode2.write('\n'.join(pyCode))
 

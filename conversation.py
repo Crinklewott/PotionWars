@@ -23,7 +23,7 @@ previousConversation = None
 previousMode = None
 maxIndex = 0
 SPLIT = -50
-def converse_with(person, previousModeIn):
+def converse_with(person, previousModeIn=None):
     print('invoking converse_with')
     global conversationPartner
     conversationPartner = person
@@ -36,7 +36,8 @@ def converse_with(person, previousModeIn):
     else:
         litany = emptyLitany
     global previousMode
-    previousMode = previousModeIn
+    if previousModeIn:
+        previousMode = previousModeIn
     say_title(person.printedName)
     say_node(litany)
 
@@ -84,6 +85,8 @@ def say_node(litanyIndex):
         return
     else:
         if litany.music is not None:
+            print("music is not none:")
+            print(litany.music)
             #universal.playedMusic.queue.clear()
             universal.say(litany.quip, justification=0, music=litany.music)
         else:
@@ -92,12 +95,12 @@ def say_node(litanyIndex):
         litany.quip_function = result[1]
         acknowledge(say_node, (litany))
         return
-    elif litany.playerComments is not None and litany.playerComments is not []:
+    elif litany.playerComments:
         universal.say('\p')
         universal.say('\n'.join([str(i) + '. ' + comment for (i, comment) in zip([i for i in range(1, len(litany.playerComments)+1)], litany.playerComments)]), justification=0)
         set_commands(['(#)Select a number.'])
         set_command_interpreter(converse_with_interpreter)
-    elif litany.children is not None:
+    elif litany.children:
         playerComments = [child.comment for child in litany.children]
         universal.say('\p')
         try:
@@ -107,6 +110,7 @@ def say_node(litanyIndex):
         set_commands(['(#)Select a number.'])
         set_command_interpreter(converse_with_interpreter)
     else:
+        universal.playedMusic.queue.clear()
         conversationPartner.litany = conversationPartner.defaultLitany
         if function is not None and function == acknowledge:
             if args is not None and args != []:
@@ -168,7 +172,7 @@ class Node(universal.RPGObject):
         self.comment = None
         self.index = index
         self.music = None
-        assert not index in allNodes, "Index %d is already taken." % index 
+        #assert not index in allNodes, "Index %d is already taken." % index 
         allNodes[index] = self
 
     def add_child(self, child):

@@ -336,7 +336,36 @@ class Dungeon(townmode.Room):
                 if ambushChance is not None:
                     self.dungeonMap[count].ambushChance = ambushChance
                 count += 1
-                    
+       
+    @staticmethod
+    def add_data(data, saveData):
+        saveData.extend(["Dungeon Data:", data])
+
+    def save(self):
+        saveData = [super(Dungeon, self).save(), "Room Data:", "Dungeon Only:"]
+        print("Saving dungeon:")
+        print(saveData)
+        Dungeon.add_data(str(self.direction), saveData)
+        Dungeon.add_data(str(self.coordinates), saveData)
+        return '\n'.join(saveData)
+
+    @staticmethod
+    def load(loadData, room):
+        print("Printing room:")
+        print(room)
+        print("Printing dungeon map:")
+        print(room.dungeonMap)
+        _, direction, coordinates = loadData.split("Dungeon Data:")
+        room.direction = int(direction.strip())
+        coordinates = coordinates.replace('(', '').replace(')', '')
+        coordinates = coordinates.split(',')
+        print("loading coordinates:")
+        print(coordinates)
+        print('room coordinates before load:')
+        print(room.coordinates)
+        room.coordinates = tuple(int(coord.strip()) for coord in coordinates)
+        print('room coordinates after load:')
+        print(room.coordinates)
 
     def exit_dungeon(self):
         """
@@ -712,13 +741,13 @@ class Dungeon(townmode.Room):
         encounteredEnemies = []
         for i in range(numEnemies):
             gender = random.randint(0, 1)
-            encounteredEnemies.append(currentFloor.enemies[random.randrange(0, len(currentFloor.enemies))](gender))
+            encounteredEnemies.append(currentFloor.enemies[random.randrange(0, len(currentFloor.enemies))](gender, identifier=i+1))
         ambush = random.randint(1, 100)
         ambushFlag = 0
         avgPartyStealth = person.get_party().avg_stealth()
         avgEnemyStealth = mean([enemy.stealth() for enemy in encounteredEnemies])
-        print('ambush: ' + str(ambush))
-        print('chance: ' + str(currentFloor.ambushChance + abs(avgPartyStealth - avgEnemyStealth)))
+        #print('ambush: ' + str(ambush))
+        #print('chance: ' + str(currentFloor.ambushChance + abs(avgPartyStealth - avgEnemyStealth)))
         if ambush <= currentFloor.ambushChance + abs(avgPartyStealth - avgEnemyStealth):
             partyAmbushes = random.random() * avgPartyStealth 
             enemyAmbushes = random.random() * avgEnemyStealth
@@ -728,7 +757,9 @@ class Dungeon(townmode.Room):
                 ambushFlag = -1
         import combat
         #combat.fight(encounteredEnemies, afterCombatEventIn=post_combat_spanking, ambushIn=ambushFlag) 
-        combat.fight(encounteredEnemies, ambushIn=ambushFlag) 
+        print("encountered enemies:")
+        print(encounteredEnemies)
+        combat.fight(encounteredEnemies, ambushIn=ambushFlag, randomEncounterIn=True) 
 
     def move(self, forward=True, down=False, up=False):
         """

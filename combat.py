@@ -81,52 +81,45 @@ actionsEndured = {}
 optional = False
 ambush = 0
 boss = False
-initialState = None
+initialAllies = None
+initialEnemies = None
+randomEncounter = False
+
 def end_fight():
-    global allies, enemies, actionsInflicted, actionsEndured, activeAlly, chosenActions 
+    global allies, enemies, actionsInflicted, actionsEndured, activeAlly, chosenActions, initialAllies, initialEnemies
     allies = None
     enemies = None
+    initialAllies = []
+    initialEnemies = []
     actionsInflicted = {}
     actionsEndured = {}
     activeAlly = None
     chosenActions = []
+    if randomEncounter:
+        for enemy in enemies:
+            universal.state.remove_character(enemy)
+
+
 def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon_mode, runnableIn=True, bossFight=False, optionalIn=False, additionalAllies=None, 
-        ambushIn=0):
+        ambushIn=0, randomEncounterIn=False):
     global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface, enemySurface, commandSurface, clearScreen, previousMode, origAllies, origEnemies, \
             actionsInflicted, actionsEndured, chosenActions, optional, defeatedEnemies, defeatedAllies
-    global ambush, boss, initialState
+    global ambush, boss, initialAllies, initialEnemies, randomEncounter
+    randomEncounter = randomEncounter
     universal.state.enemies = person.Party(enemiesIn)
     universal.state.allies = person.Party(list(universal.state.party) + (additionalAllies if additionalAllies else []))
-    initialState = copy.deepcopy(universal.state)
+    initialEnemies = []
+    initialAllies = []
+    for ally in universal.state.allies:
+        initialAllies.append((ally.get_id(), copy.deepcopy(ally.primaryStats), copy.deepcopy(ally.statusList)))
+    for enemy in universal.state.enemies:
+        initialEnemies.append((enemy.get_id(), copy.deepcopy(enemy.primaryStats), copy.deepcopy(enemy.statusList)))
     boss = bossFight
     ambush = ambushIn
     enemies = universal.state.enemies
     allies = universal.state.allies
     for enemy in enemies:
         enemy.restores()
-        print(enemy.name)
-        print('magic')
-        print(enemy.magic())
-        print('warfare')
-        print(enemy.warfare())
-        print('resilience')
-        print(enemy.resilience())
-        print('stealth')
-        print(enemy.stealth())
-        print('grapple')
-        print(enemy.grapple())
-    for ally in allies:
-        print(ally.name)
-        print('magic')
-        print(ally.magic())
-        print('warfare')
-        print(ally.warfare())
-        print('resilience')
-        print(ally.resilience())
-        print('stealth')
-        print(ally.stealth())
-        print('grapple')
-        print(ally.grapple())
     defeatedAllies = []
     defeatedEnemies = []
     optional = optionalIn
@@ -205,6 +198,7 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
         display_combat_status()
 
 def end_combat():
+    end_fight()
     previousMode()
 
 def display_combat_status(targeted=None, printAllies=True, printEnemies=True):
@@ -260,7 +254,7 @@ def print_allies(allies, targetList=None, title='Party'):
     if isinstance(allies, basestring):
         universal.say(allies, surface=allySurface, columnNum=1)
     else:
-        universal.say('\t'.join(['', 'Health:', 'Mana:', 'Grappling:\t']), surface=allySurface, columnNum=4)
+        universal.say('\t'.join(['', 'Health:', 'Mana:',  'Grappling:\n\t']), surface=allySurface, columnNum=4)
         universal.say(allies.display_party(ally=activeAlly, targeted=targetList, grappling=True), 
                 surface=allySurface, columnNum=4)
     flush_text(TITLE_OFFSET)
@@ -301,7 +295,11 @@ def battle_interpreter(keyEvent):
     elif keyEvent.key == K_d:
         defend()
     elif keyEvent.key == K_F1 and activeAlly.quickSpells[0] != None:
-        cast(activeAlly.quickSpells[0])
+        if activeAlly.current_mana() >= activeAlly.quickSpells[0].cost:
+            cast(activeAlly.quickSpells[0])
+        else:
+            print_allies(' '.join([activeAlly.name, "does not have enough mana to cast", activeAlly.quickSpells[0].name]))
+            not_enough_mana()
     elif keyEvent.key == K_F2 and activeAlly.quickSpells[1] != None:
         cast(activeAlly.quickSpells[1])
     elif keyEvent.key == K_F3 and activeAlly.quickSpells[2] != None:
@@ -341,6 +339,17 @@ def battle_interpreter(keyEvent):
         display_combat_status(printEnemies=False, printAllies=False)
     elif keyEvent.key == K_l:
         look()
+
+
+def not_enough_mana():
+    set_commands(["Press Enter to continue"])
+    set_command_interpreter(not_enough_mana_interpreter)
+
+def not_enough_mana_interpreter(keyEvent):
+    if keyEvent.key == K_RETURN:
+        display_combat_status()
+        
+
 
 def look():
     set_commands(['(#) Enemy to look at', '<==Back'])
@@ -1425,8 +1434,19 @@ def game_over():
 def game_over_interpreter(keyEvent):
     if keyEvent.key == K_RETURN:
         global allies, enemies, chosenActions, actionResults, actionsEndured, actionsInflicted, defeatedAllies, defeatedEnemies
-        universal.set_state(copy.deepcopy(initialState))
+        #universal.set_state(copy.deepcopy(initialState))
+        for charid, primaryStats, statusList in initialAllies:
+            character = universal.state.get_character(charid)
+            character.primaryStats = copy.deepcopy(primaryStats)
+            character.statusList = copy.deepcopy(statusList)
+            character.break_grapple()
+        for charid, primaryStats, statusList in initialEnemies:
+            character = universal.state.get_character(charid)
+            character.primaryStats = copy.deepcopy(primaryStats)
+            character.statusList = copy.deepcopy(statusList)
+            character.break_grapple()
         allies = universal.state.allies
+        print(allies[0])
         enemies = universal.state.enemies
         defeatedEnemies = []
         defeatedAllies = []

@@ -26,7 +26,7 @@ allEpisodes = {}
 postTitleCardFunction = None
 postTitleCardFuncArgs = None
 
-def set_post_title_card(postTitleCardFunctionIn, postTitleCardFuncArgsIn):
+def set_post_title_card(postTitleCardFunctionIn, postTitleCardFuncArgsIn=None):
     global postTitleCardFunction, postTitleCardFuncArgs
     postTitleCardFunction = postTitleCardFunctionIn
     postTitleCardFuncArgs = postTitleCardFuncArgsIn
@@ -75,6 +75,11 @@ class Episode(universal.RPGObject):
                 pass
 
     def end_episode(self, endingSceneArgs=()):
+        print("ending episode:")
+        print(self.name)
+        print(self)
+        print("next episode:")
+        print(self.nextEpisode)
         if endingSceneArgs is ():
             self.scenes[self.currentSceneIndex].endScene()
         else:

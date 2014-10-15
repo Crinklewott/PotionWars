@@ -85,8 +85,14 @@ class StatusEffect(universal.RPGObject):
         something every round.
         """
         return
-    def _save(self):
-        return '\n'.join(['begin_status', self.name(), str(self.duration), 'end_status']) 
+    def save(self):
+        return '\n'.join(["Status:", self.name(), str(self.duration)]) 
+
+    @staticmethod
+    def load(statusData, status):
+        name, duration = statusData.split('\n')
+        status.name = name
+        status.duration = duration
 
     @staticmethod
     def _load(dataFile):

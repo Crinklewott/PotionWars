@@ -32,12 +32,12 @@ def name():
 
 class Enemy(person.Person):
     def __init__(self, name, gender, defaultLitany, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3, musculature='', 
-            bodyType='', height='', hairLength='', hairStyle='', eyeColor='', skinColor='', order=person.zeroth_order):
+            bodyType='', height='', hairLength='', hairStyle='', eyeColor='', skinColor='', order=person.zeroth_order, identifier=None):
         """
         Drop chance determines the chances that this character will drop a piece of equipment.
         """
         super(Enemy, self).__init__(name, gender, defaultLitany, defaultLitany, description, printedName, coins, specialization, order, musculature=musculature,
-                bodyType=bodyType, height=height, hairLength=hairLength, hairStyle=hairStyle, eyeColor=eyeColor, skinColor=skinColor)
+                bodyType=bodyType, height=height, hairLength=hairLength, hairStyle=hairStyle, eyeColor=eyeColor, skinColor=skinColor, identifier=identifier)
         self.dropChance = dropChance
         self.printedName = self.printedName + (' (M)' if self.is_male() else ' (F)')
         self.equip(items.emptyWeapon)
@@ -96,9 +96,9 @@ class Enemy(person.Person):
 class VengadorWarrior(Enemy):
     #def __init__(self, name, gender, defaultLitany, description="", printedName=None, 
             #coins=20, specialization=BALANCED)
-    def __init__(self, gender, level=0):
+    def __init__(self, gender, level=0, identifier=None):
         super(VengadorWarrior, self).__init__('Vengador Warrior', gender, None, specialization=universal.WARFARE, bodyType='voluptuous', musculature='muscular', 
-                height='tall')
+                height='tall', identifier=identifier)
         self.level = level
         self.equip(copy.copy(itemspotionwars.leatherCuirass))
         self.equip(copy.copy(itemspotionwars.trousers))
@@ -235,8 +235,8 @@ class VengadorWarrior(Enemy):
         return self.spank_miss_text(self, person, position)
 
 class VengadorSpellslinger(Enemy):
-    def __init__(self, gender, level=0):
-        super(VengadorSpellslinger, self).__init__('Vengador', gender, None, specialization=universal.COMBAT_MAGIC, bodyType='voluptuous', height='short', musculature='soft')
+    def __init__(self, gender, level=0, identifier=None):
+        super(VengadorSpellslinger, self).__init__('Vengador', gender, None, specialization=universal.COMBAT_MAGIC, bodyType='voluptuous', height='short', musculature='soft', identifier=identifier)
         self.level = level
         self.set_all_stats(strength=0, dexterity=1, willpower=1, talent=3, health=11, mana=10, alertness=0)
         if gender == person.FEMALE:
@@ -403,8 +403,8 @@ class VengadorSpellslinger(Enemy):
         return self.spanking_missed_text(self, person, position)
 
 class VengadorScout(Enemy):
-    def __init__(self, gender, level=0):
-        super(VengadorScout, self).__init__('Vengador Scout', gender, None, specialization=person.GRAPPLE, bodyType='slim', height='average', musculature='fit')
+    def __init__(self, gender, level=0, identifier=None):
+        super(VengadorScout, self).__init__('Vengador Scout', gender, None, specialization=person.GRAPPLE, bodyType='slim', height='average', musculature='fit', identifier=identifier)
         self.level = level
         self.equip(copy.copy(itemspotionwars.tunic))
         self.equip(copy.copy(itemspotionwars.trousers))

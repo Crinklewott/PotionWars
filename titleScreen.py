@@ -321,7 +321,7 @@ def title_screen(episode=None):
         for event in pygame.event.get():
             if event.type == KEYUP:
                 import traceback
-                traceback.print_stack()
+                #traceback.print_stack()
                 return
     #subtitleLocation = (wvMidLeft[0], wvMidLeft[1]+50)
     #textSurface = textrect.render_textrect(get_subtitle(), pygame.font.SysFont(universal.FONT_LIST, 30), worldView, LIGHT_GREY, DARK_GREY, 1)
@@ -463,9 +463,9 @@ def request_height():
         return round(inches * NUM_METERS_IN_INCH, 2)
     universal.say_title('Select Height')
     height = universal.numbered_list([h + ':' for h in person.HEIGHTS])
-    heightNums = [''.join(['''5' - 5' 4" (''', str(inches_to_meters(60)), 'm - ', str(inches_to_meters(64)), '''m) ''']),
-            ''.join(['''5' 4" - 5' 8" (''', str(inches_to_meters(64)), 'm - ', str(inches_to_meters(68)), '''m) ''']),
-            ''.join(['''5' 8" - 6'" (''', str(inches_to_meters(68)), 'm - ', str(inches_to_meters(72)), '''m) ''']),
+    heightNums = [''.join(['''5' - 5'4" (''', str(inches_to_meters(60)), 'm - ', str(inches_to_meters(64)), '''m) ''']),
+            ''.join(['''5'4" - 5'8" (''', str(inches_to_meters(64)), 'm - ', str(inches_to_meters(68)), '''m) ''']),
+            ''.join(['''5'8" - 6'" (''', str(inches_to_meters(68)), 'm - ', str(inches_to_meters(72)), '''m) ''']),
             ''.join(['''over 6' (''', str(inches_to_meters(72)), '''m)'''])]
     heightNums = '\n'.join(heightNums)
     height = '\n'.join(height)
@@ -623,13 +623,11 @@ chosenPants = None
 pantsList = []
 def select_lower_clothing():
     global pantsList
-    print(universal.state.player.lower_clothing().name)
-    print(universal.state.player.shirt().name)
     if universal.state.player.lower_clothing() is universal.state.player.shirt():
         select_underwear()
     else:
         universal.say_title('Select Lower Clothing')
-        pantsList = [itemspotionwars.shorts, itemspotionwars.shortShorts, itemspotionwars.plainSkirt, itemspotionwars.miniSkirt, itemspotionwars.pencilSkirt,
+        pantsList = [itemspotionwars.trousers, itemspotionwars.shorts, itemspotionwars.shortShorts, itemspotionwars.plainSkirt, itemspotionwars.miniSkirt, itemspotionwars.pencilSkirt,
                 items.emptyLowerArmor]
         universal.say('\n'.join(universal.numbered_list([pants.name for pants in pantsList])), justification=0)
         set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
