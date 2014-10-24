@@ -113,6 +113,19 @@ inlineCommandsPlayer = {
     r'\keywords{}': "universal.state.player.keywords",
     r'\sondaughter{}': "person.sondaughter()",
     r'\SonDaughter{}': "person.SonDaughter()",
+    r'\waistbandhem{}': "universal.state.player.lower_clothing().waistband_hem()",
+    r'\pjwaistbandhem{}': "universal.state.player.pajama_bottom().waistband_hem()",
+    r'\hemwaistband{}': "universal.state.player.lower_clothing().hem_waistband()",
+    r'\pjhemwaistband{}': "universal.state.player.pajama_bottom().hem_waistband()",
+    r'\pheight':("person.height_based_msg(universal.state.player, ", 4),
+    r'\pbodytype{':("person.bodytype_based_msg(universal.state.player, ", 4),
+    r'\pmusculature{':("person.musculature_based_msg(universal.state.player, ",3),
+    r'\phairlength{':("person.hair_length_based_msg(universal.state.player, ",4),
+    r'\pisdropseat{': ("items.dropseat_based_msg(universal.state.player, ", 2),
+    r'\pisliftedlowered{':("items.liftlowered_based_msg(universal.state.player, ", 2),
+    r'\pisloweredlifted{':("items.loweredlifted_based_msg(universal.state.player, ", 2),
+    r'\pjpisloweredlifted{':("items.pjloweredlifted_based_msg(universal.state.player, ", 2),
+    r'\pjpisliftedlowered{':("items.pjliftedlowered_based_msg(universal.state.player, ", 2),
     }
 
 inlineCommands = {
@@ -173,7 +186,21 @@ inlineCommands = {
     r'\warfare{': "person.warfare(",
     r'\magic{': "person.magic(",
     r'\grapple{': "person.grapple(",
-    r'\resilience{': "person.resilience("
+    r'\resilience{': "person.resilience(",
+    r'\waistbandhem{': "items.waistband_hem(items.lower_clothing(",
+    r'\pjwaistbandhem{': "items.waistband_hem(items.pajama_bottom(",
+    r'\hemwaistband{': "items.hem_waistband(items.lower_clothing(",
+    r'\pjhemwaistband{': "items.hem_waistband(items.pajama_bottom(",
+    r'\height{':("person.height_based_msg(",5),
+    r'\bodyType{':("person.bodytype_based_msg(",5),
+    r'\musculature{':("person.musculature_based_msg(",4),
+    r'\hairlength{':("person.hair_length_based_msg(",5),
+    r'\isdropseat{': ("items.dropseat_based_msg(", 3),
+    r'\isliftedlowered{':("items.liftlowered_based_msg(", 3),
+    r'\isloweredlifted{':("items.loweredlifted_based_msg(", 3),
+    r'\isliftedlowered{':("items.liftlowered_based_msg(", 3),
+    r'\pjisloweredlifted{':("items.pjloweredlifted_based_msg(", 3),
+    r'\pjisliftedlowered{':("items.pjliftedlowered_based_msg(", 3),
     }
 
 def get_args(cmd, numArgs):
@@ -428,7 +455,9 @@ def extract_children(texCode):
     """
     childrenArgs = [get_args([text], 2) for text in texCode if '\\child' in text and not '\\childif' in text and not '\\childelif' in text]
     childrenNames = ['_'.join(args[1].split()) for args in childrenArgs]
-    playerComments = ["'''" + args[0] + "'''" for args in childrenArgs]
+    playerComments = [''.join(['format_line([', args[0], '])']) for args in childrenArgs]
+    #playerComments = '+ '.join(["'''" + text + "'''" for text in args[0]
+    #playerComments = ["format_line(['''" ", '''"[#["'''" + args[0] + "'''" for args in childrenArgs]
     return (childrenNames, playerComments)
 
 def extract_childifs(texCode, nodeName):
@@ -469,11 +498,30 @@ def extract_state_modifiers(texCode):
     Given an iterable of lists of strings (representing lines of laTeX that have been split around the LateX commands), returns a list of Python code statements that execute all of the latex statements 
     that directly modify the game's state.
     In particular, this includes the \\keyword command that adds a keyword to the player's list of keywords, and \\bummarks that adds a bum mark to a character.
+    TODO: Implement
     """
     stateModifiers = []
-    for line in texCode:
-        #The { is necessary to distinguish from the \keywords command that represents the player's actual list of keywords
-        stateModifiers.extend(textChunk for textChunk in line if '\\keyword{' in textChunk or '\\bummarks' in textChunk)
+    stateModifiers.extend(line for line in texCode if '\\keyword{' in textChunk or '\\bummarks' in textChunk)
+    code = []
+    for line in stateModifiers:
+        splitLine = re.split(texCmdPattern, line)
+        if '\\keyword{' in line:
+            args = get_args(splitLine, 1)
+            print('keywords:')
+            print(args[0])
+            code.append(''.join(['universal.state.player.add_keyword(', args[0], ')']))
+        elif '\\bummarks{' in line:
+            args = get_args(splitLine, 2)
+            print(textChunk)
+            print('bummark arguments')
+            print(args)
+            print(args[0])
+            print(args[1])
+            translatedMark = translate_inline_commands(translate_player_specific_inline_commands(args[1]
+            if args[0][0].strip() == 'player':
+                code.append(''.join(['universal.state.player.add_mark(', args[1][0], ')']))
+            else:
+                code.append(''.join([args[0][0], '.add_mark(', translatedMark, ')']))
     return stateModifiers
 
 
@@ -506,7 +554,14 @@ def translate_player_specific_inline_commands(line, commands, otherInlineCommand
     translatedCommands = []
     for text in line:
         if text in commands:
-            translatedCommands.append(commands[text])
+            try:
+                cmdText, numArgs = commands[text]
+            except ValueError:
+                translatedCommands.append(commands[text])
+            else:
+                args = get_args(text, numArgs)
+                translatedCommands.append(''.join([cmdText, ', '.join(args), ')']))
+
         else:
             pass
             translatedCommands.append(text if '=' in text else "'''" + text + "'''")
@@ -521,8 +576,12 @@ def translate_inline_commands(line, commands):
     translatedText = []
     for textChunk in line:
         if textChunk in commands:
-            person = get_args(textChunk, 1)[0]
-            translatedText.append(''.join([commands[textChunk], person, ')']))
+            try:
+                text, numArgs = commands[textChunk]
+            except ValueError:
+                numArgs = 1
+            args = get_args(textChunk, numArgs)
+            translatedText.append(''.join([text, ', '.join(args), ')']))
         else:
             translatedText.append(textChunk)
     return translatedText
@@ -572,7 +631,8 @@ def translate_conds(line):
 
 def get_args_cond(line, numArgs):
     """
-    Given a list of chunks of text split around latex commands, that begins with the cond or econd command, returns a list of length numArgs+2 containing the arguments, any remaining chunk of
+    Given a list of chunks of text split around latex commands, that begins with the cond or econd command, returns a list of length numArgs+2 containing the arguments (which are themselves lists), any 
+    remaining chunk of
     text after the last argument, and the index in the string at which the last argument was found.
     """
     inArg = False
@@ -626,6 +686,9 @@ def split_environments(fileName):
     with open(fileName, 'r') as texFile:
         beginFound = False
         for line in texFile:
+            #This assumes that comment is the only thing on the line, and that a comment is one line. Very restrictive, but I don't want to take the time to make something more flexible.
+            if "\\stageDirections{" in line:
+                line = ""
             if line.strip() and line.strip()[0] == '%':
                 continue
             line = string.replace(line, r'\_', '_')

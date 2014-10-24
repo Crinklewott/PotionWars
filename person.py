@@ -1641,6 +1641,10 @@ class PlayerCharacter(Person):
         self.viewedSlot = None
         self.reputation = 0
 
+    def add_mark(self, mark):
+        super(PlayerCharacter, self).add_mark(mark)
+        self.numSpankings += 1
+
     @staticmethod
     def add_data(data, saveData):
         saveData.extend(["Player Data:", data])
@@ -1911,8 +1915,12 @@ class Party(universal.RPGObject):
         return self.members[key]
 
     def remove_member(self, member):
-        if member in self.members:
+        try:
             self.members.remove(member)
+        except ValueError:
+            pass
+
+
     def add_member(self, member):
         if not member in self.members:
             self.members.append(member)
@@ -2978,3 +2986,16 @@ def grapple(personName):
 def resilience(personName):
     return universal.stat.get_character(personName).resilience()
 
+
+def height_based_msg(person, shortMsg, avgMsg, tallMsg, hugeMsg):
+    return universal.msg_selector(person.height, {HEIGHTS[0]:shortMsg, HEIGHTS[1]:avgMsg, HEIGHTS[2]:tallMsg, HEIGHTS[3]:hugeMsg})
+
+def bodytype_based_msg(person, slimMsg, avgMsg, voluptuousMsg, heavysetMsg):
+    return universal.msg_selector(person.bodytype, {BODY_TYPES[0]:slimMsg, BODY_TYPES[1]:avgMsg, BODY_TYPES[2]:voluptuousMsg, BODY_TYPES[3]:heavysetMsg})
+
+def musculature_based_msg(person, softMsg, fitMsg, muscularMsg):
+    return universal.msg_selector(person.musculature, {MUSCULATURE[0]:softMsg, MUSCULATURE[1]:fitMsg, MUSCULATURE[2]:muscularMsg})
+
+
+def hair_length_based_msg(person, shortMsg, shoulderMsg, backMsg, buttMsg):
+    return universal.msg_selector(person.hairLength, {HAIR_LENGTH[0]:shortMsg, HAIR_LENGTH[1]:shoulderMsg, HAIR_LENGTH[2]:backMsg, HAIR_LENGTH[3]:buttMsg})

@@ -64,9 +64,18 @@
 \newcommand{\underwearpanties}{\ifx\gender\female panties\else underwear\fi}
 \newcommand{\weapon}{sword}
 \newcommand{\weaponName}{sword}
-\newcommand{\itthem}[1]{it}
-\newcommand{\itthey}[1]{it}
+\newcommand{\itthem}[1]{\ifx#1\pajama{}\textcolor{blue}{them}\else\textcolor{blue}{it}\fi}
+\newcommand{\itthey}[1]{\ifx#1\pajama{}\textcolor{blue}{they}\else\textcolor{blue}{it}\fi}
 \newcommand{\shirt}{tunic}
+\newcommand{\stageDirections}[1]{\textit{#1}}
+\newcommand{\height}[5]{\textcolor{blue}{#2}}
+\newcommand{\pheight}[4]{\textcolor{blue}{#2}}
+\newcommand{\bodytype}[5]{\textcolor{blue}{#2}}
+\newcommand{\pbodytype}[4]{\textcolor{blue}{#2}}
+\newcommand{\musculature}[4]{\textcolor{blue}{#2}}
+\newcommand{\pmusculature}[3]{\textcolor{blue}{#2}}
+\newcommand{\hairlength}[5]{\textcolor{blue}{#2}}
+\newcommand{\phairlength}[4]{\textcolor{blue}{#2}}
 
 %If that automatically hyperlinks between the if statement and the ending fi. Useful for large if's that might span multiple pages, making it possible for the reader
 %to lose track of what sitation they're in.
@@ -263,6 +272,27 @@
 \newcommand{\underwear}{thong}
 \newcommand{\cladbottom}[1]{\textcolor{blue}{\if#1\pajama pink pajama pants-clad\else trousers-clad\fi}}
 
+\newcommand{\waistbandhem}{\textcolor{blue}{waistband}}
+\newcommand{\cwaistbandhem}[1]{\textcolor{blue}{waistband}}
+\newcommand{\pjwaistbandhem}{\textcolor{blue}{waistband}}
+\newcommand{\pjcwaistbandhem}[1]{\textcolor{blue}{waistband}}
+
+
+\newcommand{\hemwaistband}{\textcolor{blue}{waistband}}
+\newcommand{\chemwaistband}[1]{\textcolor{blue}{waistband}}
+\newcommand{\pjhemwaistband}{\textcolor{blue}{waistband}}
+\newcommand{\pjchemwaistband}[1]{\textcolor{blue}{waistband}}
+
+\newcommand{\isliftedlowered}[3]{\textcolor{blue}{#2}}
+\newcommand{\isloweredlifted}[3]{\textcolor{blue}{#2}}
+\newcommand{\pisliftedlowered}[2]{\textcolor{blue}{#2}}
+\newcommand{\pisloweredlifted}[2]{\textcolor{blue}{#2}}
+\newcommand{\pjpisliftedlowered}[2]{\textcolor{blue}{#2}}
+\newcommand{\pjpisloweredlifted}[2]{\textcolor{blue}{#2}}
+
+\newcommand{\pisdropseat}[2]{\textcolor{blue}{#2}}
+\newcommand{\isdropseat}[3]{\textcolor{blue}{#2}}
+
 \newcommand{\liftlower}{\textcolor{blue}{lower}}
 \newcommand{\lowerlift}{\textcolor{blue}{lift}}
 \newcommand{\liftslowers}{\textcolor{blue}{lowers}}
@@ -272,7 +302,7 @@
 
 %Doesn't actually do anything. Just indicates that we should add the second argument to the list of marks for the character specified in the first argument.
 %Note: In order for this command to be translated properly, it must appear after ALL NODE TEXT. ONLY OTHER SPRPG COMMANDS MAY APPEAR AFTER THIS.
-\newcommand{\bummarks}[2]{}
+\newcommand{\bummarks}[2]{\textit{#1 acquires bum marks: \textbf{#2}}}
 
 \newcommand{\lowerslifts}[1]{\textcolor{blue}{lowers}}
 

@@ -994,7 +994,10 @@ def perform_go(room, party=None, sayDescription=True):
     if universal.state.location.after_arrival is None:
         universal.state.location.mode(sayDescription)
     else:
-        universal.state.location.after_arrival()
+        try:
+            universal.state.location.after_arrival(room)
+        except TypeError:
+            universal.state.location.after_arrival()
         #universal.state.location.mode()
 
 def talk(previousModeIn):

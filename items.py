@@ -179,6 +179,27 @@ class Armor(Item):
         Armor.add_data(str(self.risque), saveData)
         return '\n'.join(saveData)
 
+    def liftlower(self):
+        return "lower"
+
+    def restore_liftlower(self):
+        return "lift"
+
+    def lowerlift(self):
+        return self.lowerlift()
+
+    def liftslowers(self):
+        return self.liftlower() + "s"
+
+    def lowerslifts(self):
+        return self.lowerlift() + "s"
+
+    def waistband_hem(self):
+        return "waistband"
+
+    def hem_waistband(self):
+        return self.waistband_hem()
+
     @staticmethod
     def load(armorData, armor):
         rest = ""
@@ -247,6 +268,15 @@ class Dress(FullArmor):
         super(Dress, self).__init__(name, description, attackDefense, attackPenalty, castingPenalty, magicDefense, price, enchantments, maxEnchantment, risque)
         self.armorType = 'dress'
 
+    def waistband_hem(self):
+        return "hem"
+
+    def liftlower(self):
+        return "lift"
+
+    def restore_liftlower(self):
+        return "lower"
+
 class Robe(Dress):
     armorType = 'dress'
     def __init__(self, name, description, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, price=0, enchantments=None, maxEnchantment=18, risque=0):
@@ -267,6 +297,7 @@ class LowerArmor(Armor):
         saveData = [super(LowerArmor, self).save(), "Armor Data:", "Lower Only:", "Lower Data:"]
         LowerArmor.add_data(str(self.baring), saveData)
         return '\n'.join(saveData)
+
 
     @staticmethod
     def load(armorData, armor):
@@ -307,6 +338,26 @@ class Skirt(LowerArmor):
         super(Skirt, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque,
                 baring)
         self.armorType = 'skirt'
+
+    def waistband_hem(self):
+        return "waistband"
+
+
+    def hem_waistband(self):
+        return "hem"
+
+    def liftlower(self):
+        return "lift"
+
+    def restore_liftlower(self):
+        return "lower"
+
+    def lowerlift(self):
+        return "lower"
+
+    def restore_lowerlift(self):
+        return "lift"
+
 
 class Underwear(Armor):
     armorType = 'underwear'
@@ -528,6 +579,11 @@ class DropSeatPajamas(FullPajamas):
         super(DropSeatPajamas, self).__init__(name, description, price)
         self.armorType = DropSeatPajamas.armorType
 
+    def waistband_hem(self):
+        return "drop seat"
+
+    def liftlower(self):
+        return "lower"
 
 class PajamaBottom(Pajamas):
     armorType = 'pajama bottom'
@@ -546,6 +602,11 @@ class PajamaBottom(Pajamas):
         char.unequip(char.pajama_bottom(), False)
         char._set_pajama_bottom(self)
 
+    def waistband_hem(self):
+        return "hem"
+
+    def liftlower(self):
+        return "lift"
     
 class PajamaPants(PajamaBottom):
     armorType = 'pajama pants'
@@ -553,38 +614,33 @@ class PajamaPants(PajamaBottom):
         super(PajamaPants, self).__init__(name, description, price)
         self.armorType = PajamaPants.armorType
 
+    def liftlower(self):
+        return "lower"
+
+    def waistband_hem(self):
+        return "waistband"
+
 def liftlower(armor):
-    if armor.armorType == Dress.armorType or armor.armorType == Skirt.armorType or armor.armorType == Robe.armorType:
-        return 'lift'
-    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Thong.armorType or armor.armorType == Shorts.armorType or armor.armorType == PajamaPants.armorType:
-        return 'lower'
+    return armor.liftlower()
 
 def liftslowers(armor):
     return liftlower(armor) + "s"
 
 
 def restore_liftlower(armor):
-    if armor.armorType == Dress.armorType or armor.armorType == Skirt.armorType:
-        return 'lower'
-    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Thong.armorType:
-        return 'lift'
+    return armor.restore_liftlower()
 
 def restore_liftslowers(armor):
     return restore_liftlower(armor) + "s"
 
 def lowerlift(armor):
-    if armor.armorType == Dress.armorType:
-        return 'lift'
-    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Thong.armorType or armor.armorType == Skirt.armorType or armor.armorType == Shorts.armorType:
-        return 'lower'
+    return armor.lowerlift()
 
 def lowerslifts(armor):
     return lowerlift(armor) + "s"
+
 def restore_lowerlift(armor):
-    if armor.armorType == Dress.armorType:
-        return 'lower'
-    elif armor.armorType == Pants.armorType or armor.armorType == Underwear.armorType or armor.armorType == Thong.armorType or armor.armorType == Skirt.armorType or armor.armorType == Shorts.armorType:
-        return 'lift'
+    return armor.restore_lowerlift()
 
 def restore_lowerslifts(armor):
     return restore_lowerlift(armor) + "s"
@@ -689,3 +745,21 @@ def clad_pajama_bottom(personName):
 def is_lower_clothing(item):
     return (item.armorType == Pants.armorType or item.armorType == Skirt.armorType or items.armorType == Shorts.armorType or items.armorType == Dress.armorType or 
         items.armorType == LowerArmor.armorType or items.armorType == FullArmor.armorType or item.armorType == Underwear.armorType)
+
+def waistband_hem(lowerClothing):
+    return lowerClothing.waistband_hem()
+
+def dropseat_based_msg(person, dropseatMsg, nodropseatMsg):
+    return universal.msg_selector(person.pajama_bottoms().armorType == DropSeatPajamas.armorType, {True:dropseatMsg, False:nodropseatMsg})
+
+def liftedlowered_based_msg(person, liftedMsg, loweredMsg):
+    return universal.msg_selector(person.lower_clothing().liftlower() == "lift", {True:liftedMsg, False:loweredMsg})
+
+def loweredlifted_based_msg(person, loweredMsg, liftedMsg):
+    return universal.msg_selector(person.lower_clothing().lowerlift() == "lower", {True:loweredMsg, False:liftedMsg})
+
+def pjliftedlowered_based_msg(person, liftedMsg, loweredMsg):
+    return universal.msg_selector(person.pajama_bottoms().liftlower() == "lift", {True:liftedMsg, False:loweredMsg})
+
+def pjloweredlifted_based_msg(person, loweredMsg, liftedMsg):
+    return universal.msg_selector(person.pajama_bottoms().lowerlift() == "lower", {True:loweredMsg, False:liftedMsg})

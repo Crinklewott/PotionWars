@@ -566,6 +566,9 @@ def guild_bedroom_after_arrival():
         if not universal.format_line(['''If''', name(), '''wishes,''', heshe(), '''can rest, and put an end to this seemingly neverending day.''']) in guildBedroom.description:
             guildBedroom.description = universal.format_text([guildBedroom.description, universal.format_line(['''If''', name(), '''wishes,''', heshe(), 
                 '''can rest, and put an end to this seemingly neverending day.'''])])
+        if 'Elise_shows_you_around' in textCommandsMusic.keywords() and universal.state.player.currentEpisode == episode1.name:
+            guildBedroom.description = universal.format_text([guildBedroom.description, universal.format_line(['''If''', name(), '''hasn't already,''', person.heshe(), 
+            '''should go meet Elise at the Shrine. After all,''', person.heshe(), '''shouldn't keep her waiting!'''])])
     if guildBedroom.boarding:
         townmode.rest_mode(guildBedroom)
     else:
@@ -618,7 +621,7 @@ offStage.add_character(paloma)
 
 class Maria(p.Person):
     def __init__(self, defaultLitany, litany):
-        super(Maria, self).__init__('Maria', p.FEMALE, defaultLitany, litany, "A tall, willowy woman in her early thirties. She has the dark eyes and hair of a Taironan, along with the tell-tale bronze skin. Her hair is also cut very short. In fact, between her height, her slim build, and her short hair, she could easily pass for a young man. As if to counteract this, she wears a short skirt that draws attention to her smooth, slender legs.  A large, wicked looking dagger rests on her hip.")
+        super(Maria, self).__init__('Maria', p.FEMALE, defaultLitany, litany, "A tall, willowy woman in her early thirties. She has the dark eyes and hair of a Taironan, along with the tell-tale bronze skin. Her hair is also cut very short. In fact, between her height, her slim build, and her short hair, she could easily pass for a young man. As if to counteract this, she wears a short skirt that draws attention to her smooth, slender legs.  A large, wicked looking dagger rests on her hip.", height="tall", bodyType="slim")
     def reset_stats(self, episode=None):
         return Maria(self.defaultLitany)
 
@@ -650,6 +653,10 @@ class Carrie(p.Person):
         super(Carrie, self).__init__('Carrie', p.FEMALE, defaultLitany, litany, universal.format_line(['''She's in her early twenties. She has a tall, slender''',
         '''build, and light brown, curly hair. Her eyes are a fierce, blue, and her mouth seems perpetually turned up in a small, sly smile. She is''',
         '''wearing a tan dress that obscures much of her figure, the mark of a Sister-in-Training.''']))
+        self.equip(itemspotionwars.carriesGString)
+        self.equip(itemspotionwars.carriesDress)
+        self.specialization = universal.BUFF_MAGIC
+        self.primaryStats = [0, 1, 2, 4, 1]  
     def reset_stats(self, episode=None):
         return Carrie(self.defaultLitany, self.litany)
 
@@ -11469,6 +11476,7 @@ ep1_tavern_outgoing_dont_rub.quip_function = ep1_tavern_outgoing_dont_rub_qf
 
 def ep1_elise_sing(node):
     songs = [textCommandsMusic.ELISE, textCommandsMusic.OMINOUS, textCommandsMusic.ROLAND, textCommandsMusic.LUCILLA, textCommandsMusic.GUARDS, textCommandsMusic.CATALIN, textCommandsMusic.LUCILLA, textCommandsMusic.ROLAND, textCommandsMusic.CATALIN, textCommandsMusic.ROLAND, textCommandsMusic.LUCILLA, textCommandsMusic.ELISE, textCommandsMusic.CARRIE, textCommandsMusic.ROLAND, textCommandsMusic.CARRIE]  
+    """
     try:
         node.music.extend(songs)
     except AttributeError:
@@ -11476,132 +11484,60 @@ def ep1_elise_sing(node):
             node.music = songs
         else:
             node.music = [node.music] + songs
+    """
     quip = universal.format_text([
-    ['''\mElise gets up on the stage, while Carrie takes the harpsichordist's place. She clears her throat, and begins to speak, her voice amplified by''',
+    ['''Elise gets up on the stage, while Carrie takes the harpsichordist's place. She clears her throat, and begins to speak, her voice amplified by''',
         '''a touch of magic. "Hello everyone. For those of you who don't know me, my name is Elise. I wasn't planning on singing tonight, but all you schmucks wore me''',
         '''down, so''',
         '''I've decided to sing a few songs for you."'''],
     ['''There's a cheer from the regulars.'''],
     ['''Elise flushes, and she gives a broad grin. "I'm not that good."'''],
     ['''Carrie rolls her eyes and says something.''', name(), '''doesn't hear it, but Elise clearly does; her embarassed blush deepens.'''],
-    ['''"Anyway," says Elise quickly. "I'll be singing three songs tonight."'''],
+    ['''"Anyway," says Elise quickly. "I'll be singing two songs tonight."'''],
     ['''There's a groan.'''],
     ['''"Well if you want fewer-"'''],
     ['''"More!" shouts a rather slender, pale man.'''],
     ['''"But I'm not that-"'''],
     ['''Carrie says something, and holds her flat hand up.'''],
-    ['''"Sorry," says Elise, clearly flustered. The tavern laughs good-naturedly. "But I'm kind of tired, and I think I'll stick to three. Don't worry though, at least''',
-    '''two of them will be rather long. We'll start with a rendition of the Song of Roland, thirty-second song of the Second Canto of the Pandemonium Cycle, in honor''',
-    '''of my fiance who, thankfully, isn't here. He wouldn't have taken''',
-    '''too kindly to how I was dancing a few minutes ago."'''],
-    ['''There's another chuckle.'''],
-    ['''\mElise takes a deep breath, and glances back at Carrie, and the other band members. Carrie''',
-        '''begins a tense, haunting, desperate melody. The other players gradually join in, adding their own instruments to the dread music.'''],
-    ['''Elise closes her eyes, her hips swaying to the slow beat. The tavern goes completely quiet.'''],
-    ['''She throws up her hands. A small sphere of golden light appears in the air above her head, surrounded by jagged, grey lines of light. A mass of dark, ugly red''',
-    '''is making its way through the grey towards the sphere.'''],
-    ['''She begins to sing. The song is an epic poem, taking place during the darkest time of the Pandemonium Wars. The Tyrant has driven the Mother's forces all the''',
-    '''way back to to the Last Hope Fortress, a small, wretched thing nestled deep in the mountains. His massive army is marching through the Dread Pass, preparing to''',
-    '''crush the Mother and Her forces once and for all.''', '''Elise throws up her hands, pushing the golden sphere, and red mass up higher. She creates a single, long''',
-    '''line with a hint of womanly figure, along with other, small golden lines.'''],
-    ['''The Mother and Her sixteen advisors work desperately on a solution. They decide that there is a small valley in the Dread Pass that the Tyrant's armies must''',
-    '''pass''',
-        '''through. If the Mother can trigger a rockslide on both sides of the valley, then the Tyrant's army will be trapped, and they will freeze in the rapidly''',
-        '''approaching winter. But the Mother is still weak from the Crossing of the White. She will need to travel to the valley, and it will take her time to work''',
-        '''Her magic. Far too much time.'''],
-    ['''\mElise creates a long, slender blue line. Longer than the advisors, not as long as the Mother. The music shifts into an intense, rapid, valiant melody. General Roland steps forward. He offers to lead a group of''',
-        '''volunteers, two hundred fifty-six strong, to meet the Tyrant's army. He will keep them in the valley long enough for the Mother to work Her magic. The long, golden''',
-        '''line wavers. The Mother''',
-        '''is distraught. Not only will he be outnumbered two hundred fifty-six to one, but he and his men will be trapped in the valley with the Tyrant's armies. But''',
-        '''Roland is''',
-        '''firm. Only he has the tactical skill to hold the Tyrant's army at bay with two hundred fifty-six men, and that is the most the Mother's army can spare. Still, the''',
-        '''Mother refuses. The slender blue line flares. Roland speaks of the refugees: the innocent men, women, and children''',
-        '''under the Mother's protection. He speaks of the murder of the men and boys, the rape of the women and girls that will ensue if the Tyrant takes Last Hope.''',
-        '''He speaks of the two thousand twenty four years of darkness that will encircle the world if the Mother falls here. What is the lives of a mere two hundred''',
-        '''fifty seven against that?'''],
-    ['''The long, golden line shortens a little, before lengthening once more, and flaring. The Mother agrees.'''],
-    ['''\mThe music takes on a sweet, sorrowful melody. Elise sweeps away the long golden lines. In their place, she creates another line, slightly shorter than Roland.''',
-    '''It too is golden, but of a darker hue. Beside''',
-    '''it is another, very short golden line with traces of blue. Roland is overlooking the city, his wife, Aleyna, next to him, their daughter Rachel in her arms. She''',
-    '''asks why he must abandon them. Why he cannot send someone else to die. And he responds that he is. He is sending two hundred fifty-six to die. He must lead them,''',
-    '''else they will fail, and the fortress will fall. He must go, he must fall, so that Rachel may grow and live. So that she may live a life of peace, and''',
-    '''happiness. The blue and golden lines mingle. Roland pulls Aleyna tight, one last embrace.'''],
-    ['''\mThen, those two lines are swept away. A small mass of blue emerges from the sphere of gold and marches to meet the overwhelming mass of red. All''',
-        '''instruments fall silent, save the drums. The red and blue masses meet.'''],
-    ['''\mA dark, intimidating, floor-shaking melody begins. Elise zooms in on the two masses. At the front of the red is a massive, painfully bright, pulsing line of''',
-        '''black and red. The long blue line in front of the blue mass seems painfully dim, and short in comparison. The Tyrant laughs at Roland's showing, mocking''',
-        '''his resistance. The Mother must have truly given up if this was the best army She could scrape together. Still, He has seen Roland's skill firsthand. He''',
-        '''offers the general the chance to join Him. All the riches, women, and respect in the world will''',
-        '''be his. The dark tones are overwhelming. The cause is hopeless. To fight means death. \mBut then, weaving its way through''',
-        '''the dark tones is the same, sweet, sorrowful melody played before. The bright blue line flares daringly. Roland laughs in the Tyrant's face. The only''',
-        '''riches he needs are food, clothing, and shelter for his family. The only woman he needs is his wife, and the only respect he needs is his daughter's.''',
-        '''\mRoland draws his sword, and his army surges forward. The music shifts into the intense, rapid, valiant melody.'''],
-    ['''The red and blue masses mingle and surge. For four days, and four nights the two armies battle. For every man that Roland loses, the Tyrant loses sixteen.'''],
-    ['''But the Tyrant's army does not outnumber Roland's sixteen to one. It outnumbers Roland's two hundred fifty-six to one. Roland's army is pushed back, back to the''',
-    '''very''',
-            '''edge of the valley. His men cannot hold more than two hours. He receives a message. The Mother needs sixteen more.'''],
-    ['''\mThe red mass has almost completely consumed the blue. The valiant melody fades away to the Tyrant's overwhelming march.'''],
-    ['''A single, small point in the blue remnants flares. Roland stands up in his stirrups. He removes a golden crystal given to him by his wife, enchanted by the''',
-            '''Mother. He shatters it, and the enchantment washes over him. He unleashes a great shout, his voice magnified one hundred and twenty eight times. He''',
-            '''extolls his shoulders. He reminds them of the innocent men, women and children, the refugees of the Tyrant's greed. He''',
-            '''describes the suffering that will wash over the land if they do not hold their ground. He speaks of their fallen comrades, the great''',
-            '''sacrifices they made to stop the Tyrant. All their sacrifices will be in vain if they do not hold their ground. He speaks of their wives, husbands, sons,''',
-            '''and daughters. Of their grim fates if they do not hold their ground.'''],
-    ['''\mThe blue mass flares until its light is blinding. The valiant music surges, overwhelming the Tyrant's march.'''],
-    ['''They hold for sixteen hours.'''],
-    ['''The mountains begin to rumble. Peaks crumble. The Tyrant unleashes a scream of rage! Only now, when''',
-            '''it is too late, does He understand their plan. He charges through the fighting men, and rams His twisted spear through Roland's chest. Roland screams out''',
-            '''to his wife and daughter, and brings his blade down upon the Tyrant's head, shattering the weapon, forever scarring the Tyrant.'''],
-    ['''\mThe trimphant music fades, replaced by the sweet, sorrowful melody. The red and blue masses fade, replaced by the dark gold line with the''',
-    '''very very small gold line. Aleyna stands upon the ramparts, her eyes filled with tears. She clutches her child to her breast, her ears still ringing with Roland's final, defiant''',
-    '''cry. She lifts Rachel up to see the first rays of the new day, a day she never expected her baby to see. The sorrowful melody fades''',
-    '''ending on a single, uplifted, hopeful note.'''],
-    ['''\mElise takes a deep breath. The bartender offers her and the musicians a drink, which they all gladly take. For a moment, the tavern is silent. Then, a great''',
-    '''uproarious applause fills it.'''],
-    ['''Elise smiles, and bows, her face bright red. "OK, that was kind of grim, I'll admit. So, how about something a bit more light-hearted? Like when the Trickster''',
-            '''gave us fire?"'''],
-    ['''\mElise then launches into a much more upbeat, light-hearted song about how the Trickster, on a whim, decided to learn how to control fire, and then teach it to''',
-            '''humanity. Of course, She teaches it first to a couple of children, who promptly burn themselves. They then teach it to their parents, who promptly burn''',
-            '''themselves. And so on down the line, until every person on Earth has been burned. The Mother is furious with the Trickster. The Trickster insists that once they''',
-            '''get the hang of it, fire will benefit them, but the Mother is having none of it, and gives Her a solid switching.'''],
-    ['''But then, the Trickster is proven right. People get the hang of fire, and use it to build better homes, to keep them warm in the winter, to craft better tools,''',
-            '''to cook their food. The Trickster points this out, but the Mother refuses to admit to wrongdoing. Unfortunately for Her, the Father takes the Trickster's''',
-            '''side, and gives the Mother a switching of Her own.'''],
-    ['''While the story itself is fairly innocuous, Elise sings it in such a way that she makes the Mother look very silly and stubborn, and the Trickster''',
-            '''very self-sacrificing and valiant.''', name(), '''is caught a bit off-guard by how irreverently Elise, a Sister of the Matirian Church, portrays the''',
-            '''Goddess she has dedicated her life to. At the point where the Mother is being switched, she even goes so far as to stick her butt out, squirm and''',
+    ['''"Sorry," says Elise, clearly flustered. The tavern laughs good-naturedly. "But I'm kind of tired, and I think I'll stick to two."'''],
+    ['''Elise launches into an upbeat, light-hearted song about how the Trickster, on a whim, decided to learn how to control fire, and then teach it to''',
+            '''humanity. She teaches it first to a couple of children, who promptly burn themselves. They then teach it to their parents, who promptly burn''',
+            '''themselves. And so on down the line, until every person on Earth has been burned. The Mother, furious, confronts the Trickster over Her hurtful prank. The Trickster insists that once they''',
+            '''get the hang of it, fire will benefit the humans, but the Mother is having none of it, and gives Her a solid switching.'''],
+    ['''But then, people get the hang of fire, and use it to build better homes, to keep them warm in the winter, to craft better tools,''',
+            '''to cook their food. However, the Mother refuses to admit to wrongdoing. Unfortunately for Her, the Father becomes rather annoyed by this,''',
+            '''and gives the Mother a switching of Her own.'''],
+    ['''Elise sings the song in such a way that she makes the Mother look very silly and stubborn, and the Trickster''',
+            '''self-sacrificing and valiant. At the point where the Mother is being switched, she even goes so far as to stick her butt out, squirm and''',
             '''yelp''',
-            '''as if she were the one being punished (needless to say, quite a few of the men enjoyed that display quite a bit). On the other hand, the woman's eyes''',
-            '''are unusually wide and bright, and her face is very red. The girl might be''',
-            '''more than a little bit tipsy at this point.'''],
-    ['''Elise takes a deep breath, and another drink. A broad grin is on her face. Carrie leans in and says something to her. At first, Elise looks a bit reluctant, but''',
+            '''as if she were the one being punished (quite a few of the men enjoyed that display quite a bit). But then, considering just how wide and bright Elise's eyes''',
+            '''are, and how red her face is, she is probably more than a little bit tipsy at this point.'''],
+    ['''When Elise finishes, she takes another drink, offered to her by the bartender. Carrie leans in and says something to her. At first, Elise looks a bit reluctant, but''',
             '''a few more words from Carrie, and she's grinning broadly, and nodding.'''],
-    ['''"Alright boys and girls," says Elise. "I feel a little bit bad that I'm only giving you three songs tonight. So for my last song, how about 'Lady in the Hay?'"'''],
+    ['''"Alright boys and girls," says Elise. "I feel a little bit bad that I'm only giving you two songs tonight. So for my second song, how about 'Lady in the Hay?'"'''],
     ['''There is a great shout of agreement and encouragement.'''],
-    ['''Without further ado, Elise launches into the song, dancing sinuously to the rapid beat. It's a bawdy tavern song about a noblewoman''',
+    ['''Elise launches into the song, dancing sinuously to the rapid beat. It's a bawdy tavern song about a noblewoman''',
     '''who is very frustrated by her less than''',
             '''well-endowed (or resilient) nobleman husband. Unfortunately, none of the other noblemen, made soft and weak by generations of easy-living,''',
             '''can meet her needs either. Then, one day she stumbles upon the stableboy in the middle of relieving himself. Her eyes widen, and her lips part as she''',
             '''sees just how very well endowed the rough peasant is. As soon as he finishes, she swoops in on him, drags him to the stable, hauls him up into the''',
-            '''hayloft, and convinces him to do all sorts of unseemly things to her. Her husband never catches on, never''',
-            '''even considers the possibility that she could find satisfaction with such a lowborn, smelly, rough man. She thus has many male babies with the''',
+            '''hayloft, and convinces him to do all sorts of unseemly things to her. Her husband never catches on. She thus has many male babies with the''',
             '''stableboy. They all grow to be equally well-endowed, making her family *the* family to marry into.'''],
     ['''There is a great wave of laughter, applause, and declarations of agreement from the tavern crowd once the song ends. Elise, her face bright red, and a broad''',
             '''grin on her face, bows over and over again.'''],
-    ['''\m"Impressive!" shouts a rather tall, lean man as he steps up onto the stage. He is wearing a finely made blue shirt and matching trousers. He has a thick''',
-            '''beard, and short-cut hair. He stands straighter than a post, and he carries himself with an easy, athletic grace. At first,''', name(), 
-            '''doesn't recognize the man without his armor, but then''', heshe(), '''realizes with a start that it's the captain of the guard, the one from the guild. "Especially that last song. What was that you were saying about noblemen?"'''],
+    ['''"Impressive!" shouts a rather tall, lean man as he steps up onto the stage. He is wearing a finely made blue shirt and matching trousers. He has a thick''',
+            '''beard, and short-cut hair. He stands straighter than a post, and almost as rigid. At first,''', name(), 
+            '''doesn't recognize the man without his armor, but then''', heshe(), '''realizes with a start that it's the captain of the guard, the one from the guild. "Especially that last song. What 
+            was that you were saying about noblemen?"'''],
     ['''Carrie starts to laugh.'''],
     ['''Elise's smile turns sickly. "Hi, honey. Um, how, how long have you been here?"'''],
-    ['''"Came in just when you made that quip about your dancing, and my approval," says the man. His voice turns stern. "Or lack thereof."'''],
-    ['''The crowd laughs uneasily. A nobleman showing up was bad enough, but the Captain of the Guard?'''],
-    ['''"So, you heard me sing the Song of Roland?" asks Elise, clearly trying to salvage the situation. "What did you think of the streams of light?''',
-            '''It's my first time trying that in an actual performance."'''],
-    ['''"Astounding," says Roland. He pulls Elise into a hug. "Added a whole new level to the performance. I've heard that song so many times I can recite it from''',
-            '''memory, and I still got a bit teary-eyed at the end."'''],
-    ['''Roland gives Elise a deep kiss, and the whole tavern cheers. Then he whispers something in her ear, and she squirms a little.'''],
+    ['''"Came in just before you started singing about the Mother's switching," says the man. His voice turns stern. "You really got into it, didn't you?"'''],
+    ['''The crowd laughs uneasily.'''],
+    ['''Elise grin fades a little. She clenches her dress. "Well, you know. Just having a little fun."'''],
+    ['''"Indeed. In that case, perhaps it's time for a quiet drink." Roland steps up on the stage and loops her arm through his. He leans forward whispers something in her ear, and she squirms''',
+    '''a little.'''],
     ['''"Well, that's it for tonight folks," says Elise, turning to the crowd. "Sorry, but I think I'll be going to enjoy a drink or two with my fiance."'''],
-    ['''"So long as that drink is very watered down," interjects Roland. "Looks like you've had enough of the strong stuff for one night."'''],
+    ['''"A very watered down drink," interjects Roland. "Looks like you've had enough of the strong stuff for one night."'''],
     ['''Elise smiles innocently as the two walk off the stage, followed by Carrie.'''],
     ['''\mThe three make their way towards''', names(), '''table. Carrie slides in next to''', name() + ",", universal.format_line(['''her foot beginning to play with''', hishers()
         + "."]) if 'flirting_with_Carrie' in keywords() else universal.format_line(['''flashing''', himher(), '''a smile in the process.'''])],

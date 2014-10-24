@@ -436,7 +436,8 @@ def request_nickname_interpreter(keyEvent):
 #BODY_TYPES = ['slim', 'average', 'voluptuous', 'heavyset']
 def request_body_type():
     universal.say_title('Select Body Type')
-    universal.say('\n'.join(universal.numbered_list(person.BODY_TYPES)), justification=0)
+    bodyTypes = ["hunky" if universal.state.player.is_male() and bodyType == "voluptuous" else bodyType for bodyType in person.BODY_TYPES]
+    universal.say('\n'.join(universal.numbered_list(bodyTypes)), justification=0)
     set_command_interpreter(request_body_type_interpreter)
     set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
 

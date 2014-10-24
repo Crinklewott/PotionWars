@@ -1138,3 +1138,7 @@ def set_initial_room(room):
 def set_state(stateIn):
     global state
     state = stateIn
+
+
+def msg_selector(attribute, msgMap):
+    return msgMap[attribute]

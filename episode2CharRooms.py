@@ -60,6 +60,12 @@ def build_chars():
             '''She has a round, protruding bottom that rolls enticingly when she walks.''']), specialization=universal.STEALTH, order=person.second_order, skinColor="caramel", eyeColor="brown",
             hairColor="black", hairLength="shoulder-length", hairStyle="down", height="average", bodyType="voluptuous", musculature="soft")
 
+    try:
+        sofia = universal.state.get_character("Sofia.person")
+    except KeyError:
+        sofia = person.Person("Sofia", person.FEMALE, None, None, ''.join(['''Sofia is a middle-aged Taironan woman with moderately dark skin. She is short and thin, with graying shoulder-length''',
+            '''hair. She is wearing a plain cotton dress.''']))
+
 
        
 
@@ -69,7 +75,6 @@ def build_rooms():
     print("starting to build kitchen")
     try:
         kitchen = universal.state.get_room('Kitchen')
-        print("Kitchen found!")
     except KeyError:
         print("Building kitchen!")
         kitchen = townmode.Room("Kitchen", ' '.join(["The kitchen is a rather large room with two long, waist-high counters running through the middle. Along the sides of the walls are a few small",
@@ -81,3 +86,10 @@ def build_rooms():
             None, None, textCommandsMusic.LIGHT_HEARTED, "textCommandsMusic.LIGHT_HEARTED", None)
         if 'boarding_with_Adrian' in textCommandsMusic.keywords():
             kitchen.add_adjacent(universal.state.get_room("Bedroom"))
+    try:
+        sofiasClinic = universal.state.get_room("Sofia's Clinic")
+    except KeyError:
+        sofiasClinic = townmode.Room("Sofia's Clinic", ' '.join(["The 'clinic' is nothing more than a long, dark, low-ceilinged room crammed with piles of ragged blankets. Immersed in the piles of",
+            "blankets are dozens of Taironans, all in different states of duress. Most of them are shivering quietly, or sleeping fitfully. Some are moaning, and shifting. A few are crying, and shaking",
+            "violently. There is even one man who is being wrestled back into his blankets, while screaming incoherently in some dialect that", textCommandsMusic.name(), "doesn't recognize. No more than",
+            "half a dozen helpers, mostly women, are moving about the clinic's patients."]), [universal.state.get_room("Slums")], None, None, textCommandsMusic.TAIRONAN, "textCommandsMusic.TAIRONAN", None)

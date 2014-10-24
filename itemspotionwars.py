@@ -104,6 +104,9 @@ underShorts = items.Underwear('undershorts', universal.format_line(['A pair of s
 thong = items.Thong('thong', ' '.join(['An undergarment that covers the genitalia, but leaves the',
     'bottom bare (except for a narrow strip of cloth that runs between the cheeks).']), price=3)
 
+carriesGString = items.Thong("Carrie's G-String", ' '.join(["A teeny tiny little pair of purple panties, consisting of a teeny tiny little string in the back. The front is barely more than that. Why",
+    "anyone would even bother wearing underwear this tiny is a mystery for the ages."]))
+
 lacyUnderwear = items.Underwear('lacy underwear', 'A pair of white, flowery, lacy underwear that leaves the lower-half of the bottom bare.', baring=True, price=3, risque=2)
 
 boyShorts = items.Underwear('boyshorts', 'A pair of dark red boyshorts that completely cover the bottom.', price=3)
@@ -134,6 +137,8 @@ deidresDress = items.Dress("Deidre's dress", "A black dress with red trim made f
         attackDefense=4, attackPenalty=1)
 
 pinkDress = items.Dress('pink dress', 'A modest pink dress cut in a style similar to what young children of the middle and upper classes tend to wear.', price=20)
+
+carriesDress = items.Dress("Carrie's dress", "A low-cut, tight, rich purple dress that extends to about halfway down Carrie's thighs. Comes with black cotton tights.", price=0)
 
 
 #------------------------Robes----------------------------------------
