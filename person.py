@@ -1400,11 +1400,11 @@ class Person(universal.RPGObject):
         person.specialization = int(specialization.strip())
         person.statusList = {}
         if statuses.strip():
-            statuses = statuses.split("Status:")
+            statuses = [statusData.strip() for statusData in statuses.split("Status:") if statusData.strip()]
             for status in statuses:
-                name, _, statusData = status.partition('\n')
+                name, statusData = (data.strip() for data in status.partition('\n') if data.strip())
                 statusEffect = statusEffects.build_status(name)
-                statusEffects.StatusEffect.load(status, statusEffect)
+                statusEffects.StatusEffect.load(statusData, statusEffect)
                 person.statusList[name] = (statusEffect, statusEffect.duration)
         person.rawName = rawName.strip()
         if spellNames.strip():

@@ -42,676 +42,181 @@ IMPORTS = ['import universal', 'import textCommandsMusic', 'import person', 'imp
         'import episode', 'import townmode']
 
 inlineCommandsPlayer = {
-    r'\hisher{}':"person.hisher()",  
-    r'\HisHer{}':"person.HisHer()",  
-    r'\himher{}':"person.himher()",  
-    r'\HimHer{}':"person.HimHer()",  
-    r'\heshe{}':"person.heshe()",  
-    r'\HeShe{}':"person.HeShe()",  
-    r'\heshell{}':"person.heshell()",  
-    r'\HeShell{}':"person.HeShell()",  
-    r'\himselfherself{}':"person.himselfherself()",  
-    r'\HimselfHerself{}':"person.HimselfHerself()",  
-    r'\mistermiss{}':"person.mistermiss()",  
-    r'\MisterMiss{}':"person.MisterMiss()",  
-    r'\manwoman{}':"person.manwoman()",  
-    r'\ManWoman{}':"person.ManWoman()",  
-    r'\trousers{}':"universal.state.player.lower_clothing().name",
-    r'\hishers{}':"person.hishers()",  
-    r'\HisHers{}':"person.HisHers()",  
-    r'\boygirl{}':"person.boygirl()",  
-    r'\BoyGirl{}':"person.BoyGirl()",  
-    r'\manlady{}':"person.manlady()",  
-    r'\ManLady{}':"person.ManLady()",  
-    r'\kingqueen{}':"person.kingqueen()",  
-    r'\KingQueen{}':"person.KingQueen()",  
-    r'\lordlady{}':"person.lordlady()",  
-    r'\LordLady{}':"person.LordLady()",  
-    r'\brothersister{}':"person.brothersister()",  
-    r'\BrotherSister{}':"person.BrotherSister()",  
-    r'\menwomen{}':"person.menwomen()",  
-    r'\MenWomen{}':"person.MenWomen()",  
-    r'\sirmaam{}':"person.sirmaam()",  
-    r'\SirMaam{}':"person.SirMaam()",  
-    r'\underwearpanties{}':"person.underwearpanties()",  
-    r'\bastardbitch{}':"person.bastardbitch()",  
-    r'\BastardBitch{}':"person.BastardBitch()",  
-    r'\weaponName{}':"universal.state.player.weapon().name",  
-    r'\name{}':"universal.state.player.name",  
-    r'\names{}':'''universal.state.player.name, "'s"''',
-    r'\nickname{}':"universal.state.player.nickname",  
-    r'\nicknames{}':"universal.state.player.nickname, 's'",
-    r'\weapon{}':"universal.state.player.weapon().name",
-    r'\player{}':"universal.state.player",
-    r'\cladbottom{\pajama}': "universal.state.player.clad_bottom(pajama=True)",
-    r'\cladbottom{\trousers}': "universal.state.player.clad_bottom()",
-    r'\muscleadj{}': "universal.state.player.muscle_adj()",
-    r'\bumadj{}': "universal.state.player.bum_adj()",
-    r'\quiver{}': "universal.state.player.quiver()",
-    r'\quivering{}': "universal.state.player.quivering()",
-    r'\liftlower{}': "items.liftlower(universal.state.player.lower_clothing())",
-    r'\lowerlift{}': "items.lowerlift(universal.state.player.lower_clothing())",
-    r'\liftslowers{}': "items.liftlower(universal.state.player.lower_clothing())",
-    r'\lowerslifts{}': "items.lowerslifts(universal.state.player.lower_clothing())",
-    r'\liftlower{underwear}': "items.liftlower(universal.state.player.underwear())",
-    r'\lowerlift{underwear}': "items.lowerlift(universal.state.player.underwear())",
-    r'\liftslowers{underwear}': "items.liftlower(universal.state.player.underwear()), 's'",
-    r'\lowerslifts{underwear}': "items.lowerslifts(universal.state.player.underwear()), 's'",
-    r'\liftlower{pajamas}': "items.liftlower(universal.state.player.pajama_bottom())",
-    r'\lowerlift{pajamas}': "items.lowerlift(universal.state.player.pajama_bottom())",
-    r'\liftslowers{pajamas}': "items.liftslower(universal.state.player.pajama_bottom())",
-    r'\lowerslifts{pajamas}': "items.lowerslifts(universal.state.player.pajama_bottom())",
-    r'\pajamabottoms{}': "universal.state.player.pajama_bottom().name",
-    r'\pajamas{}': "universal.state.player.pajama_top().name",
-    r'\underwear{}':"universal.state.player.underwear().name",
-    r'\shirt{}':"universal.state.player.shirt().name",
-    r'\stealth{}': "universal.state.player.stealth()",
-    r'\warfare{}': "universal.state.player.warfare()",
-    r'\magic{}': "universal.state.player.magic()",
-    r'\grapple{}': "universal.state.player.grapple()",
-    r'\resilience{}': "universal.state.player.resilience()",
-    r'\keywords{}': "universal.state.player.keywords",
-    r'\sondaughter{}': "person.sondaughter()",
-    r'\SonDaughter{}': "person.SonDaughter()",
-    r'\waistbandhem{}': "universal.state.player.lower_clothing().waistband_hem()",
-    r'\pjwaistbandhem{}': "universal.state.player.pajama_bottom().waistband_hem()",
-    r'\hemwaistband{}': "universal.state.player.lower_clothing().hem_waistband()",
-    r'\pjhemwaistband{}': "universal.state.player.pajama_bottom().hem_waistband()",
+    r'\hisher':"person.hisher()",  
+    r'\HisHer':"person.HisHer()",  
+    r'\himher':"person.himher()",  
+    r'\HimHer':"person.HimHer()",  
+    r'\heshe':"person.heshe()",  
+    r'\HeShe':"person.HeShe()",  
+    r'\heshell':"person.heshell()",  
+    r'\HeShell':"person.HeShell()",  
+    r'\himselfherself':"person.himselfherself()",  
+    r'\HimselfHerself':"person.HimselfHerself()",  
+    r'\mistermiss':"person.mistermiss()",  
+    r'\MisterMiss':"person.MisterMiss()",  
+    r'\manwoman':"person.manwoman()",  
+    r'\ManWoman':"person.ManWoman()",  
+    r'\trousers':"universal.state.player.lower_clothing().name",
+    r'\hishers':"person.hishers()",  
+    r'\HisHers':"person.HisHers()",  
+    r'\boygirl':"person.boygirl()",  
+    r'\BoyGirl':"person.BoyGirl()",  
+    r'\manlady':"person.manlady()",  
+    r'\ManLady':"person.ManLady()",  
+    r'\kingqueen':"person.kingqueen()",  
+    r'\KingQueen':"person.KingQueen()",  
+    r'\lordlady':"person.lordlady()",  
+    r'\LordLady':"person.LordLady()",  
+    r'\brothersister':"person.brothersister()",  
+    r'\BrotherSister':"person.BrotherSister()",  
+    r'\menwomen':"person.menwomen()",  
+    r'\MenWomen':"person.MenWomen()",  
+    r'\sirmaam':"person.sirmaam()",  
+    r'\SirMaam':"person.SirMaam()",  
+    r'\underwearpanties':"person.underwearpanties()",  
+    r'\bastardbitch':"person.bastardbitch()",  
+    r'\BastardBitch':"person.BastardBitch()",  
+    r'\weaponName':"universal.state.player.weapon().name",  
+    r'\name':"universal.state.player.name",  
+    r'\names':'''universal.state.player.name, "'s"''',
+    r'\nickname':"universal.state.player.nickname",  
+    r'\nicknames':"universal.state.player.nickname, 's'",
+    r'\weapon':"universal.state.player.weapon().name",
+    r'\player':"universal.state.player",
+    r'\cladbottom': "universal.state.player.clad_bottom(",
+    r'\muscleadj': "universal.state.player.muscle_adj()",
+    r'\bumadj': "universal.state.player.bum_adj()",
+    r'\quiver': "universal.state.player.quiver()",
+    r'\quivering': "universal.state.player.quivering()",
+    r'\liftlower': "items.liftlower(universal.state.player.lower_clothing())",
+    r'\lowerlift': "items.lowerlift(universal.state.player.lower_clothing())",
+    r'\liftslowers': "items.liftlower(universal.state.player.lower_clothing())",
+    r'\lowerslifts': "items.lowerslifts(universal.state.player.lower_clothing())",
+    r'\pajamabottoms': "universal.state.player.pajama_bottom().name",
+    r'\pajamas': "universal.state.player.pajama_top().name",
+    r'\underwear':"universal.state.player.underwear().name",
+    r'\shirt':"universal.state.player.shirt().name",
+    r'\stealth': "universal.state.player.stealth()",
+    r'\warfare': "universal.state.player.warfare()",
+    r'\magic': "universal.state.player.magic()",
+    r'\grapple': "universal.state.player.grapple()",
+    r'\resilience': "universal.state.player.resilience()",
+    r'\keywords': "universal.state.player.keywords",
+    r'\sondaughter': "person.sondaughter()",
+    r'\SonDaughter': "person.SonDaughter()",
+    r'\waistbandhem': "universal.state.player.lower_clothing().waistband_hem()",
+    r'\pjwaistbandhem': "universal.state.player.pajama_bottom().waistband_hem()",
+    r'\hemwaistband': "universal.state.player.lower_clothing().hem_waistband()",
+    r'\pjhemwaistband': "universal.state.player.pajama_bottom().hem_waistband()",
     r'\pheight':("person.height_based_msg(universal.state.player, ", 4),
-    r'\pbodytype{':("person.bodytype_based_msg(universal.state.player, ", 4),
-    r'\pmusculature{':("person.musculature_based_msg(universal.state.player, ",3),
-    r'\phairlength{':("person.hair_length_based_msg(universal.state.player, ",4),
-    r'\pisdropseat{': ("items.dropseat_based_msg(universal.state.player, ", 2),
-    r'\pisliftedlowered{':("items.liftlowered_based_msg(universal.state.player, ", 2),
-    r'\pisloweredlifted{':("items.loweredlifted_based_msg(universal.state.player, ", 2),
-    r'\pjpisloweredlifted{':("items.pjloweredlifted_based_msg(universal.state.player, ", 2),
-    r'\pjpisliftedlowered{':("items.pjliftedlowered_based_msg(universal.state.player, ", 2),
+    r'\pbodytype':("person.bodytype_based_msg(universal.state.player, ", 4),
+    r'\pmusculature':("person.musculature_based_msg(universal.state.player, ",3),
+    r'\phairlength':("person.hair_length_based_msg(universal.state.player, ",4),
+    r'\pisdropseat': ("items.dropseat_based_msg(universal.state.player, ", 2),
+    r'\pisliftedlowered':("items.liftlowered_based_msg(universal.state.player, ", 2),
+    r'\pisloweredlifted':("items.loweredlifted_based_msg(universal.state.player, ", 2),
     }
 
+#A mapping from latex commands to a tuple containing the start of the python code, and the number of arguments the latex command takes.
 inlineCommands = {
-    r'\hisher{':"person.hisher(universal.state.get_character(",  
-    r'\HisHer{':"person.HisHer(universal.state.get_character(",  
-    r'\himher{':"person.himher(universal.state.get_character(",  
-    r'\HimHer{':"person.HimHer(universal.state.get_character(",  
-    r'\heshe{':"person.heshe(universal.state.get_character(",  
-    r'\HeShe{':"person.HeShe(universal.state.get_character(",  
-    r'\heshell{':"person.heshell(universal.state.get_character(",  
-    r'\HeShell{':"person.HeShell(universal.state.get_character(",  
-    r'\himselfherself{':"person.himselfherself(universal.state.get_character(",  
-    r'\HimselfHerself{':"person.HimselfHerself(universal.state.get_character(",  
-    r'\mistermiss{':"person.mistermiss(universal.state.get_character(",  
-    r'\MisterMiss{':"person.MisterMiss(universal.state.get_character(",  
-    r'\manwoman{':"person.manwoman(universal.state.get_character(",  
-    r'\ManWoman{':"person.ManWoman(universal.state.get_character(",  
-    r'\hishers{':"person.hishers(universal.state.get_character(",  
-    r'\HisHers{':"person.HisHers(universal.state.get_character(",  
-    r'\boygirl{':"person.boygirl(universal.state.get_character(",  
-    r'\BoyGirl{':"person.BoyGirl(universal.state.get_character(",  
-    r'\manlady{':"person.manlady(universal.state.get_character(",  
-    r'\ManLady{':"person.ManLady(universal.state.get_character(",  
-    r'\kingqueen{':"person.kingqueen(universal.state.get_character(",  
-    r'\KingQueen{':"person.KingQueen(universal.state.get_character(",  
-    r'\lordlady{':"person.lordlady(universal.state.get_character(",  
-    r'\LordLady{':"person.LordLady(universal.state.get_character(",  
-    r'\brothersister{':"person.brothersister(universal.state.get_character(",  
-    r'\BrotherSister{':"person.BrotherSister(universal.state.get_character(",  
-    r'\menwomen{':"person.menwomen(universal.state.get_character(",  
-    r'\MenWomen{':"person.MenWomen(universal.state.get_character(",  
-    r'\sirmaam{':"person.sirmaam(universal.state.get_character(",  
-    r'\SirMaam{':"person.SirMaam(universal.state.get_character(",  
-    r'\bastardbitch{':"person.bastardbitch(universal.state.get_character(",  
-    r'\BastardBitch{':"person.BastardBitch(universal.state.get_character(",  
-    r'\weaponName{':"items.weapon_name(",  
-    r'\weapon{':"items.weapon_name(",
-    r'\cladbottom{\pajama{}}{': "items.clad_pajama_bottom(",
-    r'\cladbottom{\trousers}': "items.clad_bottom(",
-    r'\muscleadj{': "person.muscle_adj(",
-    r'\bumadj{': "person.bum_adj(",
-    r'\liftlower{': "items.liftlower(items.lower_clothing(",
-    r'\lowerlift{': "items.lowerlift(items.lower_clothing(",
-    r'\liftslowers{': "items.liftslowers(items.lower_clothing(",
-    r'\lowerslifts{': "items.lowerslifts(items.lower_clothing(",
-    r'\liftlower{underwear}{': "items.liftlower(items.underwear(",
-    r'\lowerlift{underwear}{': "items.lowerlift(items.underwear(",
-    r'\liftslowers{underwear}{': "items.liftlower(items.underwear(",
-    r'\lowerslifts{underwear}{': "items.lowerslifts(items.underwear(",
-    r'\liftlower{pajamas}{': "items.liftlower(items.pajama_bottom(",
-    r'\lowerlift{pajamas}{': "items.lowerlift(items.pajama_bottom(",
-    r'\liftslowers{pajamas}{': "items.liftslowers(items.pajama_bottom(",
-    r'\lowerslifts{pajamas}{': "items.lowerslifts(items.pajama_bottom(",
-    r'\underwear{':"items.underwear_name(",
-    r'\trousers{': "items.lower_clothing_name(",
-    r'\pajamabottoms{': "items.pajama_bottom_name(",
-    r'\stealth{': "person.stealth(",
-    r'\warfare{': "person.warfare(",
-    r'\magic{': "person.magic(",
-    r'\grapple{': "person.grapple(",
-    r'\resilience{': "person.resilience(",
-    r'\waistbandhem{': "items.waistband_hem(items.lower_clothing(",
-    r'\pjwaistbandhem{': "items.waistband_hem(items.pajama_bottom(",
-    r'\hemwaistband{': "items.hem_waistband(items.lower_clothing(",
-    r'\pjhemwaistband{': "items.hem_waistband(items.pajama_bottom(",
-    r'\height{':("person.height_based_msg(",5),
-    r'\bodyType{':("person.bodytype_based_msg(",5),
-    r'\musculature{':("person.musculature_based_msg(",4),
-    r'\hairlength{':("person.hair_length_based_msg(",5),
-    r'\isdropseat{': ("items.dropseat_based_msg(", 3),
-    r'\isliftedlowered{':("items.liftlowered_based_msg(", 3),
-    r'\isloweredlifted{':("items.loweredlifted_based_msg(", 3),
-    r'\isliftedlowered{':("items.liftlowered_based_msg(", 3),
-    r'\pjisloweredlifted{':("items.pjloweredlifted_based_msg(", 3),
-    r'\pjisliftedlowered{':("items.pjliftedlowered_based_msg(", 3),
+    r'\hisher':("person.hisher(universal.state.get_character(", 1),
+    r'\HisHer':("person.HisHer(universal.state.get_character(", 1),
+    r'\himher':("person.himher(universal.state.get_character(", 1), 
+    r'\HimHer':("person.HimHer(universal.state.get_character(", 1),
+    r'\heshe':("person.heshe(universal.state.get_character(", 1), 
+    r'\HeShe':("person.HeShe(universal.state.get_character(",  1),
+    r'\heshell':("person.heshell(universal.state.get_character(", 1),  
+    r'\HeShell':("person.HeShell(universal.state.get_character(", 1),  
+    r'\himselfherself':("person.himselfherself(universal.state.get_character(", 1),  
+    r'\HimselfHerself':("person.HimselfHerself(universal.state.get_character(", 1),  
+    r'\mistermiss':("person.mistermiss(universal.state.get_character(", 1),  
+    r'\MisterMiss':("person.MisterMiss(universal.state.get_character(", 1),  
+    r'\manwoman':("person.manwoman(universal.state.get_character(", 1),  
+    r'\ManWoman':("person.ManWoman(universal.state.get_character(", 1),  
+    r'\hishers':("person.hishers(universal.state.get_character(", 1),  
+    r'\HisHers':("person.HisHers(universal.state.get_character(", 1),  
+    r'\boygirl':("person.boygirl(universal.state.get_character(", 1),  
+    r'\BoyGirl':("person.BoyGirl(universal.state.get_character(", 1),  
+    r'\manlady':("person.manlady(universal.state.get_character(", 1),  
+    r'\ManLady':("person.ManLady(universal.state.get_character(", 1),  
+    r'\kingqueen':("person.kingqueen(universal.state.get_character(", 1),  
+    r'\KingQueen':("person.KingQueen(universal.state.get_character(", 1),  
+    r'\lordlady':("person.lordlady(universal.state.get_character(", 1),  
+    r'\LordLady':("person.LordLady(universal.state.get_character(", 1),  
+    r'\brothersister':("person.brothersister(universal.state.get_character(", 1),  
+    r'\BrotherSister':("person.BrotherSister(universal.state.get_character(", 1),  
+    r'\menwomen':("person.menwomen(universal.state.get_character(", 1),  
+    r'\MenWomen':("person.MenWomen(universal.state.get_character(", 1),  
+    r'\sirmaam':("person.sirmaam(universal.state.get_character(", 1),  
+    r'\SirMaam':("person.SirMaam(universal.state.get_character(", 1),  
+    r'\bastardbitch':("person.bastardbitch(universal.state.get_character(", 1),  
+    r'\BastardBitch':("person.BastardBitch(universal.state.get_character(", 1),  
+    r'\weaponName':("items.weapon_name(", 1),  
+    r'\weapon':("items.weapon_name(", 1),
+    r'\cladbottom': ("items.clad_bottom(", 1),
+    r'\muscleadj': ("person.muscle_adj(", 1),
+    r'\bumadj': ("person.bum_adj(", 1),
+    r'\liftlower': ("items.liftlower(", 1),
+    r'\lowerlift': ("items.lowerlift(", 1),
+    r'\liftslowers': ("items.liftslowers(", 1),
+    r'\lowerslifts': ("items.lowerslifts(", 1),
+    r'\underwear':("items.underwear_name(", 1),
+    r'\trousers': ("items.lower_clothing_name(", 1),
+    r'\pajamabottoms': ("items.pajama_bottom_name(", 1),
+    r'\stealth': ("person.stealth(", 1),
+    r'\warfare': ("person.warfare(", 1),
+    r'\magic': ("person.magic(", 1),
+    r'\grapple': ("person.grapple(", 1),
+    r'\resilience': ("person.resilience(", 1),
+    r'\waistbandhem': ("items.waistband_hem(", 1),
+    r'\hemwaistband': ("items.hem_waistband(", 1),
+    r'\height':("person.height_based_msg(", 5),
+    r'\bodyType':("person.bodytype_based_msg(",5),
+    r'\musculature':("person.musculature_based_msg(",4),
+    r'\hairlength':("person.hair_length_based_msg(",5),
+    r'\isdropseat': ("items.dropseat_based_msg(", 3),
+    r'\isliftedlowered':("items.liftlowered_based_msg(", 3),
+    r'\isloweredlifted':("items.loweredlifted_based_msg(", 3),
+    r'\isliftedlowered':("items.liftlowered_based_msg(", 3)
     }
 
-def get_args(cmd, numArgs):
-    """
-    Given a list of strings containing at least one element (the command whose arguments need to be extracted), and the number of arguments
-    to be extracted, returns a list of length numArgs containing the arguments to cmd.
+                          #Removes comments | splits around spaces, and save the spacing | split around commands that begin an environment | split around commands that end an environment | 
+                          #split around bracket | ditto | split around command names, and saves those names
+tokenizer = re.compile(r'%.*|(\n)|(\s+)|(\\begin\{\w+\})|(\\end\{\w+\})|(\{)|(\})|(\\\w+$)')
 
-    TODO: I should rewrite this. It's a relic of my exceedingly clever "Let's pass an iterator all over the place!" (impossible to read) premature optimization. Currently instead of just iterating
-    through all the lines in cmd, and doing different things depending on whether we've seen a brace or not (or if we've extracted all the arguments or not) it manually steps through the iterator.
-    """
-    #Checks to make sure I didn't accidentally pass in a string instead of a list of strings
-    #assert(not isinstance(cmd, str))
-    #Checks to make sure I actually passed in a command.
-    #assert(cmd[0].strip()[0] == '\\')
-    assert(not isinstance(cmd, str))
-    args = []
-    texIter = iter(cmd)
-    line = next(texIter)
-    while len(args) < numArgs:
-        while not '{' in line:
-            try:
-                line = next(texIter)
-            except StopIteration:
-                raise TranslateError('Not enough arguments for: ' + cmd[0] + '.')
-        startBraceIndex = line.index('{')
-        if '}' in line:
-            endBraceIndex = line.index('}')
-            args.append(line[startBraceIndex+1:endBraceIndex])
-        else:
-            args.append(line[startBraceIndex+1:])
-            while not '}' in line:
-                args[-1] = ''.join([args[-1], line])
-                try:
-                    line = next(texIter)
-                except StopIteration:
-                    raise TranslateError('End brace for argument of: ' + cmd[0] + ' not found.')
-            endBraceIndex = line.index('}')
-            args[-1] = ''.join([args[-1], line[:endBraceIndex]])
-        nextArg = line[endBraceIndex+1:]
-        if nextArg:
-            line = nextArg
-        else:
-            try:
-                line = next(texIter)
-            except StopIteration:
-                break
-    return args
+START_ENV = r'\begin{openScene}'
+END_ENV = r'\end{openScene}'
+START_CODE = r'\begin{code}'
+END_CODE = r'\end{code}'
+BEGIN_SCENE = r'openScene'
+BEGIN_NODE = r'\begin{node}'
+END_NODE = r'\end{node}'
+BEGIN_CHILD_NODE = r'\begin{childnode}'
+END_CHILD_NODE = r'\end{childnode}'
 
-        
+def translate(fileName, startingNodeNum, episodeName, episodeNum, titleCardTheme, imports=None):
+    tokens = []
+    firstSceneFound = False
+    lineNum = 1
+    with open(fileName, 'r') as texFile:
+        for line in texFile:
+            firstSceneFound = firstSceneFound or 'openScene' in line
+            if firstSceneFound:
+                tokens.extend([(token, lineNum) for token in re.split(tokenizer, line) if token])
+            lineNum += 1
+    for token in tokens:
+        #&&&
 
 
 
-TAB = '    '
-def append_to_function(code, newLine, tab=TAB):
-    code.append(''.join([tab, newLine]))
 
 
 DEBUG = True
-def translate(fileName, charRoomFile, episodeName, nodeNum, title, episodeNum, titleTheme, tab=TAB, imports=None): 
-    """
-    1. Split around the environments (so from begin to end)
-    2. Split each line around the commands. So a regular expression of the form \stuff whitespace
-    3. Each element in the resulting list corresponds to an element in a line of the format_text. Though some commands may require us to stop and start format_line, many can just be replaced 
-    inline. And really, some, like the \(e)cond commands, we could probably turn into inline if-statements.
-    """
-    code = IMPORTS + [' '.join(['from', charRoomFile, 'import *'])]
-    scenes, translatedCode = translate_envs(split_environments(fileName), nodeNum, episodeNum)
-    code.extend(translatedCode)
-    for sceneName in scenes:
-        code.append(''.join([sceneName, ' = ', 'episode.Scene(', '"' + sceneName + '", ', 'start_', sceneName, ', end_', sceneName, ')']))
-    code.append(''.join(['def init_episode_', str(episodeNum), '():\n', TAB, 'build_chars()\n', TAB, 'build_rooms()']))
-    code.append(''.join(['episode', str(episodeNum), ' = episode.Episode(', str(episodeNum), ', ', '"' + title + '"', ', scenes=[', ', '.join(scenes), '], titleTheme=', titleTheme, ', ',
-        'init=', 'init_episode_', str(episodeNum), ')']))
-    return code
-
-def translate_envs(envs, nodeNum, episodeNum):
-    """
-    Given a list of sprpgs-latex environments, returns a list of strings containing the translated code of the list of environments.
-    """
-    openSceneCode = []
-    nodeCode = []
-    scenes = []
-    sceneNames = []
-    sceneNum = 1
-    newLineTab = '\n' + TAB
-    for env in envs:
-        if 'openScene' in env[HEADER]:
-            openSceneCode.extend(translate_open_scene(env, episodeNum, sceneNum))
-            openSceneCode.append(''.join([TAB, "universal.state.set_init_scene(init_episode_", str(episodeNum), "_scene_", str(sceneNum), ')']))
-            openSceneCode.append(''.join([TAB, "init_episode_", str(episodeNum), "_scene_", str(sceneNum), "()"]))
-            nodeCode.append(''.join(['def init_episode_', str(episodeNum), "_scene_", str(sceneNum), "():"]))
-            sceneNames.append(''.join(['scene_', str(sceneNum), '_episode_', str(episodeNum)]))
-        elif 'childnode' in env[HEADER]:
-            env = (env[HEADER], remove_line_wrapping(env[BODY]))
-            nodeCode.extend(translate_childnode(env, nodeNum))
-            nodeNum += 1
-        elif 'node' in env[HEADER]:
-            env = (env[HEADER], remove_line_wrapping(env[BODY]))
-            newSceneCode, newNodeCode = translate_node(env, nodeNum)
-            openSceneCode.extend(newSceneCode)
-            #nodeCode.extend(''.join([TAB, line]) for line in newNodeCode)
-            nodeCode.extend(newNodeCode)
-            nodeNum += 1
-        elif 'closeScene' in env[HEADER]:
-            scenes.extend(openSceneCode + nodeCode + translate_close_scene(env, episodeNum, sceneNum))
-            openSceneCode = []
-            nodeCode = []
-            sceneNum += 1
-        else:
-            raise Exception("Don't have a translation for " + env[HEADER])
-    return (sceneNames, scenes)
-
-def remove_line_wrapping(body):
-    """
-    Given a list of lines representing a node or childnode's body, returns a copy of the list of lines with all line wrappings removed. A line wrapping is defined as lines of text that are separated 
-    by a single newline. If there are 
-    two newlines in a row, then they are treated as separate lines. In short, all paragraphs are condensed into single lines. This simplifies the processing of commands, because we don't have to
-    worry about commands carrying over onto more than one line.
-    """
-    noWrap = []
-    newLine = True
-    for line in body:
-        line = line.strip()
-        if line:
-            if newLine:
-                noWrap.append(line)
-            else:
-                noWrap[-1] = ' '.join([noWrap[-1], line])
-            newLine = False
-        else:
-            newLine = True
-    return noWrap
-
-
-
-
-
-
-
-def translate_open_scene(env, episodeNum, sceneNum):
-    code = ['_'.join(['def start_scene', str(sceneNum), 'episode', str(episodeNum) + '(loading=False):']), TAB + 'pass']
-    code.append(''.join(line for line in env[BODY]))
-    return code
-
-def translate_close_scene(env, episodeNum, sceneNum):
-    code = ['_'.join(['def end_scene', str(sceneNum), 'episode', str(episodeNum) + '(loading=False):']), TAB + 'pass']
-    code.append(''.join(line for line in env[BODY]))
-    return code
-
-
-texCmdPattern = re.compile(r'(\\\w+\{\w*\})')
-def translate_node(env, nodeNum):
-    """
-    The node environment syntax: \\begin{node}{nodeName}{Location}{Speaker}{Author}
-    Note five arguments including the first (node). Of these, the only two that we care about in this code are nodeName, and Speaker. Location and Author are for the benefit of people reading the
-    transcript (it is assumed that the character will be manually moved into the appropriate location somewhere in the transcript Tex).
-    Given the latex code to be translated, and the node number, returns an ordered pair:
-    1. A list of lines of Python code to be added to the latest openScene code that assigns the new node to the Speaker's litany.
-    2. A list of lines of Python code that builds the node defined by this environment.
-    """
-    _, nodeName, _, speaker,_  = get_args([env[HEADER]], 5)
-    tabLine = TAB + '\n'
-    nodeName = '_'.join(nodeName.split())
-    if speaker.lower() == 'self':
-        openSceneCode = [''.join([TAB, 'universal.state.player.litany = ', 'conversation.allNodes[', str(nodeNum), ']'])]
-        openSceneCode.append(TAB + 'conversation.converse_with(universal.state.player, townmode.town_mode)')
-    else:
-        openSceneCode = [''.join([TAB, 'universal.state.get_character(', '"' + speaker, '.person").litany = ', 'conversation.allNodes[', str(nodeNum), ']'])]
-    nodeCode = [''.join([TAB, nodeName, ' = ', 'conversation.Node(', str(nodeNum), ')']), 
-                ''.join([TAB, 'def ', nodeName + '_quip_function():'])]
-    body = env[BODY]
-
-    #If the first text in the environment is a command, then it will be replaced by Python code, in which case we don't want to start a string. Otherwise, we're starting with text, in which
-    #case we do want to start with the tripe quotes for a line.
-    nodeCode.extend(translate_node_body(body, nodeName))
-    nodeCode.append(''.join([TAB, nodeName, '.quip_function = ', nodeName, '_quip_function']))
-    return (openSceneCode, nodeCode)
-
-def translate_node_body(body, nodeName):
-    """
-    Given a list of lines containing the body of the (child)node , and the name of the node, returns a list of python statements that implement the quip function for this node.
-    """
-    nodeCode = []
-    translatedText = [''.join([TAB * 2, nodeName, '.quip = ', "universal.format_text_translate([["])]
-    body, code = split_text_code(body) 
-    children, playerComments = extract_children(code)
-    #Note: Continue is included in childIfs, because \continue can be viewed as a special case. A single childif with a check of "True."
-    executingChildIfs = extract_childifs(code, nodeName)
-    executingStateModifiers = extract_state_modifiers(code)
-    executingRawCode = extract_raw_code(code)
-    if body:
-        for index, line in enumerate(body):
-            line = re.split(texCmdPattern, line)
-            line = [chunk for chunk in line if chunk]
-            line = translate_player_specific_inline_commands(line, inlineCommandsPlayer, inlineCommands)
-            line = translate_inline_commands(line, inlineCommands)
-            line = translate_conds(line)
-            if index == 0:
-                translatedText[-1] += ''.join([", ".join(line), ']'])
-            else:
-                translatedText.append(''.join(['[', ", ".join(line), ']']))
-        translatedText[-1] += '])' 
-    else:
-        translatedText[-1] += "'''''']])"
-    threeTabsNewLine = '\n' + TAB * 3
-    twoTabsNewLine = '\n' + TAB * 2
-    #Note that we're moving all of the raw code to the beginning of the node. Therefore, though they are executed in the order they are defined, they are NOT executed in the position of the 
-    #text that they are written.
-    nodeCode.append(twoTabsNewLine.join(executingRawCode))
-    nodeCode.append(',\n'.join(translatedText))
-    nodeCode.append(''.join([2 * TAB, nodeName, '.children = [', ', '.join(children), ']']))  
-    nodeCode.append(''.join([2 * TAB, nodeName, '.playerComments = [', ','.join(playerComments), ']']))
-    nodeCode.append(twoTabsNewLine + twoTabsNewLine.join(executingChildIfs))
-    nodeCode.append(twoTabsNewLine.join(executingStateModifiers))
-    return nodeCode
-
-
-
-CODE_COMMANDS = [r'\child', r'\childif', r'\bummarks', r'\keyword', r'\continue'] 
-
-def split_text_code(body):
-    """
-    Given an iterable of strings (representing lines of laTeX), returns an ordered pair of lists of strings containing:
-    1. The actual marked up text to be printed.
-    2. LaTeX commands that alter the state of the program, or control the control path through the dialogue (in particular, the \\keyword, \\bummarks, \\\child, \\\child(el)if, \\code, and 
-    \\continue commands)
-    """
-    text = []
-    code = []
-    inCodeEnv = False
-    for line in body:
-        if inCodeEnv and '\\end{code}' == line.strip():
-            inCodeEnv = False
-            code.append(line)
-        elif inCodeEnv:
-            code.append(line)
-        elif '\\begin{code}' == line.strip():
-            inCodeEnv = True
-            code.append(line)
-        elif any(codeCmd in line for codeCmd in CODE_COMMANDS):
-            code.append(line)
-        else:
-            text.append(line)
-    return (text, code)
-
-def extract_children(texCode):
-    """
-    Given an iterable of lists of strings (representing lines of laTeX that have been split around the LateX commands), returns a pair. Each pair contains the following:
-    1. nodeNames: A list of the names of the nodes referred to by all the \\child commands in texCode. Note that all spaces in the node names are replaced with underscores.
-    2. playerResponses: A list of the player's responses.
-    If every child command is well-formed, then we have the guarantee that playerResponses[i] is the response that triggers nodeNames[i] for all i.
-    """
-    childrenArgs = [get_args([text], 2) for text in texCode if '\\child' in text and not '\\childif' in text and not '\\childelif' in text]
-    childrenNames = ['_'.join(args[1].split()) for args in childrenArgs]
-    playerComments = [''.join(['format_line([', args[0], '])']) for args in childrenArgs]
-    #playerComments = '+ '.join(["'''" + text + "'''" for text in args[0]
-    #playerComments = ["format_line(['''" ", '''"[#["'''" + args[0] + "'''" for args in childrenArgs]
-    return (childrenNames, playerComments)
-
-def extract_childifs(texCode, nodeName):
-    """
-        Given an iterable of strings (representing lines of LaTeX), returns a list of Python code statements that execute all of the \\child(el)if 
-        commands in the node.
-        Note: We consider \\continue a childif command because logically, it can be viewed as a special case, where we have a single childif with a "True" test.
-    """
-    code = []
-    childIfArgs = []
-    continueStmt = ''
-    for line in texCode:
-        if 'childif' in line or 'childelif' in line:
-            childIfArgs.append(get_args([line], 2) + ['elif' if '\\childelif' in line else 'if'])
-    if not childIfArgs:
-       #Since there should only be one continue statement per node, we don't need to search through the entire node. We can stop as soon as we hit "continue."
-       for line in texCode:
-           if '\\continue' in line:
-               continueStmt = line
-               break
-       if continueStmt:
-           continueNode = get_args([continueStmt], 1)[0]
-           #Note: We could just use replace, but that's not as stable, because the naive way would only replace one space with one underscore. This approach is more stable. I could probably
-           #use a regular expression with the regular expression variant of replace. Plus, these names are all going to be short (always less than 20 words, almost always less than 10), which is nowhere
-           #near long enough for efficiency to matter.
-           continueNode = '_'.join(continueNode.split())
-           code.append(''.join([nodeName, '.children = ', continueNode, '.children']))
-           code.append(''.join(['conversation.say_node(', continueNode, '.index)']))
-    for test, node, ifElif in childIfArgs:
-        node = '_'.join(node.split())
-        code.extend([''.join([ifElif, ' ', test, ':']), 
-                   ''.join([TAB, nodeName, '.children = ', node, '.children']),
-                    ''.join([TAB, 'conversation.say_node(', node, '.index)'])])
-    return code                            
-
-def extract_state_modifiers(texCode):
-    """
-    Given an iterable of lists of strings (representing lines of laTeX that have been split around the LateX commands), returns a list of Python code statements that execute all of the latex statements 
-    that directly modify the game's state.
-    In particular, this includes the \\keyword command that adds a keyword to the player's list of keywords, and \\bummarks that adds a bum mark to a character.
-    TODO: Implement
-    """
-    stateModifiers = []
-    stateModifiers.extend(line for line in texCode if '\\keyword{' in textChunk or '\\bummarks' in textChunk)
-    code = []
-    for line in stateModifiers:
-        splitLine = re.split(texCmdPattern, line)
-        if '\\keyword{' in line:
-            args = get_args(splitLine, 1)
-            print('keywords:')
-            print(args[0])
-            code.append(''.join(['universal.state.player.add_keyword(', args[0], ')']))
-        elif '\\bummarks{' in line:
-            args = get_args(splitLine, 2)
-            print(textChunk)
-            print('bummark arguments')
-            print(args)
-            print(args[0])
-            print(args[1])
-            translatedMark = translate_inline_commands(translate_player_specific_inline_commands(args[1]
-            if args[0][0].strip() == 'player':
-                code.append(''.join(['universal.state.player.add_mark(', args[1][0], ')']))
-            else:
-                code.append(''.join([args[0][0], '.add_mark(', translatedMark, ')']))
-    return stateModifiers
-
-
-def extract_raw_code(texCode):
-    """
-    Given an iterable of lists of strings (representing lines of laTeX that have been split around the LateX commands), returns a list of Python code statements that appear in any of the code 
-    environments in the node.
-    In particular, this includes the \\keyword command that adds a keyword to the player's list of keywords, and \\bummarks that adds a bum mark to a character.
-    """
-    rawCode = []
-    inCodeEnv = False
-    for line in texCode:
-        rawCode.append('')
-        if inCodeEnv and not '\\end{code}' == line.strip():
-            rawCode[-1] += line.strip()
-        elif '\\end{code}' == line.strip():
-            inCodeEnv = False
-        elif '\\begin{code}' == line.strip():
-            inCodeEnv = True
-    return rawCode
-
-
-
-
-
-
-
-
-def translate_player_specific_inline_commands(line, commands, otherInlineCommands):
-    translatedCommands = []
-    for text in line:
-        if text in commands:
-            try:
-                cmdText, numArgs = commands[text]
-            except ValueError:
-                translatedCommands.append(commands[text])
-            else:
-                args = get_args(text, numArgs)
-                translatedCommands.append(''.join([cmdText, ', '.join(args), ')']))
-
-        else:
-            pass
-            translatedCommands.append(text if '=' in text else "'''" + text + "'''")
-    return translatedCommands
-
-def translate_inline_commands(line, commands):
-    """
-    Given a list of strings such that in-line latex commands are separate from plain text, returns a list of strings that replaces those in-line commands that apply to characters other than the player 
-    (i.e. actually have arguments associated with them) into the appropriate python command. 
-    Note: Currently this only allows one-argument commands (i.e. hisher{person}, KingQueen{person})
-    """
-    translatedText = []
-    for textChunk in line:
-        if textChunk in commands:
-            try:
-                text, numArgs = commands[textChunk]
-            except ValueError:
-                numArgs = 1
-            args = get_args(textChunk, numArgs)
-            translatedText.append(''.join([text, ', '.join(args), ')']))
-        else:
-            translatedText.append(textChunk)
-    return translatedText
-
-    
-
-pythonCodeRE = re.compile(r'universal\.\w+|person\.\w+|items\.\w+')
-def translate_conds(line):
-    """
-    Given a list of strings (representing a line of partially translated latex code split around latex commands), returns a list of strings with the cond, econd commands translated.
-    """
-    inCond = False
-    translatedText = []
-    lineText = []
-    indexLastArg = 0
-    condStartIndex = 0
-    econdFound = False
-    for index, textChunk in enumerate(line):
-        if '\\cond' in textChunk or '\\econd' in textChunk:
-            econdFound = '\\econd' in textChunk
-            condIndex = textChunk.find('\\cond')
-            if condIndex == -1:
-                condIndex = textChunk.find('\\econd')
-            preCond = textChunk[:condIndex]
-            if preCond:
-                translatedText.append("'''" + preCond.replace("'''", "") + "'''")
-            condStartIndex = index
-            check, trueText, falseText, postCond, indexLastArg = get_args_cond(line[index:], 3)
-            trueText = [text if pythonCodeRE.search(text) else "'''" + text.replace("'''", "") + "'''" for text in trueText]
-            falseText = [text if pythonCodeRE.search(text) else "'''" + text.replace("'''", "") + "'''" for text in falseText]
-            check = ''.join(check)
-            trueText = ''.join(['universal.format_line([', ', '.join(trueText), '])'])
-            falseText = ''.join(['universal.format_line([', ', '.join(falseText), '])']) if falseText else "''"
-            translatedText.append(''.join([trueText, ' if ', check, ' else ', falseText]))
-            if postCond:
-                translatedText.append("'''" + postCond.replace("'''", "") + "'''")
-        else:
-            if not index or index > indexLastArg + condStartIndex:
-                translatedText.append(textChunk)
-                indexLastArg = 0
-                condStartIndex = 0
-    if not econdFound:
-        translatedText[0] = r"'\n\n' + " + translatedText[0]
-                
-    return translatedText
-
-
-def get_args_cond(line, numArgs):
-    """
-    Given a list of chunks of text split around latex commands, that begins with the cond or econd command, returns a list of length numArgs+2 containing the arguments (which are themselves lists), any 
-    remaining chunk of
-    text after the last argument, and the index in the string at which the last argument was found.
-    """
-    inArg = False
-    args = []
-    currentArg = []
-    lineLength = len(line)
-    index = 0
-    for index, textChunk in enumerate(line):
-        textChunk = textChunk.split('{')
-        textChunk = textChunk[1:] if '\\cond' in textChunk[0] or '\\econd' in textChunk[0] else textChunk
-        for text in textChunk:
-            endBraceIndex = text.find('}')
-            currentArg.append(text[:endBraceIndex] if endBraceIndex > -1 else text)
-            if endBraceIndex > -1:
-                args.append(currentArg)
-                currentArg = []
-                if len(args) == numArgs:
-                    args.append(text[endBraceIndex+1:])
-                    args.append(index)
-                    return args
-    raise TranslateError("Invalid number of arguments for: " + str(line))
-
-
-        
-
-
-def translate_childnode(env, nodeNum):
-    """
-    Given a childnode environment, and the number of the current node, returns a list of python code statements that create the Node, and defines the quip function.
-    """
-    _, nodeName, _ = get_args([env[HEADER]], 3)  
-    nodeName = '_'.join(nodeName.split())
-    nodeCode = [''.join([TAB, nodeName, ' = conversation.Node(', str(nodeNum), ')']),
-               ''.join([TAB, 'def ', nodeName, '_quip_function():'])]
-    nodeCode.extend(translate_node_body(env[BODY], nodeName))
-    nodeCode.append(''.join([TAB, nodeName, '.quip_function = ', nodeName, '_quip_function']))
-    return nodeCode
-
-
-
-HEADER = 0
-BODY = 1
-
-def split_environments(fileName):
-    """
-    Given latex source defining an sprpg transcript, returns a list of pairs:
-    1. The first element (the header) of the pair is the line that defines the environment. This line begins with "\\begin", and contains a list of 1 or more arguments in curly brackets.
-    2. The second element (the body) is a list of strings. Each element of the list is a line inside the environment:
-    """
-    environments = []
-    with open(fileName, 'r') as texFile:
-        beginFound = False
-        for line in texFile:
-            #This assumes that comment is the only thing on the line, and that a comment is one line. Very restrictive, but I don't want to take the time to make something more flexible.
-            if "\\stageDirections{" in line:
-                line = ""
-            if line.strip() and line.strip()[0] == '%':
-                continue
-            line = string.replace(line, r'\_', '_')
-            if '\\begin{' in line and not ignored_environment(line):
-                beginFound = True
-                currentEnvironment = (line, [])
-            elif '\\end{' in line and not ignored_environment(line):
-                beginFound = False
-                environments.append(currentEnvironment)
-            elif beginFound:
-                currentEnvironment[BODY].append(line)
-    return environments
-
-IGNORED_ENVS = ['\\begin{document}', '\\end{document}', '\\begin{code}', '\\end{code}']
-def ignored_environment(line):
-    return any(env in line for env in IGNORED_ENVS)
-
-
 if DEBUG:
     import os
-    pyCode = translate(os.path.join('transcripts', 'episode2.tex'), 'episode2CharRooms', 'episode_2', 327, 'Back Alleys', 2, "textCommandsMusic.LUCILLA", imports=IMPORTS)
-    with open('episode2.py', 'w') as episode2:
-        episode2.write('\n'.join(pyCode))
+    pyCode = translate(os.path.join('transcripts', 'episode2.tex'), 327, 'Back Alleys', 2, "textCommandsMusic.LUCILLA", imports=IMPORTS + ['import episode2CharRooms'])
+    #with open('episode2.py', 'w') as episode2:
+    #    episode2.write('\n'.join(pyCode))
 
 
     

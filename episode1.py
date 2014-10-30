@@ -1150,7 +1150,7 @@ class Necia(p.Person):
 
     def set_default_stats(self):
         if universal.DEBUG:
-            self.set_all_stats(strength=3, dexterity=3, talent=2, alertness=3, willpower=1, health=30, mana=20)
+            self.set_all_stats(strength=3, dexterity=3, talent=2, alertness=3, willpower=1, health=2, mana=20)
         else:
             self.set_all_stats(strength=3, dexterity=4, talent=2, alertness=4, willpower=2, health=30, mana=20)
 
@@ -7676,7 +7676,7 @@ def spank_necia(allies, enemies, won):
                         ['''1. Spit on her.'''],
                         ['''2. "Nah. You're just ugly."'''],
                         ['''3. "Please don't hurt me."''']]), justification=0)
-                    universal.set_command_interpreter(necia_chastised_lost_interpreter)
+                    universal.set_comeand_interpreter(necia_chastised_lost_interpreter)
                     universal.set_commands(['(#) Select a number.'])
                 elif 'wimpy' in keywords():
                     universal.say(universal.format_text([['''\n\n"Feh. No wonder you didn't want to fight us." The Vengador slaps''', name(), '''on the bottom.''', names(), '''arms give out, and''', heshe(), '''slumps forward,''', hisher(), 
@@ -8523,7 +8523,7 @@ episode1Scene2 = episode.Scene('Episode 1 Scene 2', start_scene_2_episode_1, Non
 def end_scene_2_episode_1():
     add_keyword('first_dungeon_done')
     backOfGuild = universal.state.get_room('Guild')
-    backOfGuild.remove_character(universal.state.player)
+    exitLeft(universal.state.player, backOfGuild)
 
 
 def start_scene_3_episode_1(loading=False):
@@ -8534,8 +8534,6 @@ def start_scene_3_episode_1(loading=False):
     exitLeft(universal.state.player, backOfGuild)
     enterLeft(universal.state.player, adventurersGuild)
     universal.state.set_init_scene(init_episode_1_scene_3)
-    backOfGuild.remove_character(universal.state.player)
-    adventurersGuild.add_character(universal.state.player)
     southGuard = universal.state.get_character('Guard.person')
     southGuard.litany = too_busy.index
     paloma = universal.state.get_character('Paloma.person')
@@ -11299,7 +11297,7 @@ ep1_elise_pretty_much = Node(294)
 ep1_elise_evasion = Node(295)
 ep1_elise_shift_away_slightly.children = [ep1_elise_bullshit, ep1_elise_evasion, ep1_elise_pretty_much]
 
-ep1_elise_bullshit.comment = '''"Bullshit."'''
+ep1_elise_bullshit.comment = '''"Stegasaur shit."''' 
 def ep1_elise_bullshit_qf():
     add_keyword('flirting_with_Carrie')
     ep1_elise_bullshit.quip = universal.format_text([['''Carrie's eyes widen at the intensity of''', names(), '''tone.'''],
@@ -11503,7 +11501,7 @@ def ep1_elise_sing(node):
     ['''Elise launches into an upbeat, light-hearted song about how the Trickster, on a whim, decided to learn how to control fire, and then teach it to''',
             '''humanity. She teaches it first to a couple of children, who promptly burn themselves. They then teach it to their parents, who promptly burn''',
             '''themselves. And so on down the line, until every person on Earth has been burned. The Mother, furious, confronts the Trickster over Her hurtful prank. The Trickster insists that once they''',
-            '''get the hang of it, fire will benefit the humans, but the Mother is having none of it, and gives Her a solid switching.'''],
+            '''get the hang of it, fire will benefit the humans, but the Mother is having none of it, and gives her a solid switching.'''],
     ['''But then, people get the hang of fire, and use it to build better homes, to keep them warm in the winter, to craft better tools,''',
             '''to cook their food. However, the Mother refuses to admit to wrongdoing. Unfortunately for Her, the Father becomes rather annoyed by this,''',
             '''and gives the Mother a switching of Her own.'''],
@@ -11527,8 +11525,8 @@ def ep1_elise_sing(node):
             '''grin on her face, bows over and over again.'''],
     ['''"Impressive!" shouts a rather tall, lean man as he steps up onto the stage. He is wearing a finely made blue shirt and matching trousers. He has a thick''',
             '''beard, and short-cut hair. He stands straighter than a post, and almost as rigid. At first,''', name(), 
-            '''doesn't recognize the man without his armor, but then''', heshe(), '''realizes with a start that it's the captain of the guard, the one from the guild. "Especially that last song. What 
-            was that you were saying about noblemen?"'''],
+            '''doesn't recognize the man without his armor, but then''', heshe(), '''realizes with a start that it's the captain of the guard, the one from the guild. "Especially that last song.''',
+            '''What was that you were saying about noblemen?"'''],
     ['''Carrie starts to laugh.'''],
     ['''Elise's smile turns sickly. "Hi, honey. Um, how, how long have you been here?"'''],
     ['''"Came in just before you started singing about the Mother's switching," says the man. His voice turns stern. "You really got into it, didn't you?"'''],
@@ -11539,7 +11537,7 @@ def ep1_elise_sing(node):
     ['''"Well, that's it for tonight folks," says Elise, turning to the crowd. "Sorry, but I think I'll be going to enjoy a drink or two with my fiance."'''],
     ['''"A very watered down drink," interjects Roland. "Looks like you've had enough of the strong stuff for one night."'''],
     ['''Elise smiles innocently as the two walk off the stage, followed by Carrie.'''],
-    ['''\mThe three make their way towards''', names(), '''table. Carrie slides in next to''', name() + ",", universal.format_line(['''her foot beginning to play with''', hishers()
+    ['''The three make their way towards''', names(), '''table. Carrie slides in next to''', name() + ",", universal.format_line(['''her foot beginning to play with''', hishers()
         + "."]) if 'flirting_with_Carrie' in keywords() else universal.format_line(['''flashing''', himher(), '''a smile in the process.'''])],
     ['"' + name(), '''this is my fiance, Sir Roland Silverstone," says Elise. "Roland, this is''', name() + ".", HeShe(), '''is a childhood friend of Maria's, who just arrived''',
         '''in Avaricum."'''],
@@ -12953,7 +12951,9 @@ def start_scene_1_episode_2(loading=False):
     universal.say_title('Next time on Pandemonium Cycle: The Potion Wars')
     universal.say(['\m\n\n' + universal.state.player.name, 'finally receives', hisher(), 'first job:', heshe(universal.state.player), 'must travel deep into the slums and track down a thief.''',
     '''However,''', name(), '''isn't the only one after her. Why all the interest in one nameless pickpocket?\n\n''',
-        'Meanwhile, Carrie is becoming a full Sister! Will', universal.state.player.name, 'be able to attend the ceremony (or at least make it to the after party)? Will', heshe(universal.state.player), 'even want to?\n\n Tune in next time to learn the answers to these questions and more!'], music=[music.THEME])
+        'Meanwhile, Carrie is becoming a full Sister! Will', universal.state.player.name, 'be able to attend the ceremony (or at least make it to the after party)? Will', heshe(universal.state.player), 'even want to?\n\n Tune in next time to learn the answers to these questions and more!\n\n',
+        name(), 'has been spanked', str(universal.state.player.numSpankings), 'times.\n\n',
+        name(), 'has administered', str(universal.state.player.numSpankingsGiven), 'spankings.'], music=[music.THEME])
     universal.set_commands('Press Enter to save')
     universal.set_command_interpreter(end_content_interpreter)
 

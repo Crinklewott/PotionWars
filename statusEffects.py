@@ -86,11 +86,12 @@ class StatusEffect(universal.RPGObject):
         """
         return
     def save(self):
-        return '\n'.join(["Status:", self.name(), str(self.duration)]) 
+        return '\n'.join(["Status Data:", self.name, str(self.duration)]) 
 
     @staticmethod
     def load(statusData, status):
-        name, duration = statusData.split('\n')
+        print([data.strip() for data in statusData.split('\n') if data.strip()])
+        _, name, duration = (data.strip() for data in statusData.split('\n') if data.strip())
         status.name = name
         status.duration = duration
 
