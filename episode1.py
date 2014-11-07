@@ -1152,7 +1152,7 @@ class Necia(p.Person):
         if universal.DEBUG:
             self.set_all_stats(strength=3, dexterity=3, talent=2, alertness=3, willpower=1, health=2, mana=20)
         else:
-            self.set_all_stats(strength=3, dexterity=4, talent=2, alertness=4, willpower=2, health=30, mana=20)
+            self.set_all_stats(strength=3, dexterity=4, talent=2, alertness=4, willpower=2, health=25, mana=20)
 
 necia = Necia(None, None, description=universal.format_line(['''An athletic, hard-bodied, dagger-wielding woman of average height. There is a tremendous amount of''',
 '''tension in her stance.''']), printedName="Warslinger's Companion")
@@ -9281,7 +9281,7 @@ def ep1_peter_spanking_panties_lesbian_qf():
             ep1_peter_spanking_panties_lesbian.quip = format_txt([['''"Alright, then," says Peter, setting the chair in the middle of the room, and sitting down. He pats his thigh. "Over my knee."'''],
                 [name(), '''approaches Peter.''', HeShe(), '''slips the gag into''', hisher(), '''mouth, then slides across Peter's lap, the rough''',
                     '''Iguanadon leather of the smith's trousers scraping harshly against''', hisher(), p.underwearpanties() + "."]])
-        if universal.state.player.numSpankings > 0:
+        if universal.state.player.numSpankings > 4:
             ep1_peter_spanking_panties_lesbian.quip = universal.format_text([ep1_peter_spanking_panties_lesbian.quip, 
                 ['''"Well," says Peter, his callused hand lightly running over''', names(), '''bruises.''',
                 '''"Looks like you've already been thoroughly spanked today."'''],
@@ -9333,7 +9333,7 @@ def ep1_peter_bare_spanking_lesbian():
         quip = universal.format_text([quip, [name(), '''takes the thin material of''', hisher(), p.underwearpanties(), '''and in a slow, smooth, sensuous, motion''',
             '''pushes the''', universal.state.player.underwear().name, '''down to''', hisher(), '''ankles.''', HeShe(), '''raises each foot in turn, and pulls the bit''',
             '''of fabric off''', hisher(), '''feet. Then,''', heshe(), '''approaches Peter, and bends over his lap.''']])
-    if universal.state.player.numSpankings > 0:
+    if universal.state.player.numSpankings > 4:
         quip = universal.format_text([quip, ['''"Well," says Peter, his callused hand running gingerly over''', names(), '''bruises.''',
             '''"Looks like you've already been thoroughly spanked today."'''],
             [name(), '''nods, then winces. His fingers leave a line of small, scalding fires across''', names(), 
@@ -9476,7 +9476,7 @@ def ep1_peter_spanking_panties_qf():
             ep1_peter_spanking_panties.quip = format_txt([['''"Alright, then," says Peter, setting the chair in the middle of the room, and sitting down. He pats his thigh. "Over my knee."'''],
                 [name(), '''approaches Peter''', hisher(), '''legs suddenly feeling very weak.''', HeShe(), '''slips the gag into''', hisher(), '''mouth, then slides across Peter's lap, the rough''',
                     '''Iguanadon leather of his trousers rubbing against the thin fabric of''', hisher(), p.underwearpanties() + "."]])
-        if universal.state.player.numSpankings > 0:
+        if universal.state.player.numSpankings > 4:
             ep1_peter_spanking_panties.quip = universal.format_text([ep1_peter_spanking_panties.quip, 
                 ['''"Well," says Peter, his callused hand lightly running over''', names(), '''bruises.''',
                 '''"Looks like you've already been thoroughly spanked today."'''],
@@ -9542,7 +9542,7 @@ def ep1_peter_bare_spanking():
             '''pushes the''', universal.state.player.underwear().name, '''down to''', hisher(), '''ankles.''', HeShe(), '''raises each foot in turn, and pulls the bit''',
             '''of fabric off''', hisher(), '''feet. Then,''', heshe(), '''approaches Peter, and bends over his lap,''', hisher(),'''naked hips and''',
             '''nether regions slowly rubbing against the rough fabric of Peter's scaled trousers.''']])
-    if universal.state.player.numSpankings > 0:
+    if universal.state.player.numSpankings > 4:
         quip = universal.format_text([quip, ['''"Well," says Peter, his callused hand running gingerly over''', names(), '''bruises.''',
             '''"Looks like you've already been thoroughly spanked today."'''],
             [name(), '''nods, rocking''', hisher(), '''hips beneath Peter's touch. His fingers leave a line of small fires across''', names(), 
@@ -9701,7 +9701,7 @@ def ep1_peter_child_alright_qf():
             '''"Not really.''', '''They weren't really interested in hurting anyone, I think. They just wanted our stuff."'''],
         ['''"That's good," says Peter. "It'd be unfortunate if something really bad happened to you on your first day."'''],
         ['''"Yeah, terrible," says''', name() + universal.format_line([",", hisher(), '''thoughts flitting back to the abyss.''']) if 'charmed_by_Deidre' in keywords() else "."]])
-    if 'teaching_Anne' not in keywords():
+    if not 'teaching_Anne' in keywords():
         ep1_peter_child_alright.quip = universal.format_text([ep1_peter_child_alright.quip, ['''"Anyway, this attack has gotten me thinking," says Peter. "Things have been getting kind of ugly lately, and''',
         '''I'm worried about Anne. I've been a camp follower, I know the hell that is''',
             '''war, and I want her to be able to defend herself. So I was wondering-"'''],
@@ -11186,9 +11186,9 @@ def ep1_tavern_shy_female(node):
             ['''"Because," says''', name() + ".", '''"I don't know. A part of me thought maybe this time it'd be different. Another part just wants''',
                 '''some friends, and you and Elise seemed nice."'''],
             ['''"Well, you don't need to come out with us to be our friends," says Carrie. She smiles wryly. "I know it may be hard to believe, but''',
-            '''there are other things in my life than just dresses, boys, toys."'''],
+            '''there are other things in my life than just dresses, boys, and toys."'''],
             ['''"Riight, we're going to slide right on past that," says''', name() + ".", '''"But thank you. That's good to know."'''],
-            ['''"Hey, what are friends for?" says Carrie. "Besides, this way we can friends, and I don't have to worry about you poaching on my men."'''],
+            ['''"Hey, what are friends for?" says Carrie. "Besides, this way I don't have to worry about you poaching on my men."'''],
             ['''"Indeed, how lucky," says''', name() + ",", '''rolling her eyes.'''],
             ['''"Now come on," says Carrie. "We've finally convinced Elise to sing. Only took a dozen people pleading, and four drinks to do it, too.''',
                 '''Girl's in a good mood tonight. You going to come listen?"'''],
@@ -11832,7 +11832,7 @@ def ep1_carrie_home_qf():
     ep1_carrie_home.quip = universal.format_text([['''"You can go home with''', name(), '''after we've spoken to Sister Samantha."'''],
         ['''"But Roland-"'''],
         ['''"Alternatively," says Roland curtly. "I can drag you back to my place, and have my Master Servant spank you. I can assure you he is much stronger''',
-            '''than Sister Samantha, and is very very good at making experienced brats squeal like virgin-bottomed eighteen year olds getting their first ever''',
+            '''than Sister Samantha, and is very very good at making experienced brats squeal like virgin-bottomed eighteen year olds getting their first''',
             '''spanking."'''],
         ['''Carrie hangs her head, and nods.'''],
         ep1_sister_samantha(ep1_carrie_home)])
@@ -12557,7 +12557,7 @@ def ep1_carrie_sex_rub_spank_interpreter(keyEvent):
         return
     if num == 1:
         universal.say(universal.format_text([[name(), '''gently rubs Carrie's bottom, using just a touch of magic to draw some of the heat from her skin. The effect is similar to''',
-            '''pressing a very soft and flexible block of (wrapped) ice against her skin. Carrie squeaks and jumps a little when''', names(), '''cool hand touches her''',
+            '''pressing a very soft and flexible block of ice against her skin. Carrie squeaks and jumps a little when''', names(), '''cool hand touches her''',
             '''skin, but soon she is moaning and pumping her hips. Her legs open, giving''', name(), '''a nice look. Alas, that region happens to be''',
             '''the only thing her panties actually cover.'''],
             [name(), '''slips his hand between her legs, and begins stroking her warm, soft labia.'''],
@@ -12695,8 +12695,12 @@ def ep1_carrie_sex_rub_spank_interpreter(keyEvent):
             ep1_carrie_pillow_talk()]), justification=0)
     ep1_catalin()
 
-
 def ep1_carrie_pillow_talk():
+    return universal.format_text([['''Carrie curls up against''', name(), '''and sighs. "That was fun."'''],
+        ['''"Can say that again," says''', name() + ",", '''wrapping''', hisher(), '''arm around Carrie's bare shoulders.''', HisHer(), '''eyes go heavy.'''],
+        ['''"See you in the morning," murmurs Carrie.'''],
+        ['''"Hmm."''', '\p']])
+    """
     return universal.format_text([['''The two lie in silence for a while.'''],
         ['''"So," says''', name(), '''at last. "I probably shouldn't ask this now. It'll probably kill the mood, but is this just a one night thing, or..."'''],
         ['''Carrie pulls away from''', names(), '''hold, and sits up. "I don't know. I do want to see more of you. Spend time with you, but..."'''],
@@ -12718,7 +12722,7 @@ def ep1_carrie_pillow_talk():
         ['''"We'll be fine," says''', name() + ".", '''He gives her a light kiss on the forehead. "Just go to sleep."'''],
         ['''Carrie nods. She puts her head against''', names(), '''chest, and closes her eyes.''', name(), '''does the same.'''],
         '\p'])
-
+"""
         
 ep1_maria_home = Node(316)            
 def ep1_maria_home_qf():
