@@ -749,8 +749,8 @@ def is_lower_clothing(item):
 def waistband_hem(lowerClothing):
     return lowerClothing.waistband_hem()
 
-def dropseat_based_msg(person, dropseatMsg, nodropseatMsg):
-    return universal.msg_selector(person.pajama_bottoms().armorType == DropSeatPajamas.armorType, {True:dropseatMsg, False:nodropseatMsg})
+def dropseat_based_msg(person, dropseatMsg, loweredMsg, liftedMsg):
+    return universal.msg_selector(person.pajama_bottoms().armorType == DropSeatPajamas.armorType, {True:dropseatMsg, False:pjliftedlowered_based_msg(person, liftedMsg, loweredMsg)})
 
 def liftedlowered_based_msg(person, liftedMsg, loweredMsg):
     return universal.msg_selector(person.lower_clothing().liftlower() == "lift", {True:liftedMsg, False:loweredMsg})
