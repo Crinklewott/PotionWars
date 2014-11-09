@@ -1547,7 +1547,8 @@ class Person(universal.RPGObject):
             self.hairLength + ",", self.hairColor,'''hair''', hairStyleDescription + "."],
             [HeShe(self), '''stands at a fairly''', self.height, '''height.''', HeShe(self), '''has a''', self.musculature + ",", self.bodyType, '''body.''']]
         bumDesc = ' '.join([self.muscle_adj() + ",", self.bum_adj()])
-        if self.marks:
+        marks = [mark for mark in self.marks if mark]
+        if marks:
             appearance.append(self.marks)
         elif self.bumStatus > 6:
             appearance.append([self.name + "'s", bumDesc, '''bottom is criss-crossed with countless layers of marks and welts. Every inch of''', hisher(), '''bottom is''',
@@ -1556,8 +1557,13 @@ class Person(universal.RPGObject):
             appearance.append([self.name + "'s", bumDesc, '''bottom is a dark red. Every inch of''', hisher(), '''bum is covered in marks and welts. Every step makes''',
                 hisher(), '''bottom buzz with pain, and the thought of sitting makes''', himher(), '''wince.'''])
         elif self.bumStatus > 2:
+            print('bumStatus greater than 2')
+            print('appearance before append:')
+            print(appearance)
             appearance.append([self.name + "'s", bumDesc, '''bottom is a deep red. Several welts mar''', hisher(), '''cheeks.''', HeShe(), '''can't sit without wincing''',
                 '''and there is a slight stiffness to''', hisher(), '''gait.'''])
+            print('appearance after append:')
+            print(appearance)
         elif self.bumStatus > 0:
             appearance.append([self.name + "'s", bumDesc, '''bottom is a dark pink, interspersed with patches of dark red.''', HisHer(), '''bottom tingles with the''',
                     '''lingering sting of''', hisher(), '''recent spankings. Sitting is best done with great care.'''])

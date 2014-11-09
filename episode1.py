@@ -567,8 +567,8 @@ def guild_bedroom_after_arrival():
             guildBedroom.description = universal.format_text([guildBedroom.description, universal.format_line(['''If''', name(), '''wishes,''', heshe(), 
                 '''can rest, and put an end to this seemingly neverending day.'''])])
         if 'Elise_shows_you_around' in textCommandsMusic.keywords() and universal.state.player.currentEpisode == episode1.name:
-            guildBedroom.description = universal.format_text([guildBedroom.description, universal.format_line(['''If''', name(), '''hasn't already,''', person.heshe(), 
-            '''should go meet Elise at the Shrine. After all,''', person.heshe(), '''shouldn't keep her waiting!'''])])
+            guildBedroom.description = universal.format_text([guildBedroom.description, universal.format_line(['''If''', name(), '''hasn't already,''', p.heshe(), 
+                '''should go meet Elise at the Shrine. After all,''', p.heshe(), '''shouldn't keep her waiting!'''])])
     if guildBedroom.boarding:
         townmode.rest_mode(guildBedroom)
     else:
@@ -12265,9 +12265,9 @@ def ep1_maria_dont_live_qf():
     else:
         ep1_maria_dont_live.quip = universal.format_text([['''"Yeah. I guess we will," says Maria. She gives''', name(), '''a brief hug.''']])
         if not 'mariasHome' in keywords(): 
-            ep1_maria_dont_live.quip += format_line([''' "Anyway, you can find me in at the edge''',
+            ep1_maria_dont_live.quip += format_text([[''' "Anyway, you can find me in at the edge''',
             '''of the slums, just past the Adventurer's Guild. It's good to see you. Try to stay out of trouble."'''],
-            [name(), '''returns the hug.'''])
+            [name(), '''returns the hug.''']])
     if 'Elise_shows_you_around' in keywords():
         avaricumSquare = universal.state.get_room('Avaricum Square')
         return (universal.acknowledge, [townmode.go, avaricumSquare])
@@ -12521,7 +12521,7 @@ def ep1_carrie_sex():
             ['''"Oh, that's no fun," says Carrie. She flashes a grin at Alondra. "Let's just have a threesome!"'''],
             [name(), '''and Alondra both stare at Carrie.'''],
             ['''"What?" says Carrie. "I'm buzzing, I'm randy, and you've got a great chest."'''],
-            ['''Alondra glances down at her chest, currently clad in an oversized nightgown. "How can you tell?"''']
+            ['''Alondra glances down at her chest, currently clad in an oversized nightgown. "How can you tell?"'''],
             ['''"Cause you don't look like a beanpole, despite wearing something at least three times too big," says Carrie.'''],
             ['''"Is there anything on two legs you aren't willing to sleep with?" asks''', name() + "."],
             ['''"Sure," says Carrie. She starts counting her fingers. "Elise, 'cause she's basically my sister, and sleeping with your sister is weird. Sister Samantha, 'cause she's the closest''',
