@@ -112,7 +112,7 @@ inlineCommandsPlayer = {
     r'\pbodytype':("person.bodytype_based_msg(universal.state.player, ", 4),
     r'\pmusculature':("person.musculature_based_msg(universal.state.player, ",3),
     r'\phairlength':("person.hair_length_based_msg(universal.state.player, ",4),
-    r'\pisdropseat': ("items.dropseat_based_msg(universal.state.player, ", 2),
+    r'\ppjtype': ("items.dropseat_based_msg(universal.state.player, ", 2),
     r'\pisliftedlowered':("items.liftlowered_based_msg(universal.state.player, ", 2),
     r'\pisloweredlifted':("items.loweredlifted_based_msg(universal.state.player, ", 2),
     }
@@ -174,7 +174,7 @@ inlineCommands = {
     r'\bodyType':("person.bodytype_based_msg(",5),
     r'\musculature':("person.musculature_based_msg(",4),
     r'\hairlength':("person.hair_length_based_msg(",5),
-    r'\isdropseat': ("items.dropseat_based_msg(", 3),
+    r'\pjtype': ("items.dropseat_based_msg(", 3),
     r'\isliftedlowered':("items.liftlowered_based_msg(", 3),
     r'\isloweredlifted':("items.loweredlifted_based_msg(", 3),
     r'\isliftedlowered':("items.liftlowered_based_msg(", 3)

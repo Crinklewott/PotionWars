@@ -53,7 +53,7 @@ def begin_game(episode):
 
     # Blit everything to the screen
     defaultFont = pygame.font.SysFont(universal.FONT_LIST, universal.DEFAULT_SIZE)
-    titleFont = pygame.font.SysFont(universal.FONT_LIST, universal.TITLE_SIZE)
+    titleFont = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.TITLE_SIZE)
     universal.init_game()
     background = universal.get_background()
     screen = universal.get_screen()

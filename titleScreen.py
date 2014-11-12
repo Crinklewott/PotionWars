@@ -175,7 +175,7 @@ def display_crawl():
         universal.say_replace('')
     worldView = universal.get_world_view()
     textRect = universal.get_world_view().copy()
-    titleFont = pygame.font.SysFont(universal.FONT_LIST, universal.TITLE_SIZE)
+    titleFont = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.TITLE_SIZE)
     displayPosition = (worldView.topleft[0], worldView.topleft[1] + 2 * titleFont.get_linesize())
     universal.display_text(universal.get_text_to_display(), textRect, displayPosition, isTitle=False)
     pygame.display.flip()

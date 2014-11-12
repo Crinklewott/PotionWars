@@ -310,7 +310,7 @@ def say_immediate(text, columnNum=1, justification=1, fontSize=36, italic=False,
     else:
         textToDisplay += text
     textRect = worldView.copy()
-    titleFont = pygame.font.SysFont(FONT_LIST, TITLE_SIZE)
+    titleFont = pygame.font.SysFont(FONT_LIST_TITLE, TITLE_SIZE)
     textRect.height = textRect.height - 2 * titleFont.get_linesize()
     displayPosition = (worldView.topleft[0], worldView.topleft[1] + 2 * titleFont.get_linesize())
     display_text(get_text_to_display(), textRect, displayPosition, isTitle=False)
@@ -382,7 +382,9 @@ def get_difficulty():
     return state.difficulty
 
 #Make sure to confirm font names for Windows and Mac.
-FONT_LIST = 'Lucida Grande, Segoe UI, rachana'
+FONT_LIST = 'Georgia'
+
+FONT_LIST_TITLE = 'Verdana'
 
 
 BLACK = (0,0,0)
@@ -504,7 +506,7 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
                 lineNum += 1
             textSurface = None
             if isTitle:
-                font = pygame.font.SysFont(FONT_LIST, TITLE_SIZE)
+                font = pygame.font.SysFont(FONT_LIST_TITLE, TITLE_SIZE)
             else:
                 font = pygame.font.SysFont(FONT_LIST, DEFAULT_SIZE)
             #At this point, we just add one line at a time until the whole thing fits, and move the other lines onto a new page. It's ugly as sin, but it gets the job
@@ -904,7 +906,7 @@ def flush_text(titleOffset=None, overwrite=True):
     as opposed to waiting until the results of the player's commands have been processed.
     """
     textRect = worldView.copy()
-    titleFont = pygame.font.SysFont(FONT_LIST, TITLE_SIZE)
+    titleFont = pygame.font.SysFont(FONT_LIST_TITLE, TITLE_SIZE)
     textRect.height = textRect.height - 2 * titleFont.get_linesize()
     displayPosition = (chosenSurface.get_rect().topleft[0], 
             chosenSurface.get_rect().topleft[1] + 2 * titleFont.get_linesize())

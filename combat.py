@@ -64,7 +64,7 @@ bg = None
 runnable = True
 activeAlly = None
 chosenActions = []
-titleFont = pygame.font.SysFont(universal.FONT_LIST, universal.TITLE_SIZE)
+titleFont = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.TITLE_SIZE)
 enemySurface = None
 allySurface = None
 commandSurface = None
@@ -266,7 +266,7 @@ def print_command(command):
             enemySurface.get_rect().bottomleft[1] + allySurface.get_height())
     commandSurface.fill(DARK_GREY)
     screen.blit(commandSurface, commandScreenCoord)
-    fontSize = pygame.font.SysFont(FONT_LIST, TITLE_SIZE).size(command)
+    fontSize = pygame.font.SysFont(FONT_LIST_TITLE, TITLE_SIZE).size(command)
     say_title(command, surface=commandSurface)
     flush_text(13)
     cmdMidTop = commandSurface.get_rect().midtop

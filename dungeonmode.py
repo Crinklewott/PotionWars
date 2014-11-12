@@ -51,11 +51,11 @@ WEST = -2
 
 #TODO: Build another surface for the current facing direction.
 pygame.font.init()
-fontSize = pygame.font.SysFont(universal.FONT_LIST, universal.TITLE_SIZE).size(str((10,10,10)))
+fontSize = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.TITLE_SIZE).size(str((10,10,10)))
 coordinateSurface = pygame.Surface((fontSize[0] + 20, fontSize[1] + 20))
 coordinateSurface.fill(universal.DARK_GREY)
-fontSize = pygame.font.SysFont(universal.FONT_LIST, universal.TITLE_SIZE).size('N')
-directionSurface = pygame.Surface((fontSize[0] + (fontSize[1] - fontSize[0]), fontSize[1] + 5))
+fontSize = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.TITLE_SIZE).size('N')
+directionSurface = pygame.Surface((fontSize[0] + (fontSize[1] - fontSize[0]), fontSize[1] + 20))
 directionSurface.fill(universal.DARK_GREY)
 
 def set_dungeon_commands(dungeon=None):
@@ -489,12 +489,12 @@ class Dungeon(townmode.Room):
         localDirSurface = directionSurface
         if has_char('u', self.get_square(self.coordinates)[0]) or has_char('d', self.get_square(self.coordinates)[0]):
             direction = "Stairs"
-            localFontSize = pygame.font.SysFont(universal.FONT_LIST, universal.TITLE_SIZE).size(direction)
+            localFontSize = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.TITLE_SIZE).size(direction)
             localDirSurface = pygame.Surface((localFontSize[0] + (localFontSize[1] - localFontSize[0]) + 75, localFontSize[1] + 15))
             localDirSurface.fill(universal.DARK_GREY)
         say_title(direction, surface=localDirSurface)
         flush_text(13)
-        pygame.draw.rect(localDirSurface, LIGHT_GREY, pygame.Rect(localDirSurface.get_rect().topleft, localDirSurface.get_rect().size), 5)
+        pygame.draw.rect(localDirSurface, LIGHT_GREY, pygame.Rect(localDirSurface.get_rect().topleft, localDirSurface.get_rect().size), 7)
         get_screen().blit(coordinateSurface, (get_world_view().midbottom[0] - coordinateSurface.get_rect().width // 2,
             get_world_view().midbottom[1] - coordinateSurface.get_rect().height))
         get_screen().blit(localDirSurface, (get_world_view().midbottom[0] - localDirSurface.get_rect().width // 2, get_world_view().midbottom[1] - 

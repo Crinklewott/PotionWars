@@ -2125,7 +2125,7 @@ elise_show_you_around.comment = '''"I wouldn't even know what to ask first. It a
 elise_show_you_around_yes = Node(77) 
 elise_show_you_around_no = Node(78) 
 elise_show_you_around_weird = Node(79)
-elise_show_you_around.children = [elise_show_you_around_yes, elise_show_you_around_no, elise_show_you_around_weird]
+elise_show_you_around.children = [elise_show_you_around_yes, elise_show_you_around_weird]
 
 def elise_show_you_around_quip_function():
     if "Maria_intimidated_you" in universal.state.player.keywords:
@@ -2156,7 +2156,7 @@ elise_show_you_around_weird.comment = '''"Well, I don't know..."'''
 elise_feel_weird = Node(80) 
 elise_carrie_question = Node(81) 
 elise_show_you_around_weird.children = [elise_feel_weird, elise_carrie_question, 
-    elise_show_you_around_yes, elise_show_you_around_no]
+    elise_show_you_around_yes]
 def elise_show_you_around_weird_quip_function():
     elise_show_you_around_weird.quip = '''"Why not?" asks Elise. "I'm not scary, I promise, and I won't get you in trouble. Unlike some people I know ..."'''
     elise_show_you_around_yes.comment = '''"Well, alright. You've convinced me."'''
@@ -2192,7 +2192,7 @@ elise_enjoy_spanking_carrie_protest.children = [elise_disbelief, elise_agree]
 elise_enjoy_spanking_carrie_protest.quip = '''"Me? Enjoy punishing someone? Never," says Elise. "It was grim satisfaction derived from a punishment well executed, and a lesson well learned."'''
 
 elise_enjoy_spanking_carrie_poetic.comment = '''"Ah, yes, sweet poetic justice, my favorite kind. Though surely you've gotten her in trouble before. So how do you know that poetic justice won't come back and smack you in the butt?"'''
-elise_enjoy_spanking_carrie_poetic.children = [elise_show_you_around_yes, elise_show_you_around_no]
+elise_enjoy_spanking_carrie_poetic.children = [elise_show_you_around_yes]
 def elise_enjoy_spanking_carrie_poetic_quip_function():
     elise_enjoy_spanking_carrie_poetic.quip = universal.format_text(['''"Because I'm the good girl," says Elise, grinning wolfishly. "If I ever got her in trouble, it was for tattling on something she did, not for convincing her to get in trouble with me."''',
         ['''"Ah, I see," says''', universal.state.player.name + ".", '''"Truly, you have nothing to fear."'''],
