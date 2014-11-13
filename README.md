@@ -102,7 +102,7 @@ sprpgs+PWStory@gmail.com.
 
 Any bug reports, post on my blog, or send me an e-mail at sprpgs+PWBugs@gmail.com
 
-Any comments or criticisms on the gameplay, post on my blog, or send me an e-mail at sprpgs@PWGameplay@gmail.com
+Any comments or criticisms on the gameplay, post on my blog, or send me an e-mail at sprpgs+PWGameplay@gmail.com
 
 Any other general questions or concerns, post on my blog, or send me an e-mail at sprgs@gmail.com
 
