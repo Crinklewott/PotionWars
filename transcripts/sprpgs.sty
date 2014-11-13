@@ -291,8 +291,15 @@
 \newcommand{\pjpisliftedlowered}[2]{\textcolor{blue}{#2}}
 \newcommand{\pjpisloweredlifted}[2]{\textcolor{blue}{#2}}
 
-\newcommand{\pisdropseat}[2]{\textcolor{blue}{#2}}
-\newcommand{\isdropseat}[3]{\textcolor{blue}{#2}}
+%Using this command will treat a skirt like a dress (lifting as opposed to lowering). The last argument is for if you're not wearing outer clothing.
+\newcommand{\istrousers}[3]{\textcolor{blue}{#1}}
+%Using this command will treat a skirt like trousers (lowering as opposed to lifting). The last argument is for if you're not wearing outer clothing.
+\newcommand{\isdress}[3]{\textcolor{blue}{#2}}
+%The first choice if your panties are baring, the second if not. The third if you're not wearing panties.
+\newcommand{\isbaring}[3]{\textcolor{blue}{#1}}
+
+\newcommand{\ppjtype}[3]{\textcolor{blue}{#2}}
+\newcommand{\pjtype}[4]{\textcolor{blue}{#2}}
 
 \newcommand{\liftlower}{\textcolor{blue}{lower}}
 \newcommand{\lowerlift}{\textcolor{blue}{lift}}
@@ -300,6 +307,8 @@
 
 \newcommand{\pajamabottoms}{\textcolor{blue}{pink pajama pants}}
 \newcommand{\pajamas}{\textcolor{blue}{large shirt}}
+\newcommand{\pajamatype}[3]{#1}
+\newcommand{\ppajamatype}[3]{#1}
 
 %Doesn't actually do anything. Just indicates that we should add the second argument to the list of marks for the character specified in the first argument.
 %Note: In order for this command to be translated properly, it must appear after ALL NODE TEXT. ONLY OTHER SPRPG COMMANDS MAY APPEAR AFTER THIS.
