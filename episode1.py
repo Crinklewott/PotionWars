@@ -4652,7 +4652,6 @@ def ep1_paloma_otk_hand(keyEvent):
             set_command_interpreter(ep1_paloma_otk_hand_lift)
 
 def ep1_paloma_otk_hand_slipper(keyEvent):
-    #&&&
     try:
         num = int(universal.key_name(keyEvent))
     except ValueError:
@@ -12218,8 +12217,11 @@ ep1_maria_temper_forgive.quip_function = ep1_maria_temper_forgive_qf
 ep1_maria_temper_forgive.children = [ep1_maria_live, ep1_maria_dont_live]
 
 def ep1_maria_live_question():
-    quip = universal.format_line(['''Anyway, I was wondering if you'd like to live with me. It's not much, but it's a home. In fact, we could even upgrade a little, and still only''',
-        '''cost us each fifty coins a month."'''])
+    quip = universal.format_text([['''Anyway, I was wondering if you'd like to live with me. It's not much, but it's a home. In fact, we could even upgrade a little, and still only''',
+        '''cost us each fifty coins a month."'''],
+        ['''"But what about rent?" asks''', name() + ".", '''"I don't have fifty coins, and I have no idea when I'll be getting some."'''],
+        ['''"Well, a friend of mine runs a clinic for helping Taironans break their addiction to Potions. It's not as fancy as the one run by the Matirian Church, but it's run by Taironans, for''',
+            '''Taironans, so it's an option for people who don't trust Matirians. How about, in exchange for the first month's rent, you spend one morning volunteering there with me."''']])
     if 'boarding_with_Adrian' in keywords(): 
         quip = universal.format_text([quip, ['''"Sorry," says''', name() + ".", '''"But I'm already boarding with Adrian."'''],
             ['''"Oh." Maria's hesitant smile fades. "Well, OK. I mean, you certainly don't have to live with me. Probably safer to live with Adrian, anyway."''']])
