@@ -30,7 +30,7 @@ def spanking_string(top, bottom):
     spankingStrings = [universal.format_line(
         [top.printedName, '''grabs''', bottom.printedName + "'s", '''arm, and hauls''', person.himher(bottom), '''over''', person.hisher(top), 
             '''knee.''', top.printedName, '''lands a few quick smacks to''', bottom.printedName + "'s", bottom.muscle_adj(), '''bottom, before''', bottom.printedName, 
-            '''amanges to roll off,''', top.printedName + "'s", '''knee,''', person.hisher(bottom), '''face bright red.''']),
+            '''manages to roll off,''', top.printedName + "'s", '''knee,''', person.hisher(bottom), '''face bright red.''']),
 
         universal.format_line([top.printedName, '''spins''', bottom.printedName, '''around and lands a few quick smacks to''', bottom.printedName + "'s", bottom.bum_adj(), 
             '''bottom.''',bottom.printedName, '''squirms back around and elbows''', top.printedName, '''in the gut.''']),

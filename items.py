@@ -23,6 +23,9 @@ import random
 
 allItems = {}
 
+LOOSE = 'loose'
+TIGHT = 'tight'
+
 class NakedError(Exception):
     pass
 
@@ -264,9 +267,14 @@ class FullArmor(Armor):
 
 class Dress(FullArmor):
     armorType = 'dress'
-    def __init__(self, name, description, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, price=0, enchantments=None, maxEnchantment=18, risque=0):
+    tightness = 'loose'
+    def __init__(self, name, description, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, price=0, enchantments=None, maxEnchantment=18, risque=0, tightness=None):
         super(Dress, self).__init__(name, description, attackDefense, attackPenalty, castingPenalty, magicDefense, price, enchantments, maxEnchantment, risque)
         self.armorType = 'dress'
+        if tightness:
+            self.tightness = tightness
+        else:
+            self.tightness = Dress.tightness
 
     def waistband_hem(self):
         return "hem"
@@ -319,25 +327,31 @@ class LowerArmor(Armor):
 
 class Pants(LowerArmor):
     armorType = 'pants'
+    tightness = 'loose'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=9, risque=0,
-            baring=False):
+            baring=False, tightness=None):
         super(Pants, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque, baring)
         self.armorType = 'pants'
+        tightness = tightness if tightness else Pants.tightness
 
 class Shorts(Pants):
     armorType = 'shorts'
+    tightness = 'tight'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=9, risque=0,
-            baring=False):
+            baring=False, tightness=None):
         super(Shorts, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque, baring)
         self.armorType = Shorts.armorType
+        self.tightness = tightness if tightness else Shorts.tightness
 
 class Skirt(LowerArmor):
     armorType = 'skirt'
+    tightness = 'loose'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=9, risque=0,
-            baring=False):
+            baring=False, tightness=None):
         super(Skirt, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque,
                 baring)
         self.armorType = 'skirt'
+        self.tightness = tightness if tightness else Skirt.tightness
 
     def waistband_hem(self):
         return "waistband"
@@ -386,7 +400,7 @@ class Underwear(Armor):
 class Thong(Underwear):
     armorType = Underwear.armorType
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, armorType='underwear', enchantments=None, maxEnchantment=9,
-            risque=3):
+            risque=5):
         super(Thong, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, True, armorType, enchantments, maxEnchantment,
                 risque) 
         self.armorType = armorType
@@ -763,3 +777,38 @@ def pjliftedlowered_based_msg(person, liftedMsg, loweredMsg):
 
 def pjloweredlifted_based_msg(person, loweredMsg, liftedMsg):
     return universal.msg_selector(person.pajama_bottoms().lowerlift() == "lower", {True:loweredMsg, False:liftedMsg})
+
+def is_tight(clothing):
+    try:
+        return clothing.tightness == 'tight'
+    except AttributeError:
+        return False
+
+def tight_msg(clothing, tightMsg, looseMsg):
+    return universal.msg_selector(clothing.tightness == TIGHT, {True:tightMsg, False:looseMsg})
+
+def is_loose(clothing):
+    try:
+        return clothing.tightness == 'loose'
+    except AttributeError:
+        return False
+
+def loose_msg(person, looseMsg, tightMsg):
+    return universal.msg_selector(clothing.tightness == LOOSE, {True:looseMsg, False:tightMsg})
+
+def wearing_trousers(person, wearingTrousers, notWearingTrousers):
+    return universal.msg_selector(person.wearing_pants_or_shorts(), {True:wearingTrousers, False:notWearingTrousers})
+
+def wearing_shirt(person, wearingShirt, notWearingShirt):
+    return universal.msg_selector(person.shirt() != emptyUpperArmor, {True:wearingShirt, False:notWearingShirt})
+
+def wearing_underwear(person, wearingUnderwear, notWearingUnderwear):
+    return universal.msg_selector(person.underwear() != emptyUnderwear, {True:wearingUnderwear, False:notWearingUnderwear})
+
+def wearing_dress(person, wearingDress, notWearingDress):
+    return universal.msg_selector(person.lower_clothing().armorType == Skirt.armorType or person.lower_clothing().armorType == Dress.armorType, {True:wearingUnderwear, False:notWearingUnderwear})
+
+def baring_underwear(underwear, baringMsg, notBaringMsg):
+    return universal.msg_selector(underwear.baring, {True:baringMsg, False:notBaringMsg})
+
+

@@ -46,7 +46,7 @@ tunic = items.Shirt('tunic', 'A fairly common, loose fitting tunic. A bit worn, 
 qualityTunic = items.Shirt('quality tunic', 'A heavy tunic made from high quality leathers. The tunic also has the smallest hint of magic about it, providing ' +
 'a little bit of protection from enemy blows.', attackDefense=2, price=10)
 """
-vNeckTunic = items.Shirt('V-neck tunic', 'A cotton tunic with a deep v-shaped slit down the front, revealing a fair amount of the upper chest.', price=5, risque=1)
+vNeckTunic = items.Shirt('V-neck tunic', 'A cotton tunic with a deep v-shaped slit down the front, revealing a fair amount of the upper chest.', price=5, risque=2)
 
 """
 qualityVNeckTunic = items.Shirt('quality V-neck tunic', 'A high quality v-neck tunic. There\'s even a little bit of magic woven into it, providing a bit of protection.', price=10, attackDefense=2)
@@ -58,43 +58,43 @@ qualityBlouse = items.Shirt('blouse', 'A well-made blouse with a hint of protect
 """
 
 bra = items.Shirt('bra', format_line(['Recent research has shown that people who wear shirts are baby-eating, Mother-hating scum who are secretly planning to steal''',
-'''your husband's sword. Be a true Avaricumite. Wear nothing but a bra today (and pants. Or a teeny tiny skirt. Or just panties.)!''']))
+'''your husband's sword. Be a true Avaricumite. Wear nothing but a bra today (and pants. Or a teeny tiny skirt. Or just panties.)!''']), risque=4)
 
 blueVest = items.Shirt('blue vest', 'A bright blue vest and white undershirt, cut in the style of outfits worn by young boys in the middle and upper classes.', price=10)
 #--------------------------------------Lower Armor--------------------------------
 
 #--------------------------------------items.Pants-------------------------------------
-trousers = items.Pants('trousers', 'Simple loose-fitting trousers. They are a bit ragged, but more or less in one piece.', price=5)
+trousers = items.Pants('trousers', 'Simple loose-fitting trousers. They are a bit ragged, but more or less in one piece.', tightness=items.LOOSE, price=5)
 
-shorts = items.Shorts('shorts', 'A pair of knee-length cotton shorts.', price=5)
+shorts = items.Shorts('shorts', 'A pair of knee-length cotton shorts.', tightness=items.LOOSE, price=5)
 
-shortShorts = items.Shorts('short shorts', "A pair of skintight shorts that barely cover one's bottom.", price=5, risque=2)
+shortShorts = items.Shorts('short shorts', "A pair of skintight shorts that barely cover one's bottom.", tightness=items.TIGHT, price=5, risque=3)
 
-holeyTrousers = items.Pants('holey trousers', 'A pair of ragged, borderline unwearable trousers. There is a massive hole in the left knee, the right leg stops in a frayed mess just pass the knee, and the waist is held up with a threadbare rope.')
+holeyTrousers = items.Pants('holey trousers', 'A pair of ragged, borderline unwearable trousers. There is a massive hole in the left knee, the right leg stops in a frayed mess just pass the knee, and the waist is held up with a threadbare rope.', tightness=items.LOOSE)
 
-blueShorts = items.Shorts('blue shorts', 'A pair of blue shorts cut in a style similar to what young boys wear in the middle and upper classes.', price=10)
+blueShorts = items.Shorts('blue shorts', 'A pair of blue shorts cut in a style similar to what young boys wear in the middle and upper classes.', price=10, tightness=items.LOOSE)
 
 #---------------------------------------items.Skirts------------------------------------
-combatSkirt = items.Skirt('combat skirt', 'A skirt that extends down to just shy of the knees. There is the faintest hint of magic. Not much, but enough that the skirt likely provides some limited combat protection.', price=5, attackDefense=2)
+combatSkirt = items.Skirt('combat skirt', 'A skirt that extends down to just shy of the knees. There is the faintest hint of magic. Not much, but enough that the skirt likely provides some limited combat protection.', price=5, attackDefense=2, tightness=items.LOOSE)
 
 plainSkirt = items.Skirt('skirt', 'A simple cotton skirt that extends down to just past the knees.', 
-        price=5)
+        price=5, tightness=items.LOOSE)
 
 miniSkirt = items.Skirt('miniskirt', 'A tight leather skirt that extends about halfway down the thigh.', 
-        price=5, risque=2)
+        price=5, risque=2, tightness=items.TIGHT)
 
 pencilSkirt = items.Skirt('pencil skirt', 'A narrow, black skirt that extends just past the knees. The skirt has a slit in back to minimize movement restriction.',
-        price=5, risque=1)
+        price=5, risque=1, tightness=items.TIGHT)
 
-alondrasSkirt = items.Skirt("Alondra's Skirt", "A plain wool skirt borrowed from Alondra", price=0, risque=0)
+alondrasSkirt = items.Skirt("Alondra's Skirt", "A plain wool skirt borrowed from Alondra", price=0, risque=0, tightness=items.LOOSE)
 
-cutoffShorts = items.Shorts('cut off shorts', "A pair of cut-off leather shorts that barely cover one's bottom.", price=0, risque=3)
+cutoffShorts = items.Shorts('cut off shorts', "A pair of cut-off leather shorts that barely cover one's bottom.", price=0, risque=4, tightness=items.TIGHT)
 
 #------------------------------------items.Underwear-------------------------------------
 modestUnderwear = items.Underwear("underwear", universal.format_line(['A plain, modest pair of underwear that', 'covers the entire bottom.']), price=3)
 
 silkPanties = items.Underwear('silk panties', universal.format_line(["A very well-made and comfortable pair of",
-    "black silk panties that leave the lower-half of one's bottom exposed."]), price=50, baring=True, risque=2)
+    "black silk panties that leave the lower-half of one's bottom exposed."]), price=50, baring=True, risque=5)
 
 underShorts = items.Underwear('undershorts', universal.format_line(['A pair of shorts that extend about a quarter',
     'of the way down the thigh. Such shorts are often worn underneath skirts to better protect', 
@@ -102,22 +102,22 @@ underShorts = items.Underwear('undershorts', universal.format_line(['A pair of s
     'or otherwise).']), price=3)
 
 thong = items.Thong('thong', ' '.join(['An undergarment that covers the genitalia, but leaves the',
-    'bottom bare (except for a narrow strip of cloth that runs between the cheeks).']), price=3)
+    'bottom bare (except for a narrow strip of cloth that runs between the cheeks).']), price=3, risque=5)
 
 carriesGString = items.Thong("Carrie's G-String", ' '.join(["A teeny tiny little pair of purple panties, consisting of a teeny tiny little string in the back. The front is barely more than that. Why",
-    "anyone would even bother wearing underwear this tiny is a mystery for the ages."]))
+    "anyone would even bother wearing underwear this tiny is a mystery for the ages."]), risque=6)
 
-lacyUnderwear = items.Underwear('lacy underwear', 'A pair of white, flowery, lacy underwear that leaves the lower-half of the bottom bare.', baring=True, price=3, risque=2)
+lacyUnderwear = items.Underwear('lacy underwear', 'A pair of white, flowery, lacy underwear that leaves the lower-half of the bottom bare.', baring=True, price=3, risque=4)
 
 boyShorts = items.Underwear('boyshorts', 'A pair of dark red boyshorts that completely cover the bottom.', price=3)
 
 stealthThong = items.Thong('loincloth of stealth', ' '.join(["A brown loincloth that leaves the majority of the wearer's cheeks exposed. It is lightly imbued with magic. The magic provides the wearer with improved fine motor",
     '''control over their legs, improving the wearer's ability to move stealthily. Provides a +1 bonus to Stealth.''']), price=50, 
-    enchantments=[items.Enchantment(1, universal.STEALTH, 1)])
+    enchantments=[items.Enchantment(1, universal.STEALTH, 1)], risque=5)
 
-chainmailBikini = items.Thong('chainmail bikini', "A two piece set of chainmail. The top piece covers a woman's breasts, but nothing else. The bottom is a chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's almost as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of one's body, the armor has a negligible impact on magic.", price=5000, attackDefense=16, risque=3, maxEnchantment=2) 
+chainmailBikini = items.Thong('chainmail bikini', "A two piece set of chainmail. The top piece covers a woman's breasts, but nothing else. The bottom is a chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's almost as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of one's body, the armor has a negligible impact on magic.", price=5000, attackDefense=16, risque=6, maxEnchantment=2) 
 
-chainmailThong = items.Thong('chainmail thong', "A chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's just as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of your body, the armor only has a much smaller penalty to magic than a chain (or plate) cuirass.", price=5000, attackDefense=16, risque=3, maxEnchantment=2)
+chainmailThong = items.Thong('chainmail thong', "A chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's just as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of your body, the armor only has a much smaller penalty to magic than a chain (or plate) cuirass.", price=5000, attackDefense=16, risque=6, maxEnchantment=2)
 
 
 #--------------------------Full Armor---------------------------------------
@@ -125,20 +125,20 @@ fullPlate = items.FullArmor('full plate', "A full suit of plate mail, that compl
         attackDefense=36, attackPenalty=4, castingPenalty=10, magicDefense=10)
 
 #------------------------Dresses---------------------------------------
-wornDress = items.Dress('worn dress', "An old, ragged wool dress.")
-blueDress = items.Dress('blue dress', "A soft blue cotton dress without any trim. This type of dress is worn by Younger Sisters of the Healer Persuasion in the Mother's Church.")
+wornDress = items.Dress('worn dress', "An old, ragged wool dress.", tightness=items.LOOSE)
+blueDress = items.Dress('blue dress', "A soft blue cotton dress without any trim. This type of dress is worn by Younger Sisters of the Healer Persuasion in the Mother's Church.", tightness=items.LOOSE)
 
 blackDress = items.Dress('black dress', "A long, slinky black dress that extends from the bottom of your neck to your ankles, but hugs your form in all the right places. A " +
-"slit runs up the side of the dress to allow for front-saddle riding.", price=20, risque=2)
+"slit runs up the side of the dress to allow for front-saddle riding.", price=20, risque=2, tightness=items.TIGHT)
 
-sunDress = items.Dress('sun dress', 'A low-cut cotton dress  that extends to about two-thirds down the thigh.', price=20, risque=3)
+sunDress = items.Dress('sun dress', 'A low-cut cotton dress  that extends to about two-thirds down the thigh.', price=20, risque=3, tightness=items.LOOSE)
 
 deidresDress = items.Dress("Deidre's dress", "A black dress with red trim made from high quality cotton. The dress is floor-length on Deidre, and is cut to balance professionalism with showing off Deidre's average bust, shapely hips and long legs. Though an elegant dress, it can interfere with combat and other highly physical activities.", 
-        attackDefense=4, attackPenalty=1)
+        attackDefense=4, attackPenalty=1, tightness=items.LOOSE)
 
-pinkDress = items.Dress('pink dress', 'A modest pink dress cut in a style similar to what young children of the middle and upper classes tend to wear.', price=20)
+pinkDress = items.Dress('pink dress', 'A modest pink dress cut in a style similar to what young children of the middle and upper classes tend to wear.', price=20, tightness=items.LOOSE)
 
-carriesDress = items.Dress("Carrie's dress", "A low-cut, tight, rich purple dress that extends to about halfway down Carrie's thighs. Comes with black cotton tights.", price=0)
+carriesDress = items.Dress("Carrie's dress", "A low-cut, tight, rich purple dress that extends to about halfway down Carrie's thighs. Comes with black cotton tights.", price=0, tightness=items.TIGHT)
 
 
 #------------------------Robes----------------------------------------
@@ -174,6 +174,9 @@ staff = items.Spear('staff', "A heavy wooden staff. Staff-wielders are specially
 #-----------------------------------Implements---------------------------------
 woodenSpoon = spanking.CombatImplement('wooden spoon', 'A large spoon made from wood. (Good for smacking naughty bottoms, too!)', severity=1)
 leatherBelt = spanking.CombatImplement('leather belt', 'A wide, worn leather belt. Popular for both holding up pants and welting naughty bottoms.', severity=3)
+
+def has_belt(person, beltMsg, noBeltMsg):
+    return universal.msg_selector(leatherBelt in person.inventory(), {True:beltMsg, False:noBeltMsg})
 
 #--------------------------------Generic Items--------------------------------
 whiteRibbon = items.Item('White Ribbon', 'A simple, yet elegant white silk ribbon.')

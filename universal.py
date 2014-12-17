@@ -4,6 +4,9 @@
     2. The set_command_interpreter and get_command_interpreter functions for modifying how the game interprets various keyboard commands.
     3. A quit() command that adds a quit event to the event queue. 
     4. Functions for getting and setting the list of commands to be displayed.
+
+WARNING: Due to fiddling with the name of Carlita (she was Carlita, then Lucilla, then Anastacia, then Carlita again), I've had to add some code to the state object to change Lucilla/Anastacia to Carlita, in order to ensure
+that keywords are registering properly for people loading saves from versions where Carly's name was Lucilla.
 """
 from __future__ import print_function 
 import sys, pygame, textrect, abc
@@ -1003,10 +1006,15 @@ class State(object):
         characters = [charData.strip() for charData in characters.split("Character:") if charData.strip()]
         for charData in characters:
            name, _, charData = charData.partition('\n')
+           if name.strip().lower() == 'lucilla' or name.strip().lower() == 'anastacia':
+               name = "Carlita"
            try:
-               person.Person.load(charData, self.characters[name.strip()])
+               person.Person.load(charData, self.characters[name.strip() + '.person'])
            except KeyError:
-               pass
+               try:
+                   person.Person.load(charData, self.characters[name.strip() + '.playerCharacter'])
+               except KeyError:
+                   pass
         rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
         for roomData in rooms:
            name, _, roomData = roomData.partition('\n')
@@ -1115,6 +1123,14 @@ class State(object):
             return
 
     def get_character(self, character):
+        """
+        Returns a particular character from the state. There are several ways of obtaining a character:
+        1. Pass a character object containing the same id (name.person if the character is an NPC, name.playerCharacter if the the character is a PC)
+        2. Pass name.person (if seeking an NPC) and name.playerCharacter (if seeking a PC).
+        3. Pass "name." Then, the function will first try to find a player character with that name, then an NPC. This is because we generally know a priori when we want to obtain a particular NPC, but we can't hard-code the
+        player's name, because we don't know the player's name yet.
+        """
+        print(self.characters)
         try:
             return self.characters[character.get_id()]
         except AttributeError:
@@ -1122,9 +1138,9 @@ class State(object):
                 return self.characters[character]
             except KeyError:
                 try:
-                    return self.characters[''.join([character, '.person'])]
-                except KeyError:
                     return self.characters[''.join([character, '.playerCharacter'])]
+                except KeyError:
+                    return self.characters[''.join([character, '.person'])]
 
 
 state = State()
@@ -1141,6 +1157,8 @@ def set_state(stateIn):
     global state
     state = stateIn
 
+def cond(condition, ifTrue, ifFalse):
+    return ifTrue if condition else ifFalse
 
 def msg_selector(attribute, msgMap):
     return msgMap[attribute]

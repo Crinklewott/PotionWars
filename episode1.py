@@ -158,7 +158,7 @@ textCommandsMusic.INTENSE = music.decrypt(universal.resource_path('POL-hurry-up-
 textCommandsMusic.SADISTIC_GAME = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'))
 textCommandsMusic.VENGADOR = music.decrypt(universal.resource_path('POL-antique-market-long.wav'))
 textCommandsMusic.OMINOUS = music.decrypt(universal.resource_path('POL-bridge-over-darkness-long.wav'))
-textCommandsMusic.LUCILLA = music.decrypt(universal.resource_path('POL-goodbye-long.wav'))
+textCommandsMusic.CARLITA = music.decrypt(universal.resource_path('POL-goodbye-long.wav'))
 textCommandsMusic.MARIA = music.decrypt(universal.resource_path('POL-moonlight-long.wav'))
 textCommandsMusic.ROLAND = music.decrypt(universal.resource_path('POL-risky-plan-long.wav'))
 textCommandsMusic.ELISE = music.decrypt(universal.resource_path('POL-land-of-peace-long.wav'))
@@ -691,10 +691,10 @@ ildri = p.Person("Ildri", p.FEMALE, None, None)
 offStage.add_character(adrian)
 offStage.add_character(ildri)
 
-class Lucilla(p.Person):
+class Carlita(p.Person):
     def __init__(self, defaultLitany, litany, description="A short, painfully thin young woman with a nicked dagger and battered breastplate.", 
             printedName=None, coins=20, specialization=universal.RESILIENCE):
-            super(Lucilla, self).__init__("Lucilla", p.FEMALE, defaultLitany, litany,
+            super(Carlita, self).__init__("Carlita", p.FEMALE, defaultLitany, litany,
                         description, printedName, coins, specialization, p.sixth_order, musculature='fit', height='short', bodyType='slim', hairLength='shoulder-length')
             self.spankingPositions = [positions.overTheKnee, positions.underarm, positions.reverseRiding]
             self.level = 0
@@ -744,8 +744,8 @@ class Lucilla(p.Person):
             ['Eventually, fueled by desperation,', Bname, 'manages to heave', himselfherself(B), 'up, throwing', Tname, 'off of', himher(T) + ".", Bname, 'scrambles to', 
             hisher(B), 'feet, one hand clutching at', hisher(B), 'throbbing bottom, the other snatching up', hisher(B), 'fallen weapon, just as', Tname, 'grabs', himher(B),
             'again.']]))
-        lucilla = universal.state.get_character('Lucilla.person')
-        if B == lucilla:
+        carlita = universal.state.get_character('Carlita.person')
+        if B == carlita:
             universal.state.player.add_keyword('spanked_young_insurgent')
         elif B == universal.state.player:
             universal.state.player.add_keyword('spanked_by_young_insurgent')
@@ -896,27 +896,27 @@ class Lucilla(p.Person):
         return self.spanking_missed_text(self, person, position)
 
     #def reset_stats(self, episode=None):
-    #    lucilla = Lucilla(self.litany, coins=self.coins, printedName=self.printedName)
-    #    lucilla.set_default_stats()
-    #    lucilla.equip(itemspotionwars.batteredDagger)
-    #    lucilla.equip(itemspotionwars.batteredLeatherBreastplate)
-    #    lucilla.equip(itemspotionwars.holeyTrousers)
-    #    return lucilla
+    #    carlita = Carlita(self.litany, coins=self.coins, printedName=self.printedName)
+    #    carlita.set_default_stats()
+    #    carlita.equip(itemspotionwars.batteredDagger)
+    #    carlita.equip(itemspotionwars.batteredLeatherBreastplate)
+    #    carlita.equip(itemspotionwars.holeyTrousers)
+    #    return carlita
 
     def set_default_stats(self):
         self.set_all_stats(strength=0, dexterity=1, alertness=0, willpower=3, talent=1, health=3, mana=10)
 
 
 
-lucilla_default = Node(193)
-lucilla_default.quip = "This is Lucilla's default quip."
-spankLucilla = Node(195)
-lucilla = Lucilla(lucilla_default.index, spankLucilla.index, coins=0, printedName='Young Vengador')
-offStage.add_character(lucilla)
-lucilla.level = 0
-lucilla.equip(itemspotionwars.batteredDagger)
-lucilla.equip(itemspotionwars.holeyTrousers)
-lucilla.equip(itemspotionwars.batteredLeatherBreastplate)
+carlita_default = Node(193)
+carlita_default.quip = "This is Carlita's default quip."
+spankCarlita = Node(195)
+carlita = Carlita(carlita_default.index, spankCarlita.index, coins=0, printedName='Young Vengador')
+offStage.add_character(carlita)
+carlita.level = 0
+carlita.equip(itemspotionwars.batteredDagger)
+carlita.equip(itemspotionwars.holeyTrousers)
+carlita.equip(itemspotionwars.batteredLeatherBreastplate)
 
 
 
@@ -2125,7 +2125,7 @@ elise_show_you_around.comment = '''"I wouldn't even know what to ask first. It a
 elise_show_you_around_yes = Node(77) 
 elise_show_you_around_no = Node(78) 
 elise_show_you_around_weird = Node(79)
-elise_show_you_around.children = [elise_show_you_around_yes, elise_show_you_around_weird]
+elise_show_you_around.children = [elise_show_you_around_yes, elise_show_you_around_weird, elise_show_you_around_no]
 
 def elise_show_you_around_quip_function():
     if "Maria_intimidated_you" in universal.state.player.keywords:
@@ -2155,8 +2155,12 @@ elise_show_you_around_no.quip_function = elise_show_you_around_no_quip_function
 elise_show_you_around_weird.comment = '''"Well, I don't know..."'''
 elise_feel_weird = Node(80) 
 elise_carrie_question = Node(81) 
+
+
 elise_show_you_around_weird.children = [elise_feel_weird, elise_carrie_question, 
-    elise_show_you_around_yes]
+    elise_show_you_around_yes, elise_show_you_around_no]
+
+
 def elise_show_you_around_weird_quip_function():
     elise_show_you_around_weird.quip = '''"Why not?" asks Elise. "I'm not scary, I promise, and I won't get you in trouble. Unlike some people I know ..."'''
     elise_show_you_around_yes.comment = '''"Well, alright. You've convinced me."'''
@@ -2166,10 +2170,12 @@ elise_show_you_around_weird.quip_function = elise_show_you_around_weird_quip_fun
 def elise_feel_weird_quip_function():
     elise_feel_weird.quip = '''"Because we don't know each other? Well, how are you going to get to know someone if you don't hang out with them for a while?" asks Elise.'''
     elise_show_you_around_yes.comment = '''"I...good point, actually. Alright, I'll go."'''
+
+
 elise_feel_weird.quip_function = elise_feel_weird_quip_function
 elise_feel_weird.comment = '''"I don't know, it'd feel weird."'''
 elise_feel_weird_shy = Node(144)
-elise_feel_weird.children = [elise_show_you_around_yes, elise_feel_weird_shy]
+elise_feel_weird.children = [elise_show_you_around_yes]
 
 elise_feel_weird_shy.comment = '''"I just need some time by myself, I guess. To get used to the city."'''
 elise_feel_weird_shy.quip = '''"That's understandable," says Elise. "Is there anything else I can help you with?"''' 
@@ -2591,7 +2597,7 @@ def elise_4p1p2p1_1_1_quip_function():
             ['''"Apparently not. Why in La Madre's name did she become a Matirian?"'''],
             ['''Elise glares at''', universal.state.player.name + ".", '''"What is that supposed to mean?"'''],
             ['''"It means what is Maria doing joining the group that caused the Potion Riots?" cries''', universal.state.player.name + '''.'''],
-            '''"That was an accident!" snaps Elise. "Do you really believe we'd have given you Potions if we'd known how addictive they were?"'''])
+            '''"That was an accident!" snaps Elise. "Do you really believe we'd have given you potions if we'd known how addictive they were?"'''])
 elise_4p1p2p1_1_1.quip_function = elise_4p1p2p1_1_1_quip_function
 
 elise_4p1p2p1p1_1_1.comment = '''"Yes."'''
@@ -2601,7 +2607,7 @@ elise_4p1p2p1p1_1_1.children = [elise_4p1p2p1p1p1_1_1, elise_4p1p2p1p1p2_1_1]
 def elise_4p1p2p1p1_1_1_quip_function():
     elise_4p1p2p1p1_1_1.quip = universal.format_text(['''Elise's eyes widen. "Do you really believe that?" Her voice is quiet, barely more than a whisper.''',
         ['''"Yes," says''', universal.state.player.name + ".", '''"Or are you seriously telling me that your precious Church didn't bother to test those wretched things before using them?"'''],
-        '''"Of course we tested them!" says Elise. "It takes three to five Potions to become addicted. Our test subjects only ever used one. Maybe two. Sure, it wasn't the most thorough testing, but... but it's not like it's my fault!"'''])
+        '''"Of course we tested them!" says Elise. "It takes three to five potions to become addicted. Our test subjects only ever used one. Maybe two. Sure, it wasn't the most thorough testing, but... but it's not like it's my fault!"'''])
 elise_4p1p2p1p1_1_1.quip_function = elise_4p1p2p1p1_1_1_quip_function
     
 elise_4p1p2p1p1p1_1_1.comment = '''"You're right, it's not your fault, I'm sorry. It's just, you can't deny the fact that the Matirian Church is responsible, at least in part, for the Riots."''' 
@@ -2610,7 +2616,7 @@ def elise_4p1p2p1p1p1_1_1_quip_function():
     elise_4p1p2p1p1p1_1_1.quip = universal.format_text([['''"I have never denied that," says Elise. She takes''', universal.state.player.name + "'s", '''hands in her own. "None of us have. Yes, we made a terrible mistake, but we're doing everything we can to rectify it."'''],
             ['''"How?" asks''', universal.state.player.name + "."],
             ['''"We've converted over half the hospital to a center dedicated to helping people break their Potion addictions," says''', 
-            '''Elise. "We are also working to improve Potions so that this tragedy never happens again. We go into the Slums, and try to help those suffering from addiction, either directly or indirectly. But it's so hard. So many Taironans hate us."'''],
+            '''Elise. "We are also working to improve potions so that this tragedy never happens again. We go into the Slums, and try to help those suffering from addiction, either directly or indirectly. But it's so hard. So many Taironans hate us."'''],
             ['''"I see," says''', universal.state.player.name + ".", '''"Well, again, I'm sorry."'''],
             '''Elise smiles lightly. "Don't worry about it. It's understandable."''',
             '''The two stand in silence for a minute.''',
@@ -2714,12 +2720,12 @@ def elise_4p1p2p2_1_1_quip_function():
         '''Matirian Church."'''],
     '''"Because of the Potion Riots?" asks Elise quietly.''',
     [universal.state.player.name, '''nods. "My Nana was one of them. She always hated and blamed the Matirian Church for their role in what happened. Always said that the Wasting Wail''',
-    '''is bad, but at least we know how to mitigate its damage. The Potions completely blindsided us, and made a terrible situation much much worse."'''],
+    '''is bad, but at least we know how to mitigate its damage. The potions completely blindsided us, and made a terrible situation much much worse."'''],
     '''"And what do you think?" asks Elise hesitantly.''',
     [universal.state.player.name, '''shrugs. "Maria never agreed with Nana. She always said that if everyone thought the same as Nana, then nothing'd ever get better. She claimed''', 
     '''that the Matirian Church had the right idea, even if things backfired."'''],
     '''"Way to dodge the question," says Elise, putting her hands on her hips.'''])
-    elise_4p1p2p1p1p2_1_1.comment = universal.format_line(['''"Quite frankly, it's not the fact that you got us addicted to Potions that pisses me off. It's that after you''', 
+    elise_4p1p2p1p1p2_1_1.comment = universal.format_line(['''"Quite frankly, it's not the fact that you got us addicted to potions that pisses me off. It's that after you''', 
     '''saw what happened, you abandoned us! Waltzed right in, said 'Oh look, let's help these poor people. Oh dear, look at the mess we made. Welp, I'm sure they''', 
     '''can clean it up, now let's get out of here. After all, who gives a fuck about them? They're just Taironans!'"''']) 
 elise_4p1p2p2_1_1.quip_function = elise_4p1p2p2_1_1_quip_function
@@ -2801,7 +2807,7 @@ elise_cathedral_history.quip_function = elise_cathedral_history_quip_function
 elise_interference_belief = Node(137)  
 elise_eldest_sister_fantasy = Node(138)
 
-elise_interference_belief.comment = '''"But wait a minute. If your Mother is willing to intervene on such a minor thing, why doesn't She intervene over major things, like wars or famine, or to warn us about the Potions?"'''
+elise_interference_belief.comment = '''"But wait a minute. If your Mother is willing to intervene on such a minor thing, why doesn't She intervene over major things, like wars or famine, or to warn us about the potions?"'''
 def elise_interference_belief_quip_function():
     elise_interference_belief.quip = '''"I know, right?" says Elise. "Personally, I figure that's just a tale, maybe spun by a later King who didn't like King Wesleyan. Anyway, I personally think that the reason She doesn't interfere is that She can't. None of the gods can. See, there was this religious scholar from the 5th Century, Sister Beatrice, who argued that what we call magic is actually some sort of shield. It's been woven around the Earth in order to keep the gods out. So, maybe the Mother can provide guidance through dreams and other indirect means, but She can't actually come to earth and paddle a naughty king."'''
     universal.state.player.add_keyword('elise_interference_beliefs')
@@ -3644,32 +3650,32 @@ def start_scene_1_episode_1(loading=False):
 
 #---------------------------------------Scene 2 Conversation Nodes-------------------------------------------
 
-spankLucillaStern = Node(196) 
-spankLucillaNice = Node(197) 
-spankLucillaCruel = Node(198)
-spankLucilla.children = [spankLucillaStern, spankLucillaNice, spankLucillaCruel]
-def spankLucilla_qf():
-    music.play_music(textCommandsMusic.LUCILLA)
-    lucilla = universal.state.get_character('Lucilla.person')
-    universal.say_title(lucilla.printedName)
-    spankLucilla.quip = universal.format_text([[universal.state.player.name + "'s", '''eyes widen as the young rebel collapses, her health clearly drained. It is blatantly obvious the young''',
+spankCarlitaStern = Node(196) 
+spankCarlitaNice = Node(197) 
+spankCarlitaCruel = Node(198)
+spankCarlita.children = [spankCarlitaStern, spankCarlitaNice, spankCarlitaCruel]
+def spankCarlita_qf():
+    music.play_music(textCommandsMusic.CARLITA)
+    carlita = universal.state.get_character('Carlita.person')
+    universal.say_title(carlita.printedName)
+    spankCarlita.quip = universal.format_text([[universal.state.player.name + "'s", '''eyes widen as the young rebel collapses, her health clearly drained. It is blatantly obvious the young''',
         '''woman has had little to no combat training.'''],
     [universal.state.player.name, '''cleans and puts away''', hisher(universal.state.player), '''weapon, then bends down over the Vengador, and yanks off the girl's mask. The girl yelps, and tries to grab it,''',
         '''but her attempt is slow and clumsy, and''', universal.state.player.name, '''easily keeps it out of reach. The girl looks to be about eighteen. Her cheeks are hollow, hinting''',
         '''at limited food of poor quality. She has a purple birthmark that arcs from just above her right eye, down across her cheek to her jawline.''', name(), 
-        '''snatches up the young woman's dagger and studies it more closely. The weapon is rusty, heavily nicked, and so dull as to be borderline unusuable.'''],
+        '''snatches up the young woman's dagger and studies it more closely. The weapon is rusty, heavily nicked, and so dull as to be borderline unusable.'''],
     ['''"Give that back," says the young woman in a weak voice. She grabs''', universal.state.player.name + "'s", '''legs, and tries to pull herself up.''',
-    universal.state.player.name, '''sets the dagger down on the nearby counter, then looks down at the woefully underprepared girl.''']])
+    universal.state.player.name, '''sets the dagger down on the nearby counter, then looks down at the woefully unprepared girl.''']])
     increment_spankings_given()
-spankLucilla.quip_function = spankLucilla_qf
+spankCarlita.quip_function = spankCarlita_qf
 
-spankLucillaStern.comment = universal.format_line(['''"You don't have any combat training to speak of, do you? What do you think you're doing attacking a guild full''',
+spankCarlitaStern.comment = universal.format_line(['''"You don't have any combat training to speak of, do you? What do you think you're doing attacking a guild full''',
     '''of professional warriors? You could have been hurt, or even killed."'''])
 sternOTK = Node(199)
 sternBentOver = Node(200)
-spankLucillaStern.children = [sternOTK, sternBentOver]
-def spankLucillaStern_qf():
-    spankLucillaStern.quip = universal.format_text([['''The girls frowns. "What?"'''],
+spankCarlitaStern.children = [sternOTK, sternBentOver]
+def spankCarlitaStern_qf():
+    spankCarlitaStern.quip = universal.format_text([['''The girls frowns. "What?"'''],
         [name(), '''picks the younger woman up by the arm and forces her to look at the chaos ripping its way through the room.''',
     '''Adventurers and Vengadors are unleashing spells, slamming each other through tables, and hacking at limbs, heads, and torsos. "What do you think would''',
     '''have happened if you'd gotten involved in one of those fights? Well?"'''],
@@ -3683,8 +3689,8 @@ def spankLucillaStern_qf():
     '''covered in burns, or-"'''],
     ['''"Oh shut up and leave me alone, you stupid''', p.pigcow() + '!"', '''snaps the girl, yanking at her arm.'''],
     [universal.state.player.name + "'s", '''eyes narrow, and the Vengador starts to look nervous.''']])
-    universal.state.player.add_keyword('stern_to_Lucilla')
-spankLucillaStern.quip_function = spankLucillaStern_qf
+    universal.state.player.add_keyword('stern_to_Carlita')
+spankCarlitaStern.quip_function = spankCarlitaStern_qf
 
 sternOTK.comment = "Turn her over your knee."
 sternOverTrousers = Node(201)
@@ -3832,22 +3838,22 @@ def sternSpoon_qf():
     return (universal.acknowledge, (dungeonmode.dungeon_mode,))
 sternSpoon.quip_function = sternSpoon_qf
 
-spankLucillaCruel.comment = '''"Well, that was pathetic. The Vengadores must be pretty desperate if they recruited you for slinger fodder."'''
-def spankLucillaCruel_qf():
-    spankLucillaCruel.quip = universal.format_text([['''The young woman shrinks away from''', name() + ",", '''her face crumpling. "You don't know what you're talking about.''',
-        '''I'm going to be a powerful warrior, and save our people from the Matirians and their Potions. Erizelda told me so."'''],
+spankCarlitaCruel.comment = '''"Well, that was pathetic. The Vengadores must be pretty desperate if they recruited you for slinger fodder."'''
+def spankCarlitaCruel_qf():
+    spankCarlitaCruel.quip = universal.format_text([['''The young woman shrinks away from''', name() + ",", '''her face crumpling. "You don't know what you're talking about.''',
+        '''I'm going to be a powerful warrior, and save our people from the Matirians and their potions. Erizelda told me so."'''],
     ['''"And you believed her?"''', name(), '''laughs mockingly. "Girl, this Erizelda was clearly just looking for expendable bodies to throw at us. If she really''',
     '''cared, she'd have given you something approximating training before throwing you into a full-fledged battle."'''],
     '''"Leave me alone," mutters the young woman, starting to drag herself away.''',
     ['''"Oh I don't think so," says''', name() + ",", '''grabbing the girl's hips. "Not until I've spanked the stupid out of you."''']])
-spankLucillaCruel.quip_function = spankLucillaCruel_qf
+spankCarlitaCruel.quip_function = spankCarlitaCruel_qf
 cruelOTK = Node(205)
 cruelSit = Node(206)
-spankLucillaCruel.children = [cruelOTK, cruelSit]
+spankCarlitaCruel.children = [cruelOTK, cruelSit]
 
 cruelOTK.comment = "Turn her over the knee."
 def cruelOTK_qf():
-    add_keyword('cruel_to_Lucilla')
+    add_keyword('cruel_to_Carlita')
     cruelOTK.quip = universal.format_text([[name(), '''looks around, and spies a heavy wooden chair. Grinning sadistically,''', heshe(), '''drags the young woman towards the''',
         '''chair.'''],
     ['''"No, let go of me!" screeches the woman, clawing at the wooden floor. "No, stop stop! Please!''' + 
@@ -3988,10 +3994,10 @@ def cruelSitSpoon_qf():
     return (universal.acknowledge, (dungeonmode.dungeon_mode,))
 cruelSitSpoon.quip_function = cruelSitSpoon_qf
 
-spankLucillaNice.comment = '''"Are you alright? I didn't permanently hurt you, did I?"'''   
-def spankLucillaNice_qf():
-    add_keyword('nice_to_Lucilla')
-    spankLucillaNice.quip = universal.format_text([[name(), '''tries to gently touch the girl's face, but the girl shrinks away.'''],
+spankCarlitaNice.comment = '''"Are you alright? I didn't permanently hurt you, did I?"'''   
+def spankCarlitaNice_qf():
+    add_keyword('nice_to_Carlita')
+    spankCarlitaNice.quip = universal.format_text([[name(), '''tries to gently touch the girl's face, but the girl shrinks away.'''],
 ['''"What are you doing?" says the young woman. "One minute you're trying to gut me, the next you're worried about me?"'''],
 [name(), '''raises''', hisher(), '''eyebrows. "To be fair, you attacked me, and I was just defending myself. If I'd realized how little training you've had, I'd have''',
     '''held back a little."'''],
@@ -4004,10 +4010,10 @@ def spankLucillaNice_qf():
 ['''"In the condition you're in? I think not," says''', name() + ".", '''"You'll just get yourself killed."'''],
 ['''"No, I'm fine, let go of me!" cries the young rebel, tugging more insistently on her trapped wrist. "I've gone easy on you because you're a Taironan, but I''',
     '''swear I'll gut you if you don't leave me alone."''']])
-spankLucillaNice.quip_function = spankLucillaNice_qf
+spankCarlitaNice.quip_function = spankCarlitaNice_qf
 niceBentOverCounter = Node(211) 
 niceStraight = Node(212)
-spankLucillaNice.children = [niceBentOverCounter, niceStraight]
+spankCarlitaNice.children = [niceBentOverCounter, niceStraight]
 
 niceBentOverCounter.comment = "Bend her over the counter."
 def niceBentOverCounter_qf():
@@ -4034,7 +4040,7 @@ def niceHand_qf():
             '''to remember."'''],
         ['''For a moment, the girl doesn't respond. Then, she looks over her shoulder at''', name() + ".", '''"Was she an addict too?"'''],
         ['''"Of course not!" snaps''', name() + ".", '''The girl tenses.''', '''"Actually, I don't know. Maybe. I mean, I didn't know what''',
-            '''Potions were when she left. How would I have known if she were addicted? Maybe she was hiding it. Maybe that's why she left."'''],
+            '''potions were when she left. How would I have known if she were addicted? Maybe she was hiding it. Maybe that's why she left."'''],
         ['''Adrian stumbles into the room. His shirt is in tatters, and smears of blood criss-cross his chest. His own blade is practially coated in the stuff. He''',
             '''looks at''', name() + ",", '''taking in''', hisher(), '''opponent's position over the counter. "What are you doing?" he roars. "Stop spanking our''',
             '''enemies, and start stopping them from raiding our armory!"'''],
@@ -4164,8 +4170,8 @@ niceStraightBare.quip_function = niceStraightBare_qf
 
 def start_scene_2_episode_1(loading=False):
     universal.state.set_init_scene(init_episode_1_scene_2)
-    lucilla = universal.state.get_character('Lucilla.person')
-    lucilla.litany = spankLucilla.index
+    carlita = universal.state.get_character('Carlita.person')
+    carlita.litany = spankCarlita.index
     if not loading:
         music.play_music(textCommandsMusic.INTENSE, 500)
     if not loading:
@@ -4177,7 +4183,7 @@ def start_scene_2_episode_1(loading=False):
         '''surprise fill the room, followed by the''',
             '''clatter of drawn weapons, knocked over tables, and flung chairs.'''],
         ['''For a moment, there is tense silence. Then, one of the masked warriors, a man, steps forward. "We are the Vengadores. We fight''',
-        '''to free Taironans from the scourge of the Avaricumites and their Potions."'''],
+        '''to free Taironans from the scourge of the Avaricumites and their potions."'''],
         '''"I'm sure your mother's very proud," says Adrian in a tight voice. "Now get out of my guild."''',
         '''The Vengador points at Adrian. Sparks dance across his fingertips. "We are here for your arms and armor. Surrender them peacefully, and no one will be hurt."''',
         '''"No," says Adrian.''',
@@ -4205,15 +4211,15 @@ def start_scene_2_episode_1(loading=False):
                 '''She clutches an old, heavily nicked dagger. Her hand is shaking, but her eyes are filled with grim''',
             '''determination.''', universal.state.player.name, '''readies''', hisher(universal.state.player), '''weapon.''']]), justification=0, music=[textCommandsMusic.CATALIN])
     adventurersGuild = universal.state.get_room("Adventurer's Guild")
-    lucilla = universal.state.get_character('Lucilla.person')
-    adventurersGuild.add_character(lucilla)
-    def after_fighting_lucilla(allies, enemies, won):
-        lucilla = universal.state.get_character('Lucilla.person')
-        lucilla.restores()
-        music.play_music(textCommandsMusic.LUCILLA)
-        conversation.converse_with(lucilla, townmode.town_mode)
+    carlita = universal.state.get_character('Carlita.person')
+    adventurersGuild.add_character(carlita)
+    def after_fighting_carlita(allies, enemies, won):
+        carlita = universal.state.get_character('Carlita.person')
+        carlita.restores()
+        music.play_music(textCommandsMusic.CARLITA)
+        conversation.converse_with(carlita, townmode.town_mode)
     if not loading:
-        universal.acknowledge(combat.fight, lucilla, after_fighting_lucilla, townmode.town_mode, False)
+        universal.acknowledge(combat.fight, carlita, after_fighting_carlita, townmode.town_mode, False)
 
 #----------------------------------------Episode 1 Dungeon-------------------------------------------------------
 def e1_0_4():   
@@ -5554,7 +5560,7 @@ def palLostWarriorDown_qf():
                 '''satisfaction. It usually leaves you feeling ill."'''],
         ['''Paloma grimaces. "Well, see, I don't know how to respark."'''],
         '''"What."''',
-        ['''Paloma smiles hesitantly. "And you were a pretty bad way, so I used one of my emergency Potions. That lingering satisfaction was''',
+        ['''Paloma smiles hesitantly. "And you were a pretty bad way, so I used one of my emergency potions. That lingering satisfaction was''',
                 '''the remnant of the supreme and rather addictive Potion-bliss."'''],
         ['''"What!"''', name(), '''jumps to her feet,''', hisher(), '''hands closing into fists.'''],
         ['''"Oh no, you are not going to be angry about this," says Paloma, shaking her finger at''', name() + ".", '''"You were dying and unconscious. The only way''',
@@ -8552,8 +8558,8 @@ def start_scene_3_episode_1(loading=False):
     peter = universal.state.get_character('Peter.person')
     peter.defaultLitany = peter_end_episode_1
     peter.litany = peter_end_episode_1.index
-    lucilla = universal.state.get_character('Lucilla.person')
-    exitLeft(lucilla, adventurersGuild)
+    carlita = universal.state.get_character('Carlita.person')
+    exitLeft(carlita, adventurersGuild)
     mariasHome = universal.state.get_room("Maria's Home")
     if not 'Elise_shows_you_around' in keywords():
         shrine = universal.state.get_room('Shrine')
@@ -8680,8 +8686,8 @@ def scene_3_guild():
         ['''The woman cries out. Her eyes meet''', names() + ".", '''"Help me, please!"'''],
         ['\p'],
         ['''1. Help her.'''],
-        ['''2. Ignore her.''']]), justification=0, music=[textCommandsMusic.LUCILLA])
-    universal.set_command_interpreter(help_Lucilla_interpreter)
+        ['''2. Ignore her.''']]), justification=0, music=[textCommandsMusic.CARLITA])
+    universal.set_command_interpreter(help_Carlita_interpreter)
     universal.set_commands(['(#) Select a number.'])
 
 def end_scene_3_episode_1():
@@ -8692,14 +8698,14 @@ def end_scene_3_episode_1():
 
 episode1Scene3 = episode.Scene('Episode 1 Scene 3', start_scene_3_episode_1, end_scene_3_episode_1)
 
-def help_Lucilla_interpreter(keyEvent):
-    music.play_music(textCommandsMusic.LUCILLA)
+def help_Carlita_interpreter(keyEvent):
+    music.play_music(textCommandsMusic.CARLITA)
     try:
         num = int(pygame.key.name(keyEvent.key))
     except ValueError:
         return
     if num == 1:
-        add_keyword('tried_to_help_Lucilla')
+        add_keyword('tried_to_help_Carlita')
         universal.say(universal.format_text([[name(), '''weaves''', hisher(), '''way towards the guards and their captive. "Hey, what are you doing? Leave her alone!''',
             '''Can't you see she's barely more than a child?"'''],
             ['''One of the guards, a woman, scowls at''', name() + ".", '''"Back off, before we take you in as a Vengador sympathizer."'''],
@@ -8716,16 +8722,16 @@ def help_Lucilla_interpreter(keyEvent):
             ['\p'],
             ['''1. Struggle.'''],
             ['''2. Give up.''']]), justification=0)
-        universal.set_command_interpreter(help_Lucilla_interpreter_continued)
+        universal.set_command_interpreter(help_Carlita_interpreter_continued)
         universal.set_commands(['(#) Select a number.'])
     elif num == 2:
-        add_keyword('failed_to_help_Lucilla')
+        add_keyword('failed_to_help_Carlita')
         universal.say(universal.format_text([[name(), '''turns away from the struggling Taironan. When the Taironan sees''', name(), '''turn away,''',
             '''something inside her breaks. She sags in the grips of the guards, and lets them carry her out, while she cries quietly.''']]), 
             justification=0)
         questioning()
 
-def help_Lucilla_interpreter_continued(keyEvent):
+def help_Carlita_interpreter_continued(keyEvent):
     try:
         num = int(pygame.key.name(keyEvent.key))
     except ValueError:
@@ -9891,7 +9897,7 @@ def ep1_elise_samantha_angry_qf():
         '''face in the older woman's shoulder.'''],
     [name(), '''isn't sure how long the Elder Sister holds''', himher() + ",", '''but the woman never complains, or slows her rocking, or stops her''',
         '''light humming. Eventually,''', name(), '''pulls away on''', hisher(), '''own.'''],
-    ['''Sister Samantha brushes a bit of hair from''', names(), '''face. "I want you to understand, child, we had no idea how addictive the Potions''',
+    ['''Sister Samantha brushes a bit of hair from''', names(), '''face. "I want you to understand, child, we had no idea how addictive the potions''',
         '''were. What we did was a terrible mistake, and if we had known what would happen, we never would have done it. But we can't undo it. All''',
         '''we can do is try to make things better. Try to help the people whose lives we inadvertently broke."'''],
     [name(), '''glances at Elise, who is giving''', himher(), '''a sympathetic look.''']]) 
@@ -9960,14 +9966,14 @@ ep1_elise_samantha_moving_on.quip_function = ep1_elise_samantha_moving_on_qf
 ep1_elise_samantha_moving_on.children = [elise_dont_worry_yes, elise_dont_worry_no]
             
 
-ep1_elise_samantha_question.comment = '''"I just want to know, did you know how addictive the Potions were before you used them? What happens to''',
+ep1_elise_samantha_question.comment = '''"I just want to know, did you know how addictive the potions were before you used them? What happens to''',
 '''addicts who try to stop?"'''
 
 def ep1_elise_samantha_question_qf():
     ep1_elise_samantha_question.quip = universal.format_text([['''Sister Samantha looks''', name(), '''in the eye. "If you ever believe anything a Matirian''',
-        '''Brother or Sister tells you, please believe this: we had no idea. We never even considered the possibility that the Potions would be''',
+        '''Brother or Sister tells you, please believe this: we had no idea. We never even considered the possibility that the potions would be''',
         '''addictive, let alone this addictive. I can't begin to tell you wracked with guilt we've all been, or how hard we've been working to both''',
-        '''make things better, and make Potions save to use." Sister Samantha kisses''', name(), '''on the forehead. "We just want to help people.''',
+        '''make things better, and make potions save to use." Sister Samantha kisses''', name(), '''on the forehead. "We just want to help people.''',
         '''That's all. Let the kings, queens and nobles have their petty politics. We just want to help people."'''],
         [name(), '''nods. "That's good to know."'''],
         ['''"Great, so if all the drama's over, what do you say you join me and Carrie for a night on the town?" says Elise gleefully.'''],
@@ -10078,7 +10084,7 @@ def ep1_elise_shake_qf():
 ep1_elise_shake.quip_function = ep1_elise_shake_qf
 
 def ep1_elise_carrie_banter(node):
-    node.music = [textCommandsMusic.LUCILLA, textCommandsMusic.CARRIE]
+    node.music = [textCommandsMusic.CARLITA, textCommandsMusic.CARRIE]
     return universal.format_text([
         ['''Elise narrows her eyes. "Carrie, Dan's out of town right now."'''],
         ['''"Exactly," says Carrie, her mischievous grin lighting up her face.'''],
@@ -10674,7 +10680,7 @@ ep1_elise_prank.children = [ep1_elise_prank_sorry, ep1_elise_prank_angry]
 ep1_elise_no_prank = Node(282)
 ep1_elise_no_prank.comment = '''Just wait for Carrie and Elise to return.'''
 def ep1_elise_no_prank_qf():
-    ep1_elise_no_prank.music = [textCommandsMusic.LUCILLA, textCommandsMusic.CARRIE]
+    ep1_elise_no_prank.music = [textCommandsMusic.CARLITA, textCommandsMusic.CARRIE]
     ep1_elise_no_prank.quip = universal.format_text([[name(), '''shrugs in the water. Probably shouldn't. It's not like it was that big of a deal anyway; she'd''',
         '''spent her whole life bathing in the public bath houses of Chengue, so nudity in front of other people (men and women!) is hardly new. Besides,''',
         '''Carrie's dress looks like it's made of cotton. Well-made or not, dumping her in the warm tub runs a serious risk of clothing shrinkage.'''],
@@ -11472,7 +11478,7 @@ ep1_tavern_outgoing_dont_rub.quip_function = ep1_tavern_outgoing_dont_rub_qf
         
 
 def ep1_elise_sing(node):
-    songs = [textCommandsMusic.ELISE, textCommandsMusic.OMINOUS, textCommandsMusic.ROLAND, textCommandsMusic.LUCILLA, textCommandsMusic.GUARDS, textCommandsMusic.CATALIN, textCommandsMusic.LUCILLA, textCommandsMusic.ROLAND, textCommandsMusic.CATALIN, textCommandsMusic.ROLAND, textCommandsMusic.LUCILLA, textCommandsMusic.ELISE, textCommandsMusic.CARRIE, textCommandsMusic.ROLAND, textCommandsMusic.CARRIE]  
+    songs = [textCommandsMusic.ELISE, textCommandsMusic.OMINOUS, textCommandsMusic.ROLAND, textCommandsMusic.CARLITA, textCommandsMusic.GUARDS, textCommandsMusic.CATALIN, textCommandsMusic.CARLITA, textCommandsMusic.ROLAND, textCommandsMusic.CATALIN, textCommandsMusic.ROLAND, textCommandsMusic.CARLITA, textCommandsMusic.ELISE, textCommandsMusic.CARRIE, textCommandsMusic.ROLAND, textCommandsMusic.CARRIE]  
     """
     try:
         node.music.extend(songs)
@@ -11658,11 +11664,11 @@ ep1_roland_how_meet_elise.quip_function = ep1_roland_how_meet_elise_qf
 ep1_taironan_no = Node(301)
 ep1_taironan_no.comment = '''"Over my dead body."'''
 def ep1_taironan_no_qf():
-    add_keyword('Lucillas_fate')
+    add_keyword('Carlitas_fate')
     ep1_taironan_no.quip = universal.format_text([['"' + name() + '-"', '''begins Elise.'''],
         ['''"Don't tell me to calm down," snaps''', name() + ".", HeShe(), '''points an accusatory finger at Roland. "I will sooner be put in the ground than work with''',
             '''a mind-raping, heartless piece of-"''']])
-    if 'tried_to_help_Lucilla' in keywords():
+    if 'tried_to_help_Carlita' in keywords():
         ep1_taironan_no.quip = universal.format_text([ep1_taironan_no.quip, ['''"This is about that girl, isn't it?" cuts in Roland. "The one with the birthmark."'''],
             ['''"What?" asks Elise.'''],
             ['''Roland scowls, and leans back in his chair. He gestures at''', name() + ".", '''"This idiot tried to interfere with our efforts to take in one of the''',
@@ -12220,7 +12226,7 @@ def ep1_maria_live_question():
     quip = universal.format_text([['''Anyway, I was wondering if you'd like to live with me. It's not much, but it's a home. In fact, we could even upgrade a little, and still only''',
         '''cost us each fifty coins a month."'''],
         ['''"But what about rent?" asks''', name() + ".", '''"I don't have fifty coins, and I have no idea when I'll be getting some."'''],
-        ['''"Well, a friend of mine runs a clinic for helping Taironans break their addiction to Potions. It's not as fancy as the one run by the Matirian Church, but it's run by Taironans, for''',
+        ['''"Well, a friend of mine runs a clinic for helping Taironans break their addiction to potions. It's not as fancy as the one run by the Matirian Church, but it's run by Taironans, for''',
             '''Taironans, so it's an option for people who don't trust Matirians. How about, in exchange for the first month's rent, you spend one morning volunteering there with me."''']])
     if 'boarding_with_Adrian' in keywords(): 
         quip = universal.format_text([quip, ['''"Sorry," says''', name() + ".", '''"But I'm already boarding with Adrian."'''],
@@ -12961,13 +12967,7 @@ def start_scene_1_episode_2(loading=False):
         name(), 'has been spanked', str(universal.state.player.numSpankings), 'times.\n\n',
         name(), 'has administered', str(universal.state.player.numSpankingsGiven), 'spankings.'], music=[music.THEME])
     universal.set_commands('Press Enter to save')
-    universal.set_command_interpreter(end_content_interpreter)
-
-def end_content_interpreter(keyEvent):    
-    townmode.go(offStage)
-    clear_screen()
-    if keyEvent.key == K_RETURN:
-        townmode.save(end_content_mode)
+    universal.set_command_interpreter(textCommandsMusic.end_content_interpreter)
 
 def end_content_mode():
     universal.say(universal.format_line(['''That's the end of the content, I hope you've enjoyed playing this far. If you have any comments, criticisms, questions, bug reports, or anything else, either comment on my blog''',
@@ -12979,13 +12979,13 @@ def end_content_mode():
 def end_scene_1_episode_2():
     pass
 
-episode2Scene1 = episode.Scene('Episode 2 Scene 1', start_scene_1_episode_2, end_scene_1_episode_2)
-episode2 = episode.Episode(2, 'Back Alleys', scenes=[episode2Scene1])
+#episode2Scene1 = episode.Scene('Episode 2 Scene 1', start_scene_1_episode_2, end_scene_1_episode_2)
+#episode2 = episode.Episode(2, 'Back Alleys', scenes=[episode2Scene1])
 #--------------------------------------------End Episode 2: Back Alleys-------------------------------------------------------------------------
-episode1.nextEpisode = episode2
-print("next episode:")
-print(episode1.nextEpisode)
-print(episode1)
+#episode1.nextEpisode = episode2
+#print("next episode:")
+#print(episode1.nextEpisode)
+#print(episode1)
 
 def init_episode_1_scene_1():
     global episode1

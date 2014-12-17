@@ -9,6 +9,12 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
+
+WARNING: Due to fiddling with the name of Carlita (she was Carlita, then Lucilla, then Carlita again), I've had to add some code to the state object to exchange Lucilla for Carlita in the player's keywords, in order to ensure
+that keywords are registering properly for people loading saves from versions where Carly's name was Lucilla. This code should be removed for any future games. Otherwise, if you name a character Lucilla, you end up with one
+named Carlita!
+
+The same is true about the Person class' load feature.
 """
 import universal
 from universal import *
@@ -1091,6 +1097,9 @@ class Person(universal.RPGObject):
     def lower_clothing_type(self):
         return self.lower_clothing().armorType if self.lower_clothing().name != items.emptyLowerArmor.name else self.lower_clothing().armorType
 
+    def wearing_pants_or_shorts(self):
+        return self.lower_clothing().armorType == items.Pants.armorType or self.lower_clothing().armorType == items.Shorts.armorType
+
     def clad_bottom(self, useName=True, pajama=False):
         if pajama:
             return hisher(self) + " " + self.pajama_bottom().name + "-clad bottom"
@@ -1395,6 +1404,7 @@ class Person(universal.RPGObject):
                 order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, hairStyle, marks = \
                 data.split("Person Data:")
         person.name = name.strip()
+        if name == 'Lucilla' or name == 'Anastacia': name = 'Carlita'
         person.description = description.strip()
         person.gender = int(gender.strip())
         person.specialization = int(specialization.strip())
@@ -1680,7 +1690,7 @@ class PlayerCharacter(Person):
         Person.load(personData, player)
         loadData = playerCharacterData
         _, keywords, currentEpisode, currentSceneIndex, numSpankings, numSpankingsGiven, fakeName, nickname, reputation = loadData.split("Player Data:")
-        player.keywords = [keyword.strip() for keyword in keywords.split('\n') if keyword.strip()]
+        player.keywords = [keyword.strip().replace('Lucilla', 'Carlita').replace('Anastacia', 'Carlita') for keyword in keywords.split('\n') if keyword.strip()]
         print("loading keywords")
         print(player.keywords)
         player.currentEpisode = currentEpisode.strip()
@@ -2869,7 +2879,10 @@ def BrotherSister(person=None):
 def underwearpanties(person=None):
     if person is None:
         person = universal.state.player
-    return choose_string(person, 'underwear', 'panties')
+    if isinstance(person.underwear().armorType, items.Thong):
+        return "thong"
+    else:
+        return choose_string(person, 'underwear', 'panties')
 
 def UnderwearPanties(person=None):
     if person is None:
@@ -3002,6 +3015,8 @@ def bodytype_based_msg(person, slimMsg, avgMsg, voluptuousMsg, heavysetMsg):
 def musculature_based_msg(person, softMsg, fitMsg, muscularMsg):
     return universal.msg_selector(person.musculature, {MUSCULATURE[0]:softMsg, MUSCULATURE[1]:fitMsg, MUSCULATURE[2]:muscularMsg})
 
+def is_female_msg(person, femaleMsg, maleMsg):
+    return universal.msg_selector(person.is_female(), {True:femaleMsg, False:maleMsg})
 
 def hair_length_based_msg(person, shortMsg, shoulderMsg, backMsg, buttMsg):
     return universal.msg_selector(person.hairLength, {HAIR_LENGTH[0]:shortMsg, HAIR_LENGTH[1]:shoulderMsg, HAIR_LENGTH[2]:backMsg, HAIR_LENGTH[3]:buttMsg})

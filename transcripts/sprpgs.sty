@@ -292,14 +292,23 @@
 \newcommand{\pjpisloweredlifted}[2]{\textcolor{blue}{#2}}
 
 %Using this command will treat a skirt like a dress (lifting as opposed to lowering). The last argument is for if you're not wearing outer clothing.
-\newcommand{\wearingtrousers}[3]{\textcolor{blue}{#1}}
-\newcommand{\wearingunderwear}[2]{\textcolor{blue}{#1}}
+%Note that in the context of this command, shorts are treated as trousers.
+\newcommand{\pwearingtrousers}[3]{\textcolor{blue}{#1}}
+\newcommand{\pwearingunderwear}[2]{\textcolor{blue}{#1}}
 %Using this command will treat a skirt like trousers (lowering as opposed to lifting). The last argument is for if you're not wearing outer clothing.
-\newcommand{\isdress}[3]{\textcolor{blue}{#2}}
+\newcommand{\pwearingdress}[3]{\textcolor{blue}{#2}}
 %First argument is text if the player has a belt, second argument is player does not.
-\newcommand{\hasbelt}[2]{\textcolor{blue}{#1}}
+\newcommand{\phasbelt}[2]{\textcolor{blue}{#1}}
 %The first choice if your panties are baring, the second if not. The third if you're not wearing panties.
-\newcommand{\isbaring}[3]{\textcolor{blue}{#1}}
+\newcommand{\pisbaring}[3]{\textcolor{blue}{#1}}
+%The first choice if your lower clothing is tight, second choice if your lower clothing is loose.
+\newcommand{\pistight}[2]{\textcolor{blue}{#1}}
+%The first choice if your lower clothing is loose, the second if your lower clothing is tight.
+\newcommand{\pisloose}[2]{\textcolor{blue}{#2}}
+
+%The first choice if the player is wearing a shirt, the second choice if not.
+\newcommand{\pwearingshirt}[2]{\textcolor{blue}{#1}}
+
 
 \newcommand{\ppjtype}[3]{\textcolor{blue}{#2}}
 \newcommand{\pjtype}[4]{\textcolor{blue}{#2}}

@@ -223,10 +223,10 @@ class Room(universal.RPGObject):
             self.add_character(character)
 
     def add_character(self, character):
-        if self.characters is None:
-            self.characters = {character.get_id():character}
-        else:
-            self.characters[character.get_id()] = character
+        if self.characters is None: self.characters = {}
+        self.characters[character.get_id()] = character
+        if character.get_id() == universal.state.player.get_id():
+            universal.state.location = self
 
     def get_description(self):
         return self.description
@@ -247,24 +247,24 @@ class Room(universal.RPGObject):
 
     def has(self, character):
         return character.get_id() in self.characters.keys()
-    def add_adjacent(self, adjacent):
+    def add_adjacent(self, adjacentIn):
         if self.adjacent is None:
-            if type(adjacent) is list:
-                self.adjacent = adjacent
-                for adj in adjacent:
+            if type(adjacentIn) is list:
+                self.adjacent = adjacentIn
+                for adj in adjacentIn:
                     adj.add_adjacent(self)
             else:
-                self.adjacent = [adjacent]
-                adjacent.add_adjacent(self)
-        elif adjacent in self.adjacent:
+                self.adjacent = [adjacentIn]
+                adjacentIn.add_adjacent(self)
+        elif adjacentIn in self.adjacent:
             return
-        elif type(adjacent) is list:
-            self.adjacent.extend(adjacent)
-            for adj in adjacent:
+        elif type(adjacentIn) is list:
+            self.adjacent.extend(adjacentIn)
+            for adj in adjacentIn:
                 adj.add_adjacent(self)
         else:
-            self.adjacent.append(adjacent)
-            adjacent.add_adjacent(self)
+            self.adjacent.append(adjacentIn)
+            adjacentIn.add_adjacent(self)
 
     def remove_adjacent(self, adjacent):
         global startRooms

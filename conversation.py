@@ -23,6 +23,20 @@ previousConversation = None
 previousMode = None
 maxIndex = 0
 SPLIT = -50
+
+def continue_to_node(origin, destination):
+    """
+    Given two nodes, invokes the quip function of destination, and sets the children and playerComments of destination to be used by origin.
+    Note that this is transitive.
+
+    Furthermore, because this is being used by auto-generated code, it doesn't deal with any of the weirdly complicated cases that have afflicted say_node over the course of
+    episode 1.
+    """
+    destination.quip_function()
+    origin.children = destination.children
+    origin.playerComments = destination.playerComments
+
+
 def converse_with(person, previousModeIn=None):
     print('invoking converse_with')
     global conversationPartner
@@ -43,6 +57,9 @@ def converse_with(person, previousModeIn=None):
 
 
 def say_node(litanyIndex):
+    """
+    litanyIndex is a terrible argument name and should be changed. It can be either the natural number that is the node's index, or it can be the node itself.
+    """
     #This may appear redundant, but it's possible for a node's quip_function to immediately invoke a different node, without going through the player. In that case,
     #we need to make sure that the current litany of the conversationPartner is properly updated.
     global previousMode
@@ -68,7 +85,10 @@ def say_node(litanyIndex):
     function = None
     args = None
     executeImmediately = False
+    print('quip function:')
+    print(litany.quip_function)
     if litany.quip_function is not None:
+        print('invoking quip function')
         result = litany.quip_function()
         if result is not None:
             function = result[0]
@@ -91,11 +111,17 @@ def say_node(litanyIndex):
             universal.say(litany.quip, justification=0, music=litany.music)
         else:
             universal.say(litany.quip, justification=0)
+    print(litany.name)
+    print('*****children*****:')
+    print(litany.children)
+    print(litany.playerComments)
     if function == SPLIT:
+        print('splitting')
         litany.quip_function = result[1]
         acknowledge(say_node, (litany))
         return
     elif litany.playerComments:
+        print('selecting commands')
         universal.say('\p')
         universal.say('\n'.join([str(i) + '. ' + comment for (i, comment) in zip([i for i in range(1, len(litany.playerComments)+1)], litany.playerComments)]), justification=0)
         set_commands(['(#)Select a number.'])
@@ -134,6 +160,7 @@ def set_litany(person, litany):
 
 def converse_with_interpreter(keyEvent):
     global conversationPartner
+    print('invoking converse_with_interpreter')
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
         if DEBUG:
@@ -163,16 +190,21 @@ def converse_with_interpreter(keyEvent):
 
 
 allNodes = {}
+allNodeNames = {}
 class Node(universal.RPGObject):
-    def __init__(self, index):
+    def __init__(self, index, name=''):
         self.quip = ''
-        self.children = None
-        self.playerComments = None
+        self.children = []
+        self.playerComments = []
         self.quip_function = None
         self.comment = None
         self.index = index
         self.music = None
-        #assert not index in allNodes, "Index %d is already taken." % index 
+        self.name = name
+        if name:
+            assert not name in allNodeNames, "Name '''%s''' is already taken." % name
+            allNodeNames[name] = self
+        assert not index in allNodes, "Index %d is already taken." % index 
         allNodes[index] = self
 
     def add_child(self, child):
