@@ -32,13 +32,13 @@ def rest_mode(bedroomIn=None, sayDescription=True):
     town_mode(sayDescription)
     if bedroomIn:
         universal.set_commands(['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', '(R)oom Actions'] if bedroomIn.boarding else 
-                ['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', '(C)lean'])
+                ['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit'])
     universal.set_command_interpreter(bedroom_interpreter)
 
 
 #TODO: Fix problems with (S)tore Item
 def bedroom_actions():
-    universal.set_commands(['(C)lean', '(R)est', '(B)raid Hair', '<==Back']) #'(S)tore Item', '<==Back'])
+    universal.set_commands(['(R)est', '(B)raid Hair', '<==Back']) #'(S)tore Item', '<==Back'])
     universal.set_command_interpreter(bedroom_actions_interpreter)
 
 def set_bedroom(bedroomIn):
@@ -60,7 +60,8 @@ def bedroom_actions_interpreter(keyEvent):
     elif keyEvent.key == K_b:
         style_character()
     elif keyEvent.key == K_c:
-        bedroom.clean()
+        #bedroom.clean()
+        pass
     elif keyEvent.key == K_s and False:
         bedroom.store_items()
     elif keyEvent.key == K_BACKSPACE:
@@ -410,6 +411,8 @@ class Bedroom(Room):
         self.dirtiness += 1
         
     def clean_check(self):
+        pass
+    """
         if self.dayNum % 7 == 0:
             if self.tooDirty():
                 self.numTransgressions += 1
@@ -425,6 +428,7 @@ class Bedroom(Room):
                     ['''"Of course," says''', punisher.name + " with a smile."]]), justification=0)
         if self.dayNum % 7 == 0:
             self.weeklyTasks()
+    """
 
     def tooDirty(self):
         return self.dirtiness > 3

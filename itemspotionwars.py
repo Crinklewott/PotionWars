@@ -24,23 +24,25 @@ import person
 
 
 #-----------------------------------Upper Armor----------------------------
-leatherCuirass = items.UpperArmor('leather cuirass', 'A leather breastplate. Often worn by foot soldiers, when they can afford any armor at all. The leather is very hard ' +  
-'and rigid, and makes it slightly harder to breathe. However, because it does not contain much (if any) iron, it does not interfere with spellcasting.', attackDefense=4,
-attackPenalty=1, price=70)
+lamellarArmor = items.UpperArmor('laminar armor', 'A sequence of thick rawhide leather plates tied together with thick strings. ' +  
+'It is fairly flexible, but much thicker and heavier than clothing leather. However, because it does not contain much (if any) iron, it does not interfere with spellcasting.', attackDefense=6,
+attackPenalty=1, price=400)
 
-chainCuirass = items.UpperArmor('chain cuirass', 'A rigid shirt of interlocking links of metal. Though it provides better protection than the leather cuirass, the fact that the majority ' +
-'of the weight rests on your shoulders makes a chain cuirass much harder to move around in. Furthermore, the iron in the cuirass interferes with magical currents, making it harder to cast spells. On the plus side, the iron protects against spells that involve pure magic.', price=120, attackDefense=8, attackPenalty=4, castingPenalty=4, 
+chainCuirass = items.UpperArmor('chain cuirass', 'A rigid shirt of interlocking links of metal. Though it provides better protection than the laminar armor, the fact that the majority ' +
+'of the weight rests on your shoulders makes a chain cuirass much harder to move around in. Furthermore, the iron in the cuirass interferes with magical currents, making it harder to cast spells. On the plus side, the iron protects against spells that involve pure magic.', price=800, attackDefense=10, attackPenalty=4, castingPenalty=4, 
 magicDefense=4)
 
-plateCuirass = items.UpperArmor('plate cuirass', 'A breastplate made of steel and chain. It provides much better protection than the chain cuirass, and surprisingly enough is ' + 
-'even easier to move around in. This is because the weight of the armor is more evenly distributed about your body than a chain cuirass. However, it contains much more iron than the chain cuirass, making it significantly more difficult to cast spells in. Though on the flip side, it provides better protection from spells that rely on raw magical power.', price=220, attackDefense=18, attackPenalty=3, castingPenalty=7, 
+plateArmor = items.UpperArmor('plate armor', 'A breastplate made of steel and chain. It provides much better protection than the chain cuirass, and surprisingly enough is ' + 
+'even easier to move around in. This is because the weight of the armor is more evenly distributed about your body than a chain cuirass. However, it contains much more iron than the chain cuirass, making it significantly more difficult to cast spells in. Though on the flip side, it provides better protection from spells that rely on raw magical power.', price=2000, attackDefense=25, attackPenalty=3, castingPenalty=7, 
     magicDefense=7)
 
-batteredLeatherBreastplate = items.UpperArmor('battered leather breastplate', 'An old, dented leather breastplate.', attackDefense=2, attackPenalty=1, price=40)
+batteredLeatherBreastplate = items.UpperArmor('battered leather breastplate', 'An old, dented leather breastplate.', attackDefense=4, attackPenalty=1, price=150)
 
 #------------------------------------Shirts---------------------------------------
 
 tunic = items.Shirt('tunic', 'A fairly common, loose fitting tunic. A bit worn, but otherwise in good shape.', price=5) 
+
+raggedTunic = items.Shirt('ragged tunic', 'A ragged, borderline useless tunic.', price=1, risque=1)
 
 """
 qualityTunic = items.Shirt('quality tunic', 'A heavy tunic made from high quality leathers. The tunic also has the smallest hint of magic about it, providing ' +
@@ -149,7 +151,14 @@ robe = items.Robe("robe", "A warm, bulky outfit often worn by men who wish they 
 familyDagger = items.Knife('family dagger', "Engraved on the hilt is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate hilt design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=100)
 
 qualityDagger = items.Knife('quality dagger', "A war dagger. Very useful in close quarters.", genericBonus=1, 
-        price=100) 
+        price=75) 
+
+knuckleDagger = items.Knife('knuckle dagger', ' '.join(["A dagger whose handle doubles as brass knuckles (made from wood). The knuckles allow the user to either stab an enemy, or punch them with the knuckles. However, the restrictive knuckles",
+    "limit the number of combat grips. The knuckle dagger does more damage than the family dagger, and gets a higher bonus to damage when grappling, but is harder to grapple with."]), minDamage=2, maxDamage=6, grappleAttempt=-1, grappleAttemptDefense=-3, 
+    grappleBonus=2, price=50)
+
+stiletto = items.Knife('stiletto', ' '.join(["When not affixed to a woman's heel, these long, thin daggers have been making life pleasant for assassins for decades. Long, thin, feather light, and very fast, a stiletto is a grappler's dream. However, they aren't",
+    "particular heavy, and aren't as useful against heavily armored enemies."]), minDamage=3, maxDamage=4, grappleAttempt=2, grappleAttemptDefense=2, grappleBonus=2, price=50)
 
 mariasDagger = items.Knife("Maria's dagger", "A beautifully made war dagger with a wicked edge. The weapon seems to gleem faintly, a sign of the magic that was imbued into the steel at its time of forging.", genericBonus=4)
 
@@ -159,17 +168,37 @@ dagger = items.Knife('dagger', "A large, wicked looking dagger.", price=10)
 
 
 #-------------------------Swords------------------------------------------
-longsword = items.Sword('longsword', "A standard, one-handed, double-edged sword. Often used as a sign of status by knights and other warriors of noble birth.", price=100,
+oneHandedSword = items.Sword('one handed sword', "A standard, double-edged sword. Often used as a sign of status by knights and other warriors of noble birth.", price=100,
         genericBonus=1)
-familySword = items.Sword('family sword', "Engraved on the hilt is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate hilt design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=100)
+familySword = items.Sword('family sword', "Engraved on the hilt is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate hilt design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=150)
+
+handAndAHalfSword = items.Sword('hand and a half sword', ' '.join(["Heavier than a one handed sword. Its increased length (compared to the family sword) means that it is more dangerous at arms length. Its heavy pommel and large crossguard also make it dangerous",
+    "in a grapple (though not as dangerous as any dagger)."]), 
+    minDamage=1, maxDamage=6, grappleAttempt=0, grappleAttemptDefense=1, grappleBonus=0, armslengthBonus=1, price=125)
+
+#sideSword = items.Sword('side sword', ' '.join(["Halfway between a heavier longsword, and a thinner, faster rapier, the side sword is fast and light, making the weapon quite reliable. It is still heavy enough to possess some oomph to it, however, making it", 
+#    "more useful against an armored opponent than a rapier. Its great speed makes it useful for holding off dagger-wielding brigands, while its accuracy makes it very reliable."]), minDamage=2, maxDamage=5, grappleAttempt=1, grappleAttemptDefense=1, price=75)
+
+rapier  = items.Sword('rapier', ' '.join(["Long, thin and blinding fast, rapiers are considered a civilian's weapon, and are most effective against enemies in little to no armor. Their nimbleness and length provides quite a bit of defense against grapplers, and their", 
+    "precision makes them very reliable. However, they are specialized for thrusting against unarmored opponents, so they are less than effective against armor. Their length also makes it awkward to initiate a grapple with."]), minDamage=3, maxDamage=4, 
+    grappleAttempt=-1, grappleAttemptDefense=2, price=125)
+
 
 #-----------------------------Spears-------------------------------------
-warspear = items.Spear('warspear', "A heavy wooden pole with a thick metal spike on one end, and an iron band on the other for balance. Very dangerous when you can keep your opponents at arms length.", price=100, genericBonus=1)
+warspear = items.Spear('warspear', "A heavy wooden pole with a thick metal spike on one end, and an iron band on the other for balance. Very dangerous when you can keep your opponents at arms length.", price=50, genericBonus=1)
+
 familySpear = items.Spear('family spear', "Engraved on the spear shaft is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=100)
 
-staff = items.Spear('staff', "A heavy wooden staff. Staff-wielders are specially trained in defensive combat. Therefore, although not as dangerous as a spear, a staff provides better protection against being grappled, and has a smaller penalty while grappled. A favorite weapon of spellslingers.", price=30, minDamage=1, maxDamage=3, 
+staff = items.Spear('staff', "A heavy wooden staff. Staff-wielders are specially trained in defensive combat. Therefore, although not as dangerous as a spear, a staff provides better protection against being grappled, and has a smaller penalty while grappled. A favorite weapon of spellslingers.", price=30, minDamage=1, maxDamage=4, 
         grappleAttempt=-3, grappleAttemptDefense=4, grappleBonus=-1,
         armslengthBonus=1)
+
+wingedSpear = items.Spear('winged spear', ' '.join(["A spear just shy of six feet (1.82 meters). There is a heavy metal cap on the other that serves both as counter-balance and for bludgeoning."]),
+        minDamage=2, maxDamage=6, grappleAttemptDefense=2, grappleAttempt=-1, price=75)
+
+#halberd = items.Spear('halberd', ' '.join(["An eight foot (2.43) polearm with a heavy axehead on one end, and a spike on the other. Although a little bit slower and more unwieldy than a spear or a short spear, a halberd can do very serious damage to an enemy, even",
+#    "one who is heavily armored. Their length and heaviness however make them borderline useless in a grapple. On the other hand, their length, and heavy axehead makes it quite difficult to grapple someone with a halberd."]), minDamage=1, maxDamage=10, 
+#    grappleAttemptDefense=3, grappleAttempt=-4, grappleBonus=-3, price=150)
 
 #-----------------------------------Implements---------------------------------
 woodenSpoon = spanking.CombatImplement('wooden spoon', 'A large spoon made from wood. (Good for smacking naughty bottoms, too!)', severity=1)

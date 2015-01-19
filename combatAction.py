@@ -397,13 +397,14 @@ class SpankAction(CombatAction):
     numTargets = 1
     primaryStat = universal.DEXTERITY
     actionType = 'spank'
-    def __init__(self, attacker, defenders, secondaryStat=None):
+    def __init__(self, attacker, defenders, secondaryStat=None, severity=0):
         super(SpankAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
         self.targetType = ENEMY
         self.grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
         self.effectClass = ALL
         self.statusInflicted = statusEffects.HUMILIATED 
         self.actionType = 'spank'
+        self.severity = severity
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
@@ -426,7 +427,7 @@ class SpankAction(CombatAction):
             successFlag =  0
             if failure <= success:
                 if not defender.is_inflicted_with(statusEffects.Humiliated.name):
-                    duration = max(MIN_DURATION, DURATION_MULTIPLIER * (max(0, rand(attacker.resilience()) - rand(defender.resilience()))))
+                    duration = max(MIN_DURATION, DURATION_MULTIPLIER * (max(0, rand(attacker.resilience()) - rand(defender.resilience())))) + self.severity
                     defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration))
                 resultString = spanking.spanking_string(attacker, defender)
                 successFlag = 1
@@ -435,7 +436,7 @@ class SpankAction(CombatAction):
                 failure = rand(spankABonus * 2 if spankABonus >= 0 else spankABonus * .5)
                 if failure <= success:
                     if not attacker.is_inflicted_with(statusEffects.Humiliated.name):
-                        duration = max(MIN_DURATION, DURATION_MULTIPLIER * (max(0, rand(defender.resilience()) - rand(attacker.resilience()))))
+                        duration = max(MIN_DURATION, DURATION_MULTIPLIER * (max(0, rand(defender.resilience()) - rand(attacker.resilience())))) + self.severity
                         attacker.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration))
                     resultString = spanking.reversed_spanking(attacker, defender)
                     successFlag = -1

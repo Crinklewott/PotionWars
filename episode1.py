@@ -605,7 +605,7 @@ guildBedroom.add_adjacent(adventurersGuild)
 #---------------------------------------South Guard-------------------------------
 too_busy = Node(2)
 guard_greeting_1_1 = Node(1)
-southGuard = p.Person('Guard', p.MALE, too_busy.index, guard_greeting_1_1.index, 'The guard is leaning on his spear, watching the refugees. If any attempt to enter the city, he pulls them aside, and asks them a few questions. Then he points to the northeast, and lets them through.')
+southGuard = p.Person('Guard', p.MALE, too_busy.index, guard_greeting_1_1.index, 'The guard is watching the refugees, one hand on the handle of the mace hanging at his belt. If any attempt to enter the city, he pulls them aside, and asks them a few questions. Then he points to the northeast, and lets them through.')
 offStage.add_character(southGuard)
 
 southGuard.litany = too_busy.index
@@ -916,7 +916,7 @@ offStage.add_character(carlita)
 carlita.level = 0
 carlita.equip(itemspotionwars.batteredDagger)
 carlita.equip(itemspotionwars.holeyTrousers)
-carlita.equip(itemspotionwars.batteredLeatherBreastplate)
+carlita.equip(itemspotionwars.raggedTunic)
 
 
 
@@ -1163,7 +1163,7 @@ necia.learn_spell(spells_PotionWars.distortMagic)
 
 necia.equip(itemspotionwars.qualityDagger)
 necia.equip(itemspotionwars.trousers)
-necia.equip(itemspotionwars.leatherCuirass)
+necia.equip(itemspotionwars.tunic)
 #necia.equip(itemspotionwars.lacyUnderwear)
 
 #-----------------------------------------------Scenes--------------------------------------------------------------------------------------------------------
@@ -1204,11 +1204,10 @@ def charmed_text():
     ['''"You and I are the greatest of friends." The voice reverberates throughout the universe. It makes''', universal.state.player.name + "'s", '''skin tingle, and''', hisher(universal.state.player), '''hair stand on end. "You trust me with everything."''']])
 
 def guard_greeting_1_1_quip():
-    guard_greeting_1_1.quip = universal.format_text([[universal.format_line(['''One of the  guard's''' + universal.format_line([''' eyes ''' + '''flick over''', universal.state.player.name + ", and he blocks", himher(universal.state.player), '''with his spear.''']) if universal.state.player.is_female() else universal.format_line(['''The southern guard blocks''', universal.state.player.name + "'s", '''path with his spear.''']), '''"I'd like to ask you a few questions."'''])],
+    guard_greeting_1_1.quip = universal.format_text([[universal.format_line(['''One of the  guard's''' + universal.format_line([''' eyes ''' + '''flick over''', universal.state.player.name + ", and he blocks", himher(universal.state.player), '''with his spear.''']) if universal.state.player.is_female() else universal.format_line(['''The southern guard blocks''', universal.state.player.name + "'s", '''path with an arm.''']), '''"I'd like to ask you a few questions."'''])],
     universal.format_line([universal.state.player.name + ''' hesitates for a moment, then steps onto the side of the road.''', HeShe(universal.state.player), '''makes sure to keep''', hisher(universal.state.player), '''distance.''']), 
     ['''The guard is a broad-shouldered, heavily muscled brute of a man. At over six feet tall, he towers over just about everyone else on the road. The large, steel-tipped''',
-    '''spear he carries only adds to his intimidating appearance. Perhaps scariest of all is his armor: a thick leather breastplate. A city as prosperous as Avaricum would only''',
-    '''outfit a guard in leather if that guard were also a spellslinger.'''],
+    '''spear he carries only adds to his intimidating appearance.'''],
     '''"What's your name?" asks the guard.'''])
     guard_greeting_1_1.playerComments = ['''"I don't have to answer that."''', '"' + universal.state.player.name + '"', '"' + universal.state.player.fakeName + '"']
     music.play_music(textCommandsMusic.GUARDS)
@@ -2821,7 +2820,7 @@ elise_interference_belief.children = [elise_support_question, elise_uncomfortabl
 elise_support_question.comment = '''"Interesting. What does Sister Beatrice use to support this?"'''
 elise_support_question.quip = universal.format_text(['''Elise's eyes light up, and her lips break out into a broad smile. "Well, one of her most compelling arguments are the old stories. See, if you go back and look at any of the stories that involve the Mother or any other god interfering directly, they don't make any mention of magic. None whatsoever. Now, historians have been able to find a lower bound on how old these stories are. They think the youngest showed up, at the latest, about two thousand years ago. Meanwhile, the first serious text on magical study that we've found is thought to be about fifteen hundred years old.''',
     '''"Then there's the Pandemonium Cycle. More than a third of our most famous stories about the gods take place during this saga. It details a struggle between the gods for supremacy with humans caught in the middle. But the worst part is there's no ending. No final battle, no horrifying realization by the gods about what they'd done. The stories just stop.''',
-    '''"So, Sister Beatrice argues that magic was developed as a shield by the Mother, Father, and other goodly gods, since humanity couldn't develop while caught in the maelstorm of divine conflict. Of course, others argue that magic developed spontaneously as a result of all the miracles being performed, and still others think that magic is in fact the body of the Mother, who sacrificed herself to drive the other gods off the earth. But you get the basic idea."'''])
+    '''"So, Sister Beatrice argues that magic was developed as a shield by the Mother, Father, and other goodly gods, since humanity couldn't develop while caught in the maelstrom of divine conflict. Of course, others argue that magic developed spontaneously as a result of all the miracles being performed, and still others think that magic is in fact the body of the Mother, who sacrificed herself to drive the other gods off the earth. But you get the basic idea."'''])
 elise_distant_gods = Node(143) 
 elise_Taironan_take = Node(157)
 elise_support_question.children = [elise_distant_gods, elise_Taironan_take]
@@ -2887,7 +2886,7 @@ def peter_greeting_quip_function():
 peter_greeting.quip_function = peter_greeting_quip_function
 
 peter = p.Person('Peter', p.MALE, peter_greeting.index, peter_greeting.index)
-peter.inventory = [itemspotionwars.qualityDagger, itemspotionwars.warspear, itemspotionwars.longsword, itemspotionwars.staff, itemspotionwars.leatherCuirass, itemspotionwars.chainCuirass,
+peter.inventory = [itemspotionwars.qualityDagger, itemspotionwars.warspear, itemspotionwars.handAndAHalfSword, itemspotionwars.staff, itemspotionwars.lamellarArmor, itemspotionwars.chainCuirass,
     itemspotionwars.chainmailBikini]
 offStage.add_character(peter)
 peter_initial_greeting = Node(159)
@@ -4205,7 +4204,7 @@ def start_scene_2_episode_1(loading=False):
             '''her through the wall. He raises his sword, jumps off the counter, and charges''',
             '''after her, screaming a battle cry.'''],
             ['''A short, painfully thin, masked woman runs towards''', universal.state.player.name + ".", 
-                '''She is wearing a battered leather breastplate''',
+                '''She is wearing a ragged tunic''',
                 '''that is two sizes too big for her, and a pair of trousers. The trousers have a massive''',
                 '''hole in the left knee, and half the right pant leg missing completely.''',
                 '''She clutches an old, heavily nicked dagger. Her hand is shaking, but her eyes are filled with grim''',
@@ -4630,7 +4629,7 @@ def ep1_paloma_otk_hand(keyEvent):
         elif num == 2:
             universal.say(format_text([[name(), '''takes Paloma's right ankle, and slips the healer's cotton slipper off her foot.''', HeShe(),  '''experimentally slaps''',
             '''the slipper''',
-                '''against''', hisher(), '''hand. A thin strip of leather runs along the bottom of the slipper, adding a bit of sting to the slip, and making a very''',
+                '''against''', hisher(), '''hand. A thin strip of leather runs along the bottom of the slipper, adding a bit of sting to it, and making a very''',
                 '''intimidating slapping sound.'''],
                 ['''"Oh no," moans Paloma, squirming on''', names(), '''lap. "Please, not my slipper. That's so embarassing."'''],
                 ['''"Well, a little humiliation can go a lont way," says''', name() + ",", '''slapping the leather against Paloma's bottom. The hard leather creates''',
@@ -6856,7 +6855,7 @@ def e0_3_5():
     if not 'met_Mai' in keywords():
         universal.say_title('Stealth Maze')
         universal.say(universal.format_text([[name(), '''tenses as''', heshe(), '''enters the room. Unlike the others, this is not a large, wide open space. Rather, it is a dark,''',
-            '''claustrophobic maze. The whole maze has the feeling of a forest where the archaeopteryx have suddenly gone quiet.'''],
+            '''claustrophobic maze. The whole maze has the feeling of a forest where the birds have suddenly gone quiet.'''],
             [name(), '''glances over''', hisher(), '''shoulder at the door, and considers the wisdom of continuing into these dark corridors.\n\n''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
     else:
@@ -8279,16 +8278,14 @@ def necia_chastised_warslinger_interpreter(keyEvent):
         return
     if num == 1:
         add_keyword('spanked_necia')
-        universal.say(universal.format_text([[name(), '''snatches up the woman's fallen dagger, and slips it into a side pocket of''', hisher(), '''pack. Then,''', heshe(), '''removes the woman's breastplate''',
-            '''revealing a ratty, heavily patched shirt. The woman doesn't bother to resist (not that she has the strength to, anyway). She just watches''', name(), '''with a smoldering, hate-filled glare.'''],
-            ['''"Oh yes, I'm so sorry," says''', name(), '''sarcastically, as''', heshe(), ''' tosses the leather breastplate to the side. "So terribly sorry that I didn't just stand around with my thumb up my''',
+        universal.say(universal.format_text([[name(), '''snatches up the woman's fallen dagger, and slips it into a side pocket of''', hisher(), '''pack. 'The woman doesn't bother to resist (not that she has the strength to, anyway). She just watches''', name(), '''with a smoldering, hate-filled glare.'''],
+            ['''"Oh yes, I'm so sorry," says''', name(), '''sarcastically. "So terribly sorry that I didn't just stand around with my thumb up my''',
             '''ass while you and your''',
                 '''buddies attacked innocent people and took their stuff."'''],
             ['''The woman just continues to glare.'''],
             [name(), '''presses''', hisher(), '''lips together.''', HeShe(), '''grabs the woman by the arm and yanks her to her feet. "Let's see how stoic you are after I've tanned your ass."\n\n''']]),
             justification=0)
         universal.state.player.take_item(itemspotionwars.qualityDagger)
-        universal.state.player.take_item(itemspotionwars.leatherCuirass)
         necia_chastised_spank_interpreter()
     elif num == 2:
         universal.say(universal.format_text([['''The woman gives''', name(), '''a mystified look, and''', name(), '''explicitly points at the woman's face.'''],
@@ -8580,7 +8577,7 @@ def scene_3_guild():
         '''ceiling.'''], 
         ['''"Oh, you're awake," says''', '''a nearby Taironan woman in the white and red robe of a White Rose. "My name's Paloma, the resident healer. How you feeling?"'''
             if not 'met_Paloma' in keywords() else universal.format_line(['''Paloma, stepping up next to''', names(), '''cot. "How you feeling?"'''])],
-        ['''"Like I just got run over by a herd of wild Apatosaurii," says''', name() + ".", HeShe(), '''groans, and rubs''', hisher(), '''aching head.'''],
+        ['''"Like I just got run over by a herd of wild horses," says''', name() + ".", HeShe(), '''groans, and rubs''', hisher(), '''aching head.'''],
         ['''"That's because that idiot slung Pain Spikes at you," says Paloma angrily. She lightly touches''', names(), '''face, wrists, and neck.''',
         '''"Pain spikes slung at a''', boygirl(), '''of your power! He could have killed you. Wretched, reckless, selfish bastard son of an iguanadon."'''],
         universal.format_text([[name(), '''flushes guiltily, touched by Paloma's concern. "Look, about what happened-"'''],
@@ -8591,9 +8588,7 @@ def scene_3_guild():
             universal.format_text([[name(), '''nods gingerly. "Can say that again."''']]),
             [name(), '''slowly sits up, and glances about the infirmary.'''],
             ['''The cots are filled with men and women, mostly Taironans in ragged clothing.''',
-                '''There are quite a few adventurers as well. Moving about the cots are grim-faced men and women. Some of them wear leather''',
-                '''breastplates, while others are clad in chain shirts. Some carry spears, and others rest their hands lightly on large war daggers''',
-                '''at their hips. All of them have a badge in the shape of a stylized blue archaeopteryx with wings uplifted on their left shoulders. The city''',
+                '''There are quite a few adventurers as well. Moving about the cots are grim-faced men and women. Some are carrying spears, while others carry maces. All have large daggers at their hips. They all wear a badge in the shape of a stylized blue raptor with wings uplifted on their left shoulders. The city''',
                 '''guard.'''],
             [name(), '''hears a cry coming from outside. It sounds familiar.''', name(), '''swings''', hisher(), '''feet around, and stands up.'''],
             ['''"You shouldn't really be-"'''],
@@ -8646,9 +8641,8 @@ def scene_3_guild():
                 ['''"Relax," says Mai. "I don't care about human politics. But you owe me a favor."\n\n''']]), justification=0)
         universal.say(universal.format_text([['\m' + name(), '''returns to the first floor of the Guild, and finds the place to be in chaos. The floor, walls, and ceiling are''',
             '''charred, frozen, and marked by various other signs of magic. Men and women in finely made armor rush about, some gathering''',
-            '''samples of the magic damage, others interrogating adventurers and Vengadores. Some wear''',
-            '''leather breastplates, while others chain shirts. Some carry spears, and others lightly rest palms on the hilts of long war daggers.''',
-            '''All of them wear a patch on their upper-left shoulder in the shape of a stylized blue archaeopteryx with wings lifted towards the sky. City''',
+            '''samples of the magic damage, others interrogating adventurers and Vengadores. Most are carrying spears, and have a wicked dagger at their belt. Those who are gathering samples of magic damage have either maces and daggers, or small swords and daggers hanging off their hips.''',
+            '''They all wear a badge in the shape of a stylized blue raptor with wings uplifted on their left shoulders.  City''',
             '''guards.'''],
             ['''Two of the guards spot''', name() + ".", '''They let out cries of warning and lower their spears.'''],
             ['''"Don't move," barks one of the guards, while half a dozen others rush up. "You're under arrest."'''],
@@ -8672,7 +8666,7 @@ def scene_3_guild():
         ['''A bearded man stands in the center of the room. He is of average height, and build. He has short-cut brown hair and a''',
         '''thick brown beard. He stands straight and tall, one hand resting on the pommel of his sword (the cross-guard of which is reminiscent of a''',
         '''soaring eagle), and the other behind his back. He is wearing an elaborate set of plate armor. On the chest of his armor is a''',
-        '''large, stylized blue archaeopteryx with wings outstretched towards the sky. He also wears a full blue cape. His brown eyes sweep over the room, taking''',
+        '''large, stylized blue raptor with wings outstretched towards the sky. He also wears a full blue cape. His brown eyes sweep over the room, taking''',
         '''in everything. They briefly meet''', names(), '''before sweeping past''', himher(), '''and focusing on the hole in the wall.''',
          '''A tall, blond''',
         '''woman in a slender black''',
@@ -8769,7 +8763,7 @@ def questioning():
         ['''After a few minutes, the tall blonde woman approaches. "Hello, my name is Deidre."\n\n''']]), justification=0, music=[textCommandsMusic.GUARDS])
     if 'charmed_by_Deidre' in keywords():
         universal.say(universal.format_text([['''"Yes, we've met," says''', name(), '''flatly.'''],
-            ['''"Indeed, which is why Sir Roland sent me to talk to you," says Deidre, gesturing towards the man with the blue archaeopteryx emblazoned on his''',
+            ['''"Indeed, which is why Sir Roland sent me to talk to you," says Deidre, gesturing towards the man with the blue raptor emblazoned on his''',
                 '''chest. "So, let's get started."'''],
             ['''The puppeteer's eyes seem to flash.'''],
             ['''"No, wait-"''']]), justification=0)
@@ -11092,7 +11086,7 @@ def ep1_tavern_shy_female(node):
             ['''"I am not a scantily clad, drunken bimbo!" she'd retort angrily. Then, she'd glance down at her half-bare, heaving chest. "Well, I'm''',
                 '''not a drunken bimbo, at least."'''],
             ['''"And what's that in your hand?" he'd ask angrily.'''],
-            ['''"What, this?" she'd say, looking down at her mostly empty tankard. "Just some foul-tasting alcoholic stegosaurpiss."'''],
+            ['''"What, this?" she'd say, looking down at her mostly empty tankard. "Just some foul-tasting alcoholic horsepiss."'''],
             ['''"If it's so bad tasting, why'd you drink it?" he'd ask.'''],
             ['''"Because..." At this point, she'd hesitate. An innocent smile would spread across her face. "Because, um, I like it?"'''],
             ['''"Even though it's foul-tasting," he'd say in a flat voice.'''],
@@ -11302,7 +11296,7 @@ ep1_elise_pretty_much = Node(294)
 ep1_elise_evasion = Node(295)
 ep1_elise_shift_away_slightly.children = [ep1_elise_bullshit, ep1_elise_evasion, ep1_elise_pretty_much]
 
-ep1_elise_bullshit.comment = '''"Stegasaur shit."''' 
+ep1_elise_bullshit.comment = '''"Bull shit."''' 
 def ep1_elise_bullshit_qf():
     add_keyword('flirting_with_Carrie')
     ep1_elise_bullshit.quip = universal.format_text([['''Carrie's eyes widen at the intensity of''', names(), '''tone.'''],

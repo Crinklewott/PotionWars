@@ -75,6 +75,7 @@
 \newcommand{\musculature}[4]{\textcolor{blue}{#2}}
 \newcommand{\pmusculature}[3]{\textcolor{blue}{#2}}
 \newcommand{\hairlength}[5]{\textcolor{blue}{#2}}
+%Short, 
 \newcommand{\phairlength}[4]{\textcolor{blue}{#2}}
 \newcommand{\isfemale}[2]{\ifx\gender\female #1 \else #2 \fi}
 
@@ -140,7 +141,7 @@
 \newenvironment{node}[4]
 {
     \refstepcounter{Nodecount}
-    \section*{\arabic{Nodecount}}
+    \section*{\#\#\#\arabic{Nodecount}}
     %\addtocounter{Nodecount}{1}
     \textit{Location: #2}
 
@@ -155,7 +156,7 @@
 \newenvironment{childnode}[2]
 {
     \refstepcounter{Nodecount}
-    \section*{\arabic{Nodecount}}
+    \section*{\#\#\#\arabic{Nodecount}}
     \textit{Author: #2}
     %\addtocounter{Nodecount}{1}
     \label{#1}
@@ -193,7 +194,7 @@
 \comment}
 {\endcomment}
 
-\newenvironment{closeScene}{}{}
+\newenvironment{closeScene}{\comment}{\endcomment}
 
 %Arguments:
 %1 : room's name
@@ -291,12 +292,12 @@
 \newcommand{\pjpisliftedlowered}[2]{\textcolor{blue}{#2}}
 \newcommand{\pjpisloweredlifted}[2]{\textcolor{blue}{#2}}
 
-%Using this command will treat a skirt like a dress (lifting as opposed to lowering). The last argument is for if you're not wearing outer clothing.
-%Note that in the context of this command, shorts are treated as trousers.
-\newcommand{\pwearingtrousers}[3]{\textcolor{blue}{#1}}
-\newcommand{\pwearingunderwear}[2]{\textcolor{blue}{#1}}
 %Using this command will treat a skirt like trousers (lowering as opposed to lifting). The last argument is for if you're not wearing outer clothing.
-\newcommand{\pwearingdress}[3]{\textcolor{blue}{#2}}
+%Note that in the context of this command, shorts are treated as trousers.
+\newcommand{\ptrousers}[3]{\textcolor{blue}{#1}}
+\newcommand{\pwearingunderwear}[2]{\textcolor{blue}{#1}}
+%Using this command will treat a skirt like a dress (lifting as opposed to lowering). The last argument is for if you're not wearing outer clothing.
+\newcommand{\pdress}[3]{\textcolor{blue}{#2}}
 %First argument is text if the player has a belt, second argument is player does not.
 \newcommand{\phasbelt}[2]{\textcolor{blue}{#1}}
 %The first choice if your panties are baring, the second if not. The third if you're not wearing panties.
@@ -309,7 +310,7 @@
 %The first choice if the player is wearing a shirt, the second choice if not.
 \newcommand{\pwearingshirt}[2]{\textcolor{blue}{#1}}
 
-
+%Arguments: Dropseat text, pants text, dresslike text 
 \newcommand{\ppjtype}[3]{\textcolor{blue}{#2}}
 \newcommand{\pjtype}[4]{\textcolor{blue}{#2}}
 

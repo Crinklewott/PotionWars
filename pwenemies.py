@@ -106,7 +106,7 @@ class VengadorWarrior(Enemy):
         self.description = universal.format_line(['''A tall, broad-shouldered''', person.manwoman(self) + ".", person.HeShe(self), '''is wielding a''', self.weapon().name, 
         '''and is wearing''', self.shirt().name, '''and''', self.lower_clothing().name + "."])
         self.set_all_stats(strength=3, dexterity=1, willpower=0, talent=0, health=12, mana=0, alertness=1)
-        self.spankingPositions = [positions.headBetweenLegs, positions.frontalOverLap]
+        self.spankingPositions = [positions.headBetweenLegs, positions.frontalOverLap, positions.reverseRiding]
 
     def default_stats(self):
         self.set_all_stats(strength=3, dexterity=0, willpower=0, talent=0, health=10, mana=0, alertness=1)
@@ -249,7 +249,7 @@ class VengadorSpellslinger(Enemy):
         self.learn_spell(spells_PotionWars.firebolt)
         self.learn_spell(spells_PotionWars.icebolt)
         self.learn_spell(spells_PotionWars.magicbolt)
-        self.spankingPositions = [positions.overOneKnee, positions.waistBetweenLegs]
+        self.spankingPositions = [positions.overOneKnee, positions.waistBetweenLegs, positions.diaper]
 
     def default_stats(self):
         self.set_all_stats(strength=0, dexterity=1, willpower=1, talent=3, health=7, mana=10, alertness=1)
@@ -412,7 +412,7 @@ class VengadorScout(Enemy):
         self.description = format_line(['''A short, thin Taironan''', person.manwoman(self), '''dresssed in a''', self.shirt().name + "," ''' and''', 
             self.lower_clothing().name + ".", person.HeShe(self), '''carries a''', self.weapon().name + "."])
         self.set_all_stats(strength=1, dexterity=3, willpower=2, talent=1, health=10, mana=7, alertness=2)
-        self.spankingPositions = [positions.diaper, positions.underarm]
+        self.spankingPositions = [positions.overTheKnee, positions.underarm, positions.standing]
         self.learn_spell(spells_PotionWars.heal)
         self.learn_spell(spells_PotionWars.weaken)
         self.learn_spell(spells_PotionWars.fortify)

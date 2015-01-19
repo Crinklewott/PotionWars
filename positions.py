@@ -20,7 +20,6 @@ import universal
 from universal import *
 
 MAX_RATING = 3
-
 def rating(num):
     return ''.join([str(num), '/', str(MAX_RATING)])
 

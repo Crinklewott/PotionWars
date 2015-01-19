@@ -75,6 +75,22 @@ def increment_spankings_taken():
     universal.state.player.bumStatus += 1
     universal.state.player.numSpankings += 1
 
+def bummarks(character, mark):
+    try:
+        character.bumStatus += 1
+        character.numSpankings += 1
+    except AttributeError:
+        pass
+    character.welts.append(mark)
+
+def stage_directions(stageDirections):
+    """
+    For now, this function just returns the empty string (allowing us to treat stage directions as comments. Invisible to the game. However, this could potentially be used for in-game commentary. Assuming people were interested,
+    and we came up with a good way of distinguishing it from the game proper.
+    """
+    return ""
+    
+
 def increment_spankings_given():
     universal.state.player.numSpankingsGiven += 1
 
@@ -117,6 +133,12 @@ def wearing_skirt_or_dress_or_pants():
 def no_shirt():
     return universal.state.player.shirt().name == items.emptyUpperArmor.name
 
+def end_content_interpreter(keyEvent):    
+    townmode.go(offStage)
+    clear_screen()
+    if keyEvent.key == K_RETURN:
+        townmode.save(end_content_mode)
+
 
 #-------------------------------------Music Files----------------------------------------
 CHURCH = music.decrypt(universal.resource_path('POL-apparition-long.wav'), 'church')
@@ -127,7 +149,7 @@ INTENSE = music.decrypt(universal.resource_path('POL-hurry-up-long.wav'), 'inten
 SADISTIC_GAME = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'), 'sadistic_game')
 VENGADOR = music.decrypt(universal.resource_path('POL-antique-market-long.wav'), 'vengador')
 OMINOUS = music.decrypt(universal.resource_path('POL-bridge-over-darkness-long.wav'), 'ominous')
-LUCILLA = music.decrypt(universal.resource_path('POL-goodbye-long.wav'), 'carlita')
+CARLITA = music.decrypt(universal.resource_path('POL-goodbye-long.wav'), 'carlita')
 MARIA = music.decrypt(universal.resource_path('POL-moonlight-long.wav'), 'maria')
 ROLAND = music.decrypt(universal.resource_path('POL-risky-plan-long.wav'), 'roland')
 ELISE = music.decrypt(universal.resource_path('POL-land-of-peace-long.wav'), 'elise')

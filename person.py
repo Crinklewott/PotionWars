@@ -999,7 +999,7 @@ class Person(universal.RPGObject):
         return int(self.primaryStats[stat])
 
     def warfare(self):
-        value = 2 * self.strength() + self.dexterity()
+        value = 2 * self.dexterity() + self.strength()
         for equipment in self.equipmentList:
             value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.WARFARE])
         return value
@@ -1024,7 +1024,7 @@ class Person(universal.RPGObject):
             self.grapplingPartner = person
             person.grapplingPartner = self
         else:
-            value = 2 * self.dexterity() + self.strength()
+            value = 2 * self.strength() + self.dexterity()
             for equipment in self.equipmentList:
                 value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.GRAPPLE])
             return value
@@ -1113,6 +1113,10 @@ class Person(universal.RPGObject):
     
     def underwear(self):
         return self.equipmentList[UNDERWEAR]
+
+    def wearing_underwear(self):
+        return self.underwear().name == items.emptyUnderwear.name
+
 
     def pajama_top(self):
         return self.equipmentList[PAJAMA_TOP]
