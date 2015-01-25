@@ -10,9 +10,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 
-WARNING: Due to fiddling with the name of Carlita (she was Carlita, then Lucilla, then Carlita again), I've had to add some code to the state object to exchange Lucilla for Carlita in the player's keywords, in order to ensure
-that keywords are registering properly for people loading saves from versions where Carly's name was Lucilla. This code should be removed for any future games. Otherwise, if you name a character Lucilla, you end up with one
-named Carlita!
+WARNING: Due to fiddling with the name of Edita (she was Carlita, then Lucilla, then Carlita again, then Edita), I've had to add some code to the state object to exchange Lucilla and Carlita for Edita in the player's keywords, in order to ensure
+that keywords are registering properly for people loading saves from versions where Ita's name was Lucilla or Carlita. This code should be removed for any future games. Otherwise, if you name a character Lucilla or Carlita, you end up with one
+named Edita!
 
 The same is true about the Person class' load feature.
 """
@@ -62,6 +62,7 @@ allStats = [universal.WARFARE, universal.MAGIC, universal.RESILIENCE, universal.
 
 allPrimaryStats = [universal.STRENGTH, universal.DEXTERITY, universal.WILLPOWER, universal.TALENT, universal.ALERTNESS, universal.HEALTH, universal.MANA, 
         universal.CURRENT_HEALTH, universal.CURRENT_MANA]
+
 
 MALE = 0
 FEMALE = 1
@@ -331,7 +332,6 @@ class Person(universal.RPGObject):
         self.specialization = specialization
         self.order = order
         #Last four indices are the appropriate spell categories
-        self.chanceIncrease = [0 for i in range(len(allPrimaryStats) + NUM_SPELL_CATEGORIES)]
         #We have as many quick spells as we do function keys.
         self.quickSpells = [None for i in range(12)]
         if printedName is None:
@@ -358,6 +358,10 @@ class Person(universal.RPGObject):
         self.eyeColor = eyeColor
         self.hairStyle = hairStyle
         self.mainStatDisplay = True
+        #Don't want to include current health and mana
+        numStats = len(allPrimaryStats) - 2
+        self.increaseStatPoints = [0] * numStats
+        self.increaseSpellPoints = [0] * NUM_SPELL_CATEGORIES
         if marks is None:
             self.marks = []
         else:
@@ -414,7 +418,6 @@ class Person(universal.RPGObject):
         #print(self.spellList)
         #print(self)
         self.spellList = state['spellList']
-
 
     def add_quick_spell(self, spell):
         try:
@@ -563,7 +566,6 @@ class Person(universal.RPGObject):
     def is_huge_or_taller(self):
         return self.is_huge()
 
-
     def dwarfs(self, char):
         return HEIGHTS.index(self.height) - HEIGHTS.index(char.height) >= 3
 
@@ -581,8 +583,6 @@ class Person(universal.RPGObject):
 
     def shorter_than(self, char):
         return - (HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 1
-
-
 
     #HAIR_LENGTH = ['short', 'shoulder-length', 'back-length', 'butt-length']
     def short_hair(self):
@@ -664,13 +664,13 @@ class Person(universal.RPGObject):
         else:
             return False
 
-    def apply_specialization(self, stat, statChance):
+    def apply_specialization(self, stat, statPoints):
         if self.is_bonus(stat):
-            return 2 * statChance
+            return statPoints * 1.5
         elif self.is_penalty(stat):
-            return statChance // 2
+            return statPoints * .75
         else:
-            return statChance
+            return statPoints
 
 
     def get_item(self, num):
@@ -820,15 +820,16 @@ class Person(universal.RPGObject):
         self.primaryStats[stat] += increment
 
     def improve_stat(self, stat, increment):
-        #TODO: Change how quickly a person's spell tiers increases.
         self.increase_stat(stat, increment)
         oldTier = self.tier
         self.tier = self.talent() // TALENT_PER_TIER
+        '''
         if self.tier > oldTier:
             magicSchool = get_spell_index(self.specialization) if self.specialized_in_magic() else -1
             if magicSchool >= 0:
                 self.learn_spell(allSpells[self.tier][magicSchool][0])
                 universal.say(universal.format_line(['\n' + self.name, 'has learned the', allSpells[self.tier][magicSchool][0].name, 'spell!']))
+        '''
 
     def reduce_stat(self, stat, increment): 
         self.decrease_stat(stat, increment)
@@ -933,6 +934,7 @@ class Person(universal.RPGObject):
 
     def receives_damage(self, num):
         self.set_stat(universal.CURRENT_HEALTH, self.current_health() - min(self.current_health(), num))
+        self.increaseStatPoints[HEALTH] += num
 
     def uses_mana(self, num):
         self.set_stat(universal.CURRENT_MANA, self.current_mana() - min(self.current_mana(), num))
@@ -1221,13 +1223,13 @@ class Person(universal.RPGObject):
 
     def defense(self):
         if self.is_grappling():
-            return self.grapple() + self.defense_bonus()
-        else:
-            return self.warfare() + self.defense_bonus()
+            return self.defense_bonus()
+            #return self.grapple() + self.defense_bonus()
+        #else:
+            #return self.warfare() + self.defense_bonus()
 
     def magic_penalty(self, rawMagic=True):
         return self.weapon().castingPenalty + self.shirt().castingPenalty + self.lower_clothing().castingPenalty + self.underwear().castingPenalty
-
 
     def magic_defense_bonus(self):
         defenseBonus = 0
@@ -1273,7 +1275,6 @@ class Person(universal.RPGObject):
 
     def status_names(self):
         return self.statusList.keys()
-        
     
     def learn_spell(self, spell):
         print(self.spellList)
@@ -1300,10 +1301,8 @@ class Person(universal.RPGObject):
             spellList = self.spellList[tier]
         return spellList
 
-
     def attack_penalty(self):
         return self.shirt().attackPenalty + self.lower_clothing().attackPenalty + self.underwear().attackPenalty
-
 
     def defense_bonus(self):
         defenseBonus = 0
@@ -1321,7 +1320,6 @@ class Person(universal.RPGObject):
             print(self.statusList[statusEffects.Shielded.name][STATUS_OBJ].inflict_status)
             defenseBonus += self.statusList[statusEffects.Shielded.name][STATUS_OBJ].inflict_status(self)
         return self.shirt().attackDefense + self.lower_clothing().attackDefense + self.underwear().attackDefense + defenseBonus
-    
 
     @staticmethod
     def add_data(data, saveData):
@@ -1408,7 +1406,7 @@ class Person(universal.RPGObject):
                 order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, hairStyle, marks = \
                 data.split("Person Data:")
         person.name = name.strip()
-        if name == 'Lucilla' or name == 'Anastacia': name = 'Carlita'
+        if name == 'Lucilla' or name == 'Anastacia' or name == 'Carlita': name = 'Edita'
         person.description = description.strip()
         person.gender = int(gender.strip())
         person.specialization = int(specialization.strip())
@@ -1694,7 +1692,7 @@ class PlayerCharacter(Person):
         Person.load(personData, player)
         loadData = playerCharacterData
         _, keywords, currentEpisode, currentSceneIndex, numSpankings, numSpankingsGiven, fakeName, nickname, reputation = loadData.split("Player Data:")
-        player.keywords = [keyword.strip().replace('Lucilla', 'Carlita').replace('Anastacia', 'Carlita') for keyword in keywords.split('\n') if keyword.strip()]
+        player.keywords = [keyword.strip().replace('Lucilla', 'Carlita').replace('Anastacia', 'Carlita').replace('Carlita', 'Edita') for keyword in keywords.split('\n') if keyword.strip()]
         print("loading keywords")
         print(player.keywords)
         player.currentEpisode = currentEpisode.strip()
@@ -2061,7 +2059,7 @@ def action_type_to_spell_type(actionType):
         return SPECTRAL
 def get_basic_spell(tierNum, spellType):
     if spellType < 0 or spellType > SPECTRAL:
-        raise ValueError(' '.join(['invalid spell type. Excepted a number between 0 and 3, got', str(spellType)]))
+        raise ValueError(' '.join(['invalid spell type. Expected a number between 0 and 3, got', str(spellType)]))
     return None if allSpells[tierNum] is None else allSpells[tierNum][spellType][0]
 
 def get_advanced_spell(tierNum, spellType):

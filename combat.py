@@ -34,6 +34,7 @@ import copy
 import townmode
 import dungeonmode
 import statusEffects
+import math
 
 """
 Note: The interpreters all assume that you will only ever face up to 9 enemies at 
@@ -145,8 +146,8 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
                     pygame.time.delay(delaySplit)
     else:
         music.play_music(music.COMBAT)
-    for ally in allies:
-        ally.chanceIncrease = [0 for i in range(len(ally.chanceIncrease))]
+    #for ally in allies:
+    #   ally.chanceIncrease = [0 for i in range(len(ally.chanceIncrease))]
     maxAllyLevel = max([sum(ally.get_battle_stats()) for ally in allies]) 
     maxEnemyLevel = max([sum(enemy.get_battle_stats()) for enemy in enemies])
     for enemy in enemies:
@@ -348,8 +349,6 @@ def not_enough_mana():
 def not_enough_mana_interpreter(keyEvent):
     if keyEvent.key == K_RETURN:
         display_combat_status()
-        
-
 
 def look():
     set_commands(['(#) Enemy to look at', '<==Back'])
@@ -434,26 +433,23 @@ def increase_stat_chance():
     numStats = len(person.allStats)
     global chosenActions
     for action in chosenActions:
-        increaseStat = action.attacker.chanceIncrease
+        increaseStat = action.attacker.increaseStatPoints
+        increaseSpellPoints = action.attacker.increaseSpellPoints
         if action.attacker in allies:
-                increaseStat[action.primaryStat] += 8 if increaseStat[action.primaryStat] < 8 else 4
+                increaseStat[action.primaryStat] += 2
                 try:
-                    increaseStat[action.spellType] += 4 if increaseStat[action.spellType] < 4 else 2
+                    increaseSpellPoints[action.spellType] += action.tier + 1
                 except AttributeError:
                     continue
                 try:
-                    increaseStat[action.secondaryStat] += 4 if increaseStat[action.secondaryStat] == 0 else 2
+                    increaseStat[action.secondaryStat] += 1
                 except (AttributeError, TypeError):
                     continue
         elif action.attacker in enemies:
             print('----------------defenders of action: ' + str(action) + '-------------------')
             print(action.defenders)
             for defender in action.defenders:
-                defender.chanceIncrease[action.primaryStat] += 2
-                try:    
-                    increaseStat[action.secondaryStat] += 1
-                except (AttributeError, TypeError):
-                    continue
+                defender.chanceIncrease[action.primaryStat] += 1
 
 def begin_round_interpreter(keyEvent):
     global chosenActions, chosenTargets
@@ -1528,17 +1524,18 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
     experience = []
     #for i in range(len(enemies)):
         #print(enemies[i].statList)
-    maxStats = [max([enemy.get_stat(i) for enemy in enemies]) for i in range(person.NUM_STATS)]
+    #maxStats = [max([enemy.get_stat(i) for enemy in enemies]) for i in range(person.NUM_STATS)]
     #print(maxStats)
     for ally in allies:
         #print('chanceIncrease for ' + ally.name)
         #print(ally.chanceIncrease)
-        ally.chanceIncrease[HEALTH] += 25 + max(ally.chanceIncrease[WARFARE], ally.chanceIncrease[GRAPPLE]) // 2
-        ally.chanceIncrease[MANA] += 25 + ally.chanceIncrease[MAGIC] // 2
-        ally.chanceIncrease[STEALTH] += 5
-        for i in range(len(ally.chanceIncrease)):
-        #We give a bonus 20% bonus to increasing the stat for every 5 points that a character is below the enemy' stat. This allows characters to more easily
-        #climb out of a hole. Note that you do need to use an action that relies on this stat at least once for the benefit to be of use.
+        #ally.chanceIncrease[HEALTH] += 25 + max(ally.chanceIncrease[WARFARE], ally.chanceIncrease[GRAPPLE]) // 2
+        #ally.chanceIncrease[MANA] += 25 + ally.chanceIncrease[MAGIC] // 2
+        #ally.chanceIncrease[STEALTH] += 5
+        for i in range(len(ally.increaseStatPoints)):
+            '''
+            #We give a bonus 20% bonus to increasing the stat for every 5 points that a character is below the enemy' stat. This allows characters to more easily
+            #climb out of a hole. Note that you do need to use an action that relies on this stat at least once for the benefit to be of use.
             if i < COMBAT_MAGIC:
                 ally.chanceIncrease[i] += (20 * ((maxStats[i] - ally.get_stat(i)) // 5)) if ally.chanceIncrease[i] > 0 and maxStats[i] > ally.get_stat(i) else 0 
                 ally.chanceIncrease[i] = ally.apply_specialization(i, ally.chanceIncrease[i])
@@ -1561,26 +1558,34 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
             gainedPoint = False
             print('success:' + str(success))
             print('statChance: ' + str(statChance))
-            if success <= statChance:
-                if i < COMBAT_MAGIC:
+            '''
+            statPoints = ally.increaseStatPoints[i]
+            stat = ally.stat(i)
+            if stat <= statPoints:
+                if i == person.HEALTH:
+                    gain = int(math.ceil(stat * .25)) + statPoints - stat
+                    ally.improve_stat(i, gain)
+                    ally.increaseStatPoints[i] = 0
+                else:
+                    gain = 1
+                    ally.improve_stat(i, 1)
+                    if stat == person.TALENT:
+                        manaGain = int(math.ceil(ally.mana() * .5))
+                        ally.improve_stat(person.MANA, manaGain)
+                    increaseStatPoints[i] -= stat 
                     #print(maxStats[i])
                     #print(ally.get_stat(i))
                     #print(specialization_bonus(ally, i))
-                    gainedPoint = True
-                    print('increasing stat: ' + universal.primary_stat_name(i))
-                    gain = 1
-                    if i != HEALTH and i != MANA and i != CURRENT_HEALTH and i != CURRENT_MANA:
-                        ally.improve_stat(i, 1)
-                    elif i != CURRENT_HEALTH and i != CURRENT_MANA:
-                        gain = random.randint(1, 10)    
-                        print(ally)
-                        print(universal.state.player)
-                        ally.improve_stat(i, gain)
-                    if i != CURRENT_HEALTH and i != CURRENT_MANA:
-                        universal.say(format_line([ally.name, 'has gained', str(gain), person.primary_stat_name(i) + '.\n']))
-                else:
-                    #print('learning a spell.')
-                    learn_spell(ally, i)
+                universal.say(format_line([ally.name, 'has gained', str(gain), person.primary_stat_name(i) + '.\n']))
+                try:
+                    universal.say(format_line([ally.name, 'has gained', str(manaGain), 'Mana.\n']))
+                except NameError:
+                    pass
+        for i in range(len(ally.increaseSpellPoints)): 
+            #Note: This is much MUCH simpler than what we will actually allow. This simply checks if the player has 10 spell points, and then has the player learn the advanced spell if the player doesn't already know it.
+            #This is only a stop-gap measure. The actual learning spell mechanic will be much more complicated, but I don't want to implement that until I've built a proper GUI.
+            if ally.increaseSpellPoints[i] >= 10 and not ally.knows_spell(person.allSpells[0][i][1]):
+                ally.learn_spell(ally, i)
     if afterCombatEvent is not None:
         acknowledge(afterCombatEvent, defeatedAllies, defeatedEnemies, victorious)
     else:

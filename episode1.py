@@ -226,12 +226,12 @@ craftmansCorridor = Room("Craftman's Corridor", '''The Craftman's Corridor is al
         
 avaricumSquare.add_adjacent(craftmansCorridor)
 
-wesleyAndAnnesArmorShop = Room("Wesley and Anne's Weapons and Armor", "", 
+wesleyAndAnnesArmorShop = Room("Wesley and Anne's Smithy", "", 
         bgMusic=textCommandsMusic.PETER, bgMusicName="textCommandsMusic.PETER") 
 def update_armor_shop_description():
     wesleyAndAnnesArmorShop.description = universal.format_line(['''The shop consists of a single small room. A counter runs the length of the far wall. Hanging on the left wall is a small collection of weapons, while on the right side are a few pieces of armor. What really catches''', universal.state.player.name + "'s", '''attention is a 'suit' of chanmail hanging on the wall above the counter.''', universal.format_line(['''The armor is a two piece affair. The top looks like to be barely big enough to cover (for a sufficiently loose definition of 'cover')''', universal.state.player.name + "'s", '''breasts, while the bottom is a thong. A thong made out of chainmail.''' if universal.state.player.is_female() else '''The armor is a single, small thong, which is made out of chainmail.'''])])
 def armor_shop_after_arrival():
-    wesleyAndAnnesArmorShop = universal.state.get_room("Wesley and Anne's Weapons and Armor")
+    wesleyAndAnnesArmorShop = universal.state.get_room("Wesley and Anne's Smithy")
     wesleyAndAnnesArmorShop.description = universal.format_line(['''The shop consists of a single small room. A counter runs the length of the far wall. Hanging on the left wall is a small collection of weapons, while on the right side are a few pieces of armor. What really catches''', universal.state.player.name + "'s", '''attention is a 'suit' of chanmail hanging on the wall above the counter.''', universal.format_line(['''The armor is a two piece affair. The top looks like to be barely big enough to cover (for a sufficiently loose definition of 'cover')''', universal.state.player.name + "'s", '''breasts, while the bottom is a thong. A thong made out of chainmail.''' if universal.state.player.is_female() else '''The armor is a single, small thong, which is made out of chainmail.'''])])
     if "visited_blacksmith" not in universal.state.player.keywords:
         wesleyAndAnnesArmorShop.description = (
@@ -691,10 +691,10 @@ ildri = p.Person("Ildri", p.FEMALE, None, None)
 offStage.add_character(adrian)
 offStage.add_character(ildri)
 
-class Carlita(p.Person):
+class Edita(p.Person):
     def __init__(self, defaultLitany, litany, description="A short, painfully thin young woman with a nicked dagger and battered breastplate.", 
             printedName=None, coins=20, specialization=universal.RESILIENCE):
-            super(Carlita, self).__init__("Carlita", p.FEMALE, defaultLitany, litany,
+            super(Edita, self).__init__("Edita", p.FEMALE, defaultLitany, litany,
                         description, printedName, coins, specialization, p.sixth_order, musculature='fit', height='short', bodyType='slim', hairLength='shoulder-length')
             self.spankingPositions = [positions.overTheKnee, positions.underarm, positions.reverseRiding]
             self.level = 0
@@ -744,7 +744,7 @@ class Carlita(p.Person):
             ['Eventually, fueled by desperation,', Bname, 'manages to heave', himselfherself(B), 'up, throwing', Tname, 'off of', himher(T) + ".", Bname, 'scrambles to', 
             hisher(B), 'feet, one hand clutching at', hisher(B), 'throbbing bottom, the other snatching up', hisher(B), 'fallen weapon, just as', Tname, 'grabs', himher(B),
             'again.']]))
-        carlita = universal.state.get_character('Carlita.person')
+        carlita = universal.state.get_character('Edita.person')
         if B == carlita:
             universal.state.player.add_keyword('spanked_young_insurgent')
         elif B == universal.state.player:
@@ -896,7 +896,7 @@ class Carlita(p.Person):
         return self.spanking_missed_text(self, person, position)
 
     #def reset_stats(self, episode=None):
-    #    carlita = Carlita(self.litany, coins=self.coins, printedName=self.printedName)
+    #    carlita = Edita(self.litany, coins=self.coins, printedName=self.printedName)
     #    carlita.set_default_stats()
     #    carlita.equip(itemspotionwars.batteredDagger)
     #    carlita.equip(itemspotionwars.batteredLeatherBreastplate)
@@ -909,9 +909,9 @@ class Carlita(p.Person):
 
 
 carlita_default = Node(193)
-carlita_default.quip = "This is Carlita's default quip."
-spankCarlita = Node(195)
-carlita = Carlita(carlita_default.index, spankCarlita.index, coins=0, printedName='Young Vengador')
+carlita_default.quip = "This is Edita's default quip."
+spankEdita = Node(195)
+carlita = Edita(carlita_default.index, spankEdita.index, coins=0, printedName='Young Vengador')
 offStage.add_character(carlita)
 carlita.level = 0
 carlita.equip(itemspotionwars.batteredDagger)
@@ -2950,10 +2950,24 @@ peter_2_1_1.children = peterRootChildren
 
 peter_3_1_1.comment = '''"Could I see your wares?"'''
 def peter_3_1_1_qf():
+    peter_3_1_1.quip  = format_text(['''Peter frowns. "I don't have any 'wares.' This is a blacksmith. If you'd like to place an order for something. Nails, buckles. Maybe a shovel?"''',
+        '''"Oh," says''', name(), '''"I'm sorry. Carnutian isn't my native tongue, I thought this was a place to buy weapons. Figured I'd see what you had."''',
+        '''"I suspected as much. You're hardly the first Taironan to make that mistake," says Peter, giving''', name(), '''a smile. "I'm assuming you guys use the same word for both?"''',
+        name(), '''nods.''',
+        '''"Well, my grandfather used to make weapons and armor, but I got out of that business," says Peter. "Nothing kills your interest in weapons like a few years as a camp follower. Don't suppose there's anything else you need? A utility knife?''',
+        '''Some sewing needles?"''',
+        name(), '''shakes''', hisher(), '''head. "Sorry."''',
+        '''Peter shrugs. "Not a big deal."'''])
+    try:
+        peterRootChildren.remove(peter_3_1_1)
+    except ValueError:
+        pass
+    """
     peter = universal.state.get_character('Peter.person')
     if universal.state.player.is_male() and itemspotionwars.chainmailBikini in peter.inventory:
         peter.inventory[peter.inventory.index(itemspotionwars.chainmailBikini)] = itemspotionwars.chainmailThong
     return(shop_mode, [peter, peter_return_from_shopping.index])
+    """
 peter_3_1_1.quip_function = peter_3_1_1_qf
 #peter_3_1_1.children = peterRootChildren
 
@@ -2977,8 +2991,8 @@ peter_4_1_1.comment = '''"Thank you for your time. I'll see you around."'''
 def peter_4_1_1qf():
     if "visited_blacksmith" not in universal.state.player.keywords:
         universal.state.player.add_keyword("visited_blacksmith")
-        wesleyAndAnnesArmorShop = universal.state.get_room("Wesley and Anne's Weapons and Armor")
-        wesleyAndAnnesArmorShop.description = universal.format_text([['''The shop consists of a single small room. A counter runs the length of the far wall. Hanging on the left wall is a small collection of weapons, while on the right side are a few pieces of armor. What really catches''', universal.state.player.name + "'s", '''attention is a 'suit' of chanmail hanging on the wall above the counter.''', universal.format_line(['''The armor is a two piece affair. The top looks like to be barely big enough to cover (for a sufficiently loose definition of 'cover')''', universal.state.player.name + "'s", '''breasts, while the bottom is a thong. A thong made out of chainmail.''' if universal.state.player.is_female() else '''The armor is a single, small thong, which is made out of chainmail.'''])]])
+        wesleyAndAnnesArmorShop = universal.state.get_room("Wesley and Anne's Armor Shop")
+        wesleyAndAnnesArmorShop.description = universal.format_text([['''The shop consists of a single small room. A counter runs the length of the far wall. Hanging on the left wall are a variety of small metal things: nails, buckles, hinges, locks, horseshoes. The left side contains a few samples of larger tools: a large sickle, and a shovel. What really catches''', universal.state.player.name + "'s", '''attention is a 'suit' of chanmail hanging on the wall above the counter.''', universal.format_line(['''The armor is a two piece affair. The top looks like to be barely big enough to cover (for a sufficiently loose definition of 'cover')''', universal.state.player.name + "'s", '''breasts, while the bottom is a thong. A thong made out of chainmail.''' if universal.state.player.is_female() else '''The armor is a single, small thong, which is made out of chainmail.'''])]])
         peter_4_1_1.quip = universal.format_text([['''"Have a nice day," says Peter, giving a''',
             '''cheerful wave.'''],
             ['''Before''', name(), '''can respond, a young girl, no more than''',
@@ -3649,15 +3663,15 @@ def start_scene_1_episode_1(loading=False):
 
 #---------------------------------------Scene 2 Conversation Nodes-------------------------------------------
 
-spankCarlitaStern = Node(196) 
-spankCarlitaNice = Node(197) 
-spankCarlitaCruel = Node(198)
-spankCarlita.children = [spankCarlitaStern, spankCarlitaNice, spankCarlitaCruel]
-def spankCarlita_qf():
+spankEditaStern = Node(196) 
+spankEditaNice = Node(197) 
+spankEditaCruel = Node(198)
+spankEdita.children = [spankEditaStern, spankEditaNice, spankEditaCruel]
+def spankEdita_qf():
     music.play_music(textCommandsMusic.CARLITA)
-    carlita = universal.state.get_character('Carlita.person')
+    carlita = universal.state.get_character('Edita.person')
     universal.say_title(carlita.printedName)
-    spankCarlita.quip = universal.format_text([[universal.state.player.name + "'s", '''eyes widen as the young rebel collapses, her health clearly drained. It is blatantly obvious the young''',
+    spankEdita.quip = universal.format_text([[universal.state.player.name + "'s", '''eyes widen as the young rebel collapses, her health clearly drained. It is blatantly obvious the young''',
         '''woman has had little to no combat training.'''],
     [universal.state.player.name, '''cleans and puts away''', hisher(universal.state.player), '''weapon, then bends down over the Vengador, and yanks off the girl's mask. The girl yelps, and tries to grab it,''',
         '''but her attempt is slow and clumsy, and''', universal.state.player.name, '''easily keeps it out of reach. The girl looks to be about eighteen. Her cheeks are hollow, hinting''',
@@ -3666,15 +3680,15 @@ def spankCarlita_qf():
     ['''"Give that back," says the young woman in a weak voice. She grabs''', universal.state.player.name + "'s", '''legs, and tries to pull herself up.''',
     universal.state.player.name, '''sets the dagger down on the nearby counter, then looks down at the woefully unprepared girl.''']])
     increment_spankings_given()
-spankCarlita.quip_function = spankCarlita_qf
+spankEdita.quip_function = spankEdita_qf
 
-spankCarlitaStern.comment = universal.format_line(['''"You don't have any combat training to speak of, do you? What do you think you're doing attacking a guild full''',
+spankEditaStern.comment = universal.format_line(['''"You don't have any combat training to speak of, do you? What do you think you're doing attacking a guild full''',
     '''of professional warriors? You could have been hurt, or even killed."'''])
 sternOTK = Node(199)
 sternBentOver = Node(200)
-spankCarlitaStern.children = [sternOTK, sternBentOver]
-def spankCarlitaStern_qf():
-    spankCarlitaStern.quip = universal.format_text([['''The girls frowns. "What?"'''],
+spankEditaStern.children = [sternOTK, sternBentOver]
+def spankEditaStern_qf():
+    spankEditaStern.quip = universal.format_text([['''The girls frowns. "What?"'''],
         [name(), '''picks the younger woman up by the arm and forces her to look at the chaos ripping its way through the room.''',
     '''Adventurers and Vengadors are unleashing spells, slamming each other through tables, and hacking at limbs, heads, and torsos. "What do you think would''',
     '''have happened if you'd gotten involved in one of those fights? Well?"'''],
@@ -3688,8 +3702,8 @@ def spankCarlitaStern_qf():
     '''covered in burns, or-"'''],
     ['''"Oh shut up and leave me alone, you stupid''', p.pigcow() + '!"', '''snaps the girl, yanking at her arm.'''],
     [universal.state.player.name + "'s", '''eyes narrow, and the Vengador starts to look nervous.''']])
-    universal.state.player.add_keyword('stern_to_Carlita')
-spankCarlitaStern.quip_function = spankCarlitaStern_qf
+    universal.state.player.add_keyword('stern_to_Edita')
+spankEditaStern.quip_function = spankEditaStern_qf
 
 sternOTK.comment = "Turn her over your knee."
 sternOverTrousers = Node(201)
@@ -3837,22 +3851,22 @@ def sternSpoon_qf():
     return (universal.acknowledge, (dungeonmode.dungeon_mode,))
 sternSpoon.quip_function = sternSpoon_qf
 
-spankCarlitaCruel.comment = '''"Well, that was pathetic. The Vengadores must be pretty desperate if they recruited you for slinger fodder."'''
-def spankCarlitaCruel_qf():
-    spankCarlitaCruel.quip = universal.format_text([['''The young woman shrinks away from''', name() + ",", '''her face crumpling. "You don't know what you're talking about.''',
+spankEditaCruel.comment = '''"Well, that was pathetic. The Vengadores must be pretty desperate if they recruited you for slinger fodder."'''
+def spankEditaCruel_qf():
+    spankEditaCruel.quip = universal.format_text([['''The young woman shrinks away from''', name() + ",", '''her face crumpling. "You don't know what you're talking about.''',
         '''I'm going to be a powerful warrior, and save our people from the Matirians and their potions. Erizelda told me so."'''],
     ['''"And you believed her?"''', name(), '''laughs mockingly. "Girl, this Erizelda was clearly just looking for expendable bodies to throw at us. If she really''',
     '''cared, she'd have given you something approximating training before throwing you into a full-fledged battle."'''],
     '''"Leave me alone," mutters the young woman, starting to drag herself away.''',
     ['''"Oh I don't think so," says''', name() + ",", '''grabbing the girl's hips. "Not until I've spanked the stupid out of you."''']])
-spankCarlitaCruel.quip_function = spankCarlitaCruel_qf
+spankEditaCruel.quip_function = spankEditaCruel_qf
 cruelOTK = Node(205)
 cruelSit = Node(206)
-spankCarlitaCruel.children = [cruelOTK, cruelSit]
+spankEditaCruel.children = [cruelOTK, cruelSit]
 
 cruelOTK.comment = "Turn her over the knee."
 def cruelOTK_qf():
-    add_keyword('cruel_to_Carlita')
+    add_keyword('cruel_to_Edita')
     cruelOTK.quip = universal.format_text([[name(), '''looks around, and spies a heavy wooden chair. Grinning sadistically,''', heshe(), '''drags the young woman towards the''',
         '''chair.'''],
     ['''"No, let go of me!" screeches the woman, clawing at the wooden floor. "No, stop stop! Please!''' + 
@@ -3993,10 +4007,10 @@ def cruelSitSpoon_qf():
     return (universal.acknowledge, (dungeonmode.dungeon_mode,))
 cruelSitSpoon.quip_function = cruelSitSpoon_qf
 
-spankCarlitaNice.comment = '''"Are you alright? I didn't permanently hurt you, did I?"'''   
-def spankCarlitaNice_qf():
-    add_keyword('nice_to_Carlita')
-    spankCarlitaNice.quip = universal.format_text([[name(), '''tries to gently touch the girl's face, but the girl shrinks away.'''],
+spankEditaNice.comment = '''"Are you alright? I didn't permanently hurt you, did I?"'''   
+def spankEditaNice_qf():
+    add_keyword('nice_to_Edita')
+    spankEditaNice.quip = universal.format_text([[name(), '''tries to gently touch the girl's face, but the girl shrinks away.'''],
 ['''"What are you doing?" says the young woman. "One minute you're trying to gut me, the next you're worried about me?"'''],
 [name(), '''raises''', hisher(), '''eyebrows. "To be fair, you attacked me, and I was just defending myself. If I'd realized how little training you've had, I'd have''',
     '''held back a little."'''],
@@ -4009,10 +4023,10 @@ def spankCarlitaNice_qf():
 ['''"In the condition you're in? I think not," says''', name() + ".", '''"You'll just get yourself killed."'''],
 ['''"No, I'm fine, let go of me!" cries the young rebel, tugging more insistently on her trapped wrist. "I've gone easy on you because you're a Taironan, but I''',
     '''swear I'll gut you if you don't leave me alone."''']])
-spankCarlitaNice.quip_function = spankCarlitaNice_qf
+spankEditaNice.quip_function = spankEditaNice_qf
 niceBentOverCounter = Node(211) 
 niceStraight = Node(212)
-spankCarlitaNice.children = [niceBentOverCounter, niceStraight]
+spankEditaNice.children = [niceBentOverCounter, niceStraight]
 
 niceBentOverCounter.comment = "Bend her over the counter."
 def niceBentOverCounter_qf():
@@ -4169,8 +4183,8 @@ niceStraightBare.quip_function = niceStraightBare_qf
 
 def start_scene_2_episode_1(loading=False):
     universal.state.set_init_scene(init_episode_1_scene_2)
-    carlita = universal.state.get_character('Carlita.person')
-    carlita.litany = spankCarlita.index
+    carlita = universal.state.get_character('Edita.person')
+    carlita.litany = spankEdita.index
     if not loading:
         music.play_music(textCommandsMusic.INTENSE, 500)
     if not loading:
@@ -4210,10 +4224,10 @@ def start_scene_2_episode_1(loading=False):
                 '''She clutches an old, heavily nicked dagger. Her hand is shaking, but her eyes are filled with grim''',
             '''determination.''', universal.state.player.name, '''readies''', hisher(universal.state.player), '''weapon.''']]), justification=0, music=[textCommandsMusic.CATALIN])
     adventurersGuild = universal.state.get_room("Adventurer's Guild")
-    carlita = universal.state.get_character('Carlita.person')
+    carlita = universal.state.get_character('Edita.person')
     adventurersGuild.add_character(carlita)
     def after_fighting_carlita(allies, enemies, won):
-        carlita = universal.state.get_character('Carlita.person')
+        carlita = universal.state.get_character('Edita.person')
         carlita.restores()
         music.play_music(textCommandsMusic.CARLITA)
         conversation.converse_with(carlita, townmode.town_mode)
@@ -4627,7 +4641,7 @@ def ep1_paloma_otk_hand(keyEvent):
         if num == 1:
             ep1_paloma_spanking_end()
         elif num == 2:
-            universal.say(format_text([[name(), '''takes Paloma's right ankle, and slips the healer's cotton slipper off her foot.''', HeShe(),  '''experimentally slaps''',
+            universal.say(format_text([[name(), '''takes Paloma's right ankle, and slips the healer's wool slipper off her foot.''', HeShe(),  '''experimentally slaps''',
             '''the slipper''',
                 '''against''', hisher(), '''hand. A thin strip of leather runs along the bottom of the slipper, adding a bit of sting to it, and making a very''',
                 '''intimidating slapping sound.'''],
@@ -8087,7 +8101,7 @@ def necia_spar_interpreter(keyEvent):
         return
     if num == 1:
         universal.say(universal.format_text([['''"I think that's enough," says''', name() + ",", '''freeing the woman from''', hisher(), '''grasp. "Next time you want to spar, we set up rules, first."'''],
-            ['''The woman sags onto her knees, and hikes her trousers back up, wincing a little as the rough cotton scrapes against her tender bottom.''']]), justification=0)
+            ['''The woman sags onto her knees, and hikes her trousers back up, wincing a little as the rough wool scrapes against her tender bottom.''']]), justification=0)
         necia_spanking_over()
     elif num == 2:
         universal.say(universal.format_text([[name(), '''pulls''', hisher(), '''wooden spoon from''', hisher(), '''pack.'''],
@@ -8555,7 +8569,7 @@ def start_scene_3_episode_1(loading=False):
     peter = universal.state.get_character('Peter.person')
     peter.defaultLitany = peter_end_episode_1
     peter.litany = peter_end_episode_1.index
-    carlita = universal.state.get_character('Carlita.person')
+    carlita = universal.state.get_character('Edita.person')
     exitLeft(carlita, adventurersGuild)
     mariasHome = universal.state.get_room("Maria's Home")
     if not 'Elise_shows_you_around' in keywords():
@@ -8681,7 +8695,7 @@ def scene_3_guild():
         ['\p'],
         ['''1. Help her.'''],
         ['''2. Ignore her.''']]), justification=0, music=[textCommandsMusic.CARLITA])
-    universal.set_command_interpreter(help_Carlita_interpreter)
+    universal.set_command_interpreter(help_Edita_interpreter)
     universal.set_commands(['(#) Select a number.'])
 
 def end_scene_3_episode_1():
@@ -8692,14 +8706,14 @@ def end_scene_3_episode_1():
 
 episode1Scene3 = episode.Scene('Episode 1 Scene 3', start_scene_3_episode_1, end_scene_3_episode_1)
 
-def help_Carlita_interpreter(keyEvent):
+def help_Edita_interpreter(keyEvent):
     music.play_music(textCommandsMusic.CARLITA)
     try:
         num = int(pygame.key.name(keyEvent.key))
     except ValueError:
         return
     if num == 1:
-        add_keyword('tried_to_help_Carlita')
+        add_keyword('tried_to_help_Edita')
         universal.say(universal.format_text([[name(), '''weaves''', hisher(), '''way towards the guards and their captive. "Hey, what are you doing? Leave her alone!''',
             '''Can't you see she's barely more than a child?"'''],
             ['''One of the guards, a woman, scowls at''', name() + ".", '''"Back off, before we take you in as a Vengador sympathizer."'''],
@@ -8716,16 +8730,16 @@ def help_Carlita_interpreter(keyEvent):
             ['\p'],
             ['''1. Struggle.'''],
             ['''2. Give up.''']]), justification=0)
-        universal.set_command_interpreter(help_Carlita_interpreter_continued)
+        universal.set_command_interpreter(help_Edita_interpreter_continued)
         universal.set_commands(['(#) Select a number.'])
     elif num == 2:
-        add_keyword('failed_to_help_Carlita')
+        add_keyword('failed_to_help_Edita')
         universal.say(universal.format_text([[name(), '''turns away from the struggling Taironan. When the Taironan sees''', name(), '''turn away,''',
             '''something inside her breaks. She sags in the grips of the guards, and lets them carry her out, while she cries quietly.''']]), 
             justification=0)
         questioning()
 
-def help_Carlita_interpreter_continued(keyEvent):
+def help_Edita_interpreter_continued(keyEvent):
     try:
         num = int(pygame.key.name(keyEvent.key))
     except ValueError:
@@ -9010,7 +9024,9 @@ def adrian_request_bed_qf():
             '''typically geared towards maintaining the Guild. Failure to complete these tasks will earn you similar penalties as with cleanliness, except your second violation will get you twenty-six''',
             '''strokes of''',
             '''the tawse, and move up to twenty-six strokes of the tawse, and ten with the cane for subsequent violations. Finally, I will take a cut out of each of your payments to finish paying for your''',
-            '''lodging, up to ninety coins a month. If you don't work enough to make ninety coins in a month, we will find extra work around the Guild for you to do to make up the difference. Understand?"'''],
+            '''lodging, up to ninety coins a month. If you don't work enough to make ninety coins in a month, we will try to find extra work around the Guild for you to do to make up the difference. If that doesn't work, then we may have to force you to go on''',
+            '''rations.''',
+            '''Understand?"'''],
         [name(), '''nods, feeling slightly overwhelmed.'''],
         ['''"Don't worry, there's a posting in the room hallway with all of the rules laid out in detail," says Adrian. "Also, we try to be merciful to newcomers, which is why the first violation is''',
             '''a warning, and the second violation is relatively mild. You still interested?"''']])
@@ -9825,6 +9841,7 @@ ep1_elise_talk_with_Sister_Samantha = Node(269)
 ep1_elise_talk_with_Sister_Samantha.comment = '''"I'd like to talk to Sister Samantha."'''
 def ep1_elise_talk_with_Sister_Samantha_qf():
     ep1_elise_talk_with_Sister_Samantha.music = [textCommandsMusic.CHURCH]
+    textCommandsMusic.keywords.remove('second_hand_tragedy')
     ep1_elise_talk_with_Sister_Samantha.quip = universal.format_text([['''"Alright," says Elise. "Follow me."'''],
         ['''The two go through a door in the back of the shrine, and wind their way through long, twisting corridors, and into a large mess hall.''',
             '''Sisters and Brothers are sitting at the tables, resting after a long day of looking after the orphaned children that lived in the church.''',
@@ -9966,8 +9983,8 @@ ep1_elise_samantha_question.comment = '''"I just want to know, did you know how 
 def ep1_elise_samantha_question_qf():
     ep1_elise_samantha_question.quip = universal.format_text([['''Sister Samantha looks''', name(), '''in the eye. "If you ever believe anything a Matirian''',
         '''Brother or Sister tells you, please believe this: we had no idea. We never even considered the possibility that the potions would be''',
-        '''addictive, let alone this addictive. I can't begin to tell you wracked with guilt we've all been, or how hard we've been working to both''',
-        '''make things better, and make potions save to use." Sister Samantha kisses''', name(), '''on the forehead. "We just want to help people.''',
+        '''addictive, let alone this addictive. I can't begin to tell you how wracked with guilt we've all been, or how hard we've been working to both''',
+        '''make things better, and make potions safe to use." Sister Samantha kisses''', name(), '''on the forehead. "We just want to help people.''',
         '''That's all. Let the kings, queens and nobles have their petty politics. We just want to help people."'''],
         [name(), '''nods. "That's good to know."'''],
         ['''"Great, so if all the drama's over, what do you say you join me and Carrie for a night on the town?" says Elise gleefully.'''],
@@ -10001,9 +10018,9 @@ def carrie_arrival():
         '''manages to achieve the same sexy balance between being firm and wobbly. She is''',
         '''wearing a''',
         '''low-cut, tight, rich purple dress that extends to about halfway down her thighs. The dress shows off her medium-sized breasts, draws attention to her''',
-        '''long legs, and hugs the curves of her hips. Her legs are sheathed in a pair of black cotton tights. She is wearing her shoulder-length blonde''',
+        '''long legs, and hugs the curves of her hips. Her legs are sheathed in a pair of black wool tights. She is wearing her shoulder-length blonde''',
         '''hair down, with the tips curled. On her feet are a pair''',
-        '''of black cotton slippers.'''],
+        '''of black wool slippers.'''],
         ['''"Lovely as always," says Elise, smiling. "Though if some of the more conservative Sisters caught you wearing that, your evening would take''',
             '''a sharp turn for the unpleasant."'''],
         ['''Carrie's grin turns mischievous. "And they haven't even seen what I'm wearing under this, yet." Then, she turns her attention to''', name() + 
@@ -10135,7 +10152,7 @@ def ep1_elise_carrie_come_in_qf():
         ['''"You became a Sister two weeks ago!"'''],
         ['''There's another smack.'''],
         ['''"Gah, fine, fine."'''],
-        ['''The door opens a crack, and a black shirt and black trousers made of fine cotton are pushed into the room, before the door closes''',
+        ['''The door opens a crack, and a black shirt and black trousers made of fine wool are pushed into the room, before the door closes''',
             '''again.'''], ep1_night_on_the_town(ep1_elise_carrie_come_in)])
 ep1_elise_carrie_come_in.quip_function = ep1_elise_carrie_come_in_qf
     
@@ -10150,7 +10167,7 @@ def ep1_elise_carrie_thanks_qf():
         ['''"You became a Sister two weeks ago!"'''],
         ['''There's another smack.'''],
         ['''"Gah, fine, fine."'''],
-        ['''The door opens a crack, and a black shirt and black trousers made of fine cotton are pushed into the room, along with a pair of black boots,''',
+        ['''The door opens a crack, and a black shirt and black trousers made of fine wool are pushed into the room, along with a pair of black boots,''',
         '''before the door to closes again.'''], ep1_night_on_the_town(ep1_elise_carrie_thanks)])
 ep1_elise_carrie_thanks.quip_function = ep1_elise_carrie_thanks_qf
 
@@ -10266,7 +10283,7 @@ def ep1_elise_prank_sorry_qf():
         ['''"But you love making dresses-" says Elise.'''],
         ['''"Doesn't mean I want them damaged," snaps Carrie.'''],
         ['''"Oh come on, the water hardly damages-" begins Elise.'''],
-        ['''"Are you kidding? This is cotton!" cries Carrie, throwing her arms in the air, and splashing water all over the place. "And this is pretty hot water! I'll be lucky if it''',
+        ['''"Are you kidding? This is wool!" cries Carrie, throwing her arms in the air, and splashing water all over the place. "And this is pretty hot water! I'll be lucky if it''',
         '''only shrinks three sizes! This dress took me two years to make, and now she's ruined it in less than a second! This was my first time''',
         '''wearing it too, and now all that work is wasted, and I really wanted to celebrate your ascension, and I've been making this dress for''',
         '''exactly that, and-"'''],
@@ -10314,7 +10331,7 @@ def ep1_elise_prank_sorry_spank_qf():
         ['''"I could hear this ruckus from all the way in my office," says Sister Samantha, her stern gaze washing over the three young women. "Care to''',
             '''tell me what's going on?"'''],
         ['''Carrie gives''', names(), '''bottom a sharp slap. "This jerk didn't take kindly to being bathed, so she shoved me in the tub. While I was''',
-            '''wearing a cotton dress that took me years to make!"'''],
+            '''wearing a wool dress that took me years to make!"'''],
         ['''"Bull! I shoved you in the tub, because you stripped and tossed me in with neither warning nor permission," snaps''', name() + "."],
         ['''"Well, what did you think was going to happen when we led you into a bathing room?" says Carrie.'''],
         ['''"Enough." Sister Samantha's voice cuts through the squabbling like a hot knife. She turns her gaze on Elise, who''',
@@ -10372,7 +10389,7 @@ def ep1_elise_prank_sorry_spank_qf():
         ['''As soon as Samantha is gone, Elise relaxes. She approaches the crumbled dress she and Carrie had picked out for''', name(), '''and holds it''',
                 '''up. "You done bathing? Let's get you dressed."'''],
         ['''By the time Carrie returns, her eyes bright from unshed tears, and her walk a bit tender,''', name(), 
-                '''has put on the black dress. It's a simple, low-cut black tube (though with straps thankfully)''',
+                '''has put on the black dress. It's a simple, low-cut black tube (though with straps)''',
         '''that snugly hugs''', names(), '''hips, and extends about halfway down''', hisher(), '''thigh. She is also wearing a pair of black slippers''',
         '''that came with the dress, and a black thong.'''],
         ['''Carrie claps her hands together. "Oh, you look lovely! Doesn't seem to fit quite right, but close enough, and it's a huge''',
@@ -10394,6 +10411,7 @@ ep1_elise_samantha_accept = Node(277)
 ep1_elise_prank_sorry_no_spank.children = [ep1_elise_samantha_refuse, ep1_elise_samantha_accept]
 def ep1_elise_prank_sorry_catfight():
     increment_spankings_given()
+    add_keyword('ep1_spanked_by_Samantha')
     return universal.format_text([
         ['"' + name() + '-"', '''says Elise, stepping towards''', name() + "."],
         ['''"Oh, you better believe you are. You can come here and take your spanking, or I can drag you over here and make you take''',
@@ -10677,7 +10695,7 @@ def ep1_elise_no_prank_qf():
     ep1_elise_no_prank.music = [textCommandsMusic.CARLITA, textCommandsMusic.CARRIE]
     ep1_elise_no_prank.quip = universal.format_text([[name(), '''shrugs in the water. Probably shouldn't. It's not like it was that big of a deal anyway; she'd''',
         '''spent her whole life bathing in the public bath houses of Chengue, so nudity in front of other people (men and women!) is hardly new. Besides,''',
-        '''Carrie's dress looks like it's made of cotton. Well-made or not, dumping her in the warm tub runs a serious risk of clothing shrinkage.'''],
+        '''Carrie's dress looks like it's made of wool. Well-made or not, dumping her in the warm tub runs a serious risk of clothing shrinkage.'''],
         ['''So,''', name(), '''floats in the water for a few minutes, letting the sweat, dirt, and dried blood slough off of her body. She lets out a long,''',
             '''deep sigh.'''],
         ['''\m"No, please I told you everything. Please you have to believe me, don't take me there, don't let them in my head. Please!"'''],
@@ -10980,7 +10998,7 @@ def ep1_tavern_scene(node):
         ['''"Just a fancy variant of Spectral Light," says Carrie dismissively. "A parlor trick that just about anyone with a minimum of spectral''',
             '''talent can learn. Come on!"'''],
         ['''The three push into the tavern. The place is filled to bursting with a variety of men and women, all Carnutians. The men are all dressed in''',
-            '''practical, but well-maintained cotton and leathers, while the women wear cotton dresses, and skirts in a variety of colors and styles.''',
+            '''practical, but well-maintained wool and leathers, while the women wear wool dresses, and skirts in a variety of colors and styles.''',
             '''Though none of them are quite as nice as Elise's or Carrie's, they're still very close.'''],
         ['''"Hey ladies," says the bouncer, a massive, muscle-bound man''' + (''' larger even than Peter.''' if 'visited_blacksmith' in keywords() else
             '''.'''), '''"You going to sing tonight, Miss Elise?"'''],
@@ -11658,11 +11676,11 @@ ep1_roland_how_meet_elise.quip_function = ep1_roland_how_meet_elise_qf
 ep1_taironan_no = Node(301)
 ep1_taironan_no.comment = '''"Over my dead body."'''
 def ep1_taironan_no_qf():
-    add_keyword('Carlitas_fate')
+    add_keyword('Editas_fate')
     ep1_taironan_no.quip = universal.format_text([['"' + name() + '-"', '''begins Elise.'''],
         ['''"Don't tell me to calm down," snaps''', name() + ".", HeShe(), '''points an accusatory finger at Roland. "I will sooner be put in the ground than work with''',
             '''a mind-raping, heartless piece of-"''']])
-    if 'tried_to_help_Carlita' in keywords():
+    if 'tried_to_help_Edita' in keywords():
         ep1_taironan_no.quip = universal.format_text([ep1_taironan_no.quip, ['''"This is about that girl, isn't it?" cuts in Roland. "The one with the birthmark."'''],
             ['''"What?" asks Elise.'''],
             ['''Roland scowls, and leans back in his chair. He gestures at''', name() + ".", '''"This idiot tried to interfere with our efforts to take in one of the''',
@@ -11747,7 +11765,7 @@ def ep1_return_to_Church(node):
             '''outfit like that."'''],
         ['''"They were going to find out anyway," says Roland. "Only now, they'll also hear that I caught you. Also, in the next few days, I'll make sure word gets''',
             '''out of the very intense spanking I'm going to give you.''',
-            '''Now, instead of being some low-born brat with delusions of standing whose successfully pulled the cotton over her fiance's eyes, you're a low-born brat''',
+            '''Now, instead of being some low-born brat with delusions of standing whose successfully pulled the wool over her fiance's eyes, you're a low-born brat''',
             '''whose a little rough around the edges, but whose fiance is working tirelessly to help her achieve her potential as a Sister and a lady."'''],
         ['''"Well, maybe I don't care what they think." Elise stops, crosses her arms over her chest, and pouts. "Maybe they can all go get buried."'''],
         ['''Roland also stops and sighs patiently. "Honey, do you want our future children to be respected? Do you want them to have friends, find good spouses, and live''',
@@ -12055,7 +12073,7 @@ def ep1_maria_submit_qf():
     ep1_maria_submit.quip = universal.format_text([[name(), '''swallows uneasily, but lets Maria pull''', himher(), '''over the older Taironan's knee.''']]) 
     if 'Elise_shows_you_around' in keywords():
         ep1_maria_submit.quip = universal.format_text([ep1_maria_submit.quip, [HeShe(), 
-        '''tenses as Maria''', universal.format_line(['''grabs the waistband of his trousers, and yanks them down to his knees, exposing a pair of cotton underdrawers. Those''',
+        '''tenses as Maria''', universal.format_line(['''grabs the waistband of his trousers, and yanks them down to his knees, exposing a pair of wool underdrawers. Those''',
             '''also come down, exposing''', names(), '''muscular bottom.''']) if universal.state.player.is_male() else universal.format_line(['''tugs''', names(), 
                 '''tight skirt up over her hips, exposing her protruding, bouncy cheeks, her tiny black thong doing nothing to contain them.'''])],
             ['''"You are in such trouble, young''', manlady() + ',"', '''says Maria, rubbing the bone hairbrush in small circles over''', names(), '''right cheek.'''],
