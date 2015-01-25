@@ -1584,7 +1584,7 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
         for i in range(len(ally.increaseSpellPoints)): 
             #Note: This is much MUCH simpler than what we will actually allow. This simply checks if the player has 10 spell points, and then has the player learn the advanced spell if the player doesn't already know it.
             #This is only a stop-gap measure. The actual learning spell mechanic will be much more complicated, but I don't want to implement that until I've built a proper GUI.
-            if ally.increaseSpellPoints[i] >= 10 and not ally.knows_spell(person.allSpells[0][i][1]):
+            if ally.increaseSpellPoints[i] >= 5 and not ally.knows_spell(person.allSpells[0][i][1]):
                 ally.learn_spell(ally, i)
     if afterCombatEvent is not None:
         acknowledge(afterCombatEvent, defeatedAllies, defeatedEnemies, victorious)
