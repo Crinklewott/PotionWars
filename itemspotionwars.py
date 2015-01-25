@@ -189,9 +189,9 @@ warspear = items.Spear('warspear', "A heavy wooden pole with a thick metal spike
 
 familySpear = items.Spear('family spear', "Engraved on the spear shaft is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=100)
 
-staff = items.Spear('staff', "A heavy wooden staff. Staff-wielders are specially trained in defensive combat. Therefore, although not as dangerous as a spear, a staff provides better protection against being grappled, and has a smaller penalty while grappled. A favorite weapon of spellslingers.", price=30, minDamage=1, maxDamage=4, 
-        grappleAttempt=-3, grappleAttemptDefense=4, grappleBonus=-1,
-        armslengthBonus=1)
+staff = items.Spear('staff', "A heavy wooden staff. Staff-wielders are specially trained in defensive combat. Therefore, although not as dangerous as a spear, a staff provides better protection against being grappled, and has a smaller penalty while grappled. A favorite weapon of spellslingers.", price=30, minDamage=1, maxDamage=1, 
+        grappleAttempt=-3, grappleAttemptDefense=3, grappleBonus=-1,
+        armslengthBonus=2)
 
 wingedSpear = items.Spear('winged spear', ' '.join(["A spear just shy of six feet (1.82 meters). There is a heavy metal cap on the other that serves both as counter-balance and for bludgeoning."]),
         minDamage=2, maxDamage=6, grappleAttemptDefense=2, grappleAttempt=-1, price=75)

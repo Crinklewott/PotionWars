@@ -1132,8 +1132,8 @@ class Person(universal.RPGObject):
                     zip([i for i in range(0, len(self.primaryStats[:-4]))], self.primaryStats)] 
         else:
             statList = []
-            statList.append(' '.join(['warfare:', str(self.warfare())]))
-            statList.append(' '.join(['grapple:', str(self.grapple())]))
+            statList.append(' '.join(['grapple:', str(self.warfare())]))
+            statList.append(' '.join(['warfare:', str(self.grapple())]))
             statList.append(' '.join(['resilience:', str(self.resilience())]))
             statList.append(' '.join(['magic:', str(self.magic())]))
             statList.append(' '.join(['stealth:', str(self.stealth())]))
@@ -1223,7 +1223,9 @@ class Person(universal.RPGObject):
 
     def defense(self):
         if self.is_grappling():
-            return self.defense_bonus()
+            return self.defense_bonus() + self.weapon().grapple_bonus()
+        else:
+            return self.defense_bonus() + self.weapon().armslength_bonus()
             #return self.grapple() + self.defense_bonus()
         #else:
             #return self.warfare() + self.defense_bonus()

@@ -472,6 +472,9 @@ class Weapon(Item):
     def grapple_bonus(self):
         return self.grappleBonus + self.genericBonus
 
+    def armslength_bonus(self):
+        return self.armslengthBonus + self.genericBonus
+
     def attack_bonus(self, grappling):
         return (self.grappleBonus if grappling else self.armslengthBonus) + self.genericBonus
 

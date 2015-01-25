@@ -229,10 +229,10 @@ avaricumSquare.add_adjacent(craftmansCorridor)
 wesleyAndAnnesArmorShop = Room("Wesley and Anne's Smithy", "", 
         bgMusic=textCommandsMusic.PETER, bgMusicName="textCommandsMusic.PETER") 
 def update_armor_shop_description():
-    wesleyAndAnnesArmorShop.description = universal.format_line(['''The shop consists of a single small room. A counter runs the length of the far wall. Hanging on the left wall is a small collection of weapons, while on the right side are a few pieces of armor. What really catches''', universal.state.player.name + "'s", '''attention is a 'suit' of chanmail hanging on the wall above the counter.''', universal.format_line(['''The armor is a two piece affair. The top looks like to be barely big enough to cover (for a sufficiently loose definition of 'cover')''', universal.state.player.name + "'s", '''breasts, while the bottom is a thong. A thong made out of chainmail.''' if universal.state.player.is_female() else '''The armor is a single, small thong, which is made out of chainmail.'''])])
+    wesleyAndAnnesArmorShop.description = universal.format_line(['''The shop consists of a single small room. A counter runs the length of the far wall. The shop consists of a single small room. A counter runs the length of the far wall. Hanging on the left wall are a variety of small metal things: nails, buckles, hinges, locks, horseshoes. The right side contains a few samples of larger tools: a large sickle, and a shovel. What really catches''', universal.state.player.name + "'s", '''attention is a 'suit' of chanmail hanging on the wall above the counter.''', universal.format_line(['''The armor is a two piece affair. The top looks like to be barely big enough to cover (for a sufficiently loose definition of 'cover')''', universal.state.player.name + "'s", '''breasts, while the bottom is a thong. A thong made out of chainmail.''' if universal.state.player.is_female() else '''The armor is a single, small thong, which is made out of chainmail.'''])])
 def armor_shop_after_arrival():
     wesleyAndAnnesArmorShop = universal.state.get_room("Wesley and Anne's Smithy")
-    wesleyAndAnnesArmorShop.description = universal.format_line(['''The shop consists of a single small room. A counter runs the length of the far wall. Hanging on the left wall is a small collection of weapons, while on the right side are a few pieces of armor. What really catches''', universal.state.player.name + "'s", '''attention is a 'suit' of chanmail hanging on the wall above the counter.''', universal.format_line(['''The armor is a two piece affair. The top looks like to be barely big enough to cover (for a sufficiently loose definition of 'cover')''', universal.state.player.name + "'s", '''breasts, while the bottom is a thong. A thong made out of chainmail.''' if universal.state.player.is_female() else '''The armor is a single, small thong, which is made out of chainmail.'''])])
+    wesleyAndAnnesArmorShop.description = universal.format_line(['''The shop consists of a single small room. A counter runs the length of the far wall. Hanging on the left wall are a variety of small metal things: nails, buckles, hinges, locks, horseshoes. The right side contains a few samples of larger tools: a large sickle, and a shovel. What really catches''', universal.state.player.name + "'s", '''attention is a 'suit' of chanmail hanging on the wall above the counter.''', universal.format_line(['''The armor is a two piece affair. The top looks like to be barely big enough to cover (for a sufficiently loose definition of 'cover')''', universal.state.player.name + "'s", '''breasts, while the bottom is a thong. A thong made out of chainmail.''' if universal.state.player.is_female() else '''The armor is a single, small thong, which is made out of chainmail.'''])])
     if "visited_blacksmith" not in universal.state.player.keywords:
         wesleyAndAnnesArmorShop.description = (
             universal.format_text([wesleyAndAnnesArmorShop.description, [universal.state.player.name, 
@@ -244,7 +244,7 @@ def armor_shop_after_arrival():
                 heshe(universal.state.player), '''studies it with''', hisher(universal.state.player), 
                 '''more magical senses.''', HisHer(universal.state.player), 
                 '''eyes widen. Useless nothing, the enchantments on that armor''',
-                '''make it as protective as a chain cuirass, and a hundredth as''',
+                '''make it as protective as mail, and a hundredth as''',
                 '''heavy. Whoever made that was cursed good at enchanting''', 
                 '''equipment.'''],
                 ['''However, there is something odd about the enchantment.''', 
@@ -2856,7 +2856,7 @@ elise_uncomfortable.comment = '''"I see. Anyway, could we talk about something e
 elise_uncomfortable.quip = '''"Oh, I'm sorry," says Elise. "I didn't mean to make you uncomfortable. So how else can I help you?"'''
 elise_uncomfortable.children = eliseRootChildren
 
-#-----------------------------------Wesley and Anne's Armor Shop---------------------------------
+#-----------------------------------Wesley and Anne's Smithy---------------------------------
 
 peter_greeting = Node(158)
 def peter_greeting_quip_function():
@@ -2868,7 +2868,7 @@ def peter_greeting_quip_function():
         craftmansCorridor = universal.state.get_room("Craftman's Corridor") 
         return (go, [craftmansCorridor])
     elif "visited_blacksmith" not in universal.state.player.keywords:
-        peter_greeting.quip = universal.format_line(['''"Sorry for keeping you waiting. How can I help you today?"'''])
+        peter_greeting.quip = universal.format_line(['''"Sorry for keeping you waiting. My name is Peter. How can I help you today?"'''])
     else:
         peter_greeting.quip = universal.format_line(['''"Ah, good to see you again,' says Peter,''',
             '''smiling. "What can I do for you?'"'''])
@@ -2882,7 +2882,8 @@ def peter_greeting_quip_function():
                 peterRootChildren.remove(peter_2_1_1)
             except ValueError:
                 pass
-        peter_greeting.children = peterRootChildren 
+        peterRootChildren.remove(peter_3_1_1)
+        peter_greeting.children = peterRootChildren
 peter_greeting.quip_function = peter_greeting_quip_function
 
 peter = p.Person('Peter', p.MALE, peter_greeting.index, peter_greeting.index)
@@ -2917,24 +2918,20 @@ peter_2_1_1.comment = universal.format_line(['''"What's with that ridiculous pie
 def peter_2_1_1qf():
     universal.state.player.add_keyword('asked_Peter_about_bikini')
     peter_2_1_1.quip = universal.format_text([['''Peter chuckles. "My grandfather had a bit of''',
-    '''a gift for spectral magic."''',
-    universal.state.player.name + "'s", '''eyes widen. Spectral magic is powerful, but also exceptionally''',
-    '''complex, and sometimes downright odd. A 'gift' for spectral magic is''',
-    '''exceptionally rare (it's also a favorite claim of charlatans).''', 
-'''"Usually grandpa was perfectly sane, but sometimes he'd be gripped by what he called''',
+    '''a gift for spectral magic. ''' 
+ '''Usually grandpa was perfectly sane, but sometimes he'd be gripped by what he called''',
 '''a fever. Then he'd become obsessed with some particular project, and he'd work on''',
 '''it to the exclusion of all else. Produced some true masterpieces under the grip of''',
 '''that fever. That armor was the last of his fever pieces before he died. It's infused''',
-'''with magic, providing protection as strong as good solid plate mail, only without''',
+'''with magic, providing protection as strong as mail, only without''',
 '''the susceptibility to hammers."'''], 
 ['''"Ok, but why is it so ... baring?" asks''', universal.state.player.name + "."],
 ['''Peter rolls his eyes. "Grandpa claimed that the way the spell he used worked,''',
 '''the less the armor covers, the better the protection. When I asked him about that''',
-'''particular design..." Peter shudders.''',
-format_line(['''"He said it was based on an outfit grandma liked to wear when they were getting''',
+'''particular design,''', format_line(['''he said it was based on an outfit grandma liked to wear when they were getting''',
 '''intimate.''']) if universal.state.player.is_female() else '''"He said it was based on an outfit he used to wear when he and grandma were getting intimate.''',
 '''I stopped asking after''',
-'''that." He shudders again.'''], 
+'''that."'''], 
 ['''"What about cold weather''', '''or the male gaze?"''' if universal.state.player.is_female() else '',  
 '''asks''', universal.state.player.name + ".", '''"Does it protect you against that too?"'''],
 ['''"Well, I imagine you could wear it under other clothing," says Peter, scratching''',
@@ -2950,14 +2947,14 @@ peter_2_1_1.children = peterRootChildren
 
 peter_3_1_1.comment = '''"Could I see your wares?"'''
 def peter_3_1_1_qf():
-    peter_3_1_1.quip  = format_text(['''Peter frowns. "I don't have any 'wares.' This is a blacksmith. If you'd like to place an order for something. Nails, buckles. Maybe a shovel?"''',
-        '''"Oh," says''', name(), '''"I'm sorry. Carnutian isn't my native tongue, I thought this was a place to buy weapons. Figured I'd see what you had."''',
-        '''"I suspected as much. You're hardly the first Taironan to make that mistake," says Peter, giving''', name(), '''a smile. "I'm assuming you guys use the same word for both?"''',
-        name(), '''nods.''',
-        '''"Well, my grandfather used to make weapons and armor, but I got out of that business," says Peter. "Nothing kills your interest in weapons like a few years as a camp follower. Don't suppose there's anything else you need? A utility knife?''',
-        '''Some sewing needles?"''',
-        name(), '''shakes''', hisher(), '''head. "Sorry."''',
-        '''Peter shrugs. "Not a big deal."'''])
+    peter_3_1_1.quip  = format_text(['''Peter frowns. "I don't have any 'wares.' This is a blacksmith. If you'd like, you can place an order for something. Nails, buckles. Maybe a shovel?"''',
+        ['''"Oh," says''', name(), "." + '''"I'm sorry. Carnutian isn't my native tongue, I thought this was a place to buy weapons. Figured I'd see what you had."'''],
+        ['''"I suspected as much. You're hardly the first Taironan to make that mistake," says Peter, giving''', name(), '''a smile. "I'm assuming you guys use the same word for both?"'''],
+        [name(), '''nods.'''],
+        ['''"Well, my grandfather used to make weapons and armor, but I got out of that business," says Peter. "Nothing kills your interest in weapons like a few years as a camp follower. Don't suppose there's anything else you need? A utility knife?''',
+        '''Some sewing needles?"'''],
+        [name(), '''shakes''', hisher(), '''head. "Sorry."'''],
+        ['''Peter shrugs. "Not a big deal."''']])
     try:
         peterRootChildren.remove(peter_3_1_1)
     except ValueError:
@@ -2969,7 +2966,7 @@ def peter_3_1_1_qf():
     return(shop_mode, [peter, peter_return_from_shopping.index])
     """
 peter_3_1_1.quip_function = peter_3_1_1_qf
-#peter_3_1_1.children = peterRootChildren
+peter_3_1_1.children = peterRootChildren
 
 peter_return_from_shopping = Node(165)
 peter_return_from_shopping.quip = '''"Anything else you need?" asks Peter.'''
@@ -2991,8 +2988,8 @@ peter_4_1_1.comment = '''"Thank you for your time. I'll see you around."'''
 def peter_4_1_1qf():
     if "visited_blacksmith" not in universal.state.player.keywords:
         universal.state.player.add_keyword("visited_blacksmith")
-        wesleyAndAnnesArmorShop = universal.state.get_room("Wesley and Anne's Armor Shop")
-        wesleyAndAnnesArmorShop.description = universal.format_text([['''The shop consists of a single small room. A counter runs the length of the far wall. Hanging on the left wall are a variety of small metal things: nails, buckles, hinges, locks, horseshoes. The left side contains a few samples of larger tools: a large sickle, and a shovel. What really catches''', universal.state.player.name + "'s", '''attention is a 'suit' of chanmail hanging on the wall above the counter.''', universal.format_line(['''The armor is a two piece affair. The top looks like to be barely big enough to cover (for a sufficiently loose definition of 'cover')''', universal.state.player.name + "'s", '''breasts, while the bottom is a thong. A thong made out of chainmail.''' if universal.state.player.is_female() else '''The armor is a single, small thong, which is made out of chainmail.'''])]])
+        wesleyAndAnnesArmorShop = universal.state.get_room("Wesley and Anne's Smithy")
+        wesleyAndAnnesArmorShop.description = universal.format_text([['''The shop consists of a single small room. A counter runs the length of the far wall. Hanging on the left wall are a variety of small metal things: nails, buckles, hinges, locks, horseshoes. The right side contains a few samples of larger tools: a large sickle, and a shovel. What really catches''', universal.state.player.name + "'s", '''attention is a 'suit' of chanmail hanging on the wall above the counter.''', universal.format_line(['''The armor is a two piece affair. The top looks like to be barely big enough to cover (for a sufficiently loose definition of 'cover')''', universal.state.player.name + "'s", '''breasts, while the bottom is a thong. A thong made out of chainmail.''' if universal.state.player.is_female() else '''The armor is a single, small thong, which is made out of chainmail.'''])]])
         peter_4_1_1.quip = universal.format_text([['''"Have a nice day," says Peter, giving a''',
             '''cheerful wave.'''],
             ['''Before''', name(), '''can respond, a young girl, no more than''',
@@ -3035,8 +3032,7 @@ def peter_5p1_1_1qf():
     peter_5p1_1_1.quip = universal.format_text([['''"That's not something I'd like to''', 
         '''discuss," says Peter firmly. "Do we have any more business?"'''],
         [universal.state.player.name, '''shakes''', hisher(universal.state.player), '''head.'''],
-        ['''Peter smiles. "Then have a nice day. I hope you remember me whenever''', 
-            '''you need a weapon or armor replaced or repaired. Now, if you'll''', 
+        ['''Peter smiles. "Then have a nice day. Now, if you'll''', 
             '''excuse me, I need to see to my daughter."''']])
 peter_5p1_1_1.quip_function = peter_5p1_1_1qf
 
@@ -4201,7 +4197,7 @@ def start_scene_2_episode_1(loading=False):
         '''The Vengador points at Adrian. Sparks dance across his fingertips. "We are here for your arms and armor. Surrender them peacefully, and no one will be hurt."''',
         '''"No," says Adrian.''',
         '''A bolt of fire erupts from his fingertip and arcs towards Adrian, who throws his own hand up. Just before the firebolt strikes, his hand flares with blue light. When the light fades, the firebolt is gone.''',
-        ['''\mThe Vengadores scatter through the room, engaging the heavily outnumbered''',
+        ['''The Vengadores scatter through the room, engaging the heavily outnumbered''',
         '''adventurers.''',
             '''The only swordswoman in the group locks eyes with''', universal.state.player.name + ".", '''She twists around a charging adventurer,''',
             '''and sprints towards''', himher(universal.state.player) + ".", '''The young Taironan starts to scramble''',
@@ -4222,7 +4218,7 @@ def start_scene_2_episode_1(loading=False):
                 '''that is two sizes too big for her, and a pair of trousers. The trousers have a massive''',
                 '''hole in the left knee, and half the right pant leg missing completely.''',
                 '''She clutches an old, heavily nicked dagger. Her hand is shaking, but her eyes are filled with grim''',
-            '''determination.''', universal.state.player.name, '''readies''', hisher(universal.state.player), '''weapon.''']]), justification=0, music=[textCommandsMusic.CATALIN])
+            '''determination.''', universal.state.player.name, '''readies''', hisher(universal.state.player), '''weapon.''']]), justification=0)
     adventurersGuild = universal.state.get_room("Adventurer's Guild")
     carlita = universal.state.get_character('Edita.person')
     adventurersGuild.add_character(carlita)
@@ -5057,8 +5053,8 @@ def helpPaloma_qf():
     add_keyword('met_Paloma')
     helpPaloma.quip = universal.format_text([['''Upon reaching the three woman, the amazon turns to''', name() + ",", '''and grins. "Ah, a fellow Vengador."'''],
     ['''"Are you sure''', heshe() + "'s", '''one of us?" asks the other.''', '"' + HeShe(), '''isn't wearing a mask."'''],
-    ['''"''' + HeShe(), '''probably just lost it during the fighting," says the amazon.''', '"' +  HeShe(), '''doesn't look like any of the Taironans in the Guild."''',
-    '''The amazon turns her attention back to''', name() + ".", 
+    ['''"''' + HeShe(), '''probably just lost it during the fighting," says the amazon.''', '"' +  HeShe(), '''doesn't look like any of the Taironans in the Guild."'''],
+    ['''The amazon turns her attention back to''', name() + ".", 
     '''"Anyway, we found this sniveling traitor cowering in here, and tried to convince''',
     '''her to join us. You know, fight the good fight against the soulless bastards that run this city. And she refused! Can you believe it? We're''',
         '''being crushed under Avaricum's bootheel, and she just wants us to lie there and take it!"'''],
@@ -5706,7 +5702,7 @@ floor1 = (
                #0    1     2     3      4     5    6     7     8     9   
             ( '__','___','___','___', '__', '__','___','___','___','___', '_'), 
             ('|  ','   ','   ','   ','|d ','|  ',' ! ','   ','   ','   ','|'),  #9
-            ('|  ','   ','   ','   ','|  ','|  ','   ','   ',' ! ','   ','|'),  #8
+            ('|  ','   ','   ','   ','|x ','|  ','   ','   ',' ! ','   ','|'),  #8
             ('|  ',' * ','   ',' * ',';  ',';* ','   ','   ','   ',' ! ','|'),  #7 
             ('|  ','   ','   ','   ','|  ','|  ',' ! ',' ! ','   ','   ','|'),  #6
             ('|__','___','___','___','|  ','|__','___','___','___','_!_','|'),  #5
@@ -8504,11 +8500,11 @@ floor0 = (
         ( '__','___','___','___', '__', '__','___','___','___','___', '_'), 
         ('|  ','   ','   ','   ','|u ','|  ','   ','   ','   ','   ','|'),  #9
         ('|  ',' * ','   ',' * ',';* ','|  ','   ','   ','   ','   ','|'),  #8
-        ('|  ','   ','   ','   ','|  ',';*_','___','*__','___','___','|'),  #7 
+        ('|  ','   ','   ','   ','|x ',';*_','___','*__','___','___','|'),  #7 
         ('|  ','   ','   ','   ','|  ','|__','|  ','___','|__','|  ','|'),  #6
         ('|  ','   ','   ','   ','|  ','|* ','   ','|__','|*_',' * ','|'),  #5
-        ('|__','___','___','___','|  ','|  ','___','   ','|  ','|  ','|'),  #4
-        ('|  ','   ','   ','   ','|  ',';* ','|  ','|  ','|  ','|  ','|'),  #3
+        ('|__','___','___','___','|  ','|x ','___','   ','|  ','|x ','|'),  #4
+        ('|  ','   ','   ','   ','|  ',';* ','|  ','|x ','|  ','|  ','|'),  #3
         ('|  ','   ','   ','   ','|  ','|__','|__','|  ','|__','|* ','|'),  #2 
         ('|  ','   ','   ',' * ',';  ','|  ','|*_','___','   ','___','|'),  #1
         ('|__','-%-','___','-%-','|__','|__','___','___','|__','|_|','|')   #0 
@@ -9629,7 +9625,7 @@ def ep1_peter_flirt_quip():
             not wearing_skirt_or_dress_or_pants() and universal.state.player.underwear().baring else '''bum.''']) if not 'lesbian_in_denial' in keywords() else '.')])], 
         [HeShe(), 
                 '''pouts at Peter, and makes a big show of rubbing''', hisher(), '''bottom. "I was only kidding, you big jerk."'''],
-        ['''"Nobody kids about Wesley and Anne's Armor Shop," says Peter with hyperbolic intensity. "Not unless''', heshe(), '''wants''', hisher(), '''bottom smacked."'''],
+        ['''"Nobody kids about Wesley and Anne's Smithy," says Peter with hyperbolic intensity. "Not unless''', heshe(), '''wants''', hisher(), '''bottom smacked."'''],
         [name(), '''sticks''', hisher(), '''tongue out at Peter. "Well, maybe nobody smacks my bottom, unless he wants his bottom smacked. What do''',
             '''you say to that you overgrown brute?"'''],
         ['''Before Peter can respond, the door creaks open, and Anne steps in, dressed in a simple nightshift, a ragged doll clutched in one hand, the''',

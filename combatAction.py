@@ -165,16 +165,25 @@ def compute_bonus(difference):
     """
     Computes the bonus the initiator of an action receives for having higher stats than her opponents.
     """
+    print('computing bonus:')
     remainder = difference % POINT_DROP_OFF
+    print('remainder:')
+    print(remainder)
     bonusLevels = difference // POINT_DROP_OFF             
+    print('bonusLevels:')
+    print(bonusLevels)
     multiplier = 1.0
     bonus = 0
     while bonusLevels > 0:
         bonus += int(math.floor(POINT_DROP_OFF * multiplier))
-        multiplier -= POINT_DROP_OFF
+        print('bonus:')
+        print(bonus)
+        multiplier -= MULTIPLIER_DECREASE
         bonusLevels -= 1
     if remainder:
-        bonus += warfareRemainder * multiplier
+        bonus += int(math.floor(remainder * multiplier))
+    print('final bonus:')
+    print(bonus)
     return bonus
 
 class AttackAction(CombatAction):
@@ -182,7 +191,8 @@ class AttackAction(CombatAction):
     grappleStatus = GRAPPLER_ONLY
     effectClass = SPELL_SLINGERS
     numTargets = 1
-    primaryStat = universal.STRENGTH
+    primaryStat = universal.DEXTERITY
+    secondaryStat = universal.STRENGTH
     actionType = 'attack'
     def __init__(self, attacker, defenders, secondaryStat=None):
         super(AttackAction, self).__init__(attacker, defenders, universal.WARFARE, secondaryStat)
@@ -191,6 +201,8 @@ class AttackAction(CombatAction):
         self.effectClass = SPELL_SLINGERS
         self.grappleStatus = GRAPPLER_ONLY
         self.actionType = 'attack'
+        self.primaryStat = AttackAction.primaryStat
+        self.secondaryStat = AttackAction.secondaryStat
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
@@ -207,7 +219,7 @@ class AttackAction(CombatAction):
                 defender.guardian = None
         except AttributeError:
             pass
-        if defender.guardian is not None:
+        if defender.guardian:
             success = rand(CHANCE_RANGE + compute_bonus(max(0, defender.guardian.warfare() - attacker.warfare())))
             failure = rand(CHANCE_RANGE)
             if failure <= success:
@@ -218,25 +230,37 @@ class AttackAction(CombatAction):
             else:
                 resultString = ' '.join([defender.guardian.printedName, 'fails to defend', defender.printedName, 'from', attacker.printedName + '!'])
                 defender.guardian = None
-        if defender.guardian is None:
+        if not defender.guardian:
             attacker = self.attacker
             wa = attacker.weapon()
             wd = defender.weapon()
             attackBonus = wa.attack_bonus(attacker.is_grappling())
             defendBonus = wd.parry_bonus(defender.is_grappling())
             warfareDifference = max(0, attacker.warfare() - defender.warfare())
+            print('warfareDifference:')
+            print(warfareDifference)
             bonus = compute_bonus(warfareDifference)
             #attackBonus += attacker.warfare()
             #defendBonus += defender.warfare() // 2
             #assert attacker.attack_penalty() >= 0, '%s attack penalty: %s' % (attacker.name, attacker.attack_penalty())
             #attackBonus += attacker.attack_penalty()
             #defendBonus += defender.attack_penalty()
-            print('warfareBonus:')
+            print('attacker:')
+            print(attacker.name)
+            print('defender:')
+            print(defender.name)
+            print('bonus:')
             print(bonus)
             print('attack success:')
+            print('attacker warfare:')
+            print(attacker.warfare())
+            print('defender warfare:')
+            print(defender.warfare())
             success = rand(bonus + attackBonus) 
+            print(success)
             print('attack failure:')
             failure = rand(defendBonus)
+            print(failure)
             if failure <= success:
                 print('damageBonus for ' + attacker.name)
                 #damageBonus = attacker.warfare() + wa.attack_bonus(attacker.is_grappling()) - defender.defense()
@@ -264,7 +288,8 @@ class GrappleAction(CombatAction):
     grappleStatus = NOT_WHEN_GRAPPLED
     effectClass = SPELL_SLINGERS
     numTargets = 1
-    primaryStat = universal.DEXTERITY
+    primaryStat = universal.STRENGTH
+    secondaryStat = universal.DEXTERITY
     actionType = 'GrappleAction'
     def __init__(self, attacker, defenders, enemyInitiated=False, secondaryStat=None):
         super(GrappleAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
@@ -272,6 +297,7 @@ class GrappleAction(CombatAction):
         #Spell slingers can have their effectiveness grossly decreased by being grappled.
         self.effectClass = SPELL_SLINGERS
         self.primaryStat = GrappleAction.primaryStat
+        self.secondaryStat = GrappleAction.secondaryStat
         self.grappleStatus = NOT_WHEN_GRAPPLED
         self.enemyInitiated = enemyInitiated
         self.actionType = 'GrappleAction'
@@ -513,7 +539,7 @@ class ThrowAction(CombatAction):
             return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
         if attacker.is_grappling(grappler):
             wa = attacker.weapon()
-            wg = grappler.weapon()
+            wd = grappler.weapon()
             #grappleABonus = wa.grapple_bonus() + attacker.grapple() - attacker.attack_penalty()
             #grappleGBonus = wg.grapple_bonus() + grappler.grapple() - grappler.attack_penalty()
             bonus = compute_bonus(max(0, attacker.grapple() - defender.grapple()))

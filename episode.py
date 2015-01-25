@@ -86,6 +86,7 @@ class Episode(universal.RPGObject):
             self.scenes[self.currentSceneIndex].endScene(*endingSceneArgs)
         universal.state.player.currentEpisode = self.nextEpisode.name
         set_post_title_card(allEpisodes[universal.state.player.currentEpisode].init)
+        universal.state.clear_one_time_encounters()
         allEpisodes[universal.state.player.currentEpisode].start_episode()
 
     def next_scene(self, previousSceneArgs=(), startingSceneArgs=()):

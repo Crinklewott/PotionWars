@@ -429,6 +429,9 @@ def print_action(action):
     elif isinstance(action, person.Spell):
         return ' '.join([attacker, 'will cast', action.name, 'on', defenders + '.'])
 
+PRIMARY_POINTS = 2
+SECONDARY_POINTS = 1
+
 def increase_stat_chance():
     numStats = len(person.allStats)
     global chosenActions
@@ -436,20 +439,20 @@ def increase_stat_chance():
         increaseStat = action.attacker.increaseStatPoints
         increaseSpellPoints = action.attacker.increaseSpellPoints
         if action.attacker in allies:
-                increaseStat[action.primaryStat] += 2
+                increaseStat[action.primaryStat] += PRIMARY_POINTS
                 try:
                     increaseSpellPoints[action.spellType] += action.tier + 1
                 except AttributeError:
                     continue
                 try:
-                    increaseStat[action.secondaryStat] += 1
+                    increaseStat[action.secondaryStat] += SECONDARY_POINTS
                 except (AttributeError, TypeError):
                     continue
         elif action.attacker in enemies:
             print('----------------defenders of action: ' + str(action) + '-------------------')
             print(action.defenders)
             for defender in action.defenders:
-                defender.chanceIncrease[action.primaryStat] += 1
+                defender.increaseStatPoints[action.primaryStat] += SECONDARY_POINTS
 
 def begin_round_interpreter(keyEvent):
     global chosenActions, chosenTargets
@@ -579,7 +582,6 @@ def target_spell():
     set_command_interpreter(target_spell_interpreter)
 
 chosenTargets = []
-spellIncrease = 10
 def target_spell_interpreter(keyEvent):
     """
     This assumes that you never face more than 9 enemies, and you never have more than 9
@@ -599,10 +601,10 @@ def target_spell_interpreter(keyEvent):
         if keyEvent.key == K_RETURN:
             if chosenSpell.targetType == ENEMY:
                 chosenActions.append(chosenSpell.__class__(activeAlly, activeAlly.grapplingPartner))
-                activeAlly.chanceIncrease[chosenSpell.spellSchool] += spellIncrease
+                #activeAlly.increaseSpellPoints[chosenSpell.spellSchool] += PRIMARY_POINTS
             else:
                 chosenActions.append(chosenSpell.__class__(activeAlly, activeAlly))
-                activeAlly.chanceIncrease[chosenSpell.spellSchool] += spellIncrease
+                #activeAlly.increaseSpellPoints[chosenSpell.spellSchool] += PRIMARY_POINTS
             chosenTier = None
             next_character()
         elif keyEvent.key == K_BACKSPACE:
@@ -653,11 +655,11 @@ def target_spell_interpreter(keyEvent):
                     #set_commands([' '.join(['Cast', chosenSpell.name + '?(Y/N)'])])
                     #set_command_interpreter(confirm_cast_interpreter)
                     chosenActions.append(chosenSpell.__class__(activeAlly, chosenTargets))
-                    activeAlly.chanceIncrease[chosenSpell.spellSchool] += spellIncrease
+                    #activeAlly.chanceIncrease[chosenSpell.spellSchool] += spellIncrease
                     next_character()
         elif keyEvent.key == K_RETURN and len(chosenTargets) > 0:
             chosenActions.append(chosenSpell.__class__(activeAlly, chosenTargets))
-            activeAlly.chanceIncrease[chosenSpell.spellSchool] += spellIncrease
+            #activeAlly.chanceIncrease[chosenSpell.spellSchool] += spellIncrease
             next_character()
 
 """
@@ -1458,8 +1460,11 @@ def game_over_interpreter(keyEvent):
             music.play_music(music.COMBAT)
     elif keyEvent.key == K_ESCAPE:
         if optional:
-            afterCombatEvent([ally for ally in allies if ally.current_health() <= 0] + defeatedAllies, 
-                    [enemy for enemy in enemies if enemy.current_health() <= 0] + defeatedEnemies, False)
+            try:
+                afterCombatEvent([ally for ally in allies if ally.current_health() <= 0] + defeatedAllies, 
+                        [enemy for enemy in enemies if enemy.current_health() <= 0] + defeatedEnemies, False)
+            except TypeError:
+                pass
             allies.members += defeatedAllies    
         else:
             end_fight()
@@ -1517,6 +1522,7 @@ def specialization_bonus(ally, i):
     return bonus
 
 HIGH_STAT_PENALTY = .1
+STAT_GROWTH_RATE_MULTIPLIER = 10
 def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious):
     """
     Takes as argument the function that should be invoked after leveling up is complete.
@@ -1560,27 +1566,31 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
             print('statChance: ' + str(statChance))
             '''
             statPoints = ally.increaseStatPoints[i]
-            stat = ally.stat(i)
-            if stat <= statPoints:
+            stat = ally.stat(i) * STAT_GROWTH_RATE_MULTIPLIER
+            gain = 0
+            manaGain = 0
+            while stat <= statPoints:
                 if i == person.HEALTH:
-                    gain = int(math.ceil(stat * .25)) + statPoints - stat
+                    gain += int(math.ceil(stat * .25)) + statPoints - stat
                     ally.improve_stat(i, gain)
                     ally.increaseStatPoints[i] = 0
                 else:
-                    gain = 1
+                    gain += 1
                     ally.improve_stat(i, 1)
                     if stat == person.TALENT:
-                        manaGain = int(math.ceil(ally.mana() * .5))
+                        manaGain += int(math.ceil(ally.mana() * .5))
                         ally.improve_stat(person.MANA, manaGain)
-                    increaseStatPoints[i] -= stat 
-                    #print(maxStats[i])
-                    #print(ally.get_stat(i))
-                    #print(specialization_bonus(ally, i))
+                    ally.increaseStatPoints[i] -= stat 
+                statPoints = ally.increaseStatPoints[i]
+                stat = ally.stat(i) * STAT_GROWTH_RATE_MULTIPLIER
+                #print(maxStats[i])
+                #print(ally.get_stat(i))
+                #print(specialization_bonus(ally, i))
+            if gain:
                 universal.say(format_line([ally.name, 'has gained', str(gain), person.primary_stat_name(i) + '.\n']))
-                try:
-                    universal.say(format_line([ally.name, 'has gained', str(manaGain), 'Mana.\n']))
-                except NameError:
-                    pass
+            if manaGain:
+                universal.say(format_line([ally.name, 'has gained', str(gain), person.primary_stat_name(i) + '.\n']))
+                universal.say(format_line([ally.name, 'has gained', str(manaGain), 'Mana.\n']))
         for i in range(len(ally.increaseSpellPoints)): 
             #Note: This is much MUCH simpler than what we will actually allow. This simply checks if the player has 10 spell points, and then has the player learn the advanced spell if the player doesn't already know it.
             #This is only a stop-gap measure. The actual learning spell mechanic will be much more complicated, but I don't want to implement that until I've built a proper GUI.

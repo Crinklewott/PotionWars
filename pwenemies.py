@@ -100,7 +100,8 @@ class VengadorWarrior(Enemy):
         super(VengadorWarrior, self).__init__('Vengador Warrior', gender, None, specialization=universal.WARFARE, bodyType='voluptuous', musculature='muscular', 
                 height='tall', identifier=identifier)
         self.level = level
-        self.equip(copy.copy(itemspotionwars.leatherCuirass))
+        #self.equip(copy.copy(itemspotionwars.leatherCuirass))
+        self.equip(copy.copy(itemspotionwars.tunic))
         self.equip(copy.copy(itemspotionwars.trousers))
         self.equip(copy.copy(itemspotionwars.warspear))
         self.description = universal.format_line(['''A tall, broad-shouldered''', person.manwoman(self) + ".", person.HeShe(self), '''is wielding a''', self.weapon().name, 

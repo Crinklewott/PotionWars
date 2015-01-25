@@ -149,7 +149,7 @@ class DungeonFloor(universal.RPGObject):
         Implements a single floor. See the documentation for Dungeon for details.
         Floor should be a tuple of tuple of strings, events a list of list of functions.
     """
-    def __init__(self, floor, events=None, visibility=4, encounterRate=5, enemies=None, maxEnemies=2, ambushChance=5):
+    def __init__(self, floor, events=None, visibility=4, encounterRate=0, enemies=None, maxEnemies=2, ambushChance=5):
         self.floor = floor
         if not events:
             events = []
@@ -258,6 +258,7 @@ class Dungeon(townmode.Room):
         j. "!"  - This square has a guaranteed random encounter
         k. "s"  - Start square
         l. "e"  - Exit Square
+        m. "x" - A one time encounter
 
         The start square is where the player begins dungeon crawling. 
         The designer MUST provide a start square for the floor on which play begins, and should provide ONLY ONE start square. When the player enters the dungeon, the
@@ -718,9 +719,17 @@ class Dungeon(townmode.Room):
         elif has_char('!', square):
             event = True
             self.encounter()
+        elif has_char('x', square) and not universal.state.is_clear((floor, row, column)):
+            def clear_encounter(x, y, z):
+                #These three are just dummy arguments that are used because the combat function expects the postCombatEvent to have three arguments.
+                print("clearing encounter")
+                universal.state.clear_encounter((floor, row, column))
+
+            event = True
+            self.encounter(clear_encounter)
         if has_char('e', square):
             universal.set_commands(get_commands())
-            if self.dungeonEvents[floor][row][column] is not None:
+            if self.dungeonEvents[floor][row][column]:
                 event = True
                 self.dungeonEvents[floor][row][column]()
         if has_char('u', square):
@@ -730,12 +739,12 @@ class Dungeon(townmode.Room):
             print('Going down.')
             changingFloors = -1
             universal.set_commands(get_commands())
-        if not event and random.randint(0, 99) < self[floor].encounterRate:
-            self.encounter()
-        elif not event:
+        #if not event and random.randint(0, 99) < self[floor].encounterRate:
+            #self.encounter()
+        if not event:
             dungeon.display()
 
-    def encounter(self):
+    def encounter(self, afterCombatEvent=None):
         currentFloor = self.dungeonMap[self.coordinates[0]]
         numEnemies = random.randint(1, currentFloor.maxEnemies)
         encounteredEnemies = []
@@ -759,7 +768,7 @@ class Dungeon(townmode.Room):
         #combat.fight(encounteredEnemies, afterCombatEventIn=post_combat_spanking, ambushIn=ambushFlag) 
         print("encountered enemies:")
         print(encounteredEnemies)
-        combat.fight(encounteredEnemies, ambushIn=ambushFlag, randomEncounterIn=True) 
+        combat.fight(encounteredEnemies, ambushIn=ambushFlag, randomEncounterIn=True, afterCombatEventIn=afterCombatEvent) 
 
     def move(self, forward=True, down=False, up=False):
         """

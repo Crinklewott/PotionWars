@@ -8,14 +8,17 @@
 WARNING: Due to fiddling with the name of Carlita (she was Carlita, then Lucilla, then Anastacia, then Carlita again), I've had to add some code to the state object to change Lucilla/Anastacia to Carlita, in order to ensure
 that keywords are registering properly for people loading saves from versions where Carly's name was Lucilla.
 """
+
+#NOTE: I've had to add some code to keep save files compatible with the name change of Peter's shop. That code should be deleted before using this engine for future games.
 from __future__ import print_function 
 import sys, pygame, textrect, abc
 import Queue
 from pygame.locals import *
 import os
 import math
+import ast
 
-DEBUG = False
+DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 
@@ -667,9 +670,9 @@ def init_game():
     TITLE_SIZE = int(math.floor(TITLE_SIZE * scale))
     pygame.display.set_caption(get_name())
     if DEBUG:
-        set_screen(pygame.display.set_mode(size))
+        set_screen(pygame.display.set_mode((1920, 1080)))
     else:
-        set_screen(pygame.display.set_mode(size, pygame.FULLSCREEN))
+        set_screen(pygame.display.set_mode(size, pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE))
     #set_screen(pygame.display.set_mode(size))
     # Fill background
     set_background(pygame.Surface(get_screen().get_size()))
@@ -961,6 +964,8 @@ class State(object):
         self.init_scene = None
         self.instant_combat = True
         self.reset = None
+        #A list of triples containing the coordinates of one-time encounters that have been cleared. This is automatically emptied at the end of each episode.
+        self.clearedSquares = []
 
     def save(self, saveFile):
         saveData = []
@@ -990,13 +995,21 @@ class State(object):
             saveData.append(item.save())
         saveData.append("State Data:")
         saveData.append(str(self.difficulty))
+        saveData.append("State Data:")
+        for coordinate in self.clearedSquares:
+            saveData.append("Square:")
+            saveData.append(str(coordinate))
         saveFile.write('\n'.join(saveData))
 
     def load(self, loadFile):
         import episode, person, townmode, items
         fileData = '\n'.join(loadFile.readlines())
         #Note: The first entry in the list is just the empty string.
-        _, player, characters, rooms, bedroom, party, location, itemList, difficulty = fileData.split('State Data:')
+        try:
+            _, player, characters, rooms, bedroom, party, location, itemList, difficulty, clearedSquares = fileData.split('State Data:')
+        except ValueError:
+            _, player, characters, rooms, bedroom, party, location, itemList, difficulty = fileData.split('State Data:')
+            clearedSquares = ''
         person.PlayerCharacter.load(player, self.player)   
         if self.player.currentEpisode:
             currentEpisode = episode.allEpisodes[self.player.currentEpisode]
@@ -1033,7 +1046,21 @@ class State(object):
             self.difficulty = int(difficulty.strip())
         except ValueError:
             self.difficulty = None
+        clearedSquares = clearedSquares.split('Square:')
+        self.clearedSquares = []
+        print(clearedSquares)
+        for square in clearedSquares:
+            if square:
+                self.clearedSquares.append(ast.literal_eval(square))
 
+    def clear_one_time_encounters(self):
+        self.clearedSquares = []
+
+    def clear_encounter(self, coordinate):
+        self.clearedSquares.remove(coordinate)
+
+    def is_clear(self, coordinate):
+        return coordinate in self.clearedSquares
 
     def set_init_scene(self, init_scene):
         self.init_scene = init_scene
@@ -1109,6 +1136,12 @@ class State(object):
             return self.rooms[room.name]
         except AttributeError:
             return self.rooms[room]
+        except KeyError:
+            #NOTE: This is here to keep save files compatible with the change in the name of Peter's shop. This should be deleted before using this engine for future games.
+            if room.name == "Wesley and Anne's Armor Shop":
+                return self.rooms["Wesley and Anne's Smithy"]
+            elif room.name == "Wesley and Anne's Smithy":
+                return self.rooms["Wesley and Anne's Armor Shop"]
 
     def add_character(self, character):
         self.characters[character.get_id()] = character
