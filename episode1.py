@@ -1161,7 +1161,7 @@ necia.learn_spell(spells_PotionWars.icebolt)
 necia.learn_spell(spells_PotionWars.weaken) 
 necia.learn_spell(spells_PotionWars.distortMagic) 
 
-necia.equip(itemspotionwars.qualityDagger)
+necia.equip(itemspotionwars.neciasDagger)
 necia.equip(itemspotionwars.trousers)
 necia.equip(itemspotionwars.tunic)
 #necia.equip(itemspotionwars.lacyUnderwear)
@@ -2887,8 +2887,9 @@ def peter_greeting_quip_function():
 peter_greeting.quip_function = peter_greeting_quip_function
 
 peter = p.Person('Peter', p.MALE, peter_greeting.index, peter_greeting.index)
-peter.inventory = [itemspotionwars.qualityDagger, itemspotionwars.warspear, itemspotionwars.handAndAHalfSword, itemspotionwars.staff, itemspotionwars.lamellarArmor, itemspotionwars.chainCuirass,
-    itemspotionwars.chainmailBikini]
+#peter.inventory = [itemspotionwars.qualityDagger, itemspotionwars.warspear, itemspotionwars.handAndAHalfSword, itemspotionwars.staff, itemspotionwars.lamellarArmor, itemspotionwars.chainCuirass,
+#    itemspotionwars.chainmailBikini]
+peter.inventory = [itemspotionwars.chainmailBikini]
 offStage.add_character(peter)
 peter_initial_greeting = Node(159)
 peter.litany = peter_initial_greeting.index
@@ -8295,7 +8296,7 @@ def necia_chastised_warslinger_interpreter(keyEvent):
             ['''The woman just continues to glare.'''],
             [name(), '''presses''', hisher(), '''lips together.''', HeShe(), '''grabs the woman by the arm and yanks her to her feet. "Let's see how stoic you are after I've tanned your ass."\n\n''']]),
             justification=0)
-        universal.state.player.take_item(itemspotionwars.qualityDagger)
+        #universal.state.player.take_item(itemspotionwars.qualityDagger)
         necia_chastised_spank_interpreter()
     elif num == 2:
         universal.say(universal.format_text([['''The woman gives''', name(), '''a mystified look, and''', name(), '''explicitly points at the woman's face.'''],

@@ -29,6 +29,8 @@ TIGHT = 'tight'
 class NakedError(Exception):
     pass
 
+
+
 class Enchantment(universal.RPGObject):
     def __init__(self, cost=0, stat=None, bonus=0):
         self.cost = cost
@@ -57,6 +59,12 @@ class Enchantment(universal.RPGObject):
     def display(self):
         return ''.join(['+', str(self.bonus), ' ', universal.stat_name(self.stat)])
 
+class AttackEnchantment(Enchantment):
+    """
+    Grants a +1 attack bonus to weapons, and a +1 evade bonus to clothing.
+    """
+    pass
+
 class MaxEnchantmentError(Exception):
     pass
 
@@ -73,6 +81,12 @@ class Item(universal.RPGObject):
         self.enchantments = [] if enchantments is None else enchantments
         self.maxEnchantment = maxEnchantment
         universal.state.add_item(self)
+
+    def __eq__(self, item):
+        return self.name == item.name
+    
+    def __neq__(self, item):
+        return self.name != item.name
 
     @staticmethod
     def add_data(data, saveData):
@@ -165,6 +179,37 @@ class Item(universal.RPGObject):
     @staticmethod
     def _load(dataList):
         raise NotImplementedError()
+
+allGems = {}
+class Gem(Item):
+    """
+    Special gems used to imbue weapons and clothing with enchantments.
+    """
+    def __init__(self, name, description, enchantment):
+        """
+        name - name of the Gem
+        description - Gem's description in text
+        enchantment - The Enchantment class associated with this gem. This should be the enchantment that the gem imbues the desired weapon or clothing with. 
+        """
+        super(Gem, self).__init__(name, description)
+        self.enchantment = enchantment
+
+    def save(self):
+        saveData = []
+        Gem.add_data(str(self.name), saveData)
+        return '\n'.join(saveData)
+
+    @staticmethod
+    def add_data(data, saveData):
+        saveData.extend(["Gem Data:", data])
+
+    @staticmethod
+    def load(saveData, gem):
+        """
+        Because enchantment gems can't be changed by the player, and we always start with a copy of the object, whose state is then updated to match the state in the savefile, nothing fancy needs to happen when loading gems.
+        """
+        pass
+
 
 class Armor(Item):
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6, risque=0):

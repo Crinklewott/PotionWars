@@ -150,7 +150,7 @@ robe = items.Robe("robe", "A warm, bulky outfit often worn by men who wish they 
 #------------------------------Knives------------------------------------
 familyDagger = items.Knife('family dagger', "Engraved on the hilt is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate hilt design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=100)
 
-qualityDagger = items.Knife('quality dagger', "A war dagger. Very useful in close quarters.", genericBonus=1, 
+neciasDagger = items.Knife("Necia's dagger", "A very high quality dagger used by a Vengador.", genericBonus=1, 
         price=75) 
 
 knuckleDagger = items.Knife('knuckle dagger', ' '.join(["A dagger whose handle doubles as brass knuckles (made from wood). The knuckles allow the user to either stab an enemy, or punch them with the knuckles. However, the restrictive knuckles",
@@ -168,11 +168,11 @@ dagger = items.Knife('dagger', "A large, wicked looking dagger.", price=10)
 
 
 #-------------------------Swords------------------------------------------
-oneHandedSword = items.Sword('one handed sword', "A standard, double-edged sword. Often used as a sign of status by knights and other warriors of noble birth.", price=100,
-        genericBonus=1)
+longSword = items.Sword('longsword', "A standard, double-edged sword. Often used as a sign of status by knights and other warriors of noble birth.", price=100)
+
 familySword = items.Sword('family sword', "Engraved on the hilt is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate hilt design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=150)
 
-handAndAHalfSword = items.Sword('hand and a half sword', ' '.join(["Heavier than a one handed sword. Its increased length (compared to the family sword) means that it is more dangerous at arms length. Its heavy pommel and large crossguard also make it dangerous",
+twoHandedSword = items.Sword('two handed sword', ' '.join(["Heavier and longer than a longsword. Its increased length means that it is more dangerous at arms length. Its heavy pommel and large crossguard also make it dangerous",
     "in a grapple (though not as dangerous as any dagger)."]), 
     minDamage=1, maxDamage=6, grappleAttempt=0, grappleAttemptDefense=1, grappleBonus=0, armslengthBonus=1, price=125)
 
@@ -231,3 +231,8 @@ bluePajamaPants = items.PajamaPants('blue pajama pants',
     'A pair of delightfully soft, dark blue pajama pants. Just tight enough to show off your ass, not tight enough to be uncomfortable.', 3)
 
 bluePajamaShirt = items.PajamaTop('blue pajama shirt', 'A delightfully soft, dark blue pajama shirt. Goes great with the blue pajama pants', 3)
+
+
+#----------------------------------Gems-----------------------------------------
+
+attackGem = items.Gem('Attack Gem', 'Weapons enchanted with this gem gain a bonus to attack. Clothing enchanted with the gem gain a bonus to evasion.', items.AttackEnchantment)

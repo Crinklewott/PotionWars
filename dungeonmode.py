@@ -408,29 +408,15 @@ class Dungeon(townmode.Room):
     def display_squares(self):
         pass
 
-    def display(self):
+
+    def compute_visible_area(self):
         """
-        a. "|" - This square has a wall to the east
-        b. "_" - This square has a wall to the south
-        c. "*" - A special event occurs at this spot.
-        d. ";" - This square has a door to the east.
-        e. ":" - This square has a secret door to the east.
-        f. ".," - This square has a door to the south.
-        g. ".." - This square has a secret door to the south.
-        h. d - This square has a passage from the current floor to the floor immediately below.
-        i. u - This square has a passage from the current floor to the floor immediately above.
-        j. "!" - This square has a guaranteed random encounter
-        k. "s" - Start square
-        l. "e" - Exit Square
-        m. "%" - Darkness to the south
-        n. "#" - Darkness to the west
-        o. "-" - Invisible wall to the south
-        p. "^" - Invisible wall to the west
+        Computes the parts of the dungeon that the player can see.
+
+        NOTE: I really really need to rework this. It's buggy as fuck, and I have no idea what's going on in this damned thing.
+
+        I'll probably have to bust out some kind of line of sight, or ray-tracing algorithm or something. *groan* Hate graphics coding.
         """
-        set_command_interpreter(dungeon_interpreter)
-        clear_screen()
-        set_dungeon_commands(self)
-        #First, we build a 3 x visibility grid of all the potentially visible squares.
         visibleArea = ([], [], [])
         floor = self.coordinates[0]
         row = self.coordinates[1]
@@ -476,7 +462,35 @@ class Dungeon(townmode.Room):
                                 visibleArea[1][j] = None
                     if has_char('_', mySquare[SOUTH]) or has_char('..', mySquare[SOUTH]) or has_char('.,', mySquare[SOUTH]):
                         visibleArea[2][i] = None
-                    
+        return visibleArea
+
+    def display(self):
+        """
+        a. "|" - This square has a wall to the east
+        b. "_" - This square has a wall to the south
+        c. "*" - A special event occurs at this spot.
+        d. ";" - This square has a door to the east.
+        e. ":" - This square has a secret door to the east.
+        f. ".," - This square has a door to the south.
+        g. ".." - This square has a secret door to the south.
+        h. d - This square has a passage from the current floor to the floor immediately below.
+        i. u - This square has a passage from the current floor to the floor immediately above.
+        j. "!" - This square has a guaranteed random encounter
+        k. "s" - Start square
+        l. "e" - Exit Square
+        m. "%" - Darkness to the south
+        n. "#" - Darkness to the west
+        o. "-" - Invisible wall to the south
+        p. "^" - Invisible wall to the west
+        """
+        set_command_interpreter(dungeon_interpreter)
+        clear_screen()
+        set_dungeon_commands(self)
+        #First, we build a 3 x visibility grid of all the potentially visible squares.
+        visibleArea = self.compute_visible_area()
+        floor = self.coordinates[0]
+        row = self.coordinates[1]
+        column = self.coordinates[2]
         #At this point, if visibleArea[i][j] does *not* have None, then we need to draw something.
         self.draw_walls(visibleArea)
         coordinate = str(self.coordinates)
@@ -510,6 +524,7 @@ class Dungeon(townmode.Room):
                 mapColumn.append(['None'])
         return ' '.join(['{' + ', '.join(column) + '}' for column in mapColumn])
 
+    WIDTH_HEIGHT_MULTIPLIER = 2
     def draw_walls(self, visibleArea):
         """
         Visible area is a 3 x visibility grid of blocks. If a block is None, then it is not visible (and a wall needs to be drawn). If it is not None, then it is visible, 
@@ -517,9 +532,16 @@ class Dungeon(townmode.Room):
         """
         westSouth = WEST if self.direction == NORTH or self.direction == SOUTH else SOUTH
         eastNorth = EAST if self.direction == NORTH or self.direction == SOUTH else NORTH
-        leftCoordinates = ((-5, get_world_view().height // 40), (0, 39 * get_world_view().height // 40))
+        width = get_world_view().width
+        height = get_world_view().height
+        #Meant to make things look a bit less stretched if on a wide (or tall) screen.
+        if width < height:
+            height = min(Dungeon.WIDTH_HEIGHT_MULTIPLIER * width, height)
+        elif height < width:
+            width = min(Dungeon.WIDTH_HEIGHT_MULTIPLIER * height, width)
+        leftCoordinates = ((-5, height // 40), (0, 39 * height // 40))
         pLeftCoordinates = leftCoordinates
-        rightCoordinates = ((get_world_view().width+5, get_world_view().height // 40), (get_world_view().width, 39 * get_world_view().height // 40))
+        rightCoordinates = ((width+5, height // 40), (width, 39 * height // 40))
         pRightCoordinates = rightCoordinates
         angle = 24
         wallAngle = math.radians(angle)
@@ -615,7 +637,11 @@ class Dungeon(townmode.Room):
         x0 = start[0][0]
         y0 = start[0][1]
         y0Prime = start[1][1]
-        x1 = x0 + neg * (1/(4.5 * (stepsAhead + 1))) * get_world_view().width
+        width = get_world_view().width
+        height = get_world_view().height
+        if height < width:
+            width = min(Dungeon.WIDTH_HEIGHT_MULTIPLIER * height, width)
+        x1 = x0 + neg * (1/(4.5 * (stepsAhead + 1))) * width
         y1 = math.tan(wallAngle) * neg * (x1 - x0) + y0
         y1Prime = y0Prime - math.tan(wallAngle) * neg * (x1 - x0) 
         drawWall = False
@@ -718,7 +744,11 @@ class Dungeon(townmode.Room):
             self.dungeonEvents[floor][row][column]()
         elif has_char('!', square):
             event = True
-            self.encounter()
+            enemies = None
+            if self.dungeonEvents[floor][row][column]:
+                #One time combat events have associated with them a function that returns the list of enemies to be battled.
+               enemies = dungeonEvents[floor][row][column]()
+            self.encounter(enemies)
         elif has_char('x', square) and not universal.state.is_clear((floor, row, column)):
             def clear_encounter(x, y, z):
                 #These three are just dummy arguments that are used because the combat function expects the postCombatEvent to have three arguments.
@@ -744,13 +774,14 @@ class Dungeon(townmode.Room):
         if not event:
             dungeon.display()
 
-    def encounter(self, afterCombatEvent=None):
+    def encounter(self, afterCombatEvent=None, encounteredEnemies=None):
         currentFloor = self.dungeonMap[self.coordinates[0]]
-        numEnemies = random.randint(1, currentFloor.maxEnemies)
-        encounteredEnemies = []
-        for i in range(numEnemies):
-            gender = random.randint(0, 1)
-            encounteredEnemies.append(currentFloor.enemies[random.randrange(0, len(currentFloor.enemies))](gender, identifier=i+1))
+        if not encounteredEnemies:
+            numEnemies = random.randint(1, currentFloor.maxEnemies)
+            encounteredEnemies = []
+            for i in range(numEnemies):
+                gender = random.randint(0, 1)
+                encounteredEnemies.append(currentFloor.enemies[random.randrange(0, len(currentFloor.enemies))](gender, identifier=i+1))
         ambush = random.randint(1, 100)
         ambushFlag = 0
         avgPartyStealth = person.get_party().avg_stealth()
@@ -768,7 +799,7 @@ class Dungeon(townmode.Room):
         #combat.fight(encounteredEnemies, afterCombatEventIn=post_combat_spanking, ambushIn=ambushFlag) 
         print("encountered enemies:")
         print(encounteredEnemies)
-        combat.fight(encounteredEnemies, ambushIn=ambushFlag, randomEncounterIn=True, afterCombatEventIn=afterCombatEvent) 
+        combat.fight(encounteredEnemies, ambushIn=ambushFlag, randomEncounterIn=True, coordinatesIn=self.coordinates) 
 
     def move(self, forward=True, down=False, up=False):
         """

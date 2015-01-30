@@ -22,6 +22,7 @@ DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 
+STAT_GROWTH_RATE_MULTIPLIER = 10
 NUM_TIERS = 10
 
 SELECT_NUMBER_COMMAND = ['(#) Select a number.']
@@ -1002,7 +1003,11 @@ class State(object):
         saveFile.write('\n'.join(saveData))
 
     def load(self, loadFile):
-        import episode, person, townmode, items
+        import episode, person, townmode, items 
+        try:
+            import itemspotionwars
+        except ImportError:
+            pass
         fileData = '\n'.join(loadFile.readlines())
         #Note: The first entry in the list is just the empty string.
         try:
@@ -1031,7 +1036,10 @@ class State(object):
         rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
         for roomData in rooms:
            name, _, roomData = roomData.partition('\n')
-           townmode.Room.load(roomData, self.rooms[name])
+           try:
+               townmode.Room.load(roomData, self.rooms[name])
+           except KeyError, e:
+               townmode.Room.load(roomData, self._backwards_compatibility_room_names(name, e))
         if bedroom.strip() != "None":
             self.bedroom = self.rooms[bedroom.strip()] 
         party = party.strip().split('\n')
@@ -1039,25 +1047,86 @@ class State(object):
         self.party = person.Party([self.player if memberName == self.player.get_id() else self.characters[memberName] for memberName in party])
         self.location = self.rooms[location.strip()]
         itemList = [itemName.strip() for itemName in itemList.split("Item:") if itemName.strip()]
+        hasQualityDagger = False
         for itemData in itemList:
             name, _, itemData = itemData.partition('\n')
-            items.Item.load(itemData, self.items[name])
+            try:
+                items.Item.load(itemData, self.items[name])
+            except KeyError:
+                pass
         try:
             self.difficulty = int(difficulty.strip())
         except ValueError:
             self.difficulty = None
-        clearedSquares = clearedSquares.split('Square:')
+        clearedSquares = [square for square in clearedSquares.split('Square:') if square.split()]
         self.clearedSquares = []
         print(clearedSquares)
         for square in clearedSquares:
             if square:
                 self.clearedSquares.append(ast.literal_eval(square))
 
+    def _backwards_compatibility_items(self, item):
+        #NOTE: This function needs to be eliminated before using this code for other games. This exists solely for reasons of backwards compatibility for Potion Wars.
+        import itemspotionwars
+        try:
+            itemName = item.name
+        except AttributeError:
+            itemName = item
+        if itemName == 'leather cuirass':
+            #&&& Working on replacing leather cuirass with a gem. We'll also need to replace qualityDagger with the player's weapon at some point, in case the player decided to sell off their family weapon.
+            say_immediate(format_text([["Due to changes to the armor system, the leather cuirass no longer exists. Instead, you will receive an enhancement gem (if you haven't received one already for having the quality dagger) that Peter at Wesley and Anne's",
+            "Smithy can forge into your weapon, and Carol at Therese's Tailors can",
+            "forge into your clothing. You will also receive 20 coins, enough to purchase a clothing item of your choice to cover your rather exposed chest."],
+            ["Hit Enter to continue loading your game."]]))
+            if not itemspotionwars.attackGem in self.player.inventory:
+                self.player.take_item(itemspotionwars.attackGem)
+            acknowledged = False
+            while not acknowledged:
+                for event in pygame.event.get():
+                    if event.type == KEYUP and event.key == K_RETURN:
+                        acknowledged = True
+                        break
+            self.player.coins += 20
+        elif itemName == 'quality dagger':
+            if not itemspotionwars.attackGem in self.player.inventory:
+                self.player.take_item(itemspotionwars.attackGem)
+            say_immediate(format_text([["Due to changes to the weapon system, the quality dagger no longer exists. Instead, you will receive an enhancement gem (if you haven't received one already for having the leather cuirass) that Peter at Wesley and Anne's",
+            "Smithy can forge into your weapon, and Carol at Therese's Tailors can forge into your clothing."]]))
+            if all(map(lambda x : x not in self.player.inventory, [itemspotionwars.familyDagger, itemspotionwars.familySword, itemspotionwars.familySpear])):
+                say_immediate(format_text([['''It appears that you got rid of your starting weapon in favor of the quality dagger. Since the family weapons are rather unique, you'll now be given the option of selecting a new family weapon, just like at''',
+                    '''the''','''beginning''', '''of the game. Please make your choice:'''], ['''1. Family Dagger'''], ['''2. Family Sword'''], ['''3. Family Spear''']]))
+                choiceMade = False
+                while not choiceMade:
+                    for event in pygame.event.get():
+                        if event.type == KEYUP:
+                            if event.key == K_1:
+                                self.player.take_item(itemspotionwars.familyDagger)
+                                choiceMade = True
+                                break
+                            elif event.key == K_2:
+                                self.player.take_item(itemspotionwars.familySword)
+                                choiceMade = True
+                                break
+                            elif event.key == K_3:
+                                self.player.take_item(itemspotionwars.familySpear)
+                                choiceMade = True
+                                break
+            else:
+                universal.say_immediate("Hit Enter to continue loading your game.")
+                if not itemspotionwars.attackGem in self.player.inventory:
+                    self.player.take_item(itemspotionwars.attackGem)
+                acknowledged = False
+                while not acknowledged:
+                    for event in pygame.event.get():
+                        if event.type == KEYUP and event.key == K_RETURN:
+                            acknowledged = True
+                            break
+
     def clear_one_time_encounters(self):
         self.clearedSquares = []
 
     def clear_encounter(self, coordinate):
-        self.clearedSquares.remove(coordinate)
+        self.clearedSquares.append(coordinate)
 
     def is_clear(self, coordinate):
         return coordinate in self.clearedSquares
@@ -1135,13 +1204,31 @@ class State(object):
         try:
             return self.rooms[room.name]
         except AttributeError:
-            return self.rooms[room]
-        except KeyError:
-            #NOTE: This is here to keep save files compatible with the change in the name of Peter's shop. This should be deleted before using this engine for future games.
-            if room.name == "Wesley and Anne's Armor Shop":
-                return self.rooms["Wesley and Anne's Smithy"]
-            elif room.name == "Wesley and Anne's Smithy":
-                return self.rooms["Wesley and Anne's Armor Shop"]
+            try:
+                return self.rooms[room]
+            except KeyError, e:
+                return self._backwards_compatibility_room_names(room, e)
+        except KeyError, e:
+                return self._backwards_compatibility_room_names(room, e)
+
+    def _backwards_compatibility_room_names(self, room, e):
+        """
+            NOTE: This is here to keep save files compatible with the change in the name of Peter's shop. This should be deleted before using this engine for future games.
+        """
+        try:
+            roomName = room.name
+        except AttributeError:
+            roomName = room
+        if roomName == "Wesley and Anne's Weapons and Armor":
+            return self.rooms["Wesley and Anne's Smithy"]
+        elif roomName == "offStage":
+            #Hacking away and I don't care!
+            import townmode
+            return townmode.offStage
+        elif roomName == "Wesley and Anne's Smithy":
+            return self.rooms["Wesley and Anne's Weapons and Armor"]
+        else:
+            raise e
 
     def add_character(self, character):
         self.characters[character.get_id()] = character
@@ -1173,7 +1260,28 @@ class State(object):
                 try:
                     return self.characters[''.join([character, '.playerCharacter'])]
                 except KeyError:
-                    return self.characters[''.join([character, '.person'])]
+                    try:
+                        return self.characters[''.join([character, '.person'])]
+                    except KeyError, e:
+                        return self._backwards_compatibility_person_names(character, e)
+
+    def _backwards_compatibility_person_names(self, character, e):
+        try:
+            characterName = character.get_id()
+        except AttributeError:
+            characterName = character
+        if characterName == "Lucilla.person": 
+            try:
+                character =  self.get_character("Edita.person")
+            except KeyError:
+                character =  self.get_character("Lucilla.person")
+        elif characterName == "Carlita.person":
+            try:
+                character =  self.get_character("Edita.person")
+            except KeyError:
+                character =  self.get_character("Lucilla.person")
+        else:
+            raise e
 
 
 state = State()

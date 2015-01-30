@@ -357,7 +357,7 @@ class Person(universal.RPGObject):
         self.hairColor = hairColor
         self.eyeColor = eyeColor
         self.hairStyle = hairStyle
-        self.mainStatDisplay = True
+        self.mainStatDisplay = 0
         #Don't want to include current health and mana
         numStats = len(allPrimaryStats) - 2
         self.increaseStatPoints = [0] * numStats
@@ -1127,22 +1127,38 @@ class Person(universal.RPGObject):
         return self.equipmentList[PAJAMA_BOTTOM]
 
     def display_main_stats(self):
-        if self.mainStatDisplay:
+        assert self.mainStatDisplay < 3
+        if self.mainStatDisplay == 0:
             statList = [': '.join([universal.primary_stat_name(stat), str(statValue)]) for (stat, statValue) in 
                     zip([i for i in range(0, len(self.primaryStats[:-4]))], self.primaryStats)] 
-        else:
+            statList.append('Health: ' + str(self.primaryStats[-2]) + '/' + str(self.primaryStats[-4]))
+            statList.append('Mana: '   + str(self.primaryStats[-1]) + '/' + str(self.primaryStats[-3]))
+        elif self.mainStatDisplay == 1:
             statList = []
-            statList.append(' '.join(['grapple:', str(self.warfare())]))
-            statList.append(' '.join(['warfare:', str(self.grapple())]))
+            statList.append(' '.join(['grapple:', str(self.grapple())]))
+            statList.append(' '.join(['warfare:', str(self.warfare())]))
             statList.append(' '.join(['resilience:', str(self.resilience())]))
             statList.append(' '.join(['magic:', str(self.magic())]))
             statList.append(' '.join(['stealth:', str(self.stealth())]))
-        statList.append('Health: ' + str(self.primaryStats[-2]) + '/' + str(self.primaryStats[-4]))
-        statList.append('Mana: '   + str(self.primaryStats[-1]) + '/' + str(self.primaryStats[-3]))
+            statList.append('Health: ' + str(self.primaryStats[-2]) + '/' + str(self.primaryStats[-4]))
+            statList.append('Mana: '   + str(self.primaryStats[-1]) + '/' + str(self.primaryStats[-3]))
+        elif self.mainStatDisplay == 2:
+            statList = [': '.join([universal.primary_stat_name(stat), pointStatus]) for (stat, pointStatus) in zip([i for i in range(0, len(self.primaryStats[:-3]))], self.compute_point_status())]
         return '\n'.join(statList)
+
+    def compute_point_status(self):
+        """
+        Returns a list of strings of the form x / y where x is the number of stat points currently accumulated, and y is the number of points needed to gain a point in stat i.
+        """
+        statPointData = []
+        for statPoint, statIndex in zip(self.increaseStatPoints, range(0, len(self.primaryStats[:-3]))):
+            primaryStatValue = self.primaryStats[statIndex]
+            statPointData.append('/'.join([str(statPoint), str(primaryStatValue if statIndex == universal.HEALTH else primaryStatValue * STAT_GROWTH_RATE_MULTIPLIER)]))
+        return statPointData
 
     def display_stats(self):
         return self.display_main_stats()
+
     def display_spells(self, tierNum=None):
         if tierNum is None:
             spellList = []
@@ -1398,15 +1414,22 @@ class Person(universal.RPGObject):
             Person.add_data('\n'.join(self.marks), saveData)
         else:
             Person.add_data('', saveData)
+        Person.add_data('\n'.join(map(str, self.increaseStatPoints)), saveData)
+        Person.add_data('\n'.join(map(str, self.increaseSpellPoints)), saveData)
         return '\n'.join(saveData)
 
     @staticmethod
     def load(data, person):
         #Note: First entry in the list is the empty string.
         data = data.strip()
-        _, name, gender, description, statuses, rawName, spellNames, inventory, equipmentList, stats, tier, specialization, ignoredSpells, combatType, litany, defaultLitany, coins, specialization, \
-                order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, hairStyle, marks = \
-                data.split("Person Data:")
+        try:
+            _, name, gender, description, statuses, rawName, spellNames, inventory, equipmentList, stats, tier, specialization, ignoredSpells, combatType, litany, defaultLitany, coins, specialization, \
+                    order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, hairStyle, marks, increaseStatPoints, increaseSpellPoints = \
+                    data.split("Person Data:")
+        except ValueError:
+            _, name, gender, description, statuses, rawName, spellNames, inventory, equipmentList, stats, tier, specialization, ignoredSpells, combatType, litany, defaultLitany, coins, specialization, \
+                    order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, hairStyle, marks,  = \
+                    data.split("Person Data:")
         person.name = name.strip()
         if name == 'Lucilla' or name == 'Anastacia' or name == 'Carlita': name = 'Edita'
         person.description = description.strip()
@@ -1433,12 +1456,20 @@ class Person(universal.RPGObject):
                         spell = get_spell(spellName)
                         person.learn_spell(spell)
         person.inventory = []
+        hasQualityDagger = False
         if inventory.strip():
             inventory = [item.strip() for item in inventory.split("Item:") if item.strip()]
             for itemData in inventory:
                 name, _, itemData = itemData.partition('\n')
-                items.Item.load(itemData, universal.state.get_item(name))
-                person.take_item(universal.state.get_item(name))
+                try:
+                    items.Item.load(itemData, universal.state.get_item(name))
+                except KeyError:
+                    if person.get_id().split('.')[-1] == 'playerCharacter' and name == 'quality dagger':
+                        hasQualityDagger = True
+                else:
+                    person.take_item(universal.state.get_item(name))
+        if hasQualityDagger:   
+            universal.state._backwards_compatibility_items(name)
         equipmentList = [equipment.strip() for equipment in equipmentList.split("Equipment:") if equipment.strip()]
         person.equipmentList = [items.emptyWeapon, items.emptyUpperArmor, items.emptyLowerArmor, items.emptyUnderwear, items.emptyPajamaTop, items.emptyPajamaBottom]
         for equipmentData in equipmentList:
@@ -1490,6 +1521,12 @@ class Person(universal.RPGObject):
         person.eyeColor = eyeColor.strip()
         person.hairStyle = hairStyle.strip()
         person.marks = marks.split('\n')
+        #This is in a try-except block in order to ensure backwards compatibility with saves from before adding the stat and spell points.
+        try:
+            person.increaseStatPoints = map(int, increaseStatPoints.split('\n'))
+            person.increaseSpellPoints = map(int, increaseSpellPoints.split('\n'))
+        except UnboundLocalError:
+            pass
 
     def character_sheet_spells(self):
         return '\n'.join(['Name: ' + self.name, 'Order: ' + order_name(self.order),  self.display_stats(), 'Spells: ', self.display_spells()])
@@ -1797,6 +1834,7 @@ currentMode = None
 currentPerson = None
 selectedNum = None
 NUM_DIGITS = 3
+NUM_STAT_MODES = 3
 def character_viewer_interpreter(keyEvent):     
     global equipNum
     global selectedNum
@@ -1881,7 +1919,7 @@ def character_viewer_interpreter(keyEvent):
         set_commands(commandList)
         set_command_interpreter(view_item_interpreter)
     elif keyEvent.key == K_t:
-        currentPerson.mainStatDisplay = not currentPerson.mainStatDisplay
+        currentPerson.mainStatDisplay = (currentPerson.mainStatDisplay + 1) % NUM_STAT_MODES
         currentPerson.character_sheet()
     elif keyEvent.key == K_a:
         say(currentPerson.appearance(), justification=0)

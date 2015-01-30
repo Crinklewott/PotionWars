@@ -85,8 +85,12 @@ boss = False
 initialAllies = None
 initialEnemies = None
 randomEncounter = False
+coordinates = None
 
 def end_fight():
+    if randomEncounter:
+        for enemy in enemies:
+            universal.state.remove_character(enemy)
     global allies, enemies, actionsInflicted, actionsEndured, activeAlly, chosenActions, initialAllies, initialEnemies
     allies = None
     enemies = None
@@ -96,17 +100,16 @@ def end_fight():
     actionsEndured = {}
     activeAlly = None
     chosenActions = []
-    if randomEncounter:
-        for enemy in enemies:
-            universal.state.remove_character(enemy)
-
 
 def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon_mode, runnableIn=True, bossFight=False, optionalIn=False, additionalAllies=None, 
-        ambushIn=0, randomEncounterIn=False):
+        ambushIn=0, randomEncounterIn=False, coordinatesIn=None):
     global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface, enemySurface, commandSurface, clearScreen, previousMode, origAllies, origEnemies, \
             actionsInflicted, actionsEndured, chosenActions, optional, defeatedEnemies, defeatedAllies
-    global ambush, boss, initialAllies, initialEnemies, randomEncounter
-    randomEncounter = randomEncounter
+    global ambush, boss, initialAllies, initialEnemies, randomEncounter, coordinates
+    randomEncounter = randomEncounterIn
+    if randomEncounter:
+        assert coordinatesIn
+        coordinates = coordinatesIn
     universal.state.enemies = person.Party(enemiesIn)
     universal.state.allies = person.Party(list(universal.state.party) + (additionalAllies if additionalAllies else []))
     initialEnemies = []
@@ -187,7 +190,7 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
         for i in range(0, 5):
             delaySplit = delay // 5
             pygame.time.delay(delaySplit)
-        increase_stat_chance()    
+        increment_stat_points()    
         choose_enemy_actions()
         start_round([])
     else:
@@ -296,11 +299,7 @@ def battle_interpreter(keyEvent):
     elif keyEvent.key == K_d:
         defend()
     elif keyEvent.key == K_F1 and activeAlly.quickSpells[0] != None:
-        if activeAlly.current_mana() >= activeAlly.quickSpells[0].cost:
-            cast(activeAlly.quickSpells[0])
-        else:
-            print_allies(' '.join([activeAlly.name, "does not have enough mana to cast", activeAlly.quickSpells[0].name]))
-            not_enough_mana()
+        cast(activeAlly.quickSpells[0])
     elif keyEvent.key == K_F2 and activeAlly.quickSpells[1] != None:
         cast(activeAlly.quickSpells[1])
     elif keyEvent.key == K_F3 and activeAlly.quickSpells[2] != None:
@@ -432,7 +431,7 @@ def print_action(action):
 PRIMARY_POINTS = 2
 SECONDARY_POINTS = 1
 
-def increase_stat_chance():
+def increment_stat_points():
     numStats = len(person.allStats)
     global chosenActions
     for action in chosenActions:
@@ -462,7 +461,7 @@ def begin_round_interpreter(keyEvent):
             choose_enemy_actions()
         else:
             ambush = 0
-        increase_stat_chance()
+        increment_stat_points()
         start_round(chosenActions)
     elif keyEvent.key == K_t:
         universal.state.instant_combat = not universal.state.instant_combat
@@ -560,6 +559,10 @@ def target_spell():
     #print_command(chosenSpell.name)
     target = 'enemy'
     targets = 'enemies'
+    if activeAlly.current_mana() < chosenSpell.cost:
+        print_allies(' '.join([activeAlly.name, "does not have enough mana to cast", activeAlly.quickSpells[0].name]))
+        not_enough_mana()
+        return
     if chosenSpell.targetType == ALLY:
         target = 'ally'
         targets = 'allies'
@@ -1481,6 +1484,10 @@ def victory():
     after combat event.
     """
     clear_screen()
+    global coordinates
+    if randomEncounter:
+        universal.state.clear_encounter(coordinates)
+        coordinates = None
     global allies, defeatedAllies, enemies, defeatedEnemies
     allies.members += defeatedAllies
     enemies.members += defeatedEnemies
@@ -1522,7 +1529,6 @@ def specialization_bonus(ally, i):
     return bonus
 
 HIGH_STAT_PENALTY = .1
-STAT_GROWTH_RATE_MULTIPLIER = 10
 def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious):
     """
     Takes as argument the function that should be invoked after leveling up is complete.
@@ -1566,7 +1572,7 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
             print('statChance: ' + str(statChance))
             '''
             statPoints = ally.increaseStatPoints[i]
-            stat = ally.stat(i) * STAT_GROWTH_RATE_MULTIPLIER
+            stat = ally.stat(i) * person.STAT_GROWTH_RATE_MULTIPLIER
             gain = 0
             manaGain = 0
             while stat <= statPoints:
@@ -1582,7 +1588,7 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
                         ally.improve_stat(person.MANA, manaGain)
                     ally.increaseStatPoints[i] -= stat 
                 statPoints = ally.increaseStatPoints[i]
-                stat = ally.stat(i) * STAT_GROWTH_RATE_MULTIPLIER
+                stat = ally.stat(i) * person.STAT_GROWTH_RATE_MULTIPLIER
                 #print(maxStats[i])
                 #print(ally.get_stat(i))
                 #print(specialization_bonus(ally, i))
