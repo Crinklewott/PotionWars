@@ -194,8 +194,8 @@ class AttackAction(CombatAction):
     primaryStat = universal.DEXTERITY
     secondaryStat = universal.STRENGTH
     actionType = 'attack'
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(AttackAction, self).__init__(attacker, defenders, universal.WARFARE, secondaryStat)
+    def __init__(self, attacker, defenders):
+        super(AttackAction, self).__init__(attacker, defenders, universal.WARFARE, AttackAction.secondaryStat)
         self.targetType = ENEMY
     #Spell slingers tend to have lower defense, so attacks are more effective.
         self.effectClass = SPELL_SLINGERS
@@ -291,8 +291,8 @@ class GrappleAction(CombatAction):
     primaryStat = universal.STRENGTH
     secondaryStat = universal.DEXTERITY
     actionType = 'GrappleAction'
-    def __init__(self, attacker, defenders, enemyInitiated=False, secondaryStat=None):
-        super(GrappleAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
+    def __init__(self, attacker, defenders, enemyInitiated=False):
+        super(GrappleAction, self).__init__(attacker, defenders, GRAPPLE, GrappleAction.secondaryStat)
         self.targetType = ENEMY
         #Spell slingers can have their effectiveness grossly decreased by being grappled.
         self.effectClass = SPELL_SLINGERS
@@ -359,10 +359,11 @@ class BreakGrappleAction(CombatAction):
     grappleStatus = ONLY_WHEN_GRAPPLED
     effectClass = ALL
     numTargets = 1
-    primaryStat = universal.DEXTERITY
+    primaryStat = universal.STRENGTH
+    secondaryStat = universal.DEXTERITY
     actionType = 'breakGrappleAction'
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(BreakGrappleAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
+    def __init__(self, attacker, defenders):
+        super(BreakGrappleAction, self).__init__(attacker, defenders, GRAPPLE, BreakGrappleAction.secondaryStat)
         self.targetType = ENEMY
         self.primaryStat = BreakGrappleAction.primaryStat
         self.grappleStatus = ONLY_WHEN_GRAPPLED
@@ -451,10 +452,11 @@ class SpankAction(CombatAction):
     grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
     effectClass = ALL
     numTargets = 1
-    primaryStat = universal.DEXTERITY
+    primaryStat = universal.STRENGTH
+    secondaryStat = universal.DEXTERITY
     actionType = 'spank'
-    def __init__(self, attacker, defenders, secondaryStat=None, severity=0):
-        super(SpankAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
+    def __init__(self, attacker, defenders, severity=0):
+        super(SpankAction, self).__init__(attacker, defenders, GRAPPLE, SpankAction.secondaryStat)
         self.targetType = ENEMY
         self.grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
         self.effectClass = ALL
@@ -515,8 +517,8 @@ class ThrowAction(CombatAction):
     primaryStat = universal.DEXTERITY
     secondaryStat = universal.STRENGTH
     actionType = 'throw'
-    def __init__(self, attacker, defenders, secondaryStat=universal.STRENGTH):
-        super(ThrowAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
+    def __init__(self, attacker, defenders):
+        super(ThrowAction, self).__init__(attacker, defenders, GRAPPLE, ThrowAction.secondaryStat)
         self.targetType = ENEMY
         self.primaryStat = ThrowAction.primaryStat
         self.secondaryStat = ThrowAction.secondaryStat
@@ -547,9 +549,7 @@ class ThrowAction(CombatAction):
             failure = rand(wd.grapple_bonus())
             if failure <= success:
                 #betterStat = attacker.warfare() if attacker.warfare() >= attacker.grapple() else attacker.grapple()
-                dam = int(bonus + damRange[0])
-                if dam < 1:
-                    dam = 1
+                dam = max(1, int(bonus + damRange[0]))
                 grappler.receives_damage(dam)   
                 attacker.break_grapple()
                 if grappler is defender:
@@ -560,13 +560,10 @@ class ThrowAction(CombatAction):
                 else:
                     if not defender in opponents:
                         defender = opponents[randrange(0, len(opponents))]
-                    grappleDBonus = defender.weapon().grappleBonus + defender.grapple()
-                    success = rand(grappleABonus)
-                    failure = rand(grappleDBonus)
+                    failure = rand(wd.grapple_bonus())
+                    success = rand(bonus + wa.grapple_bonus())
                     if failure <= success:
-                        dam1 = int(math.floor(rand(damRange[1] + betterStat) + damRange[0] - defender.defense()))
-                        if dam1 < 1:
-                            dam1 = 1
+                        dam1 = max(1, int(math.floor(rand(damRange[1] + betterStat) + damRange[0] - defender.defense())))
                         defender.receives_damage(dam1)
                         resultString = '\n'.join([' '.join([attacker.printedName, 'throws', grappler.printedName, 'for', str(dam), 'damage!']), 
                             ' '.join([attacker.printedName, 'strikes', defender.printedName, 'for', str(dam), 'damage!'])])
@@ -590,10 +587,11 @@ class BreakAllysGrappleAction(CombatAction):
     grappleStatus = NOT_WHEN_GRAPPLED
     effectClass = SPELL_SLINGERS
     numTargets = 1
-    primaryStat = universal.DEXTERITY
+    primaryStat = universal.STRENGTH
+    secondaryStat = universal.DEXTERITY
     actionType = 'breakAllysGrappleAction'
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(BreakAllysGrappleAction, self).__init__(attacker, defenders, GRAPPLE, secondaryStat)
+    def __init__(self, attacker, defenders):
+        super(BreakAllysGrappleAction, self).__init__(attacker, defenders, GRAPPLE, BreakGrappleAction.secondaryStat)
         self.targetType = ALLY
         self.primaryStat = BreakAllysGrappleAction.primaryStat
         self.grappleStatus = NOT_WHEN_GRAPPLED
@@ -636,9 +634,10 @@ class DefendAction(CombatAction):
     effectClass = SPELL_SLINGERS
     numTargets = 1
     primaryStat = universal.WILLPOWER
+    secondaryStat = universal.DEXTERITY
     actionType = 'defend'
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(DefendAction, self).__init__(attacker, defenders, RESILIENCE, secondaryStat)
+    def __init__(self, attacker, defenders):
+        super(DefendAction, self).__init__(attacker, defenders, RESILIENCE, DefendAction.secondaryStat)
         self.targetType = ALLY
         self.grappleStatus = GRAPPLER_ONLY
         self.primaryStat = DefendAction.primaryStat

@@ -438,20 +438,28 @@ def increment_stat_points():
         increaseStat = action.attacker.increaseStatPoints
         increaseSpellPoints = action.attacker.increaseSpellPoints
         if action.attacker in allies:
-                increaseStat[action.primaryStat] += PRIMARY_POINTS
-                try:
-                    increaseSpellPoints[action.spellType] += action.tier + 1
-                except AttributeError:
-                    continue
-                try:
-                    increaseStat[action.secondaryStat] += SECONDARY_POINTS
-                except (AttributeError, TypeError):
-                    continue
+            if action.attacker.is_bonus(action.primaryStat):
+                pointGain = PRIMARY_POINTS + 1
+            elif action.attacker.is_penalty(action.primaryStat):
+                pointGain = PRIMARY_POINTS - 1
+            else:
+                pointGain = PRIMARY_POINTS
+            increaseStat[action.primaryStat] += pointGain
+            try:
+                increaseSpellPoints[action.spellType] += action.tier + 1
+            except AttributeError:
+                continue
+            try:
+                increaseStat[action.secondaryStat] += SECONDARY_POINTS
+            except (AttributeError, TypeError):
+                continue
         elif action.attacker in enemies:
             print('----------------defenders of action: ' + str(action) + '-------------------')
             print(action.defenders)
             for defender in action.defenders:
                 defender.increaseStatPoints[action.primaryStat] += SECONDARY_POINTS
+    for ally in allies:
+        ally.increaseStatPoints[universal.ALERTNESS] += 2 if ally.is_bonus(universal.ALERTNESS) else 1
 
 def begin_round_interpreter(keyEvent):
     global chosenActions, chosenTargets
@@ -490,7 +498,7 @@ def attack(target):
         target = enemies.index(activeAlly.grapplingPartner) if activeAlly.is_grappling() else 0
     activeAlly.previousTarget = target
     if activeAlly.is_grappling() and target == enemies.index(activeAlly.grapplingPartner):
-        chosenActions.append(combatAction.AttackAction(activeAlly, activeAlly.grapplingPartner, secondaryStat=universal.GRAPPLE))
+        chosenActions.append(combatAction.AttackAction(activeAlly, activeAlly.grapplingPartner))
         next_character()
     elif not activeAlly.is_grappling():
         if 0 <= target and target < len(enemies) and enemies[target] in [enemy for enemy in enemies if enemy.current_health() > 0]:
@@ -560,7 +568,7 @@ def target_spell():
     target = 'enemy'
     targets = 'enemies'
     if activeAlly.current_mana() < chosenSpell.cost:
-        print_allies(' '.join([activeAlly.name, "does not have enough mana to cast", activeAlly.quickSpells[0].name]))
+        print_allies(' '.join([activeAlly.name, "does not have enough mana to cast", chosenSpell.name]))
         not_enough_mana()
         return
     if chosenSpell.targetType == ALLY:
@@ -1572,18 +1580,27 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
             print('statChance: ' + str(statChance))
             '''
             statPoints = ally.increaseStatPoints[i]
-            stat = ally.stat(i) * person.STAT_GROWTH_RATE_MULTIPLIER
+            stat = ally.stat(i) if i == universal.HEALTH else ally.stat(i) * person.STAT_GROWTH_RATE_MULTIPLIER 
             gain = 0
             manaGain = 0
+            print("stat:" + universal.primary_stat_name(i))
+            print("stat points: " + str(statPoints))
+            print("stat points needed: " + str(stat))
             while stat <= statPoints:
-                if i == person.HEALTH:
+                print(' '.join(["Improving stat:", universal.primary_stat_name(i)])) 
+                if i == universal.HEALTH:
+                    print("Improving Health")
                     gain += int(math.ceil(stat * .25)) + statPoints - stat
                     ally.improve_stat(i, gain)
                     ally.increaseStatPoints[i] = 0
                 else:
                     gain += 1
                     ally.improve_stat(i, 1)
-                    if stat == person.TALENT:
+                    print("stat:")
+                    print(stat)
+                    print(universal.TALENT)
+                    if i == universal.TALENT:
+                        print("Improving Mana")
                         manaGain += int(math.ceil(ally.mana() * .5))
                         ally.improve_stat(person.MANA, manaGain)
                     ally.increaseStatPoints[i] -= stat 
@@ -1595,19 +1612,23 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
             if gain:
                 universal.say(format_line([ally.name, 'has gained', str(gain), person.primary_stat_name(i) + '.\n']))
             if manaGain:
-                universal.say(format_line([ally.name, 'has gained', str(gain), person.primary_stat_name(i) + '.\n']))
                 universal.say(format_line([ally.name, 'has gained', str(manaGain), 'Mana.\n']))
         for i in range(len(ally.increaseSpellPoints)): 
-            #Note: This is much MUCH simpler than what we will actually allow. This simply checks if the player has 10 spell points, and then has the player learn the advanced spell if the player doesn't already know it.
+            #Note: This is much MUCH simpler than what we will actually allow. This simply checks if the player has 5 spell points, and then has the player learn the advanced spell if the player doesn't already know it.
             #This is only a stop-gap measure. The actual learning spell mechanic will be much more complicated, but I don't want to implement that until I've built a proper GUI.
-            if ally.increaseSpellPoints[i] >= 5 and not ally.knows_spell(person.allSpells[0][i][1]):
-                ally.learn_spell(ally, i)
+            if ally.increaseSpellPoints[i] >= (ally.tier*person.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS) and not ally.knows_spell(person.allSpells[0][i][1]):
+                learn_spell(ally, i+universal.COMBAT_MAGIC)
+                ally.increaseSpellPoints[i] -= ally.tier*person.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
     if afterCombatEvent is not None:
         acknowledge(afterCombatEvent, defeatedAllies, defeatedEnemies, victorious)
     else:
         acknowledge(previousMode)
 
 def learn_spell(ally, spellSchool):
+    """
+    TODO: Currently, the spells learned are random within a given school. However, this needs to be modified to give the player a choice. I'll implement for a choice as a part of episode 3, when I rework the GUI. Don't want to add too much more to the
+    GUI until I've reworked it.
+    """
     spellIndex = person.get_spell_index(spellSchool)
     unknownSpells = []
     for i in range(0, ally.tier+1):
@@ -1635,6 +1656,8 @@ def learn_spell(ally, spellSchool):
         ally.learn_spell(learnedSpell)
         ally.add_quick_spell(learnedSpell)
         universal.say(format_line([ally.name, 'has learned the spell', learnedSpell.name + '!\n']))
+    else:
+        ally.increaseSpellPoints[i-universal.COMBAT_MAGIC] = ally.tier * person.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
         
 
 """ 

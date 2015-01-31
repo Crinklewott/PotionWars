@@ -33,6 +33,7 @@ import copy
 checkWillpower = True
 
 
+
 def flip_willpower_check():
     global checkWillpower
     checkWillpower = not checkWillpower
@@ -110,6 +111,7 @@ def stat_name(stat):
         return 'current health'
     elif stat == universal.CURRENT_MANA:
         return 'current mana'
+
 
 WEAPON = 0
 SHIRT = 1
@@ -322,7 +324,6 @@ class Person(universal.RPGObject):
         self.tier = 0
         self.experience = 0
         self.spellPoints = 3
-        self.specialization = None
         self.ignoredSpells = []
         self.spankingPositions = []
         self.combatType = None
@@ -604,6 +605,12 @@ class Person(universal.RPGObject):
     def get_core_stats(self):
         return self.primaryStats[:-2]
 
+    def highest_stat(self):
+        maxStat = 0
+        for i in range(len(self.primaryStats[:-4])):
+            maxStat = maxStat if self.primaryStats[i] < maxStat else self.primaryStats[i]
+        return maxStat
+
     def get_battle_stats(self):
         """Returns all the stats except for health, mana, current health, current mana
         """
@@ -643,23 +650,22 @@ class Person(universal.RPGObject):
         """
 
     def is_bonus(self, stat):
-        if stat == universal.MAGIC and (self.specialization == COMBAT_MAGIC or self.specialization == STATUS_MAGIC or self.specialization == BUFF_MAGIC or 
-                self.specialization == SPECTRAL_MAGIC):
+        if stat == universal.TALENT and (self.specialization == COMBAT_MAGIC or self.specialization == STATUS_MAGIC or self.specialization == BUFF_MAGIC or self.specialization == SPECTRAL_MAGIC):
             return True
         elif self.specialization == stat:
             return True
         else:
             return False
     def is_penalty(self, stat):
-        if self.specialization == universal.WARFARE and stat == universal.MAGIC:
+        if self.specialization == universal.DEXTERITY and stat == universal.TALENT:
             return True
-        elif self.specialization == universal.GRAPPLE and stat == universal.RESILIENCE:
+        elif self.specialization == universal.STRENGTH and stat == universal.WILLPOWER:
             return True
-        elif self.specialization == universal.MAGIC and stat == universal.WARFARE:
+        elif self.specialization == universal.TALENT and stat == universal.DEXTERITY:
             return True
-        elif self.specialization == universal.RESILIENCE and stat == universal.GRAPPLE:
+        elif self.specialization == universal.WILLPOWER and stat == universal.STRENGTH:
             return True
-        elif self.specialization == universal.STEALTH and stat == universal.WARFARE:
+        elif self.specialization == universal.ALERTNESS and stat == universal.DEXTERITY:
             return True
         else:
             return False
@@ -1143,7 +1149,9 @@ class Person(universal.RPGObject):
             statList.append('Health: ' + str(self.primaryStats[-2]) + '/' + str(self.primaryStats[-4]))
             statList.append('Mana: '   + str(self.primaryStats[-1]) + '/' + str(self.primaryStats[-3]))
         elif self.mainStatDisplay == 2:
-            statList = [': '.join([universal.primary_stat_name(stat), pointStatus]) for (stat, pointStatus) in zip([i for i in range(0, len(self.primaryStats[:-3]))], self.compute_point_status())]
+            spellCategoryNames = {0:'combat', 1:'status', 2:'buff', 3:'spectral'}
+            statList = [': '.join([universal.primary_stat_name(stat) if stat < len(self.primaryStats[:-3]) else spellCategoryNames[stat-len(self.primaryStats[:-3])], pointStatus]) for (stat, pointStatus) in zip([i for i in 
+                range(0, len(self.primaryStats[:-3]) + NUM_SPELL_CATEGORIES)], self.compute_point_status())]
         return '\n'.join(statList)
 
     def compute_point_status(self):
@@ -1154,6 +1162,9 @@ class Person(universal.RPGObject):
         for statPoint, statIndex in zip(self.increaseStatPoints, range(0, len(self.primaryStats[:-3]))):
             primaryStatValue = self.primaryStats[statIndex]
             statPointData.append('/'.join([str(statPoint), str(primaryStatValue if statIndex == universal.HEALTH else primaryStatValue * STAT_GROWTH_RATE_MULTIPLIER)]))
+        for statPoint, statIndex in zip(self.increaseSpellPoints, range(0, NUM_SPELL_CATEGORIES)):
+            spellStatValue = self.tier * STAT_GROWTH_RATE_MULTIPLIER if self.tier else TIER_0_SPELL_POINTS
+            statPointData.append('/'.join([str(statPoint), str(spellStatValue)]))
         return statPointData
 
     def display_stats(self):
@@ -1217,15 +1228,6 @@ class Person(universal.RPGObject):
         else:
             return self.grapplingPartner == opponent
 
-    def attack_modifier(self):
-        if self.is_grappling():
-            return self.grapple() + self.attack_penalty()
-        else:
-            return self.warfare() + self.attack_penalty()
-
-    def attack(self):
-        return self.attack()
-
     def damage(self):
         weaponDamage = random.randrange(self.weapon().minDamage, self.weapon().maxDamage)
         if self.is_grappling():
@@ -1235,13 +1237,13 @@ class Person(universal.RPGObject):
         return self.warfare() + weaponDamage
 
     def magic_defense(self, rawMagic=False):
-        return self.magic() + self.magic_defense_bonus() + (self.magic_penalty() if rawMagic else 0)
+        return max(0, self.magic() + self.magic_defense_bonus() + (self.magic_penalty() if rawMagic else 0))
 
     def defense(self):
         if self.is_grappling():
-            return self.defense_bonus() + self.weapon().grapple_bonus()
+            return max(0, self.defense_bonus() + self.weapon().grapple_bonus())
         else:
-            return self.defense_bonus() + self.weapon().armslength_bonus()
+            return max(0, self.defense_bonus() + self.weapon().armslength_bonus())
             #return self.grapple() + self.defense_bonus()
         #else:
             #return self.warfare() + self.defense_bonus()
@@ -1255,7 +1257,7 @@ class Person(universal.RPGObject):
             defenseBonus = self.statusList[statusEffects.LoweredMagicDefense.name][0].inflict_status(self)
         if statusEffects.MagicShielded.name in self.statusList: 
             defenseBonus += self.statusList[statusEffects.MagicShielded.name][STATUS_OBJ].inflict_status(self)
-        return self.weapon().magicDefense + self.shirt().magicDefense + self.lower_clothing().magicDefense + self.underwear().magicDefense + defenseBonus
+        return max(0, self.weapon().magicDefense + self.shirt().magicDefense + self.lower_clothing().magicDefense + self.underwear().magicDefense + defenseBonus)
 
     def inflict_status(self, status, originalList=None, newList=None):
         if originalList is not None and newList is not None:
@@ -1520,11 +1522,11 @@ class Person(universal.RPGObject):
         person.hairColor = hairColor.strip()
         person.eyeColor = eyeColor.strip()
         person.hairStyle = hairStyle.strip()
-        person.marks = marks.split('\n')
+        person.marks = [mark for mark in marks.split('\n') if mark.strip()]
         #This is in a try-except block in order to ensure backwards compatibility with saves from before adding the stat and spell points.
         try:
-            person.increaseStatPoints = map(int, increaseStatPoints.split('\n'))
-            person.increaseSpellPoints = map(int, increaseSpellPoints.split('\n'))
+            person.increaseStatPoints = map(int, [point for point in increaseStatPoints.split('\n') if point.strip()])
+            person.increaseSpellPoints = map(int, [point for point in increaseSpellPoints.split('\n') if point.strip()])
         except UnboundLocalError:
             pass
 
@@ -2072,21 +2074,23 @@ def get_spell(name):
             for spell in spellTuple:
                 if spell.name == name:
                     return spell
+
 COMBAT_INDEX = 0
 STATUS_INDEX = 1
 BUFF_INDEX = 2
 SPECTRAL_INDEX = 3
+
 def get_spell_index(spellIndex):
-    if spellIndex == COMBAT_MAGIC:
+    if spellIndex == universal.COMBAT_MAGIC:
         return COMBAT_INDEX
-    elif spellIndex == STATUS_MAGIC:
+    elif spellIndex == universal.STATUS_MAGIC:
         return STATUS_INDEX
-    elif spellIndex == BUFF_MAGIC:
+    elif spellIndex == universal.BUFF_MAGIC:
         return BUFF_INDEX
-    elif spellIndex == SPECTRAL_MAGIC:
+    elif spellIndex == universal.SPECTRAL_MAGIC:
         return SPECTRAL_INDEX
     else:
-        raise ValueError(str(i) + 'is not a valid spell school.')
+        raise ValueError(str(spellIndex) + ' is not a valid spell school.')
 
 def action_type_to_spell_type(actionType):
     if actionType == 'combat':
@@ -2128,6 +2132,8 @@ BASIC = 0
 ADVANCED = 1
 EXPERT = 2
 
+TIER_0_SPELL_POINTS = 5
+
 #TODO: Modify the effect functions of our spells to return the same triples as all the other combat actions:
 #1. A string describing the results
 #2. The list of effects for each defender
@@ -2166,6 +2172,7 @@ class Spell(combatAction.CombatAction):
         self.tier = None
         self.magicMultiplier = None
         self.castableOutsideCombat = False
+        self.primaryStat = Spell.primaryStat
 
     def __str__(self):
         return self.name
@@ -2323,9 +2330,13 @@ class Combat(Spell):
             damage = 0
             if not defender.ignores_spell(self):
                 print('-------------------' + self.name + '------------------')
+                print('-------------------' + self.attacker.name + '---------')
+                print('-------------------' + defender.name + '---------')
                 print('magicMultiplier: ' + str(self.magicMultiplier))
                 print('magic_attack: ' + str(attacker.magic_attack()))
                 print('magic_defense: ' + str(defender.magic_defense(self.rawMagic)))
+                print('min damage: ' + str(self.minDamage))
+                print('max damage: ' + str(self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))))
                 try:
                     damage = random.randint(self.minDamage, self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic)))
                 except ValueError:
@@ -2349,8 +2360,8 @@ class Status(Spell):
     primaryStat = universal.WILLPOWER
     secondaryStat = universal.TALENT
     actionType = 'status'
-    def __init__(self, attacker, defenders, secondaryStat=universal.MAGIC):
-        super(Status, self).__init__(attacker, defenders, secondaryStat)
+    def __init__(self, attacker, defenders):
+        super(Status, self).__init__(attacker, defenders, Status.secondaryStat)
         self.statusInflicted = None
         #This way, if we forget to set these values, we'll get an exception.
         self.minDuration = None
@@ -2364,6 +2375,7 @@ class Status(Spell):
         self.spellSchool = universal.STATUS_MAGIC
         self.targetType = combatAction.ENEMY
         self.primaryStat = Status.primaryStat
+        self.secondaryStat = Status.secondaryStat
         self.actionType = 'status'
 
     def effect(self, inCombat=True, allies=None, enemies=None):
@@ -2514,8 +2526,11 @@ class Buff(Spell):
     effectClass = None
     statusInflicted = None
     actionType = 'buff'
+    primaryStat = universal.WILLPOWER
+    secondaryStat = universal.TALENT
+
     def __init__(self, attacker, defenders, secondaryStat=None):
-        super(Buff, self).__init__(attacker, defenders, secondaryStat)
+        super(Buff, self).__init__(attacker, defenders, Buff.secondaryStat)
         self.targetType = combatAction.ALLY
         self.effectClass = None
         self.spellType  = BUFF #Deprecated. Do not use.
@@ -2524,6 +2539,8 @@ class Buff(Spell):
         self.minDuration = None
         self.actionType = 'buff'
         self.castableOutsideCombat = True
+        self.primaryStat = Buff.primaryStat
+        self.secondaryStat = Buff.secondaryStat
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(Buff, self).effect(inCombat, allies, enemies)
@@ -2642,14 +2659,16 @@ class SpectralSpanking(Spectral):
     numTargets = 1
     statusInflicted = statusEffects.HUMILIATED
     cost = 2
-    secondaryStat = universal.RESILIENCE
+    secondaryStat = universal.WILLPOWER
+    smackMultiplier = 5
+
     def __init__(self, attacker, defenders):
         super(SpectralSpanking, self).__init__(attacker, defenders)
         self.name = 'Spectral Spanking'
         self.cost = SpectralSpanking.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.description = 'Conjures \'hands\' of raw magic. One hand grabs the target and lifts them into the air. The other lands a number of swats on the target\'s backside. Once the spanking is done, the first hand lifts the target up, and throws them into the ground. The spanking leaves your opponent distracted and humiliated, giving them a -1 penalty to all stats.'
-        self.effectFormula = 'DURATION: 2 | 2 * (resilience - enemy resilience)\nDAMAGE: 1 | (magic - enemy magic),\nSuccess (%): 50 | 35 * (magic - enemy magic) | 95'
+        self.effectFormula = 'DURATION: 2 | 2 * resilience bonus\nDAMAGE: 1 | magic bonus,\nSuccess (%): 36 | 18 * magic bonus | 95'
         self.numTargets = 1
         self.magicMultiplier = 1
         self.resilienceMultiplier = 2
@@ -2660,11 +2679,12 @@ class SpectralSpanking(Spectral):
         self.tier = SpectralSpanking.tier
         self.expertise = BASIC
         self.maxProbability = 95
-        self.minProbability = 50
-        self.probModifier = 35
+        self.minProbability = 36
+        self.probModifier = 18
         self.secondaryStat = SpectralSpanking.secondaryStat
-        self.minDamage = 2
+        self.minDamage = 1
         self.minDuration = 2
+        self.smackMultiplier = SpectralSpanking.smackMultiplier
 
 
     def effect(self, inCombat=True, allies=None, enemies=None, severity=0):
@@ -2714,7 +2734,11 @@ class SpectralSpanking(Spectral):
             print('success:')
             print(success)
             if success <= successProbability:
-                defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration=duration))
+                #Yeah, I know I'm abusing the shit out of import. Suck it."
+                from combatAction import compute_bonus
+                bonus = compute_bonus(attacker.magic() - defender.magic())
+                numSmacks = self.smackMultiplier * bonus
+                defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration=duration, numSmacks=numSmacks))
                 defender.receives_damage(damage)
                 resultStatement.append(self.success_statement(defender))
                 effects.append(damage)

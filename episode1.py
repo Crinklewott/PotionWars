@@ -744,8 +744,8 @@ class Edita(p.Person):
             ['Eventually, fueled by desperation,', Bname, 'manages to heave', himselfherself(B), 'up, throwing', Tname, 'off of', himher(T) + ".", Bname, 'scrambles to', 
             hisher(B), 'feet, one hand clutching at', hisher(B), 'throbbing bottom, the other snatching up', hisher(B), 'fallen weapon, just as', Tname, 'grabs', himher(B),
             'again.']]))
-        carlita = universal.state.get_character('Edita.person')
-        if B == carlita:
+        edita = universal.state.get_character('Edita.person')
+        if B == edita:
             universal.state.player.add_keyword('spanked_young_insurgent')
         elif B == universal.state.player:
             universal.state.player.add_keyword('spanked_by_young_insurgent')
@@ -896,27 +896,27 @@ class Edita(p.Person):
         return self.spanking_missed_text(self, person, position)
 
     #def reset_stats(self, episode=None):
-    #    carlita = Edita(self.litany, coins=self.coins, printedName=self.printedName)
-    #    carlita.set_default_stats()
-    #    carlita.equip(itemspotionwars.batteredDagger)
-    #    carlita.equip(itemspotionwars.batteredLeatherBreastplate)
-    #    carlita.equip(itemspotionwars.holeyTrousers)
-    #    return carlita
+    #    edita = Edita(self.litany, coins=self.coins, printedName=self.printedName)
+    #    edita.set_default_stats()
+    #    edita.equip(itemspotionwars.batteredDagger)
+    #    edita.equip(itemspotionwars.batteredLeatherBreastplate)
+    #    edita.equip(itemspotionwars.holeyTrousers)
+    #    return edita
 
     def set_default_stats(self):
         self.set_all_stats(strength=0, dexterity=1, alertness=0, willpower=3, talent=1, health=3, mana=10)
 
 
 
-carlita_default = Node(193)
-carlita_default.quip = "This is Edita's default quip."
+edita_default = Node(193)
+edita_default.quip = "This is Edita's default quip."
 spankEdita = Node(195)
-carlita = Edita(carlita_default.index, spankEdita.index, coins=0, printedName='Young Vengador')
-offStage.add_character(carlita)
-carlita.level = 0
-carlita.equip(itemspotionwars.batteredDagger)
-carlita.equip(itemspotionwars.holeyTrousers)
-carlita.equip(itemspotionwars.raggedTunic)
+edita = Edita(edita_default.index, spankEdita.index, coins=0, printedName='Young Vengador')
+offStage.add_character(edita)
+edita.level = 0
+edita.equip(itemspotionwars.batteredDagger)
+edita.equip(itemspotionwars.holeyTrousers)
+edita.equip(itemspotionwars.raggedTunic)
 
 
 
@@ -1150,9 +1150,9 @@ class Necia(p.Person):
 
     def set_default_stats(self):
         if universal.DEBUG:
-            self.set_all_stats(strength=3, dexterity=3, talent=2, alertness=3, willpower=1, health=2, mana=20)
+            self.set_all_stats(strength=3, dexterity=3, talent=2, alertness=3, willpower=1, health=45, mana=20)
         else:
-            self.set_all_stats(strength=3, dexterity=4, talent=2, alertness=4, willpower=2, health=25, mana=20)
+            self.set_all_stats(strength=3, dexterity=4, talent=2, alertness=4, willpower=2, health=45, mana=20)
 
 necia = Necia(None, None, description=universal.format_line(['''An athletic, hard-bodied, dagger-wielding woman of average height. There is a tremendous amount of''',
 '''tension in her stance.''']), printedName="Warslinger's Companion")
@@ -3666,8 +3666,8 @@ spankEditaCruel = Node(198)
 spankEdita.children = [spankEditaStern, spankEditaNice, spankEditaCruel]
 def spankEdita_qf():
     music.play_music(textCommandsMusic.CARLITA)
-    carlita = universal.state.get_character('Edita.person')
-    universal.say_title(carlita.printedName)
+    edita = universal.state.get_character('Edita.person')
+    universal.say_title(edita.printedName)
     spankEdita.quip = universal.format_text([[universal.state.player.name + "'s", '''eyes widen as the young rebel collapses, her health clearly drained. It is blatantly obvious the young''',
         '''woman has had little to no combat training.'''],
     [universal.state.player.name, '''cleans and puts away''', hisher(universal.state.player), '''weapon, then bends down over the Vengador, and yanks off the girl's mask. The girl yelps, and tries to grab it,''',
@@ -4180,8 +4180,8 @@ niceStraightBare.quip_function = niceStraightBare_qf
 
 def start_scene_2_episode_1(loading=False):
     universal.state.set_init_scene(init_episode_1_scene_2)
-    carlita = universal.state.get_character('Edita.person')
-    carlita.litany = spankEdita.index
+    edita = universal.state.get_character('Edita.person')
+    edita.litany = spankEdita.index
     if not loading:
         music.play_music(textCommandsMusic.INTENSE, 500)
     if not loading:
@@ -4221,15 +4221,15 @@ def start_scene_2_episode_1(loading=False):
                 '''She clutches an old, heavily nicked dagger. Her hand is shaking, but her eyes are filled with grim''',
             '''determination.''', universal.state.player.name, '''readies''', hisher(universal.state.player), '''weapon.''']]), justification=0)
     adventurersGuild = universal.state.get_room("Adventurer's Guild")
-    carlita = universal.state.get_character('Edita.person')
-    adventurersGuild.add_character(carlita)
-    def after_fighting_carlita(allies, enemies, won):
-        carlita = universal.state.get_character('Edita.person')
-        carlita.restores()
+    edita = universal.state.get_character('Edita.person')
+    adventurersGuild.add_character(edita)
+    def after_fighting_edita(allies, enemies, won):
+        edita = universal.state.get_character('Edita.person')
+        edita.restores()
         music.play_music(textCommandsMusic.CARLITA)
-        conversation.converse_with(carlita, townmode.town_mode)
+        conversation.converse_with(edita, townmode.town_mode)
     if not loading:
-        universal.acknowledge(combat.fight, carlita, after_fighting_carlita, townmode.town_mode, False)
+        universal.acknowledge(combat.fight, edita, after_fighting_edita, townmode.town_mode, False)
 
 #----------------------------------------Episode 1 Dungeon-------------------------------------------------------
 def e1_0_4():   
@@ -8566,8 +8566,8 @@ def start_scene_3_episode_1(loading=False):
     peter = universal.state.get_character('Peter.person')
     peter.defaultLitany = peter_end_episode_1
     peter.litany = peter_end_episode_1.index
-    carlita = universal.state.get_character('Edita.person')
-    exitLeft(carlita, adventurersGuild)
+    edita = universal.state.get_character('Edita.person')
+    exitLeft(edita, adventurersGuild)
     mariasHome = universal.state.get_room("Maria's Home")
     if not 'Elise_shows_you_around' in keywords():
         shrine = universal.state.get_room('Shrine')

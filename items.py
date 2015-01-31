@@ -194,6 +194,7 @@ class Gem(Item):
         super(Gem, self).__init__(name, description)
         self.enchantment = enchantment
 
+    '''
     def save(self):
         saveData = []
         Gem.add_data(str(self.name), saveData)
@@ -209,6 +210,7 @@ class Gem(Item):
         Because enchantment gems can't be changed by the player, and we always start with a copy of the object, whose state is then updated to match the state in the savefile, nothing fancy needs to happen when loading gems.
         """
         pass
+    '''
 
 
 class Armor(Item):

@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
+from __future__ import division
 import universal
 from universal import *
 import abc
@@ -105,18 +106,19 @@ class Humiliated(StatusEffect):
     #The number of smacks that need to be landed to increase the penalty by another point. This can be varied for balancing.
     smacksPerPenaltyPoint = 5
     name = 'Humiliation'
-    def __init__(self, duration):
+    def __init__(self, duration, numSmacks):
         super(Humiliated, self).__init__(Humiliated.name, duration, True)
-        self.penalty = 1
+        self.penalty = numSmacks // Humiliated.smacksPerPenaltyPoint
 
     def inflict_status(self, person):
         print(' '.join([person.name, 'before humiliation:']))
         print(person.primaryStats)
         #stat = max([i for i in range(len(person.primaryStats[:-4]))], key=lambda x : person.primaryStats[x])
-        person.decrease_all_stats(self.penalty)
+        person.decrease_stat(person.highest_stat(), self.penalty)
         print(' '.join([person.name, 'after humiliation:']))
         print(person.primaryStats)
         return 0
+
 
     def reverse_status(self, person):
         print(' '.join([person.name, 'before reversing humiliation:']))
@@ -134,8 +136,8 @@ class Weakened(StatusEffect):
     def inflict_status(self, person):
         print(' '.join([person.name, 'before weakened:']))
         print(person.primaryStats)
-        person.decrease_stat(STRENGTH, 2)
-        person.decrease_stat(DEXTERITY, 2)
+        person.decrease_stat(STRENGTH, 1)
+        person.decrease_stat(DEXTERITY, 1)
         print(' '.join([person.name, 'after weakened:']))
         print(person.primaryStats)
         return 0
@@ -423,7 +425,7 @@ def build_status(status, duration=0, numSmacks=0, allies=None, enemies=None):
         status can also be the status' name.
     """
     if status == HUMILIATED or status == Humiliated.name:
-        return Humiliated(duration)
+        return Humiliated(duration, numSmacks)
     elif status == WEAKENED or status == Weakened.name:
         return Weakened(duration)
     elif status == MAGIC_DISTORTED or status == MagicDistorted.name:
