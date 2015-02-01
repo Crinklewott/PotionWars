@@ -162,7 +162,7 @@ class DungeonFloor(universal.RPGObject):
         self.enemies = enemies
         self.maxEnemies = maxEnemies
         self.ambushChance = ambushChance
-    
+
     def convert_dungeon_map(self):
         """
         Converts this dungeon's map into a three dimensional list, where each square consists of a map containing five items:
@@ -324,7 +324,7 @@ class Dungeon(townmode.Room):
         if dungeonMap is not None:
             count = 0
             if not encounterRates:
-                encounterRates = [5, 5]
+                encounterRates = [0, 0]
             for floor in dungeonMap:
                 if visibility is None:
                     self.dungeonMap[count] = floor if type(floor) == DungeonFloor else DungeonFloor(floor, self.dungeonEvents[count], encounterRate=encounterRates[count])
@@ -744,19 +744,20 @@ class Dungeon(townmode.Room):
             self.dungeonEvents[floor][row][column]()
         elif has_char('!', square):
             event = True
-            enemies = None
-            if self.dungeonEvents[floor][row][column]:
-                #One time combat events have associated with them a function that returns the list of enemies to be battled.
-               enemies = dungeonEvents[floor][row][column]()
-            self.encounter(enemies)
+            self.encounter()
         elif has_char('x', square) and not universal.state.is_clear((floor, row, column)):
             def clear_encounter(x, y, z):
                 #These three are just dummy arguments that are used because the combat function expects the postCombatEvent to have three arguments.
                 print("clearing encounter")
                 universal.state.clear_encounter((floor, row, column))
-
             event = True
-            self.encounter(clear_encounter)
+            enemies = None
+            if self.dungeonEvents[floor][row][column]:
+                #One time combat events have associated with them a function that returns the list of enemies to be battled.
+               enemies = self.dungeonEvents[floor][row][column]()
+               print('------------------enemies:--------------')
+               print(enemies)
+            self.encounter(clear_encounter, enemies)
         if has_char('e', square):
             universal.set_commands(get_commands())
             if self.dungeonEvents[floor][row][column]:
@@ -776,6 +777,7 @@ class Dungeon(townmode.Room):
 
     def encounter(self, afterCombatEvent=None, encounteredEnemies=None):
         currentFloor = self.dungeonMap[self.coordinates[0]]
+        print(encounteredEnemies)
         if not encounteredEnemies:
             numEnemies = random.randint(1, currentFloor.maxEnemies)
             encounteredEnemies = []
@@ -784,8 +786,8 @@ class Dungeon(townmode.Room):
                 encounteredEnemies.append(currentFloor.enemies[random.randrange(0, len(currentFloor.enemies))](gender, identifier=i+1))
         ambush = random.randint(1, 100)
         ambushFlag = 0
-        avgPartyStealth = person.get_party().avg_stealth()
-        avgEnemyStealth = mean([enemy.stealth() for enemy in encounteredEnemies])
+        avgPartyStealth = person.get_party().avg_speed()
+        avgEnemyStealth = mean([enemy.speed() for enemy in encounteredEnemies])
         #print('ambush: ' + str(ambush))
         #print('chance: ' + str(currentFloor.ambushChance + abs(avgPartyStealth - avgEnemyStealth)))
         if ambush <= currentFloor.ambushChance + abs(avgPartyStealth - avgEnemyStealth):
@@ -1021,6 +1023,8 @@ def select_targets_interpreter(keyEvent):
         spellResult = chosenSpell.__class__(selectedSlinger, targetList).effect(inCombat=False, allies=person.get_party())
         selectedSlinger.uses_mana(chosenSpell.cost)
         say(spellResult[0])
+        if spellResult[-1]:
+            selectedSlinger.increaseStatPoints[universal.BUFF_MAGIC - universal.COMBAT_MAGIC] += chosenSpell.spell_points()
         targetList = []
         acknowledge(dungeon_mode, ())
         return

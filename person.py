@@ -102,7 +102,7 @@ def stat_name(stat):
     elif stat == universal.GRAPPLE:
         return 'grapple'
     elif stat == universal.STEALTH:
-        return 'stealth'
+        return 'speed'
     elif stat == universal.HEALTH:
         return 'health'
     elif stat == universal.MANA:
@@ -138,7 +138,7 @@ Stats:
     magic
     resilience()
     grapple
-    stealth
+    speed
     health
     mana
     current health
@@ -848,7 +848,7 @@ class Person(universal.RPGObject):
         self.increase_stat(stat, 1)
 
     #def increase_all_stats(self, increment):
-    #    self.set_all_stats(warfare + increment, resilience() + increment, magic + increment, grapple + increment, stealth + increment)
+    #    self.set_all_stats(warfare + increment, resilience() + increment, magic + increment, grapple + increment, speed + increment)
 
     #def decrease_all_stats(self, decrement):
     #    self.increase_all_stats(-decrement)
@@ -1043,7 +1043,7 @@ class Person(universal.RPGObject):
         if gp is not None:
             gp.grapplingPartner = None
 
-    def stealth(self):
+    def speed(self):
         value = 2 * self.alertness()
         for equipment in self.equipmentList:
             value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.STEALTH])
@@ -1145,7 +1145,7 @@ class Person(universal.RPGObject):
             statList.append(' '.join(['warfare:', str(self.warfare())]))
             statList.append(' '.join(['resilience:', str(self.resilience())]))
             statList.append(' '.join(['magic:', str(self.magic())]))
-            statList.append(' '.join(['stealth:', str(self.stealth())]))
+            statList.append(' '.join(['speed:', str(self.speed())]))
             statList.append('Health: ' + str(self.primaryStats[-2]) + '/' + str(self.primaryStats[-4]))
             statList.append('Mana: '   + str(self.primaryStats[-1]) + '/' + str(self.primaryStats[-3]))
         elif self.mainStatDisplay == 2:
@@ -2033,14 +2033,14 @@ class Party(universal.RPGObject):
         return display_party(self)
 
 
-    def avg_stealth(self):
-        return sum([member.stealth() for member in self.members]) / len(self)
+    def avg_speed(self):
+        return sum([member.speed() for member in self.members]) / len(self)
 
-    def max_stealth(self):
-        return max([member.stealth() for member in self.members])
+    def max_speed(self):
+        return max([member.speed() for member in self.members])
 
-    def median_stealth(self):
-        return median([member.stealth() for member in self.members])
+    def median_speed(self):
+        return median([member.speed() for member in self.members])
 
 def median(listNums):
     return listNums[len(listNums) // 2]
@@ -2176,7 +2176,10 @@ class Spell(combatAction.CombatAction):
 
     def __str__(self):
         return self.name
-    
+   
+    def spell_points(self):
+        return self.tier + 1
+
     def _save(self):
         raise NotImplementedError()
 
@@ -2548,6 +2551,7 @@ class Buff(Spell):
         caster = self.attacker
         resultStatement = []
         effects = []
+        didSomething = False
         companions = allies if caster in allies else enemies
         currentRecipients = list(recipients)
         for recipient in recipients:
@@ -2566,13 +2570,17 @@ class Buff(Spell):
             else:
                 #Because the buff spell is being cast on the caster, the magic never actually leaves the person's body, so it isn't affected by the caster's iron.
                 duration = self.magicMultiplier * caster.magic_attack(False)
-            if self.statusInflicted is not None:
+            if self.statusInflicted is not None and not self.statusInflicted.name in recipient.statusList:
                 recipient.inflict_status(statusEffects.build_status(self.statusInflicted, duration))
+                didSomething = True
             resultStatement.append(self.effect_statement(recipient))
             resultStatement.append(self.success_statement(recipient))
             print(resultStatement)
             effects.append(True)
-        return (universal.format_text(resultStatement, False), effects, self)
+        if not inCombat:
+            return (universal.format_text(resultStatement, False), effect, self, didSomething)
+        else:
+            return (universal.format_text(resultStatement, False), effects, self)
 
     def success_statement(self, defender):
         """
@@ -2596,6 +2604,7 @@ class Healing(Buff):
         resultStatement = []
         effects = []
         companions = []
+        didSomething = False
         if inCombat:
             companions = allies if caster in allies else enemies
         else:
@@ -2617,13 +2626,18 @@ class Healing(Buff):
                 if healedHealth < 0:
                     healedHealth = 1
                 recipient.increase_stat(universal.CURRENT_HEALTH, healedHealth)
+                didSomething = True
             else:
+                didSomething = didSomething or recipient.current_health() < recipient.health()
                 if healedHealth < 0:
                     healedHealth = 1
                 healedHealth = recipient.heals(healedHealth)
             resultStatement.append(self.effect_statement(recipient) + [caster.printedName, 'heals', recipient.printedName, 'for', str(healedHealth), 'health!'])
             effects.append(True)
-        return (universal.format_text(resultStatement, False), effects, self)
+        if inCombat:
+            return (universal.format_text(resultStatement, False), effects, self)
+        else:
+            return (universal.format_text(resultStatement, False), effects, self, didSomething)
 
 class Resurrection(Healing):
     def __init__(self, attacker, defenders, secondaryStat=None):
@@ -3056,8 +3070,8 @@ def quivering(personName):
     return universal.state.player.get_character(personName).quivering()
 
 
-def stealth(personName):
-    return universal.stat.get_character(personName).stealth()
+def speed(personName):
+    return universal.stat.get_character(personName).speed()
 
 def warfare(personName):
     return universal.stat.get_character(personName).warfare()

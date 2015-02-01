@@ -5699,6 +5699,10 @@ def e1_7_5():
         #'''upended, and is covered in pockmarks, burns, and coats of ice. The deafening ring of steel on steel, howls of rage, and screams of pain batter against''', 
         #names(), '''ears.''']]))
         #universal.acknowledge(dungeonmode.dungeon_mode, ())
+
+def c1_8_4():
+    return [pwenemies.VengadorWarrior(p.MALE)]
+
 floor1 = (
                #0    1     2     3      4     5    6     7     8     9   
             ( '__','___','___','___', '__', '__','___','___','___','___', '_'), 
@@ -5716,7 +5720,7 @@ floor1 = (
 floor1Events = (
               #0     1     2     3      4     5    6     7     8     9   
             (None, None, None, None, None, None, None, None, None, None),  #9
-            (None, None, None, None, None, None, None, None, None, None),  #8
+            (None, None, None, None,c1_8_4,None, None, None, None, None),  #8
             (None,e1_7_1,None,e1_7_3,None,e1_7_5,None, None, None, None),  #7 
             (None, None, None, None, None, None, None, None, None, None),  #6
             (None, None, None, None, None, None, None, None, None, None),  #5
@@ -5725,7 +5729,7 @@ floor1Events = (
             (None,e1_2_1,None,e1_2_3,None,e1_2_5,None,e1_2_7,None, None),  #2 
             (None, None, None, None, None, None, None, None, None, None),  #1
             (None, None, None, None,e1_0_4,None, None, None, None, None)   #0
-        )
+            )  
 
 def e0_8_4():
     backOfGuild = universal.state.get_room('Guild')
@@ -5738,7 +5742,7 @@ def e0_8_4():
         universal.acknowledge(dungeonmode.dungeon_mode, ())
     else:
         backOfGuild.display()
-        
+
 def e0_6_3():
     if 'met_Airell' in keywords():
         backOfGuild = universal.state.get_room('Guild')
@@ -6378,6 +6382,8 @@ def e0_8_7():
         backOfGuild = universal.state.get_room('Guild')
         backOfGuild.display()
 
+
+
 def cosima_failedPaloma_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
@@ -7002,11 +7008,11 @@ def e0_5_8():
             '''uneasily.'''],
             [name(), '''says nothing.'''],
             ['''The elf clears her throat. "Anyway, two ways of apologizing. One, I give you switch, and bend over. Two, I have magic clothing. You call it''',
-            '''loin cloth. I give it to good students. It makes you extra stealthy, easier to sneak up on''',
+            '''loin cloth. I give it to good students. It makes you extra speed, easier to move quickly''',
             '''and ambush enemies. Which do you prefer?"'''],
             ['\p'],
             ['''1. "Gimme that switch, and bend over. By the time I'm done with you, you'll wish you'd never met me!"'''],
-            ['''2. "I'll take the stealthy loincloth. As cathartic as switching you may be, I think the magic clothing would be a bit more useful."''']]),
+            ['''2. "I'll take the speedy loincloth. As cathartic as switching you may be, I think the magic clothing would be a bit more useful."''']]),
             justification=0)
         universal.set_commands(['(#) Select a number.'])
         universal.set_command_interpreter(mai_apologizes_intepreter)
@@ -7085,7 +7091,7 @@ def mai_apologizes_intepreter(keyEvent):
             universal.set_command_interpreter(mai_spanking_interpreter)
             universal.set_commands(['(#) Select a number.'])
         elif num == 2:
-            universal.state.player.take_item(itemspotionwars.stealthThong)
+            universal.state.player.take_item(itemspotionwars.speedThong)
             universal.say(universal.format_text([['''Mai claps her hands gleefully. "I'll be right back." The elf vanishes into the shadows.'''],
                 [name(), '''taps''', hisher(), '''foot impatiently. Just when''', heshe(), '''is fairly certain the elf is renegging on the deal, the elf slips out''',
                     '''of the shadows right next to''', himher(), '''(scaring the ever-loving crap out of''', himher(), '''in the process).'''],
@@ -7094,7 +7100,7 @@ def mai_apologizes_intepreter(keyEvent):
                 ['''1. "Sexy!"'''],
                 ['''2. "Doesn't this seem a little small to you?"'''],
                 ['''3. Spank Mai anyway.''']]), justification=0)
-            universal.set_command_interpreter(mai_stealth_thong_interpreter)
+            universal.set_command_interpreter(mai_speed_thong_interpreter)
             universal.set_commands(['(#) Select a number.'])
 def mai_spanking_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
@@ -7407,7 +7413,7 @@ def mai_convince_to_help_interpreter(keyEvent):
                 ['''The elf vanishes into the shadows before''', name(), '''can respond.''']]), justification=0)
             universal.acknowledge(dungeonmode.dungeon_mode, ())
 
-def mai_stealth_thong_interpreter(keyEvent):
+def mai_speed_thong_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
         if num == 1:
@@ -8495,7 +8501,21 @@ def necia_spanking_over():
         ['''"Hey wait a minute-" begins''', name() + "."],
         ['''But the warslinger is already gone.''']]), justification=0)
     episode.allEpisodes[universal.state.player.currentEpisode].next_scene()
-        
+
+def c0_7_4():
+    return [pwenemies.VengadorSpellslinger(p.MALE), pwenemies.VengadorSpellslinger(p.FEMALE)]
+
+def c0_4_5():
+    return [pwenemies.VengadorScout(p.MALE), pwenemies.VengadorSpellslinger(p.FEMALE)]
+
+def c0_3_7():
+    return [pwenemies.VengadorWarrior(p.MALE), pwenemies.VengadorWarrior(p.FEMALE)]
+
+def c0_4_9():
+    return [pwenemies.VengadorScout(p.MALE)]
+
+
+
 floor0 = (
            #0    1     2     3      4     5    6     7     8     9   
         ( '__','___','___','___', '__', '__','___','___','___','___', '_'), 
@@ -8514,12 +8534,12 @@ floor0Events = (
           #0     1     2     3      4     5    6     7     8     9   
         (None, None, None, None, None, None, None, None, None, None),  #9
         (None,e0_6_1,None,e0_6_3,e0_8_4,None,None, None, None, None),  #8
-        (None, None, None, None, None,e0_8_5,None,e0_8_7,None, None),  #7 
+        (None, None, None,None,c0_7_4,e0_8_5,None,e0_8_7,None, None),  #7 
         (None, None, None, None, None, None, None, None, None, None),  #6
-        (None, None, None, None, None,e0_5_5,None, None,e0_5_8,e0_5_9),  #5
-        (None, None, None, None, None, None, None, None, None, None),  #4
-        (None, None, None, None, None,e0_3_5,None, None, None, None),  #3
-        (None, None, None, None, None, None, None, None, None,e0_2_9),  #2 
+        (None, None, None, None,None,e0_5_5,None,None,e0_5_8,e0_5_9),  #5
+        (None, None, None, None, None,c0_4_5, None,None,None,c0_4_9),  #4
+        (None, None, None, None, None,e0_3_5,None,c0_3_7,None, None),  #3
+        (None, None, None, None,None, None, None, None, None,e0_2_9),  #2 
         (None, None, None,e0_1_3,None, None,e0_1_6,None, None, None),  #1
         (None, None, None, None, None, None, None, None, None, None)   #0
     )

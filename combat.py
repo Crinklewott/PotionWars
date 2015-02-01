@@ -56,8 +56,6 @@ Furthermore, I've commented out the code that allows the player and enemies to s
 
 TITLE_OFFSET = 15
 allies = None
-origAllies = None
-origEnemies = None
 afterCombatEvent = None
 worldView = None
 enemies = None
@@ -86,6 +84,8 @@ initialAllies = None
 initialEnemies = None
 randomEncounter = False
 coordinates = None
+defeatedAllies = []
+defeatedEnemies = []
 
 def end_fight():
     if randomEncounter:
@@ -103,7 +103,7 @@ def end_fight():
 
 def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon_mode, runnableIn=True, bossFight=False, optionalIn=False, additionalAllies=None, 
         ambushIn=0, randomEncounterIn=False, coordinatesIn=None):
-    global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface, enemySurface, commandSurface, clearScreen, previousMode, origAllies, origEnemies, \
+    global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface, enemySurface, commandSurface, clearScreen, previousMode,  \
             actionsInflicted, actionsEndured, chosenActions, optional, defeatedEnemies, defeatedAllies
     global ambush, boss, initialAllies, initialEnemies, randomEncounter, coordinates
     randomEncounter = randomEncounterIn
@@ -115,7 +115,7 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
     initialEnemies = []
     initialAllies = []
     for ally in universal.state.allies:
-        initialAllies.append((ally.get_id(), copy.deepcopy(ally.primaryStats), copy.deepcopy(ally.statusList)))
+        initialAllies.append((ally.get_id(), copy.deepcopy(ally.primaryStats), copy.deepcopy(ally.statusList), copy.deepcopy(ally.increaseSpellPoints), copy.deepcopy(ally.increaseStatPoints)))
     for enemy in universal.state.enemies:
         initialEnemies.append((enemy.get_id(), copy.deepcopy(enemy.primaryStats), copy.deepcopy(enemy.statusList)))
     boss = bossFight
@@ -161,7 +161,6 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
                 for i in range(0, 5):
                     delaySplit = delay // 5
                     pygame.time.delay(delaySplit)
-    origAllies = copy.deepcopy(allies.members)
     actionsEndured = {combatant:[] for combatant in allies + enemies}
     actionsInflicted = {combatant:[] for combatant in allies + enemies}
     if additionalAllies is not None:
@@ -446,7 +445,7 @@ def increment_stat_points():
                 pointGain = PRIMARY_POINTS
             increaseStat[action.primaryStat] += pointGain
             try:
-                increaseSpellPoints[action.spellType] += action.tier + 1
+                increaseSpellPoints[action.spellType] += action.spell_points()
             except AttributeError:
                 continue
             try:
@@ -873,14 +872,22 @@ def strap_cane_ai(enemy):
                 spell.grappleStatus != combatAction.ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY and enemy.current_mana() >= spell.cost]
 
     magicActions = list(availableSpells)
+    print("---------Possible actions for: " + enemy.get_id() + '-----------------')
+    print(warfareActions)
+    print(grappleActions)
+    print(magicActions)
 
     #We have one reference to each action type for every value in a character's stat + 1 so that every class appears.
     weightedActionClasses = [warfareActions for i in range(max(1, enemy.warfare()))] + [grappleActions for i in range(max(1, enemy.grapple()))]
     if magicActions != []:
         weightedActionClasses += [magicActions for i in range(max(1, enemy.magic()))]
+    print('----------Weighted action classes for: ' + enemy.get_id() + '-------------------')
+    print(weightedActionClasses)
     if get_difficulty() == CANE:
         #For now, this does nothing. Not sure if we want to do anything to perform additional weighting on the classes for cane difficulty.
         weightedActionClasses = weight_classes_cane(weightedActionClasses)
+    #If an action class doesn't have anything, we certainly don't want to use it!
+    weightedActionClasses = [actionClass for actionClass in weightedActionClasses if actionClass]
     chosenActionClass = []
     while chosenActionClass == []:
         chosenActionClass = weightedActionClasses[random.randrange(0, len(weightedActionClasses))]
@@ -1302,7 +1309,6 @@ def max_damage(companions, chosenAction=None):
 
 
 actionResults = []
-RANDOM_ORDER_MULTIPLIER = 4
 def start_round(chosenActions):
     global actionResults, resultIndex, delay
     delay = COMBAT_DELAY
@@ -1316,8 +1322,7 @@ def start_round(chosenActions):
     nonDefendActions = [action for action in chosenActions if action not in defendActions]
     #nonDefendActions.sort(key=lambda x : x.attacker.stat(x.primaryStat) + random.randrange(0, RANDOM_ORDER_MULTIPLIER))
     #We push all the defend actions to the beginning, so that every defending character is guaranteed to defend at the beginning.
-    chosenActions = defendActions + sorted(nonDefendActions, key=lambda x : x.attacker.stat(x.primaryStat) + (x.attacker.alertness() // 2) + 
-            random.randrange(0, RANDOM_ORDER_MULTIPLIER), reverse=True) 
+    chosenActions = defendActions + sorted(nonDefendActions, key=lambda x : x.attacker.stat(x.primaryStat) // 2 + (x.attacker.alertness()), reverse=True) 
     print('sorted actions:')
     print(chosenActions)
     for action in chosenActions:
@@ -1405,8 +1410,6 @@ def print_round_results():
                     pygame.time.delay(delaySplit)
             print_round_results()
 
-defeatedAllies = []
-defeatedEnemies = []
 def end_round():
     global allies, enemies, chosenActions, actionResults, defeatedAllies, defeatedEnemies
     activeAllies = [ally for ally in allies if ally.current_health() > 0]
@@ -1444,10 +1447,25 @@ def game_over_interpreter(keyEvent):
     if keyEvent.key == K_RETURN:
         global allies, enemies, chosenActions, actionResults, actionsEndured, actionsInflicted, defeatedAllies, defeatedEnemies
         #universal.set_state(copy.deepcopy(initialState))
-        for charid, primaryStats, statusList in initialAllies:
+        for charid, primaryStats, statusList, spellPoints, statPoints in initialAllies:
+            print('------------------restoring: ' + charid + '-----------------------')
+            print((charid, primaryStats, statusList, spellPoints, statPoints))
+            print((charid, primaryStats, statusList, spellPoints, statPoints))
             character = universal.state.get_character(charid)
+            print('defeated state:')
+            print(character.primaryStats)
+            print(character.statusList)
+            print(character.increaseSpellPoints)
+            print(character.increaseStatPoints)
             character.primaryStats = copy.deepcopy(primaryStats)
             character.statusList = copy.deepcopy(statusList)
+            character.increaseSpellPoints = spellPoints
+            character.increaseStatPoints = statPoints
+            print('restored state:')
+            print(character.primaryStats)
+            print(character.statusList)
+            print(character.increaseSpellPoints)
+            print(character.increaseStatPoints)
             character.break_grapple()
         for charid, primaryStats, statusList in initialEnemies:
             character = universal.state.get_character(charid)
@@ -1472,8 +1490,9 @@ def game_over_interpreter(keyEvent):
     elif keyEvent.key == K_ESCAPE:
         if optional:
             try:
-                afterCombatEvent([ally for ally in allies if ally.current_health() <= 0] + defeatedAllies, 
-                        [enemy for enemy in enemies if enemy.current_health() <= 0] + defeatedEnemies, False)
+                #defeatedAllies = allies.members + defeatedAllies
+                #defeatedEnemies = [enemy for enemy in enemies if enemy.current_health() <= 0] + defeatedEnemies
+                improve_characters(False, afterCombatEvent)
             except TypeError:
                 pass
             allies.members += defeatedAllies    
@@ -1511,7 +1530,7 @@ def victory():
     music.play_music(music.VICTORY)
     for ally in allies:
         ally.break_grapple()
-    improve_characters(afterCombatEvent, activeAllies, activeEnemies, True)
+    improve_characters(True, afterCombatEvent)
     end_fight()
     """
     global enemies, chosenActions, actionResults, actionsEndured, actionsInflicted
@@ -1537,7 +1556,7 @@ def specialization_bonus(ally, i):
     return bonus
 
 HIGH_STAT_PENALTY = .1
-def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious):
+def improve_characters(victorious, afterCombatEvent=None):
     """
     Takes as argument the function that should be invoked after leveling up is complete.
     """
@@ -1546,7 +1565,8 @@ def improve_characters(afterCombatEvent, activeAllies, activeEnemies, victorious
         #print(enemies[i].statList)
     #maxStats = [max([enemy.get_stat(i) for enemy in enemies]) for i in range(person.NUM_STATS)]
     #print(maxStats)
-    for ally in allies:
+    #Characters can gain stat points even if they are knocked out.
+    for ally in allies.members + defeatedAllies:
         #print('chanceIncrease for ' + ally.name)
         #print(ally.chanceIncrease)
         #ally.chanceIncrease[HEALTH] += 25 + max(ally.chanceIncrease[WARFARE], ally.chanceIncrease[GRAPPLE]) // 2

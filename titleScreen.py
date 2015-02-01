@@ -830,7 +830,7 @@ Stats:
     magic
     resilience()
     grapple
-    stealth
+    speed
     health
     mana
     current health

@@ -391,6 +391,8 @@ class BreakGrappleAction(CombatAction):
             #print(max(attacker.warfare(), attacker.grapple()))
             print('attack penalty:')
             print(attacker.attack_penalty())
+            print('attacker grapple:')
+            print(attacker.grapple())
             print('defender grapple bonus:')
             print(wd.grapple_bonus())
             print('defender grapple:')
@@ -401,7 +403,7 @@ class BreakGrappleAction(CombatAction):
             #print(grappleABonus)
             #print('defender:')
             #print(grappleDBonus)
-            success = rand(bonus + wa.grappleAttemptDefense)
+            success = rand(bonus + wa.grapple_bonus())
             print('success:')
             print(success)
             failure = rand(wd.grapple_bonus())
@@ -435,11 +437,11 @@ class RunAction(CombatAction):
         minEnemyStealth = 9000
         attacker = self.attacker
         for enemy in enemies:
-            avgEnemyStealth += enemy.stealth()
-            if enemy.stealth() < minEnemyStealth:
-                minEnemyStealth = enemy.stealth()
+            avgEnemyStealth += enemy.speed()
+            if enemy.speed() < minEnemyStealth:
+                minEnemyStealth = enemy.speed()
         avgEnemyStealth /= len(enemies)
-        success = rand(compute_bonus(max(0, attacker.stealth() - avgEnemyStealth)))
+        success = rand(compute_bonus(max(0, attacker.speed() - avgEnemyStealth)))
         failure = rand()
         if failure <= success:
             return (' '.join(['The party has successfully fled.']), [True], self)

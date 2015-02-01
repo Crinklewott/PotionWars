@@ -106,11 +106,11 @@ class VengadorWarrior(Enemy):
         self.equip(copy.copy(itemspotionwars.warspear))
         self.description = universal.format_line(['''A tall, broad-shouldered''', person.manwoman(self) + ".", person.HeShe(self), '''is wielding a''', self.weapon().name, 
         '''and is wearing''', self.shirt().name, '''and''', self.lower_clothing().name + "."])
-        self.set_all_stats(strength=1, dexterity=3, willpower=0, talent=0, health=20, mana=0, alertness=1)
+        self.set_all_stats(strength=1, dexterity=3, willpower=0, talent=0, health=12, mana=0, alertness=1)
         self.spankingPositions = [positions.headBetweenLegs, positions.frontalOverLap, positions.reverseRiding]
 
     def default_stats(self):
-        self.set_all_stats(strength=3, dexterity=0, willpower=0, talent=0, health=10, mana=0, alertness=1)
+        self.set_all_stats(strength=1, dexterity=3, willpower=0, talent=0, health=15, mana=0, alertness=1)
 
     def post_combat_spanking(self):
         bottomAdj = "large, smooth, round" if self.is_female() else "large, rather hairy"
@@ -239,7 +239,7 @@ class VengadorSpellslinger(Enemy):
     def __init__(self, gender, level=0, identifier=None):
         super(VengadorSpellslinger, self).__init__('Vengador', gender, None, specialization=universal.COMBAT_MAGIC, bodyType='voluptuous', height='short', musculature='soft', identifier=identifier)
         self.level = level
-        self.set_all_stats(strength=1, dexterity=0, willpower=2, talent=4, health=16, mana=10, alertness=0)
+        self.set_all_stats(strength=0, dexterity=1, willpower=2, talent=4, health=6, mana=10, alertness=0)
         if gender == person.FEMALE:
             self.equip(copy.copy(itemspotionwars.wornDress))
         else:
@@ -253,7 +253,7 @@ class VengadorSpellslinger(Enemy):
         self.spankingPositions = [positions.overOneKnee, positions.waistBetweenLegs, positions.diaper]
 
     def default_stats(self):
-        self.set_all_stats(strength=0, dexterity=1, willpower=1, talent=3, health=7, mana=10, alertness=1)
+        self.set_all_stats(strength=0, dexterity=1, willpower=2, talent=4, health=8, mana=10, alertness=0)
 
     def post_combat_spanking(self):
         insurgentText = format_text([['''The Vengador leans against a nearby wall, breathing heavily.''', person.HeShe(self), '''tries to stumble away from''', name() + ",",
@@ -412,7 +412,7 @@ class VengadorScout(Enemy):
         self.equip(copy.copy(itemspotionwars.dagger))
         self.description = format_line(['''A short, thin Taironan''', person.manwoman(self), '''dresssed in a''', self.shirt().name + "," ''' and''', 
             self.lower_clothing().name + ".", person.HeShe(self), '''carries a''', self.weapon().name + "."])
-        self.set_all_stats(strength=1, dexterity=3, willpower=2, talent=1, health=18, mana=7, alertness=2)
+        self.set_all_stats(strength=1, dexterity=3, willpower=2, talent=1, health=9, mana=7, alertness=2)
         self.spankingPositions = [positions.overTheKnee, positions.underarm, positions.standing]
         self.learn_spell(spells_PotionWars.heal)
         self.learn_spell(spells_PotionWars.weaken)

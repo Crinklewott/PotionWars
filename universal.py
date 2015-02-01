@@ -54,7 +54,7 @@ WARFARE = 0
 MAGIC = 1
 RESILIENCE = 2
 GRAPPLE = 3
-STEALTH = 4
+SPEED = 4
 HEALTH = 5
 MANA = 6
 CURRENT_HEALTH = 7
@@ -75,8 +75,8 @@ def stat_name(stat):
         return 'resilience'
     elif stat == GRAPPLE:
         return 'grapple'
-    elif stat == STEALTH:
-        return 'stealth'
+    elif stat == SPEED:
+        return 'speed'
     elif stat == HEALTH:
         return 'health'
     elif stat == MANA:
@@ -1053,7 +1053,10 @@ class State(object):
             try:
                 items.Item.load(itemData, self.items[name])
             except KeyError:
-                pass
+                if name == 'loincloth of stealth':
+                    name = 'loincloth of speed'
+                    items.Item.load(itemData, self.items[name])
+                    self.items[name].name = 'loincloth of speed'
         try:
             self.difficulty = int(difficulty.strip())
         except ValueError:

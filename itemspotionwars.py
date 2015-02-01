@@ -113,9 +113,9 @@ lacyUnderwear = items.Underwear('lacy underwear', 'A pair of white, flowery, lac
 
 boyShorts = items.Underwear('boyshorts', 'A pair of dark red boyshorts that completely cover the bottom.', price=3)
 
-stealthThong = items.Thong('loincloth of stealth', ' '.join(["A brown loincloth that leaves the majority of the wearer's cheeks exposed. It is lightly imbued with magic. The magic provides the wearer with improved fine motor",
-    '''control over their legs, improving the wearer's ability to move stealthily. Provides a +1 bonus to Stealth.''']), price=50, 
-    enchantments=[items.Enchantment(1, universal.STEALTH, 1)], risque=5)
+speedThong = items.Thong('loincloth of speed', ' '.join(["A brown loincloth that leaves the majority of the wearer's cheeks exposed. It is lightly imbued with magic. The magic provides the wearer with improved fine motor",
+    '''control over their legs, improving the wearer's ability to move speedily. Provides a +1 bonus to speed.''']), price=50, 
+    enchantments=[items.Enchantment(1, universal.SPEED, 1)], risque=5)
 
 chainmailBikini = items.Thong('chainmail bikini', "A two piece set of chainmail. The top piece covers a woman's breasts, but nothing else. The bottom is a chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's almost as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of one's body, the armor has a negligible impact on magic.", price=5000, attackDefense=16, risque=6, maxEnchantment=2) 
 
