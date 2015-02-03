@@ -71,6 +71,7 @@ def translate(fileName,  episodeName, episodeNum, titleCardTheme, startingNodeNu
     endFound = True
     beginFound = False
     code = imports if imports else []
+    #print(tokens)
     tree = parse.parse_environments(iter(tokens), parseTree.Root(episodeNum, charRooms), startingNodeNum)
     #print(str(tree))
     code.extend(tree.translate())
