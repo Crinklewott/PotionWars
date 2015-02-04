@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+#We're not applying the arguments of cond correctly.
+
 #TODO: This only works when the player is the only character with dynamic clothing.
 #Before the second episode is done, we'll need to implement a way to call liftlower, etc. on
 #other characters.
@@ -77,7 +79,7 @@ def translate(fileName,  episodeName, episodeNum, titleCardTheme, startingNodeNu
     code.extend(tree.translate())
     code.append('\n')
     for sceneNum in range(1, parseTree.OpenScene.sceneNum):
-        print(sceneNum)
+        #print(sceneNum)
         code.append(''.join(['episode', str(episodeNum), 'Scene', str(sceneNum), ' = episode.Scene("Episode ', str(episodeNum), ' Scene ', str(sceneNum), '", ', 'start_scene_', str(sceneNum), '_episode_', str(episodeNum), ', ',
             'end_scene_', str(sceneNum), '_episode_', str(episodeNum), ')']))
     code.append(''.join(['episode', str(episodeNum), ' = episode.Episode(', str(episodeNum), ', ', "'''" + episodeName + "'''", ', ', 'scenes=[', ', '.join([''.join(['episode', str(episodeNum), 'Scene', str(sceneNum)]) 

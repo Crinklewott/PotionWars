@@ -58,7 +58,7 @@ BALANCED = 6
 
 TALENT_PER_TIER = 10
 
-allStats = [universal.WARFARE, universal.MAGIC, universal.RESILIENCE, universal.GRAPPLE, universal.STEALTH, universal.HEALTH, universal.MANA, universal.CURRENT_HEALTH, 
+allStats = [universal.WARFARE, universal.MAGIC, universal.RESILIENCE, universal.GRAPPLE, universal.SPEED, universal.HEALTH, universal.MANA, universal.CURRENT_HEALTH, 
         universal.CURRENT_MANA]
 
 allPrimaryStats = [universal.STRENGTH, universal.DEXTERITY, universal.WILLPOWER, universal.TALENT, universal.ALERTNESS, universal.HEALTH, universal.MANA, 
@@ -101,7 +101,7 @@ def stat_name(stat):
         return 'resilience()'
     elif stat == universal.GRAPPLE:
         return 'grapple'
-    elif stat == universal.STEALTH:
+    elif stat == universal.SPEED:
         return 'speed'
     elif stat == universal.HEALTH:
         return 'health'
@@ -278,7 +278,7 @@ def compute_stat(stat, primaryStats):
         return 2 * primaryStats[universal.DEXTERITY] + primaryStats[universal.STRENGTH]
     elif stat == RESILIENCE:
         return 2 * primaryStats[universal.WILLPOWER] + primaryStats[universal.TALENT]
-    elif stat == STEALTH:
+    elif stat == SPEED:
         return 2 * ALERTNESS
     
 
@@ -1046,7 +1046,7 @@ class Person(universal.RPGObject):
     def speed(self):
         value = 2 * self.alertness()
         for equipment in self.equipmentList:
-            value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.STEALTH])
+            value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.SPEED])
         return value
 
     def health(self):

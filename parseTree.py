@@ -1,0 +1,502 @@
+from __future__ import print_function
+import transExceptions
+import ast
+import re
+
+
+class bcolors:
+        HEADER = '\033[95m'
+        BLUE = '\033[94m'
+        GREEN = '\033[92m'
+        YELLOW = '\033[93m'
+        RED = '\033[91m'
+        ENDC = '\033[0m'
+
+COLOR = True
+def color(text, color):
+    if COLOR:
+        return color + text + bcolors.ENDC
+    else:
+        return text
+
+
+def color_line(lineNum):
+    return "Line " + color(str(lineNum), bcolors.BLUE)
+
+TAB= ' ' * 4
+BEGIN_OPEN_SCENE = r'\begin{openScene}'
+END_OPEN_SCENE = r'\end{openScene}'
+BEGIN_CLOSE_SCENE = r'\begin{closeScene}'
+END_CLOSE_SCENE = r'\end{closeScene}'
+BEGIN_CODE = r'\begin{code}'
+END_CODE = r'\end{code}'
+BEGIN_SCENE = r'openScene'
+BEGIN_NODE = r'\begin{node}'
+END_NODE = r'\end{node}'
+BEGIN_CHILD_NODE = r'\begin{childnode}'
+END_CHILD_NODE = r'\end{childnode}'
+
+BEGIN = r'\begin'
+END = 'r\end'
+
+nodeNum = 0
+
+codeCommands = {
+        r'\keyword':("textCommandsMusic.add_keyword(", 1),
+        r'\music':("music.play_music(", 1)
+        }
+
+inlineCommandsPlayer = {
+    r'\hisher':("person.hisher()",),
+    r'\HisHer':("person.HisHer()",),  
+    r'\himher':("person.himher()",), 
+    r'\HimHer':("person.HimHer()",),  
+    r'\heshe':("person.heshe()",),  
+    r'\HeShe':("person.HeShe()",),  
+    r'\heshell':("person.heshell()",),  
+    r'\HeShell':("person.HeShell()",),  
+    r'\himselfherself':("person.himselfherself()",),  
+    r'\HimselfHerself':("person.HimselfHerself()",),  
+    r'\mistermiss':("person.mistermiss()",),  
+    r'\MisterMiss':("person.MisterMiss()",),  
+    r'\manwoman':("person.manwoman()",),  
+    r'\ManWoman':("person.ManWoman()",),  
+    r'\trousers':("universal.state.player.lower_clothing().name",),
+    r'\hishers':("person.hishers()",),  
+    r'\HisHers':("person.HisHers()",),  
+    r'\boygirl':("person.boygirl()",),  
+    r'\BoyGirl':("person.BoyGirl()",),  
+    r'\manlady':("person.manlady()",),  
+    r'\ManLady':("person.ManLady()",),  
+    r'\kingqueen':("person.kingqueen()",),  
+    r'\KingQueen':("person.KingQueen()",),  
+    r'\lordlady':("person.lordlady()",),  
+    r'\LordLady':("person.LordLady()",),  
+    r'\brothersister':("person.brothersister()",),  
+    r'\BrotherSister':("person.BrotherSister()",),  
+    r'\menwomen':("person.menwomen()",),  
+    r'\MenWomen':("person.MenWomen()",),  
+    r'\sirmaam':("person.sirmaam()",),  
+    r'\SirMaam':("person.SirMaam()",),  
+    r'\underwearpanties':("person.underwearpanties()",  ),
+    r'\bastardbitch':("person.bastardbitch()",  ),
+    r'\BastardBitch':("person.BastardBitch()",  ),
+    r'\weaponName':("universal.state.player.weapon().name",  ),
+    r'\name':("universal.state.player.name",  ),
+    r'\names':('''universal.state.player.name, "'s"''',),
+    r'\nickname':("universal.state.player.nickname",  ),
+    r'\nicknames':("universal.state.player.nickname, 's'",),
+    r'\weapon':("universal.state.player.weapon().name",),
+    r'\player':("universal.state.player",),
+    r'\cladbottom':("universal.state.player.clad_bottom(",),
+    r'\muscleadj': ("universal.state.player.muscle_adj()",),
+    r'\bumadj': ("universal.state.player.bum_adj()",),
+    r'\quiver': ("universal.state.player.quiver()",),
+    r'\qivering':("universal.state.player.quivering()",),
+    r'\liftlower': ("items.liftlower(universal.state.player.lower_clothing()",),
+    r'\lowerlift': ("items.lowerlift(universal.state.player.lower_clothing()",),
+    r'\liftslowers': ("items.liftlower(universal.state.player.lower_clothing()",),
+    r'\lowerslifts': ("items.lowerslifts(universal.state.player.lower_clothing()",),
+    r'\pajamabottoms': ("universal.state.player.pajama_bottom().name",),
+    r'\pajamas':("universal.state.player.pajama_top).(name",),
+    r'\underwear':("universal.state.player.underwear).(name",),
+    r'\shirt':("universal.state.player.shirt().name",),
+    r'\speed':("universal.state.player.speed()",),
+    r'\warfare':("universal.state.player.warfare()",),
+    r'\magic':("universal.state.player.magic()",),
+    r'\grapple':("universal.state.player.grapple()",),
+    r'\resilience':("universal.state.player.resilience()",),
+    r'\keywords':("universal.state.player.keywords",),
+    r'\sondaughter':("person.sondaughter()",),
+    r'\SonDaughter':("person.SonDaughter()",),
+    r'\waistbandhem':("universal.state.player.lower_clothing().waistband_hem()",),
+    r'\pjwaistbandhem':("universal.state.player.pajama_bottom().waistband_hem()",),
+    r'\hemwaistband':("universal.state.player.lower_clothing().hem_waistband()",),
+    r'\pjhemwaistband':("universal.state.player.pajama_bottom().hem_waistband()",),
+    r'\pheight':("person.height_based_msg(universal.state.player, ", 4),
+    r'\pbodytype':("person.bodytype_based_msg(universal.state.player, ", 4),
+    r'\pmusculature':("person.musculature_based_msg(universal.state.player, ",3),
+    r'\phairlength':("person.hair_length_based_msg(universal.state.player, ",4),
+    r'\ppjtype': ("items.dropseat_based_msg(universal.state.player, ", 2),
+    r'\pisliftedlowered':("items.liftlowered_based_msg(universal.state.player, ", 2),
+    r'\pisloweredlifted':("items.loweredlifted_based_msg(universal.state.player, ", 2),
+    r'\ptrousers':("items.wearing_dress(universal.state.player, ", 2),
+    r'\pdress':("items.wearing_trousers(universal.state.player, ", 2),
+    r'\pwearingunderwear':("items.wearing_underwear(universal.state.player, ", 2),
+    #Note: This is not ideal, because it has itemspotionwars baked in. Need to figure out an alternative.
+    r'\phasbelt':("itemspotionwars.has_belt(universal.state.player, )", 2),
+    r'\pisbaring':("items.baring_underwear(universal.state.player.underwear(), ", 2),
+    r'\pistight':("items.tight_msg(universal.state.player.lower_clothing(), ", 2),
+    r'\pisloose':("items.loose_msg(universal.state.player.lower_clothing(), ", 2),
+    r'\pwearingshirt':("items.wearing_shirt(universal.state.player, ", 2),
+    r'\isfemale':("person.is_female_msg(universal.state.player, ", 2)
+    }
+
+inlineCommands = {
+    #r'\hisher':("person.hisher(universal.state.get_character(", 1),
+    #r'\HisHer':("person.HisHer(universal.state.get_character(", 1),
+    #r'\himher':("person.himher(universal.state.get_character(", 1), 
+    #r'\HimHer':("person.HimHer(universal.state.get_character(", 1),
+    #r'\heshe':("person.heshe(universal.state.get_character(", 1), 
+    #r'\HeShe':("person.HeShe(universal.state.get_character(",  1),
+    #r'\heshell':("person.heshell(universal.state.get_character(", 1),  
+    #r'\HeShell':("person.HeShell(universal.state.get_character(", 1),  
+    #r'\himselfherself':("person.himselfherself(universal.state.get_character(", 1),  
+    #r'\HimselfHerself':("person.HimselfHerself(universal.state.get_character(", 1),  
+    #r'\mistermiss':("person.mistermiss(universal.state.get_character(", 1),  
+    #r'\MisterMiss':("person.MisterMiss(universal.state.get_character(", 1),  
+    #r'\manwoman':("person.manwoman(universal.state.get_character(", 1),  
+    #r'\ManWoman':("person.ManWoman(universal.state.get_character(", 1),  
+    #r'\hishers':("person.hishers(universal.state.get_character(", 1),  
+    #r'\HisHers':("person.HisHers(universal.state.get_character(", 1),  
+    #r'\boygirl':("person.boygirl(universal.state.get_character(", 1),  
+    #r'\BoyGirl':("person.BoyGirl(universal.state.get_character(", 1),  
+    #r'\manlady':("person.manlady(universal.state.get_character(", 1),  
+    #r'\ManLady':("person.ManLady(universal.state.get_character(", 1),  
+    #r'\kingqueen':("person.kingqueen(universal.state.get_character(", 1),  
+    #r'\KingQueen':("person.KingQueen(universal.state.get_character(", 1),  
+    #r'\lordlady':("person.lordlady(universal.state.get_character(", 1),  
+    #r'\LordLady':("person.LordLady(universal.state.get_character(", 1),  
+    #r'\brothersister':("person.brothersister(universal.state.get_character(", 1),  
+    #r'\BrotherSister':("person.BrotherSister(universal.state.get_character(", 1),  
+    #r'\menwomen':("person.menwomen(universal.state.get_character(", 1),  
+    #r'\MenWomen':("person.MenWomen(universal.state.get_character(", 1),  
+    #r'\sirmaam':("person.sirmaam(universal.state.get_character(", 1),  
+    #r'\SirMaam':("person.SirMaam(universal.state.get_character(", 1),  
+    #r'\bastardbitch':("person.bastardbitch(universal.state.get_character(", 1),  
+    #r'\BastardBitch':("person.BastardBitch(universal.state.get_character(", 1),  
+    r'\weaponName':("items.weapon_name(", 1),  
+    r'\weapon':("items.weapon_name(", 1),
+    r'\cladbottom': ("items.clad_bottom(", 1),
+    r'\muscleadj': ("person.muscle_adj(", 1),
+    r'\bumadj': ("person.bum_adj(", 1),
+    r'\liftlower': ("items.liftlower(", 1),
+    r'\lowerlift': ("items.lowerlift(", 1),
+    r'\liftslowers': ("items.liftslowers(", 1),
+    r'\lowerslifts': ("items.lowerslifts(", 1),
+    r'\underwear':("items.underwear_name(", 1),
+    r'\trousers': ("items.lower_clothing_name(", 1),
+    r'\pajamabottoms': ("items.pajama_bottom_name(", 1),
+    r'\speed': ("person.speed(", 1),
+    r'\warfare': ("person.warfare(", 1),
+    r'\magic': ("person.magic(", 1),
+    r'\grapple': ("person.grapple(", 1),
+    r'\resilience': ("person.resilience(", 1),
+    r'\waistbandhem': ("items.waistband_hem(", 1),
+    r'\hemwaistband': ("items.hem_waistband(", 1),
+    r'\height':("person.height_based_msg(", 5),
+    r'\bodyType':("person.bodytype_based_msg(",5),
+    r'\musculature':("person.musculature_based_msg(",4),
+    r'\hairlength':("person.hair_length_based_msg(",5),
+    r'\pjtype': ("items.dropseat_based_msg(", 3),
+    r'\isliftedlowered':("items.liftlowered_based_msg(", 3),
+    r'\isloweredlifted':("items.loweredlifted_based_msg(", 3),
+    r'\isliftedlowered':("items.liftlowered_based_msg(", 3),
+    r'\cond':("universal.cond(", 3),
+    r'\bummarks':("textCommandsMusic.bummarks(", 2),
+    r'\stageDirections':("textCommandsMusic.stage_directions(", 1)
+    }
+
+
+parseTreeNodeNum = 0
+
+class ParseTree(object):
+    """
+    A parse tree is a recursive data structure that takes:
+        1. lineNum: The line number in the original LaTeX file in which the token appears
+        2. children: An iterable of ParseTrees that represent this node's children.
+        3. parent: The node's parent.
+        4. data: The data (if any) associated with this node. For example, a childnode type 
+        tree would have the name of the node. A node would have the name of the node, 
+            and the person you are conversing with. Text node, would have the text 
+            associated with that node.
+    """
+    def __init__(self, episodeNum, lineNum=0, children=None, parent=None, data=None):
+        self.lineNum = lineNum
+        self.parent = parent
+        self.children = children if children else []
+        self.data = data if data else []
+        self.episodeNum = episodeNum
+        global parseTreeNodeNum
+        self.parseTreeNodeNum = parseTreeNodeNum
+        self.init_name = ''.join(['init_episode_', str(episodeNum)])
+        parseTreeNodeNum += 1
+
+
+    def __repr__(self):
+        return '\n'.join([color('--------Start Node ' + str(self.parseTreeNodeNum) + '----------', bcolors.GREEN), color("nodeType: ", bcolors.GREEN) + str(self.__class__.__name__), color("data: ", bcolors.YELLOW) + str(self.data), 
+            color("lineNum: ", bcolors.BLUE) + str(self.lineNum),
+            color("parent: ", bcolors.RED) + str(self.parent.parseTreeNodeNum) if self.parent else 'None',
+            color("children:\n", bcolors.RED) + '**********\n'.join("child " + str(n) + ":\n" + str(child) for (n, child) in zip(range(len(self.children)), self.children)), 
+            color('---------End Node ' + str(self.parseTreeNodeNum) + '------------', bcolors.GREEN)])
+
+    def node_name(self):
+        return ''
+                
+    def translate(self):            
+        """
+        Returns an iterable of python lines that implement the parse tree rooted at this node.
+        """
+        raise NotImplementedError()
+
+
+class Root(ParseTree):
+
+    def __init__(self, episodeNum, charRoomsModuleName, lineNum=0, children=None, parent=None, data=None):
+        super(Root, self).__init__(episodeNum, lineNum, children, parent, data)
+        self.charRoomsModuleName = charRoomsModuleName
+
+    def translate(self):
+        code = [''.join(['def ', self.init_name, '():'])]
+        code.append(''.join([TAB, self.charRoomsModuleName, '.build_chars()']))
+        code.append(''.join([TAB, self.charRoomsModuleName, '.build_rooms()']))
+        code.extend(''.join([TAB, 'init_scene_', str(sceneNum), '_episode_', str(self.episodeNum), '()']) for sceneNum in range(1, OpenScene.sceneNum))
+        for child in self.children:
+            code.extend(child.translate())
+        return code
+
+
+class OpenScene(ParseTree):
+
+    sceneNum = 1
+
+    def __init__(self, lineNum=0, children=None, parent=None, data=None):
+        super(OpenScene, self).__init__(parent.episodeNum, lineNum, children, parent)
+        self.startToken = BEGIN_OPEN_SCENE
+        self.endToken = END_OPEN_SCENE
+        self.data = [''.join(['def start_scene_', str(OpenScene.sceneNum), '_episode_', str(self.episodeNum), '(loading=False):'])] + (data if data else [])
+        self.sceneNum  = OpenScene.sceneNum
+        OpenScene.sceneNum += 1
+
+
+    def translate(self):
+        openSceneCode = [line.replace('\n', '') for line in self.data]
+        """
+        for child in self.children:
+            translation = child.translate()
+            print(translation)
+            print('-----------------')
+            if isinstance(translation, basestring):
+                print(translation)
+        """
+        openSceneCode.extend([''.join(['\n\n', 'def init_scene_', str(self.sceneNum), '_episode_', str(self.episodeNum), '():'])])
+        openSceneCode.extend([TAB + ('\n' + TAB).join(child.translate()) for child in self.children])
+        return openSceneCode 
+
+
+class CloseScene(ParseTree):
+
+    def __init__(self, lineNum=0, children=None, parent=None, data=None):
+        super(CloseScene, self).__init__(parent.episodeNum, lineNum, children, parent)
+        self.startToken = BEGIN_CLOSE_SCENE
+        self.endToken = END_CLOSE_SCENE
+                                                #Because close scene comes after open scene, the associated scene number for close scene will be one less than what is currently stored (because OpenScene.sceneNum increments every
+                                                #time a new open scene node is created).
+        self.data = [''.join(['def end_scene_', str(OpenScene.sceneNum-1), '_episode_', str(self.episodeNum), '():'])] + ([TAB + line for line in data if line.strip()] if data else [])
+
+    def translate(self):
+        return [line.replace('\n', '') for line in self.data]
+
+class AbstractNode(ParseTree):
+
+    def translate(self):
+        nodeName = self.data[0].replace(' ', '_')
+        if not re.match(re.compile(r'^\w+$'), nodeName):
+            raise transExceptions.TranslationError(' '.join([color("Error", bcolors.RED), color_line(self.lineNum), "Invalid character in node name: ", color(self.data[0], bcolors.GREEN), 
+                "Only alphanumeric characters and spaces allowed in node names."]))
+        childrenCode = [child.translate() for child in self.children]
+        nodeText = []
+        linkCode = []
+        buildNode = [''.join([nodeName, ' = conversation.Node(', str(self.nodeNum), ', ', "'''", self.data[0], "'''", ')']), '', '',
+                ''.join(['def ', nodeName, '_qf():'])] 
+        for childCode, codeType in childrenCode:
+            if codeType == 'text':
+                if childCode[0] != '[]':
+                    nodeText.append(childCode)
+            elif codeType == 'code':
+                buildNode.extend(TAB + line for line in childCode)
+            elif codeType == 'link':
+                linkCode.extend([TAB + line for line in childCode])
+        #This line is being generated solely so that the quip for the node is not zero. This is necessary to ensure that we show the children. It's a hack required by a hack required by episode 1.
+        #Note: I REALLY need to simplify the conversation node structure. It is loaded with hacks and workarounds. The whole damn thing really needs to be simplified. I'll wait until I've 
+        #transcribed episode 1 into 
+        #latex though, first. Then, I can remove the .quip infrastructure that's complicating everything.
+        buildNode.append(''.join([TAB, nodeName, '.quip = " "' ]))
+        buildNode.extend([''.join([TAB, 'universal.say(universal.format_text([', ', '.join(nodeText), ']), justification=0)'])])
+        buildNode.extend(linkCode)
+        buildNode.append(''.join([nodeName, '.quip_function = ', nodeName, '_qf']))
+        return buildNode
+
+    def node_name(self):
+        return self.data[0].replace(' ', '_')
+
+class Node(AbstractNode):
+
+    def __init__(self, lineNum=0, children=None, parent=None, data=None):
+        super(Node, self).__init__(parent.episodeNum, lineNum=lineNum, children=children, parent=parent, data=data)
+        self.startToken = BEGIN_NODE
+        self.endToken = END_NODE
+        global nodeNum
+        self.nodeNum = nodeNum
+        nodeNum += 1
+        conversationPartner = self.data[2]
+        ancestor = parent
+        while ancestor.startToken != BEGIN_OPEN_SCENE:
+            ancestor = ancestor.parent
+        #data[2] is the character with whom the player is speaking.
+        if conversationPartner.lower() == 'self':
+            ancestor.data.append(TAB + 'if not loading:')
+            ancestor.data.extend([''.join([TAB*2, 'universal.state.player.litany = conversation.allNodes[', str(self.nodeNum), ']']),
+                                  ''.join([TAB*2, 'conversation.converse_with(universal.state.player, townmode.town_mode)'])])
+        else:
+            ancestor.data.append(''.join([TAB, data[2].lower(), ' = ', "universal.state.get_character('''",  data[2], ".person''')"]))
+            ancestor.data.append(''.join([TAB, data[2].lower(), '.litany = conversation.allNodes[', str(self.nodeNum), ']']))
+
+
+    
+class ChildNode(AbstractNode):
+
+    def __init__(self, lineNum=0, children=None, parent=None, data=None):
+        super(ChildNode, self).__init__(parent.episodeNum, lineNum=lineNum, children=children, parent=parent, data=data)
+        self.startToken = BEGIN_CHILD_NODE
+        self.endToken = END_CHILD_NODE
+        global nodeNum
+        self.nodeNum = nodeNum
+        nodeNum += 1
+
+errorMsg = color("Error", bcolors.RED)
+
+class CodeCommands(ParseTree):
+    def __init__(self, lineNum=0, children=None, parent=None, data=None):
+        super(CodeCommands, self).__init__(parent.episodeNum, lineNum, children, parent, data)
+
+    def translate(self):
+        command, numArgs = codeCommands[self.data[0]]
+        return ([command + ','.join(self.data[1:numArgs+1]) + ')'], 'code')
+    
+
+class Code(ParseTree):
+
+    def __init__(self, lineNum=None, children=None, parent=None, data=None):
+        super(Code, self).__init__(parent.episodeNum, lineNum, children, parent, data)
+
+
+    def translate(self):
+        initialSpacing = ''
+        count = 0 
+        self.data = [line for line in self.data if line]
+        try:
+            char = self.data[count][0]
+        except IndexError:
+            char = ''
+        while char.isspace():
+            initialSpacing += char
+            count += 1
+            try:
+                char = self.data[0][count]
+            except IndexError:
+                break
+        code = [line.replace(initialSpacing, '', 1) for line in self.data]
+        try:
+            ast.parse('\n'.join(code))
+        except SyntaxError, e:
+            import sys
+            global errorMsg
+            raise transExceptions.TranslationError(' '.join([errorMsg, color_line(self.lineNum), "Invalid Python Syntax found in Python code:\n\n", '\n'.join(code), "Python error:\n\n", str(e)]))
+        return (code, 'code')
+
+class Paragraph(ParseTree):
+    """
+        Represents a paragraph of text and/or inlineCommands, defined as chunks of text separated by two or more newlines.
+    """
+
+    def __init__(self, lineNum=0, children=None, parent=None, data=None):
+        super(Paragraph, self).__init__(parent.episodeNum, lineNum, children, parent, data)
+
+    def translate(self):
+        return ('[' + ', '.join(' '.join(child.translate()) for child in self.children) + ']', 'text')
+
+class Text(ParseTree):
+    "A node in the parse tree that contains a string of one or more words (where words are strings of any alphanumeric characters but whitespace)."
+
+    def __init__(self, lineNum=0, children=None, parent=None, data=None):
+        super(Text, self).__init__(parent.episodeNum, lineNum, children, parent, data)
+
+    def translate(self):
+        return ["'''" + ' '.join(self.data) + "'''"]
+
+class InlineCommand(ParseTree):
+    def __init__(self, lineNum=0, children=None, parent=None, data=None):
+        super(InlineCommand, self).__init__(parent.episodeNum, lineNum, children, parent, data)
+
+    def translate(self):
+        try:
+            code = inlineCommandsPlayer[self.data[0]]
+        except KeyError:
+            code, numArgs = inlineCommands[self.data[0]]
+        else:
+            try:
+                code, numArgs = code
+            except ValueError:
+                code = code[0]
+                numArgs = 0
+            else:
+                assert(int(numArgs))
+        numParens = code.count('(') - code.count(')')
+        translatedChildren = [child.translate()[0] for child in self.children]
+        check = ''
+        if self.data[0] == r'\cond':
+            #Note: Since the first argument is code, the first argument is a list of lines of code, whose list contains a single line of code.
+            #This adding and removing check garbage is necessary because of the weirdness of cond.
+            check = translatedChildren[0][0]
+            translatedChildren = translatedChildren[1:]
+        translatedChildren = [check] + ["' '.join(" + child + ")" for child in translatedChildren]
+        if self.data[0] == r'\cond':
+            print(''.join([code, ', '.join(translatedChildren), ')' * numParens]))
+        return [''.join([code, ', '.join(child for child in translatedChildren if child.strip()), ')' * numParens])]
+
+class Destination(ParseTree):
+    """
+    Contains information on the destination node of a child command.
+    """
+    def __init__(self, lineNum=0, children=None, parent=None, data=None):
+        super(Destination, self).__init__(parent.episodeNum, lineNum=lineNum, children=children, parent=parent, data=data)
+
+    def translate(self):
+        return '_'.join([word.strip() for word in self.data if word.strip()])
+
+class Link(ParseTree):
+    """
+    Handles commands that connect one node to another, i.e. \\child, \\childif, and \\continue.
+    """
+    def __init__(self, lineNum=0, children=None, parent=None, data=None):
+        super(Link, self).__init__(parent.episodeNum, lineNum=lineNum, children=children, parent=parent, data=data)
+
+    def translate(self):
+        nodeName = '_'.join(self.data[0].split())
+        cmd = self.data[-1]
+        if cmd == r'\continue':
+            #import sys
+            destination = self.extract_destination(0)
+            destination = destination.replace("'''", '')
+            linkCode = [''.join(['conversation.continue_to_node(', nodeName, ', ', destination, ')'])]
+            return (linkCode, 'link')
+        elif cmd == r'\childif' or cmd == r'\childelif':
+            #The test is a code node, and the translate of the code node returns a pair of text with code.
+            test = ' '.join(self.children[0].translate()[0])
+            destination = self.extract_destination(1)
+            linkCode = [''.join([TAB, 'conversation.continue_to_node(', nodeName, ', ', destination, ')'])]
+            return ([''.join(['if ' if cmd == r'\childif' else 'elif ', test, ':'])] + linkCode, 'link')
+        elif cmd == r'\child':
+            playerComment = ''.join(['universal.format_line(', self.children[0].translate()[0], ')'])
+            destination = self.extract_destination(1)
+            destination = destination.replace("'''", '')
+            return ([''.join([nodeName, '.children.append(', destination, ')']),
+                     ''.join([nodeName, '.playerComments.append(', playerComment, ')'])], 'link')
+        else:
+            raise transExceptions.TranslationError(' '.join([color("Error", bcolors.RED), color_line(self.lineNum), "Invalid linking command:", cmd]))
+
+    def extract_destination(self, destinationArg):
+        return self.children[destinationArg].translate()
+        #Either the destination is a pair: ([list of words], 'code') if the link is a child, or
+        #destination is a singleton list: [string].
