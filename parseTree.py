@@ -98,8 +98,8 @@ inlineCommandsPlayer = {
     r'\liftslowers': ("items.liftlower(universal.state.player.lower_clothing()",),
     r'\lowerslifts': ("items.lowerslifts(universal.state.player.lower_clothing()",),
     r'\pajamabottoms': ("universal.state.player.pajama_bottom().name",),
-    r'\pajamas':("universal.state.player.pajama_top).(name",),
-    r'\underwear':("universal.state.player.underwear).(name",),
+    r'\pajamas':("universal.state.player.pajama_top().name",),
+    r'\underwear':("universal.state.player.underwear().name",),
     r'\shirt':("universal.state.player.shirt().name",),
     r'\speed':("universal.state.player.speed()",),
     r'\warfare':("universal.state.player.warfare()",),
@@ -125,7 +125,7 @@ inlineCommandsPlayer = {
     r'\pwearingunderwear':("items.wearing_underwear(universal.state.player, ", 2),
     #Note: This is not ideal, because it has itemspotionwars baked in. Need to figure out an alternative.
     r'\phasbelt':("itemspotionwars.has_belt(universal.state.player, )", 2),
-    r'\pisbaring':("items.baring_underwear(universal.state.player.underwear(), ", 2),
+    r'\pisbaring':("items.baring_underwear(universal.state.player.underwear(), ", 3),
     r'\pistight':("items.tight_msg(universal.state.player.lower_clothing(), ", 2),
     r'\pisloose':("items.loose_msg(universal.state.player.lower_clothing(), ", 2),
     r'\pwearingshirt':("items.wearing_shirt(universal.state.player, ", 2),
@@ -423,7 +423,14 @@ class Text(ParseTree):
         super(Text, self).__init__(parent.episodeNum, lineNum, children, parent, data)
 
     def translate(self):
-        return ["'''" + ' '.join(self.data) + "'''"]
+        text = ' '.join(self.data)
+        if text == '"':
+            return ["'" + text + "'"] 
+        else:
+            return ['"' + text + '"']
+
+#This is returned when translating empty text.
+EMPTY_TEXT_TRANSLATION = '[""]'
 
 class InlineCommand(ParseTree):
     def __init__(self, lineNum=0, children=None, parent=None, data=None):
@@ -444,16 +451,20 @@ class InlineCommand(ParseTree):
                 assert(int(numArgs))
         numParens = code.count('(') - code.count(')')
         translatedChildren = [child.translate()[0] for child in self.children]
-        check = ''
-        if self.data[0] == r'\cond':
-            #Note: Since the first argument is code, the first argument is a list of lines of code, whose list contains a single line of code.
-            #This adding and removing check garbage is necessary because of the weirdness of cond.
-            check = translatedChildren[0][0]
-            translatedChildren = translatedChildren[1:]
-        translatedChildren = [check] + ["' '.join(" + child + ")" for child in translatedChildren]
-        if self.data[0] == r'\cond':
-            print(''.join([code, ', '.join(translatedChildren), ')' * numParens]))
-        return [''.join([code, ', '.join(child for child in translatedChildren if child.strip()), ')' * numParens])]
+        translatedChildren = [translatedChild for translatedChild in translatedChildren if translatedChild != EMPTY_TEXT_TRANSLATION]
+        #print(code)
+        #print(translatedChildren)
+        if translatedChildren:
+            check = ''
+            if self.data[0] == r'\cond':
+                #Note: Since the first argument is code, the first argument is a list of lines of code, whose list contains a single line of code.
+                #This adding and removing check garbage is necessary because of the weirdness of cond.
+                check = translatedChildren[0][0]
+                translatedChildren = translatedChildren[1:]
+            translatedChildren = [check] + ["' '.join(" + child + ")" for child in translatedChildren]
+            return [''.join([code, ', '.join(child for child in translatedChildren if child.strip()), ')' * numParens])]
+        else:
+            return [code]
 
 class Destination(ParseTree):
     """

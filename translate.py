@@ -46,8 +46,8 @@ IMPORTS = ['import universal', 'import textCommandsMusic', 'import person', 'imp
 
 
                           #Removes comments | split around newlines and save the newlines | splits around spaces, and save the spacing | split around commands that begin an environment | split around 
-                          #commands that end an environment | split around bracket and save the bracket | ditto | split around command names, and saves those names
-tokenizer = re.compile(r'%.*|(\n)|(\s+)|(\\begin\{\w+\})|(\\end\{\w+\})|(\{)|(\})|(\\\w+$)')
+                          #commands that end an environment | split around bracket and save the bracket | ditto | split around command names, and saves those names| tokenize around quotes.
+tokenizer = re.compile(r'%.*|(\n)|(\s+)|(\\begin\{\w+\})|(\\end\{\w+\})|(\{)|(\})|(\\\w+$)|(")')
 
 
 def translate(fileName,  episodeName, episodeNum, titleCardTheme, startingNodeNum=1, imports=None, teaser='', charRooms=''):
@@ -86,7 +86,6 @@ def translate(fileName,  episodeName, episodeNum, titleCardTheme, startingNodeNu
         for sceneNum in range(1, parseTree.OpenScene.sceneNum)]), ']', ', ', 'titleTheme=', titleCardTheme, ')']))
     code.append(''.join(['episode', str(episodeNum), '.nextEpisode = ', charRooms, '.episode', str(episodeNum+1)]))
     code.append(''.join(['episode', str(episodeNum), '.init = ', tree.init_name]))
-    #&&& TODO: Need to set up any other preliminary code, i.e. the start and end episode functions. Need to look at episode 1 to get a refresher on what that code is.
     return code
 
 DEBUG = True

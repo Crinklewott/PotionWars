@@ -249,7 +249,7 @@ def parse_command(inlineCmd, startLineNum, tokenIterator, parent):
             if not numOpenBraces:
                 #If we're looking at a cond, then the first command is supposed to code: Some sort of boolean expression, with the next two arguments text.
                 if inlineCmd == r'\cond' and not args:
-                    args.append(parseTree.Code(lineNum=lineNum, parent=tree, data=[token for (token, lineNum) in argumentTokens]))
+                    args.append(parseTree.Code(lineNum=lineNum, parent=tree, data=[' '.join(token for (token, lineNum) in argumentTokens)]))
                 else:
                     args.append(parse_paragraph(iter(argumentTokens), tree))
                 argumentTokens = []
