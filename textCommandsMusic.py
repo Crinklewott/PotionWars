@@ -4,11 +4,15 @@ import titleScreen
 
 
 def enterLeft(character, room):
+    if character is universal.state.player:
+        universal.state.location = room
     offStage = universal.state.get_room('offStage')
     offStage.remove_character(character)
     room.add_character(character)
 
 def exitLeft(character, room):
+    if character is universal.state.player:
+        universal.state.location = room
     offStage = universal.state.get_room('offStage')
     room.remove_character(character)
     offStage.add_character(character)
@@ -155,6 +159,8 @@ ROLAND = music.decrypt(universal.resource_path('POL-risky-plan-long.wav'), 'rola
 ELISE = music.decrypt(universal.resource_path('POL-land-of-peace-long.wav'), 'elise')
 CATALIN = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'), 'catalin')
 CARRIE = music.decrypt(universal.resource_path('POL-smart-ideas-long.wav'), 'carrie')
+ALONDRA = music.decrypt(universal.resource_path('POL-moonshine-piano-long.wav'), 'alondra')
+ROMANTIC = music.decrypt(universal.resource_path('POL-love-theme-long.wav'), 'romantic')
 PETER = music.decrypt(universal.resource_path('POL-telekinesis-long.wav'), 'peter')
 COMBAT = music.decrypt(universal.resource_path('POL-chase-long.wav'), 'combat')
 DEFEAT = music.decrypt(universal.resource_path('POL-graveyard-lord-long.wav'), 'defeat')

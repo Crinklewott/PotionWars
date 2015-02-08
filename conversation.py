@@ -24,7 +24,7 @@ previousMode = None
 maxIndex = 0
 SPLIT = -50
 
-def continue_to_node(origin, destination):
+def continue_to_node(origin, destination, newPage=False):
     """
     Given two nodes, invokes the quip function of destination, and sets the children and playerComments of destination to be used by origin.
     Note that this is transitive.
@@ -32,6 +32,10 @@ def continue_to_node(origin, destination):
     Furthermore, because this is being used by auto-generated code, it doesn't deal with any of the weirdly complicated cases that have afflicted say_node over the course of
     episode 1.
     """
+    if newPage:
+        universal.say('\p')
+    else:
+        universal.say('\n\n')
     destination.quip_function()
     origin.children = destination.children
     origin.playerComments = destination.playerComments
@@ -202,9 +206,9 @@ class Node(universal.RPGObject):
         self.music = None
         self.name = name
         if name:
-            assert not name in allNodeNames, "Name '''%s''' is already taken." % name
+            #assert not name in allNodeNames, "Name '''%s''' is already taken." % name
             allNodeNames[name] = self
-        assert not index in allNodes, "Index %d is already taken." % index 
+        #assert not index in allNodes, "Index %d is already taken." % index 
         allNodes[index] = self
 
     def add_child(self, child):

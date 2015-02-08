@@ -1132,6 +1132,9 @@ class Person(universal.RPGObject):
     def pajama_bottom(self):
         return self.equipmentList[PAJAMA_BOTTOM]
 
+    def pajama_bottoms(self):
+        return self.pajama_bottom()
+
     def display_main_stats(self):
         assert self.mainStatDisplay < 3
         if self.mainStatDisplay == 0:
@@ -3090,7 +3093,7 @@ def height_based_msg(person, shortMsg, avgMsg, tallMsg, hugeMsg):
     return universal.msg_selector(person.height, {HEIGHTS[0]:shortMsg, HEIGHTS[1]:avgMsg, HEIGHTS[2]:tallMsg, HEIGHTS[3]:hugeMsg})
 
 def bodytype_based_msg(person, slimMsg, avgMsg, voluptuousMsg, heavysetMsg):
-    return universal.msg_selector(person.bodytype, {BODY_TYPES[0]:slimMsg, BODY_TYPES[1]:avgMsg, BODY_TYPES[2]:voluptuousMsg, BODY_TYPES[3]:heavysetMsg})
+    return universal.msg_selector(person.bodyType, {BODY_TYPES[0]:slimMsg, BODY_TYPES[1]:avgMsg, BODY_TYPES[2]:voluptuousMsg, BODY_TYPES[3]:heavysetMsg})
 
 def musculature_based_msg(person, softMsg, fitMsg, muscularMsg):
     return universal.msg_selector(person.musculature, {MUSCULATURE[0]:softMsg, MUSCULATURE[1]:fitMsg, MUSCULATURE[2]:muscularMsg})

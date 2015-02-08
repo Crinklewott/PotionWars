@@ -58,7 +58,7 @@ def build_chars():
     except KeyError:
         alondra = person.Person('Alondra', person.FEMALE, None, None, ''.join(['''Alondra is a Taironan woman with rich, dark caramel skin, . She is a little on the short side of average.''',
             '''She has shoulder-length hair black hair, and relatively small, dark brown eyes. In contrast to her height, her breasts are a little on the large side of average.''',
-            '''She has a round, protruding bottom that rolls enticingly when she walks.''']), specialization=universal.STEALTH, order=person.second_order, skinColor="caramel", eyeColor="brown",
+            '''She has a round, protruding bottom that rolls enticingly when she walks.''']), specialization=universal.SPEED, order=person.second_order, skinColor="caramel", eyeColor="brown",
             hairColor="black", hairLength="shoulder-length", hairStyle="down", height="average", bodyType="voluptuous", musculature="soft")
 
     try:
@@ -82,7 +82,7 @@ def build_rooms():
             "stools. A pair of massive hearths sit at the far end, a pair of turnspit coelophysii are lying next to the hearth. Their heads come up, and they gurgle happily as", 
             universal.state.player.name,
             "enters. There is a large hole in the south wall. The hole has been braced with several hastily carved timbers, and a few thick furs have been draped over it, so that",
-            "customers can't peer directly into the back of the guild. A pair of high windows sit on the western wall on either side of the hearth."]), [],
+            "customers can't peer directly into the back of the guild. A pair of high windows sit on the western wall on either side of the hearth."]), [universal.state.get_room("Adventurer's Guild")],
             None, None, textCommandsMusic.LIGHT_HEARTED, "textCommandsMusic.LIGHT_HEARTED", None)
     try:
         sofiasClinic = universal.state.get_room("Sofia's Clinic")
@@ -90,7 +90,7 @@ def build_rooms():
         sofiasClinic = townmode.Room("Sofia's Clinic", ' '.join(["The 'clinic' is nothing more than a long, dark, low-ceilinged room crammed with piles of ragged blankets. Immersed in the piles of",
             "blankets are dozens of Taironans, all in different states of duress. Most of them are shivering quietly, or sleeping fitfully. Some are moaning, and shifting. A few are crying, and shaking",
             "violently. There is even one man who is being wrestled back into his blankets, while screaming incoherently in some dialect that", textCommandsMusic.name(), "doesn't recognize. No more than",
-            "half a dozen helpers, mostly women, are moving about the clinic's patients."]), [], None, None, textCommandsMusic.TAIRONAN, "textCommandsMusic.TAIRONAN", None)
+            "half a dozen helpers, mostly women, are moving about the clinic's patients."]), [universal.state.get_room("Slums")], None, None, textCommandsMusic.TAIRONAN, "textCommandsMusic.TAIRONAN", None)
 
 def start_scene_1_episode_3(loading=False): 
     universal.say("Next Time on Pandemonium Cycle: The Potion Wars")

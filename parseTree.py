@@ -43,7 +43,7 @@ nodeNum = 0
 
 codeCommands = {
         r'\keyword':("textCommandsMusic.add_keyword(", 1),
-        r'\music':("music.play_music(", 1)
+        r'\music':("universal.say('\m') ; universal.playedMusic.put(", 1)
         }
 
 inlineCommandsPlayer = {
@@ -117,11 +117,11 @@ inlineCommandsPlayer = {
     r'\pbodytype':("person.bodytype_based_msg(universal.state.player, ", 4),
     r'\pmusculature':("person.musculature_based_msg(universal.state.player, ",3),
     r'\phairlength':("person.hair_length_based_msg(universal.state.player, ",4),
-    r'\ppjtype': ("items.dropseat_based_msg(universal.state.player, ", 2),
+    r'\ppjtype': ("items.dropseat_based_msg(universal.state.player, ", 3),
     r'\pisliftedlowered':("items.liftlowered_based_msg(universal.state.player, ", 2),
     r'\pisloweredlifted':("items.loweredlifted_based_msg(universal.state.player, ", 2),
-    r'\ptrousers':("items.wearing_dress(universal.state.player, ", 2),
-    r'\pdress':("items.wearing_trousers(universal.state.player, ", 2),
+    r'\ptrousers':("items.wearing_dress(universal.state.player, ", 3),
+    r'\pdress':("items.wearing_trousers(universal.state.player, ", 3),
     r'\pwearingunderwear':("items.wearing_underwear(universal.state.player, ", 2),
     #Note: This is not ideal, because it has itemspotionwars baked in. Need to figure out an alternative.
     r'\phasbelt':("itemspotionwars.has_belt(universal.state.player, )", 2),
@@ -322,7 +322,7 @@ class AbstractNode(ParseTree):
         #transcribed episode 1 into 
         #latex though, first. Then, I can remove the .quip infrastructure that's complicating everything.
         buildNode.append(''.join([TAB, nodeName, '.quip = " "' ]))
-        buildNode.extend([''.join([TAB, 'universal.say(universal.format_text([', ', '.join(nodeText), ']), justification=0)'])])
+        buildNode.extend([''.join([TAB, 'universal.say(universal.format_text_translate([', ', '.join(nodeText), ']), justification=0)'])])
         buildNode.extend(linkCode)
         buildNode.append(''.join([nodeName, '.quip_function = ', nodeName, '_qf']))
         return buildNode
@@ -405,6 +405,13 @@ class Code(ParseTree):
             raise transExceptions.TranslationError(' '.join([errorMsg, color_line(self.lineNum), "Invalid Python Syntax found in Python code:\n\n", '\n'.join(code), "Python error:\n\n", str(e)]))
         return (code, 'code')
 
+
+PUNCTUATION_NO_SPACE_FOLLOWING = ['"("', '""', '"--"', '"-"']
+
+PUNCTUATION_NO_SPACE_PRECEDING = ['"."', '","', '"!"', '"?"', '")"', '".)"', '"?)"', '"!)"', '"--"', '"-"']
+
+QUOTE = "'" + '"' + "'"
+
 class Paragraph(ParseTree):
     """
         Represents a paragraph of text and/or inlineCommands, defined as chunks of text separated by two or more newlines.
@@ -414,7 +421,26 @@ class Paragraph(ParseTree):
         super(Paragraph, self).__init__(parent.episodeNum, lineNum, children, parent, data)
 
     def translate(self):
-        return ('[' + ', '.join(' '.join(child.translate()) for child in self.children) + ']', 'text')
+        translatedText = [child.translate() for child in self.children]
+        quoteSeen = False
+        for i in range(len(translatedText)):
+            text = translatedText[i]
+            if not text:
+                continue
+            try:
+                nextText = translatedText[i+1]
+            except IndexError:
+                nextText = ''
+            if text == QUOTE:
+                if quoteSeen:
+                    translatedText[i] = ' '.join(["''.join([", text, ", ' '])"])
+                quoteSeen = not quoteSeen
+            elif nextText == QUOTE:
+                if not quoteSeen:
+                    translatedText[i] = ' '.join(["''.join([", text, ", ' '])"])
+            elif text not in PUNCTUATION_NO_SPACE_FOLLOWING and nextText not in PUNCTUATION_NO_SPACE_PRECEDING: 
+                translatedText[i] = ' '.join(["''.join([", text, ", ' '])"])
+        return ('[' + ', '.join(translatedText) + ']', 'text')
 
 class Text(ParseTree):
     "A node in the parse tree that contains a string of one or more words (where words are strings of any alphanumeric characters but whitespace)."
@@ -425,9 +451,9 @@ class Text(ParseTree):
     def translate(self):
         text = ' '.join(self.data)
         if text == '"':
-            return ["'" + text + "'"] 
+            return "'" + text + "'"
         else:
-            return ['"' + text + '"']
+            return '"' + text + '"'
 
 #This is returned when translating empty text.
 EMPTY_TEXT_TRANSLATION = '[""]'
@@ -462,9 +488,9 @@ class InlineCommand(ParseTree):
                 check = translatedChildren[0][0]
                 translatedChildren = translatedChildren[1:]
             translatedChildren = [check] + ["' '.join(" + child + ")" for child in translatedChildren]
-            return [''.join([code, ', '.join(child for child in translatedChildren if child.strip()), ')' * numParens])]
+            return ''.join([code, ', '.join(child for child in translatedChildren if child.strip()), ')' * numParens])
         else:
-            return [code]
+            return code
 
 class Destination(ParseTree):
     """
@@ -486,11 +512,12 @@ class Link(ParseTree):
     def translate(self):
         nodeName = '_'.join(self.data[0].split())
         cmd = self.data[-1]
-        if cmd == r'\continue':
+        if cmd == r'\continue' or cmd == r'\continueNewPage':
+            newPage = cmd == r'\continueNewPage'
             #import sys
             destination = self.extract_destination(0)
             destination = destination.replace("'''", '')
-            linkCode = [''.join(['conversation.continue_to_node(', nodeName, ', ', destination, ')'])]
+            linkCode = [''.join(['conversation.continue_to_node(', nodeName, ', ', destination, ', ', str(newPage), ')'])]
             return (linkCode, 'link')
         elif cmd == r'\childif' or cmd == r'\childelif':
             #The test is a code node, and the translate of the code node returns a pair of text with code.
@@ -499,7 +526,7 @@ class Link(ParseTree):
             linkCode = [''.join([TAB, 'conversation.continue_to_node(', nodeName, ', ', destination, ')'])]
             return ([''.join(['if ' if cmd == r'\childif' else 'elif ', test, ':'])] + linkCode, 'link')
         elif cmd == r'\child':
-            playerComment = ''.join(['universal.format_line(', self.children[0].translate()[0], ')'])
+            playerComment = ''.join(['universal.format_line_translate(', self.children[0].translate()[0], ')'])
             destination = self.extract_destination(1)
             destination = destination.replace("'''", '')
             return ([''.join([nodeName, '.children.append(', destination, ')']),

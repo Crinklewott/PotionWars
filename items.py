@@ -591,9 +591,10 @@ class Spear(Weapon):
 
 class Pajamas(Item):
     armorType = 'pajamas'
-    def __init__(self, name, description, price):
+    def __init__(self, name, description, price, risque=0):
         super(Pajamas, self).__init__(name, description, price)
         self.armorType = Pajamas.armorType
+        self.risque = risque
 
     def is_equippable(self):
         return True

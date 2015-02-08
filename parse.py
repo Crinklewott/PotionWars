@@ -5,7 +5,7 @@ import transExceptions
 import parseTree
 
 #Mapping from the command, to the number of arguments the command takes.
-childrenCommands = {r'\childif':2, r'\childelif':2, r'\child':2, r'\continue':1}
+childrenCommands = {r'\childif':2, r'\childelif':2, r'\child':2, r'\continue':1, r'\continueNewPage':1}
 
 
 
@@ -261,7 +261,7 @@ def parse_command(inlineCmd, startLineNum, tokenIterator, parent):
 
 def parse_children_command(cmd, startLineNum, tokenIterator, parent):
     """
-    Given a command that affects node transitions (childif, childelif, child, or continue) returns the ParseTree associated with this node.
+    Given a command that affects node transitions (childif, childelif, child, or continue or continueNewPage) returns the ParseTree associated with this node.
     """
     try:
         numArgs = childrenCommands[cmd]
@@ -333,7 +333,7 @@ def parse_children_command(cmd, startLineNum, tokenIterator, parent):
                 argTokens = []
         if numOpenBraces > 0:
             raise transExceptions.TranslationError(' '.join([parseTree.color("Error", parseTree.bcolors.RED), color_line(startLineNum), "Too many", parseTree.color('{', parseTree.bcolors.GREEN)]))
-    elif cmd == r'\continue':
+    elif cmd == r'\continue' or cmd == r'\continueNewPage':
         numOpenBraces = 0
         argTokens = []
         while len(args) < numArgs:

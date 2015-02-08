@@ -292,7 +292,6 @@ def say(text, columnNum=1, justification=1, fontSize=36, italic=False, bold=Fals
         textToDisplay = [(text, fontSize, italic, bold)]
     """
 
-
 def say_immediate(text, columnNum=1, justification=1, fontSize=36, italic=False, bold=False, 
         surface=None):
     """
@@ -464,6 +463,9 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
     support depends on how much text you have, and how big the viewing area is, and which you'll have to determine with a bit of experimentation.
     It will automatically generate 
     new pages if the text is too big to fit on a single page.
+
+    Note to self: When I rewrite this festering piece of fucking shit with a proper GUI, make sure to tie text to nodes, so that I can delay certain things (such as playing certain songs0 until the text in that node is actually
+    displayed.
     """
     #We need to split the rectangle into number of columns pieces, essentially, for displaying the text.
     global chosenSurface
@@ -831,6 +833,13 @@ def format_line(text):
     """
     return ' '.join(text)
 
+def format_line_translate(text):
+    """
+    Given a list of text, returns the text joined using '' as a separator. Meant to be shorthand, and used by the translation script. The lack of spacing provides better word-by-word control over the spacing, which is important
+    to make punctuation look right
+    """
+    return ''.join(text)
+
 def format_text(text, doubleSpaced=True):
     """
     Given a list of (lists of) text, returns the text joined using '\n\n' as a separator. Note that any lists of text that are contained in text are joined using a space.
@@ -843,11 +852,8 @@ def format_text(text, doubleSpaced=True):
     """
     textList = []
     try:
-        for line in text:
-            if type(line) is list:
-                textList.append(' '.join(line))
-            else:
-                textList.append(line)
+        for line in (l for l in text if l):
+            textList.append(' '.join(line))
     except TypeError, e:
         print(e)
         print(text)
@@ -857,21 +863,18 @@ def format_text(text, doubleSpaced=True):
 
 def format_text_translate(text):
     """
-    Given a list of (lists of) text, returns the text joined using '' as a separator. Note that any lists of text that are contained in text are joined using a space.
-    Used by the translated python code in order to provide better control over when we get paragraph separators.
+    Given a list of (lists of) text, returns the text joined using '\n\n' as a separator. Note that any lists of text that are contained in text are joined using ''.
+    Used by the translated python code in order to provide better control over spacing between words.
     """
     textList = []
     try:
-        for line in text:
-            if type(line) is list:
-                textList.append(' '.join(line))
-            else:
-                textList.append(line)
+        for line in (l for l in text if l):
+            textList.append(''.join(line))
     except TypeError, e:
         print(e)
         print(text)
         sys.exit()
-    return ''.join(textList)
+    return '\n\n'.join(textList)
 
 def format_text_no_space(text, doubleSpaced=True):
     """
@@ -1016,11 +1019,6 @@ class State(object):
             _, player, characters, rooms, bedroom, party, location, itemList, difficulty = fileData.split('State Data:')
             clearedSquares = ''
         person.PlayerCharacter.load(player, self.player)   
-        if self.player.currentEpisode:
-            currentEpisode = episode.allEpisodes[self.player.currentEpisode]
-            currentEpisode.init()
-            currentScene = currentEpisode.scenes[currentEpisode.currentSceneIndex]
-            currentScene.startScene(True)
         characters = [charData.strip() for charData in characters.split("Character:") if charData.strip()]
         for charData in characters:
            name, _, charData = charData.partition('\n')
@@ -1034,6 +1032,7 @@ class State(object):
                except KeyError:
                    pass
         rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
+        print("loading rooms")
         for roomData in rooms:
            name, _, roomData = roomData.partition('\n')
            try:
@@ -1067,6 +1066,12 @@ class State(object):
         for square in clearedSquares:
             if square:
                 self.clearedSquares.append(ast.literal_eval(square))
+        if self.player.currentEpisode:
+            currentEpisode = episode.allEpisodes[self.player.currentEpisode]
+            print("initializing scene")
+            currentEpisode.init()
+            currentScene = currentEpisode.scenes[currentEpisode.currentSceneIndex]
+            currentScene.startScene(True)
 
     def _backwards_compatibility_items(self, item):
         #NOTE: This function needs to be eliminated before using this code for other games. This exists solely for reasons of backwards compatibility for Potion Wars.
@@ -1186,7 +1191,12 @@ class State(object):
         self.items[item.name] = item
 
     def get_item(self, itemName):
-        return self.items[itemName]
+        #NOTE: This is here for backwards compatibility
+        try:
+            return self.items[itemName]
+        except KeyError:
+            if itemName == "loincloth of stealth":
+                return self.items["loincloth of speed"]
 
     def remove_item(self, item):
         try:
@@ -1301,7 +1311,7 @@ def set_state(stateIn):
     global state
     state = stateIn
 
-def cond(condition, ifTrue, ifFalse):
+def cond(condition, ifTrue, ifFalse=''):
     return ifTrue if condition else ifFalse
 
 def msg_selector(attribute, msgMap):

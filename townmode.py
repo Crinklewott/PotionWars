@@ -9,6 +9,7 @@ import music
 import episode
 import copy
 import textrect
+import sys
 from pygame.locals import *
 
 def town_mode(sayDescription=True):
@@ -129,13 +130,19 @@ class Room(universal.RPGObject):
             self.bgMusic = bgMusic
             self.bgMusicName = bgMusicName
         self.description = ' '.join(description) if not isinstance(description, str) else description
+        print("modifying adjacent")
+        import traceback
+        traceback.print_stack(file=sys.stdout)
         if not isinstance(adjacent, list):
             if adjacent:
                 self.adjacent = [adjacent]
+                adjacent.add_adjacent(self)
             else:
                 self.adjacent = []
         else:
             self.adjacent = adjacent
+            for adj in self.adjacent:
+                adj.add_adjacent(self)
         if characters is None:
             self.characters = {}
         else:
@@ -166,6 +173,8 @@ class Room(universal.RPGObject):
 
     @staticmethod
     def load(loadData, room):
+        print("loading room")
+        print(room)
         rest = ""
         try:
             _, name, bgMusicName, description, adjacent, characters, rest = loadData.split("Room Data:")
@@ -183,6 +192,9 @@ class Room(universal.RPGObject):
             module = sys.modules[moduleName]
             room.bgMusic = getattr(module, musicName)
         adjacent = [roomName.strip() for roomName in adjacent.split('\n') if roomName.strip()]
+        print("modifying adjacent")
+        import traceback
+        traceback.print_stack(file=sys.stdout)
         room.adjacent = [universal.state.get_room(roomName) for roomName in adjacent]
         characters = [charName.strip() for charName in characters.split('\n') if charName.strip()]
         room.characters = {}
@@ -249,29 +261,38 @@ class Room(universal.RPGObject):
     def has(self, character):
         return character.get_id() in self.characters.keys()
     def add_adjacent(self, adjacentIn):
-        if self.adjacent is None:
+        if not self.adjacent:
             if type(adjacentIn) is list:
                 self.adjacent = adjacentIn
                 for adj in adjacentIn:
-                    adj.add_adjacent(self)
+                    if self not in adj.adjacent:
+                        adj.adjacent.append(self)
             else:
                 self.adjacent = [adjacentIn]
-                adjacentIn.add_adjacent(self)
+                if self not in adjacentIn.adjacent:
+                    adjacentIn.adjacent.append(self)
         elif adjacentIn in self.adjacent:
+            if self not in adjacentIn.adjacent:
+                adjacentIn.adjacent.append(self)
             return
         elif type(adjacentIn) is list:
             self.adjacent.extend(adjacentIn)
             for adj in adjacentIn:
-                adj.add_adjacent(self)
+                if self not in adj:
+                    adj.adjacent.append(self)
         else:
             self.adjacent.append(adjacentIn)
-            adjacentIn.add_adjacent(self)
+            if self not in adjacentIn.adjacent:
+                adjacentIn.adjacent.append(self)
 
     def remove_adjacent(self, adjacent):
         global startRooms
         if not adjacent in self.adjacent:
             return
         if type(adjacent) is list:
+            print("Modifying adjacent")
+            import traceback
+            traceback.print_stack(file=sys.stdout)
             self.adjacent = [a for a in self.adjacent if not a in adjacent]
             for adj in adjacent:
                 adj.remove_adjacent(self)
@@ -281,6 +302,9 @@ class Room(universal.RPGObject):
             
 
     def set_adjacent(self, adjacent):
+        print("Modifying adjacent")
+        print(self)
+        print(self.adjacent)
         self.remove_adjacent(self.adjacent)
         self.add_adjacent(adjacent)
 
@@ -448,7 +472,7 @@ class Bedroom(Room):
 def clear_rooms():
     print('calling clear rooms')
     import traceback
-    traceback.print_stack()
+    traceback.print_stack(file=sys.stdout)
     for room in allRooms:
         allRooms[room].clear_characters()
 offStage = Room('offStage', "If you're seeing this, it means you've reached the end of the content.")
