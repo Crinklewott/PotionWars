@@ -1094,7 +1094,7 @@ def select_targets(chosenAction, enemy):
     targets = [opp for opp in opponents if opp.current_health() > 0] if chosenAction.targetType == combatAction.ENEMY else \
               [comp for comp in companions if comp.current_health() > 0]
     try:
-        if chosenAction.combatType == combatAction.GrappleAction.actionType or chosenAction.combatType == combatAction.BreakAllysGrappleAction.combatType:
+        if chosenAction.combatType == combatAction.GrappleAction.actionType or chosenAction.combatType == combatAction.BreakAllysGrappleAction.actionType:
             targets = [t for t in targets if not chosenActions_have_target_action(chosenAction, t)]
     except AttributeError:
         pass

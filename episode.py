@@ -97,20 +97,26 @@ class Episode(universal.RPGObject):
         print(self.scenes[self.currentSceneIndex].endScene)
         if self.scenes[self.currentSceneIndex].endScene is not None:
             if previousSceneArgs is ():
-                self.scenes[self.currentSceneIndex].previousSceneArgs()      
+                self.scenes[self.currentSceneIndex].endScene()      
             else:
                 self.scenes[currentSceneIndex].endScene(*previousSceneArgs)
         self.currentSceneIndex += 1
-        print('next scene start:')
-        print(self.scenes[self.currentSceneIndex].startScene)
-        print('startingSceneArgs:')
-        print(startingSceneArgs)
-        if self.scenes[self.currentSceneIndex].init_scene:
-            self.scenes[self.currentSceneIndex].init_scene()
-        if startingSceneArgs is ():
-            self.scenes[self.currentSceneIndex].startScene()
+        #print('next scene start:')
+        #print(self.scenes[self.currentSceneIndex].startScene)
+        #print('startingSceneArgs:')
+        #print(startingSceneArgs)
+        try:
+            if self.scenes[self.currentSceneIndex].init_scene:
+                self.scenes[self.currentSceneIndex].init_scene()
+        except IndexError:
+           import textCommandsMusic
+           textCommandsMusic.exitLeft(universal.state.player, universal.state.location)
+           end_content_mode()
         else:
-            self.scenes[self.currentSceneIndex].startScene(*startingSceneArgs)
+            if startingSceneArgs is ():
+                self.scenes[self.currentSceneIndex].startScene()
+            else:
+                self.scenes[self.currentSceneIndex].startScene(*startingSceneArgs)
 
     def _save(self):
         raise NotImplementedError()
@@ -119,7 +125,16 @@ class Episode(universal.RPGObject):
     def _load(loadData):
         raise NotImplementedError()
 
+def end_content_mode():
+    universal.say(universal.format_line(['''That's the end of the content, I hope you've enjoyed playing this far. If you have any comments, criticisms, questions, bug reports, or anything else, either comment on my blog''',
+            '''spankingrpgs.blogspot.com, or send me an e-mail at sprpgs@gmail.com (please post bug reports on the blog however, so that others can see them). Criticisms are welcome, however please keep them constructive. Saying "This game''',
+            '''sucks!" tells me nothing except that you didn't like it. Saying "Your combat system felt unbalanced. The magic was way too powerful." tells  me much much more.''']))
+    universal.set_commands(['(Esc) To exit'])
+    universal.set_command_interpreter(quit_interpreter)
+
 allScenes = {}
+
+
 class Scene(universal.RPGObject):
     """
         A scene has a name, a startFunction, and an endFunction.

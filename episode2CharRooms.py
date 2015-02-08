@@ -10,6 +10,7 @@ ildri = None
 kitchen = None
 deidre = None
 alondra = None
+sofiasClinic = None
     #def __init__(self, name, gender, defaultLitany, litany, description="", printedName=None, 
     #        coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle='', marks=None,
     #        musculature='', hairLength='', height='', bodyType=''): 

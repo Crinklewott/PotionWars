@@ -129,6 +129,7 @@ inlineCommandsPlayer = {
     r'\pistight':("items.tight_msg(universal.state.player.lower_clothing(), ", 2),
     r'\pisloose':("items.loose_msg(universal.state.player.lower_clothing(), ", 2),
     r'\pwearingshirt':("items.wearing_shirt(universal.state.player, ", 2),
+    r'\pwearingdress':("items.wearing_dress(universal.state.player, ", 2),
     r'\isfemale':("person.is_female_msg(universal.state.player, ", 2)
     }
 
@@ -385,6 +386,12 @@ class Code(ParseTree):
         initialSpacing = ''
         count = 0 
         self.data = [line for line in self.data if line]
+        fixedLines = []
+        for line in self.data:
+            newLines = line.splitlines()
+            line = ''.join(line for line in newLines if line.strip())
+            fixedLines.append(line)
+        self.data = fixedLines
         try:
             char = self.data[count][0]
         except IndexError:

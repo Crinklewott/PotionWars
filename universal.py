@@ -18,7 +18,7 @@ import os
 import math
 import ast
 
-DEBUG = True
+DEBUG = False
 SAVE_DELIMITER = '%%%'
 
 

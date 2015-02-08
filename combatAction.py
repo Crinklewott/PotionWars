@@ -425,7 +425,7 @@ class RunAction(CombatAction):
     primaryStat = universal.ALERTNESS
     actionType = 'run'
     def __init__(self, attacker, defenders, secondaryStat=None):
-        super(RunAction, self).__init__(attacker, defenders, STEALTH, secondaryStat)
+        super(RunAction, self).__init__(attacker, defenders, universal.SPEED, secondaryStat)
         self.targetType = ALLY
         self.grappleStatus = NOT_WHEN_GRAPPLED
         self.primaryStat = RunAction.primaryStat

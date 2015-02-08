@@ -12985,28 +12985,28 @@ episode1.init = init_episode1
 
 #----------------------------------------------Episode 2: Back Alleys-------------------------------------------------------------------
 #These should be uncommented when sending out versions before episode 2 is completed, and commented when working on episode2.
-def initialize_episode_2():
-    pass
+#def init_episode_2():
+#    pass
 
-def start_scene_1_episode_2(loading=False):
-    universal.say_title('Next time on Pandemonium Cycle: The Potion Wars')
-    universal.say(['\m\n\n' + universal.state.player.name, 'finally receives', hisher(), 'first job:', heshe(universal.state.player), 'must travel deep into the slums and track down a thief.''',
-    '''However,''', name(), '''isn't the only one after her. Why all the interest in one nameless pickpocket?\n\n''',
-        'Meanwhile, Carrie is becoming a full Sister! Will', universal.state.player.name, 'be able to attend the ceremony (or at least make it to the after party)? Will', heshe(universal.state.player), 'even want to?\n\n Tune in next time to learn the answers to these questions and more!\n\n',
-        name(), 'has been spanked', str(universal.state.player.numSpankings), 'times.\n\n',
-        name(), 'has administered', str(universal.state.player.numSpankingsGiven), 'spankings.'], music=[music.THEME])
-    universal.set_commands('Press Enter to save')
-    universal.set_command_interpreter(textCommandsMusic.end_content_interpreter)
+#def start_scene_1_episode_2(loading=False):
+#    universal.say_title('Next time on Pandemonium Cycle: The Potion Wars')
+#    universal.say(['\m\n\n' + universal.state.player.name, 'finally receives', hisher(), 'first job:', heshe(universal.state.player), 'must travel deep into the slums and track down a thief.''',
+#    '''However,''', name(), '''isn't the only one after her. Why all the interest in one nameless pickpocket?\n\n''',
+#        'Meanwhile, Carrie is becoming a full Sister! Will', universal.state.player.name, 'be able to attend the ceremony (or at least make it to the after party)? Will', heshe(universal.state.player), 'even want to?\n\n Tune in next time to learn the answers to these questions and more!\n\n',
+#        name(), 'has been spanked', str(universal.state.player.numSpankings), 'times.\n\n',
+#        name(), 'has administered', str(universal.state.player.numSpankingsGiven), 'spankings.'], music=[music.THEME])
+#    universal.set_commands('Press Enter to save')
+#    universal.set_command_interpreter(textCommandsMusic.end_content_interpreter)
 
-def end_content_mode():
-    universal.say(universal.format_line(['''That's the end of the content, I hope you've enjoyed playing this far. If you have any comments, criticisms, questions, bug reports, or anything else, either comment on my blog''',
-            '''spankingrpgs.blogspot.com, or send me an e-mail at sprpgs@gmail.com (please post bug reports on the blog however, so that others can see them). Criticisms are welcome, however please keep them constructive. Saying "This game''',
-            '''sucks!" tells me nothing except that you didn't like it. Saying "Your combat system felt unbalanced. The magic was way too powerful." tells  me much much more.''']))
-    universal.set_commands(['(Esc) To exit'])
-    universal.set_command_interpreter(quit_interpreter)
+#def end_content_mode():
+#    universal.say(universal.format_line(['''That's the end of the content, I hope you've enjoyed playing this far. If you have any comments, criticisms, questions, bug reports, or anything else, either comment on my blog''',
+#            '''spankingrpgs.blogspot.com, or send me an e-mail at sprpgs@gmail.com (please post bug reports on the blog however, so that others can see them). Criticisms are welcome, however please keep them constructive. Saying "This game''',
+#            '''sucks!" tells me nothing except that you didn't like it. Saying "Your combat system felt unbalanced. The magic was way too powerful." tells  me much much more.''']))
+#    universal.set_commands(['(Esc) To exit'])
+#    universal.set_command_interpreter(quit_interpreter)
             
-def end_scene_1_episode_2():
-    pass
+#def end_scene_1_episode_2():
+#    pass
 
 #episode2Scene1 = episode.Scene('Episode 2 Scene 1', start_scene_1_episode_2, end_scene_1_episode_2)
 #episode2 = episode.Episode(2, 'Back Alleys', scenes=[episode2Scene1])

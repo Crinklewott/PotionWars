@@ -847,19 +847,26 @@ def is_loose(clothing):
 def loose_msg(person, looseMsg, tightMsg):
     return universal.msg_selector(clothing.tightness == LOOSE, {True:looseMsg, False:tightMsg})
 
-def wearing_trousers(person, wearingTrousers, notWearingTrousers):
+def wearing_trousers(person, wearingTrousers, notWearingTrousers='', noLowerClothing=''):
+    if person.lower_clothing() == emptyLowerArmor:
+        return noLowerClothing
     return universal.msg_selector(person.wearing_pants_or_shorts(), {True:wearingTrousers, False:notWearingTrousers})
 
-def wearing_shirt(person, wearingShirt, notWearingShirt):
+def wearing_shirt(person, wearingShirt, notWearingShirt='', noLowerClothing=''):
+    if person.shirt() == emptyUpperArmor:
+        return noLowerClothing
     return universal.msg_selector(person.shirt() != emptyUpperArmor, {True:wearingShirt, False:notWearingShirt})
 
-def wearing_underwear(person, wearingUnderwear, notWearingUnderwear):
+def wearing_underwear(person, wearingUnderwear, notWearingUnderwear=''):
     return universal.msg_selector(person.underwear() != emptyUnderwear, {True:wearingUnderwear, False:notWearingUnderwear})
 
-def wearing_dress(person, wearingDress, notWearingDress):
-    return universal.msg_selector(person.lower_clothing().armorType == Skirt.armorType or person.lower_clothing().armorType == Dress.armorType, {True:wearingUnderwear, False:notWearingUnderwear})
+def wearing_dress(person, wearingDress, notWearingDress='', noOuterClothing=''):
+    if person.shirt() == emptyUpperArmor and person.lower_clothing() == emptyLowerArmor:
+        return noOuterClothing
+    else:
+        return universal.msg_selector(person.lower_clothing().armorType == Skirt.armorType or person.lower_clothing().armorType == Dress.armorType, {True:wearingUnderwear, False:notWearingUnderwear})
 
-def baring_underwear(underwear, baringMsg, notBaringMsg):
-    return universal.msg_selector(underwear.baring, {True:baringMsg, False:notBaringMsg})
+def baring_underwear(underwear, baringMsg, notBaringMsg, notWearingUnderwearMsg=''):
+    return notWearingUnderwearMsg if underwear == emptyUnderwear else universal.msg_selector(underwear.baring, {True:baringMsg, False:notBaringMsg})
 
 
