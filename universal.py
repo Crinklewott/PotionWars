@@ -18,7 +18,7 @@ import os
 import math
 import ast
 
-DEBUG = False
+DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 
@@ -845,15 +845,17 @@ def format_text(text, doubleSpaced=True):
     Given a list of (lists of) text, returns the text joined using '\n\n' as a separator. Note that any lists of text that are contained in text are joined using a space.
     So the list ['Hi!', ['I am', 'a list!'], 'Good-bye!'] would be returned as a single string of the form:
     Hi!
-
     I am a list!
-
     Good-Bye!
     """
     textList = []
     try:
-        for line in (l for l in text if l):
-            textList.append(' '.join(line))
+        for line in text:
+            #I don't know why this is necessary, but apparently it is. Stupid fucking Python and its bullshit "strings are lists" crap.
+            if type(line) is list:
+                textList.append(' '.join(line))
+            else:
+                textList.append(line)
     except TypeError, e:
         print(e)
         print(text)

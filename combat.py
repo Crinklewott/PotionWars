@@ -115,9 +115,9 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
     initialEnemies = []
     initialAllies = []
     for ally in universal.state.allies:
-        initialAllies.append((ally.get_id(), copy.deepcopy(ally.primaryStats), copy.deepcopy(ally.statusList), copy.deepcopy(ally.increaseSpellPoints), copy.deepcopy(ally.increaseStatPoints)))
+        initialAllies.append((ally.get_id(), list(ally.primaryStats), dict(ally.statusList), list(ally.increaseSpellPoints), list(ally.increaseStatPoints)))
     for enemy in universal.state.enemies:
-        initialEnemies.append((enemy.get_id(), copy.deepcopy(enemy.primaryStats), copy.deepcopy(enemy.statusList)))
+        initialEnemies.append((enemy.get_id(), list(enemy.primaryStats), dict(enemy.statusList)))
     boss = bossFight
     ambush = ambushIn
     enemies = universal.state.enemies
@@ -1457,10 +1457,10 @@ def game_over_interpreter(keyEvent):
             print(character.statusList)
             print(character.increaseSpellPoints)
             print(character.increaseStatPoints)
-            character.primaryStats = copy.deepcopy(primaryStats)
-            character.statusList = copy.deepcopy(statusList)
-            character.increaseSpellPoints = spellPoints
-            character.increaseStatPoints = statPoints
+            character.primaryStats = list(primaryStats)
+            character.statusList = dict(statusList)
+            character.increaseSpellPoints = list(spellPoints)
+            character.increaseStatPoints = list(statPoints)
             print('restored state:')
             print(character.primaryStats)
             print(character.statusList)
@@ -1469,8 +1469,8 @@ def game_over_interpreter(keyEvent):
             character.break_grapple()
         for charid, primaryStats, statusList in initialEnemies:
             character = universal.state.get_character(charid)
-            character.primaryStats = copy.deepcopy(primaryStats)
-            character.statusList = copy.deepcopy(statusList)
+            character.primaryStats = list(primaryStats)
+            character.statusList = list(statusList)
             character.break_grapple()
         allies = universal.state.allies
         print(allies[0])
@@ -1495,6 +1495,7 @@ def game_over_interpreter(keyEvent):
                 improve_characters(False, afterCombatEvent)
             except TypeError:
                 pass
+            end_fight()
             allies.members += defeatedAllies    
         else:
             end_fight()
@@ -1600,7 +1601,7 @@ def improve_characters(victorious, afterCombatEvent=None):
             print('statChance: ' + str(statChance))
             '''
             statPoints = ally.increaseStatPoints[i]
-            stat = ally.stat(i) if i == universal.HEALTH else ally.stat(i) * person.STAT_GROWTH_RATE_MULTIPLIER 
+            stat = ally.stat(i) if i == universal.HEALTH else ally.stat(i) * universal.STAT_GROWTH_RATE_MULTIPLIER 
             gain = 0
             manaGain = 0
             print("stat:" + universal.primary_stat_name(i))
@@ -1625,7 +1626,10 @@ def improve_characters(victorious, afterCombatEvent=None):
                         ally.improve_stat(person.MANA, manaGain)
                     ally.increaseStatPoints[i] -= stat 
                 statPoints = ally.increaseStatPoints[i]
-                stat = ally.stat(i) * person.STAT_GROWTH_RATE_MULTIPLIER
+                stat = ally.stat(i) * universal.STAT_GROWTH_RATE_MULTIPLIER
+                print("Improving stat")
+                print(stat)
+                print(statPoints)
                 #print(maxStats[i])
                 #print(ally.get_stat(i))
                 #print(specialization_bonus(ally, i))
@@ -1636,9 +1640,9 @@ def improve_characters(victorious, afterCombatEvent=None):
         for i in range(len(ally.increaseSpellPoints)): 
             #Note: This is much MUCH simpler than what we will actually allow. This simply checks if the player has 5 spell points, and then has the player learn the advanced spell if the player doesn't already know it.
             #This is only a stop-gap measure. The actual learning spell mechanic will be much more complicated, but I don't want to implement that until I've built a proper GUI.
-            if ally.increaseSpellPoints[i] >= (ally.tier*person.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS) and not ally.knows_spell(person.allSpells[0][i][1]):
+            if ally.increaseSpellPoints[i] >= (ally.tier*universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS) and not ally.knows_spell(person.allSpells[0][i][1]):
                 learn_spell(ally, i+universal.COMBAT_MAGIC)
-                ally.increaseSpellPoints[i] -= ally.tier*person.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
+                ally.increaseSpellPoints[i] -= ally.tier*universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
     if afterCombatEvent is not None:
         acknowledge(afterCombatEvent, defeatedAllies, defeatedEnemies, victorious)
     else:
@@ -1677,7 +1681,7 @@ def learn_spell(ally, spellSchool):
         ally.add_quick_spell(learnedSpell)
         universal.say(format_line([ally.name, 'has learned the spell', learnedSpell.name + '!\n']))
     else:
-        ally.increaseSpellPoints[i-universal.COMBAT_MAGIC] = ally.tier * person.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
+        ally.increaseSpellPoints[i-universal.COMBAT_MAGIC] = ally.tier * universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
         
 
 """ 
