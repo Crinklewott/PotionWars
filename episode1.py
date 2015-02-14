@@ -721,7 +721,7 @@ class Edita(p.Person):
             '''manages to wiggle right off of''', Tname + "'s", '''lap.''', HeShe(B), '''quickly scrambles away, before''', Tname, '''can yank''', himher(B), '''back.'''],
             [Bname, '''snatches up''', hisher(B), '''dropped weapon, and spins to face''', Tname + ",", 'though', heshe(B), '''can't quite resist the urge to give''',
             hisher(B), '''bottom a quick rub. Then''', Tname, '''grabs''', himher(B), '''again, and''', heshe(B), '''forgets all about''', hisher(B), '''sore tushy.''']]))
-        elif position == positions.underarm:
+        elif position == positions.standing:
             reversalPhrases.append(universal.format_text([[Bname, 'hooks', hisher(B), 'arm around', Tname + "'s", 'neck, and tries to force', himher(T), 'to bend over.', Tname, 
                 'bends slightly, grabs', Bname + "'s", 'arm with one hand, and wraps', hisher(T), 'other arm around', Bname + "'s", 'waist. The two struggle for a moment,',
                 'neither gaining ground. Then,', Tname, 'manages to pry', Bname + "'s", 'arm off of', hisher(T), 'neck.', HeShe(T), 'presses', hisher(T), 'elbow against', 
@@ -732,7 +732,7 @@ class Edita(p.Person):
             ['More through sheer luck than anything else,', Bname + "'s", 'stomping foot comes down hard on', Tname + "'s", 'foot.', Tname, 'reflexively lets go of', Bname, 
             'and hops backward, clutching at', hisher(T), 'stinging toes.', Bname, 'snatches up', hisher(B), 'weapon and faces', Tname + ",", hisher(B), 
             'face bright red.']]))  
-        elif position == positions.reverseRiding:
+        elif position == positions.onTheGround:
             reversalPhrases.append(universal.format_text([[Bname, 'sweeps', Tname + "'s", 'legs out from under', himher(T) + ",", 'and flips', himher(T), 'over onto', hisher(T), 
                 'front. Then,', Bname, 'starts to sit down on', Tname + "'s", 'back. However,', Tname, 'manages to get', hisher(T), 'hands knees underneath', 
                 himselfherself(T), 'and snaps upward.', HisHer(T), 'back smacks into', Bname + "'s", 'bottom and sends', himher(B), 'stumbling.', Tname, 'spins, grabs', 
@@ -751,76 +751,21 @@ class Edita(p.Person):
             universal.state.player.add_keyword('spanked_by_young_insurgent')
         return reversalPhrases[random.randrange(0, len(reversalPhrases))]
 
-    def reversed_spanking_of(self, person, position):
-        return self.spanking_reversal_text(self, person, position)
-    #abstractmethod
-    def spanked_by(self, person, position):
-        T = person
-        Tname = person.printedName
-        B = self
-        Bname = self.printedName
-        universal.state.player.add_keyword('spanked_young_insurgent')
-        if universal.state.player.currentEpisode == episode1.name:
-            spankText = []
-            if position == positions.overTheKnee:
-                return universal.format_text([[Tname, 'falls onto', hisher(T), 'right knee, and into a lunge position.', Bname + ',', 'thinking', heshe(B), 
-                    'has the advantage, tries to drive', Tname, 'into the ground. But then', Tname, 'twists, folds', hisher(T), 'left leg back underneath', hisher(T), 
-                    'torso, and sits on', hisher(T), 'heels. As', heshe(T), 'twists,', heshe(T), 'yanks on', Bname + "'s", 'wrists. Caught off-balance,', Bname, 
-                    'sprawls face-down across', Tname + "'s", 'lap.', Tname, 'yanks', hisher(T), 'own left hand free, and presses firmly on the small of', Bname + "'s",
-                    'back.'],
-            [Bname, 'squirms uselessly in', Tname + "'s", '''grip. "Hey, what're you doing?"'''],
-            ['''"It should be obvious," says''', Tname + ".",  HeShe(T), 'snaps', hisher(T), 'right hand against', Bname + "'s", 'right bum cheek.', Bname, 'squeals,', 
-            hisher(B), '''thin trousers clearly not providing much protection.'''],
-            [Tname, 'begins to spank', Bname, "with quick, sharp slaps.", Bname, 'yelps and twists,', hisher(B), 'hips bucking against', Tname + "'s", 'lap.'],
-            ['"Hey, hey come on," wails', Bname + ".", '''"This is absurd! Everyone around us is fighting for their lives, and you're spanking meee!"'''],
-            ['"Poor', boygirl(B) + ',"', '''says''', Tname + ",", '''as''', hisher(T), '''hand continues to mercilessly pound''', Bname + "'s", '''small, bouncing''',
-            '''bottom.'''],
-            ['''Finally,''', Bname, '''manages to roll off of''', Tname  + "'s", '''lap.''', HeShe(B), '''crawls frantically away, scrambling for''', hisher(B), 
-                '''dropped''', B.weapon().name + ".", '''Then,''', heshe(B), '''spins to face''', Tname + ".", '''"You'll pay for that,"''', heshe(B), '''growls.''']])
-            elif position == positions.underarm:
-                return universal.format_text([[Tname, '''hooks''', hisher(T), '''right arm around''', Bname + "'s", '''neck, and forces''', himher(B), '''to bend over.''',
-                    Tname, '''wraps''', hisher(), '''arm around''', Bname + "'s", '''lower back, and holds''', himher(B), '''tight against''', hisher(T), '''hip.'''],
-                    ['''"Hey, hey what're you doing?" cries''', Bname, '''as''', Tname, '''lightly taps''', Bname + "'s", '''left cheek.'''],
-                    ['''"Targeting," says''', Tname + "."],
-                    ['''"Targetin' for-oww!"''', Bname, '''yelps as''', Tname + "'s", '''hand cracks against''', hisher(B), '''left butt cheek.'''],
-                    ['''"Your spanking of course," says''', Tname + ".", '''"Thought that was obvious."'''],
-                    ['''"This is absurd!" cries''', Bname + ",", hisher(B), 
-                        '''voice rising into a whine. "I'm supposed to be fighting to help my people, not getting spanked''',
-                    '''by one of them!"'''],
-                    ['''"Funny how life works," says''', Tname + ".", HisHer(T), 
-                        '''hand starts to rise and fall, and the slightly muffled smack of hand against thinly-trousered''',
-                    '''bottom joins the cacophany of steel on steel, and hisses of firebolts.'''],
-                    [Bname, '''stomps the ground and yelps with each smack,''', hisher(B), '''bottom bouncing vigorously.'''],
-                    ['''"Stop it, stop it!"''', heshe(B), '''cries. "Or so help me, I'll gut you! I swear I'll-owwwww!"'''],
-                    [Tname, '''ignores''', Bname + "'s", '''carrying on, and lays it on good and hard.'''],
-                    ['''Then,''', Bname, '''manages to ram''', hisher(B), '''fist into''', Tname + "'s", '''funny bone.''', Tname + "'s", 
-                        '''arm involuntarily jerks away from''',
-                    '''the blow, tingling terribly.''', Bname, '''wiggles out of''', Tname + "'s", '''grip.''', HeShe(B), '''crouches and snatches up''', hisher(B), 
-                    '''fallen weapon, and turns back to face''', Tname + "."]])
-            elif position == positions.reverseRiding:
-                return universal.format_text([[Tname, '''pivots to the side, and sweeps''', Bname + "'s", '''feet out from under''', himher(B) + ".", Bname, '''yelps, and hits the''',
-                    '''ground face-first. Before''', heshe(B), '''can get up,''', Tname, '''plops down on top of''', himher(B) + ",", '''facing''', hisher(B), 
-                    '''legs and bottom.'''],
-                ['''"Get off me," says''', Bname + ",", '''squirming.'''],
-                ['''"Now why would I do a crazy thing like that?"''', Tname + "'s", '''hand arcs through the air and strikes''', Bname + "'s", 
-                    '''right cheek.'''], 
-                    [Bname, '''yelps, more from surprise than pain, and wiggles''', hisher(B), '''bottom in a vain effort to get it away from''', Tname + "'s", 
-                        '''inevitable next blow.'''],
-                ['''Taking advantage of the fact that''', heshe(T), '''has both hands available,''', Tname,  '''begins to smack''', Bname + "'s", 
-                    '''bouncing bottom with both hands, playing''', hisher(B), '''cheeks like a drum.'''],
-                [Bname, '''yelps, and kicks''', hisher(B), '''feet vainly against the floor, while''', Tname, "'plays'", hisher(B), '''bottom. Eventually,''', Bname, 
-                '''gains the presence of mind to get''', hisher(B), '''elbows underneath''', himselfherself(B) + ".", '''Bracing''', hisher(B), '''knees against the''',
-                '''ground, and giving a mighty heave,''', Bname, '''manages to throw''', Tname, '''off of''', himher(B) + ".", '''Then,''', heshe(B), 
-                '''scrambles to''', hisher(B), '''feet, one hand sneaking back to rub''', hisher(B), '''stinging bottom, while the other snatches up''', hisher(B), 
-                '''dropped weapon.''']])
+    def otk_reversal(self, top, bottom):
+        return self.spanking_reversal_text(bottom, top, positions.overTheKnee)
 
-    def spanks(self, person, position):
-        T = self
-        Tname = self.printedName
-        B = person
-        Bname = person.printedName
-        universal.state.player.add_keyword('spanked_by_young_insurgent')
-        if position == positions.overTheKnee:
+    def standing_reversal(self, top, bottom):
+        return self.spanking_reversal_text(bottom, top, positions.standing)
+
+    def on_the_ground_reversal(self, top, bottom):
+        return self.spanking_reversal_text(bottom, top, positions.onTheGround)
+
+    def otk_intro(self, top, bottom):
+        T = top
+        B = bottom
+        Tname = top.printedName
+        Bname = bottom.printedName
+        if self is top:
             return universal.format_text([[Tname, '''kicks''', Bname, '''in the shin.''', Bname, '''cries out and hops backward, clutching at''', hisher(B), '''leg.''', Tname, 
             '''dashes forward, and grabs''', Bname, '''by the hair.''', HeShe(T), '''half falls, half sits down onto''', hisher(T), '''heels, yanking''', Bname, 
             '''by the hair across''', hisher(T), '''lap.'''],
@@ -837,7 +782,28 @@ class Edita(p.Person):
                 '''feet, snatching up''', hisher(B), '''weapon.'''],
                 ['''"Brat," says''', Bname + ".", '''"You're going to pay dearly for that, I promise you."'''],
                 [Tname, '''scrambles to''', hisher(T), '''feet, looking very nervous.''']])
-        elif position == positions.underarm:
+        else:
+            return universal.format_text([[Tname, 'falls onto', hisher(T), 'right knee, and into a lunge position.', Bname + ',', 'thinking', heshe(B), 
+                'has the advantage, tries to drive', Tname, 'into the ground. But then', Tname, 'twists, folds', hisher(T), 'left leg back underneath', hisher(T), 
+                'torso, and sits on', hisher(T), 'heels. As', heshe(T), 'twists,', heshe(T), 'yanks on', Bname + "'s", 'wrists. Caught off-balance,', Bname, 
+                'sprawls face-down across', Tname + "'s", 'lap.', Tname, 'yanks', hisher(T), 'own left hand free, and presses firmly on the small of', Bname + "'s",
+                'back.'],
+            [Bname, 'squirms uselessly in', Tname + "'s", '''grip. "Hey, what're you doing?"'''],
+            ['''"It should be obvious," says''', Tname + ".",  HeShe(T), 'snaps', hisher(T), 'right hand against', Bname + "'s", 'right bum cheek.', Bname, 'squeals,', 
+            hisher(B), '''thin trousers clearly not providing much protection.'''],
+            [Tname, 'begins to spank', Bname, "with quick, sharp slaps.", Bname, 'yelps and twists,', hisher(B), 'hips bucking against', Tname + "'s", 'lap.'],
+            ['"Hey, hey come on," wails', Bname + ".", '''"This is absurd! Everyone around us is fighting for their lives, and you're spanking meee!"'''],
+            ['"Poor', boygirl(B) + ',"', '''says''', Tname + ",", '''as''', hisher(T), '''hand continues to mercilessly pound''', Bname + "'s", '''small, bouncing''',
+            '''bottom.'''],
+            ['''Finally,''', Bname, '''manages to roll off of''', Tname  + "'s", '''lap.''', HeShe(B), '''crawls frantically away, scrambling for''', hisher(B), 
+            '''dropped''', B.weapon().name + ".", '''Then,''', heshe(B), '''spins to face''', Tname + ".", '''"You'll pay for that,"''', heshe(B), '''growls.''']])
+
+    def standing_intro(self, top, bottom)
+        T = top
+        B = bottom
+        Tname = top.printedName
+        Bname = bottom.printedName
+        if self is top:
             return universal.format_text([[Tname, '''punches''', Bname, '''in the gut, hard enough to knock the wind out of''', himher(T) + ".", Bname, '''hunches, and clutches at''',
             hisher(T), '''gut.''', Tname, '''hooks''', hisher(T), '''arm around''', Bname + "'s", '''waist, grabs the back of''', Bname + "'s", B.worn_lower_clothing(), 
             '''and pulls''', Bname, '''more fully under''', hisher(T), '''arm.''', Tname, '''gives''', Bname + "'s", '''bottom a light rub, then after a slight''',
@@ -851,8 +817,34 @@ class Edita(p.Person):
             [Bname, '''twists and kicks''', hisher(B), '''feet. Not because the spanking hurts (of course not), but in an effort to get free. Still,''', Tname + "'s", 
             '''stronger than''', heshe(T), '''looks, and the burn in''', Bname + "'s", '''bottom continues to build. Finally,''', Bname, '''gets a hold of a bit of cloth''',
             '''from''', Tname + "'s", '''mask.''', Bname, '''gives it a jerk, yanking''', Tname + "'s", '''head back. As''', heshe(T), '''stumbles,''', hisher(T), 
-            '''grip loosens enough for''', Bname, '''to break free and pick up''', hisher(B), '''weapon.''']]) 
-        elif position == positions.reverseRiding:
+            '''grip loosens enough for''', Bname, '''to break free and pick up''', hisher(B), '''weapon.''']])
+        else:
+            return universal.format_text([[Tname, '''hooks''', hisher(T), '''right arm around''', Bname + "'s", '''neck, and forces''', himher(B), '''to bend over.''',
+                Tname, '''wraps''', hisher(), '''arm around''', Bname + "'s", '''lower back, and holds''', himher(B), '''tight against''', hisher(T), '''hip.'''],
+                ['''"Hey, hey what're you doing?" cries''', Bname, '''as''', Tname, '''lightly taps''', Bname + "'s", '''left cheek.'''],
+                ['''"Targeting," says''', Tname + "."],
+                ['''"Targetin' for-oww!"''', Bname, '''yelps as''', Tname + "'s", '''hand cracks against''', hisher(B), '''left butt cheek.'''],
+                ['''"Your spanking of course," says''', Tname + ".", '''"Thought that was obvious."'''],
+                ['''"This is absurd!" cries''', Bname + ",", hisher(B), 
+                    '''voice rising into a whine. "I'm supposed to be fighting to help my people, not getting spanked''',
+                '''by one of them!"'''],
+                ['''"Funny how life works," says''', Tname + ".", HisHer(T), 
+                    '''hand starts to rise and fall, and the slightly muffled smack of hand against thinly-trousered''',
+                '''bottom joins the cacophany of steel on steel, and hisses of firebolts.'''],
+                [Bname, '''stomps the ground and yelps with each smack,''', hisher(B), '''bottom bouncing vigorously.'''],
+                ['''"Stop it, stop it!"''', heshe(B), '''cries. "Or so help me, I'll gut you! I swear I'll-owwwww!"'''],
+                [Tname, '''ignores''', Bname + "'s", '''carrying on, and lays it on good and hard.'''],
+                ['''Then,''', Bname, '''manages to ram''', hisher(B), '''fist into''', Tname + "'s", '''funny bone.''', Tname + "'s", 
+                    '''arm involuntarily jerks away from''',
+                '''the blow, tingling terribly.''', Bname, '''wiggles out of''', Tname + "'s", '''grip.''', HeShe(B), '''crouches and snatches up''', hisher(B), 
+                '''fallen weapon, and turns back to face''', Tname + "."]])
+
+    def on_the_ground_intro(self, top, bottom):
+        T = top
+        B = bottom
+        Tname = top.printedName
+        Bname = bottom.printedName
+        if self is top:
             return universal.format_text([[Tname, '''pivots, and sweeps''', hisher(T), '''legs around behind''', Bname + "'s", '''legs, knocking''', Bname, '''on''', hisher(B), 
             '''butt. Before''', Bname, '''can react,''', Tname, 'rolls', Bname, 'onto', hisher(B), '''chest. Then,''', Tname, 'sits down on the middle of', hisher(B), 
             'back.'],
@@ -868,9 +860,40 @@ class Edita(p.Person):
             [Tname, '''goes sprawling across the ground, before quickly scrambling to''', hisher(T), '''feet, and spinning to face''', Bname + "."],
             [Bname, 'gets to', hisher(B), 'feet, rubbing', hisher(B), 'bottom.', HeShe(B), 'glares at', Tname + ",", '''who starts to look nervous.' "I promise you'll''',
             'pay dearly for that."''']])
+        else:
+                return universal.format_text([[Tname, '''pivots to the side, and sweeps''', Bname + "'s", '''feet out from under''', himher(B) + ".", Bname, '''yelps, and hits the''',
+                    '''ground face-first. Before''', heshe(B), '''can get up,''', Tname, '''plops down on top of''', himher(B) + ",", '''facing''', hisher(B), 
+                    '''legs and bottom.'''],
+                ['''"Get off me," says''', Bname + ",", '''squirming.'''],
+                ['''"Now why would I do a crazy thing like that?"''', Tname + "'s", '''hand arcs through the air and strikes''', Bname + "'s", 
+                    '''right cheek.'''], 
+                    [Bname, '''yelps, more from surprise than pain, and wiggles''', hisher(B), '''bottom in a vain effort to get it away from''', Tname + "'s", 
+                        '''inevitable next blow.'''],
+                ['''Taking advantage of the fact that''', heshe(T), '''has both hands available,''', Tname,  '''begins to smack''', Bname + "'s", 
+                    '''bouncing bottom with both hands, playing''', hisher(B), '''cheeks like a drum.'''],
+                [Bname, '''yelps, and kicks''', hisher(B), '''feet vainly against the floor, while''', Tname, "'plays'", hisher(B), '''bottom. Eventually,''', Bname, 
+                '''gains the presence of mind to get''', hisher(B), '''elbows underneath''', himselfherself(B) + ".", '''Bracing''', hisher(B), '''knees against the''',
+                '''ground, and giving a mighty heave,''', Bname, '''manages to throw''', Tname, '''off of''', himher(B) + ".", '''Then,''', heshe(B), 
+                '''scrambles to''', hisher(B), '''feet, one hand sneaking back to rub''', hisher(B), '''stinging bottom, while the other snatches up''', hisher(B), 
+                '''dropped weapon.''']])
 
-    def avoided_spanking_by(self, person, position):
-        return self.spanking_missed_text(person, self, position)
+    def otk_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def otk_failure(self, top, bottom):
+        return self.spanking_missed_text(top, bottom, positions.overTheKnee)
+
+    def standing_failure(self, top, bottom):
+        return self.spanking_missed_text(top, bottom, positions.standing)
+
+    def on_the_ground_failure(self, top, bottom):
+        return self.spanking_missed_text(top, bottom, positions.onTheGround)
 
     def spanking_missed_text(self, top, bottom, position):              
         T = top
@@ -884,16 +907,13 @@ class Edita(p.Person):
             'hands, trying to drive', himher(T), 'all the way to the ground. But then', T.printedName, 'twists, bringing', hisher(T), 'other knee back and sitting on',
             hisher(T), 'heels. As', heshe(T), 'comes down,', heshe(T), 'gives', B.printedName, 'a savage yank.', B.printedName, 'sways dangerously, but manages to keep',
             hisher(B), 'feet.', 'So instead,', T.printedName, 'shoves', B.printedName, 'a few steps backwards, giving', himher(T), 'a chance to regain', hisher(T), 'feet.']]))
-        elif position == positions.underarm:
+        elif position == positions.standing:
             missPhrases.append(universal.format_text([[T.printedName, 'hooks', hisher(T), 'arm around', B.printedName + "'s", 'neck. Before', heshe(T), 'can get a good hold,', 
             B.printedName, 'jerks backward, and slips out of', T.printedName + "'s", 'grip']]))
-        elif position == position.reverseRiding:
+        elif position == position.onTheGround:
             missPhrases.append(universal.format_text([[Tname, "pivots to the side, sweeping", hisher(T), 'leg at', Bname + "'s", 'feet. But', Bname + "'s", 'own foot lashes out and',
             'catches', hisher(T), 'leg. The two balance precariously. Finally,', Tname, 'steps back, and the two regain their footing.']]))
         return missPhrases[random.randrange(0, len(missPhrases))]
-
-    def failed_to_spank(self, person, position):
-        return self.spanking_missed_text(self, person, position)
 
     #def reset_stats(self, episode=None):
     #    edita = Edita(self.litany, coins=self.coins, printedName=self.printedName)

@@ -457,13 +457,14 @@ class SpankAction(CombatAction):
     primaryStat = universal.STRENGTH
     secondaryStat = universal.DEXTERITY
     actionType = 'spank'
-    def __init__(self, attacker, defenders, severity=0):
+    def __init__(self, attacker, defenders, position, severity=0):
         super(SpankAction, self).__init__(attacker, defenders, GRAPPLE, SpankAction.secondaryStat)
         self.targetType = ENEMY
         self.grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
         self.effectClass = ALL
         self.statusInflicted = statusEffects.HUMILIATED 
         self.actionType = 'spank'
+        self.position = position
         self.severity = severity
 
     def effect(self, inCombat=True, allies=None, enemies=None):
@@ -482,29 +483,31 @@ class SpankAction(CombatAction):
             #spankABonus = wa.grapple_bonus() + attacker.grapple() - attacker.attack_penalty()
             #spankDBonus = wd.grapple_bonus() + defender.grapple() - defender.attack_penalty()
             success = rand(compute_bonus(max(0, attacker.grapple() - defender.grapple())) + wa.grapple_bonus())
-            #TODO: Incorporate difficulty of position into this calculation
-            failure = rand(wd.grapple_bonus())
+            failure = rand(wd.grapple_bonus() + self.position.difficulty)
             humiliated = False
             successFlag =  0
             if failure <= success:
                 if not defender.is_inflicted_with(statusEffects.Humiliated.name):
                     duration = max(MIN_DURATION, DURATION_MULTIPLIER * rand(compute_bonus(max(0, attacker.resilience() - defender.resilience()))) + self.severity)
-                    defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration))
-                resultString = spanking.spanking_string(attacker, defender)
+                    #This is just a placeholder, until we can implement the multi-round spankings.
+                    numSmacks = rand(self.position.maintainability)
+                    defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration, numSmacks))
+                resultString = spanking.spanking_string(attacker, defender, position)
                 successFlag = 1
             else:
                 success = rand(compute_bonus(max(0, defender.grapple() - attacker.grapple())) + wd.grapple_bonus())
                 failure = rand(wa.grapple_bonus())
                 if failure <= success:
                     if not attacker.is_inflicted_with(statusEffects.Humiliated.name):
-                        duration = max(MIN_DURATION, DURATION_MULTIPLIER * rand(compute_bonus(max(0, defender.resilience() - attacker.resilience())))) + self.severity
-                        attacker.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration))
+                        duration = max(MIN_DURATION, DURATION_MULTIPLIER * rand(compute_bonus(max(0, defender.resilience() - attacker.resilience()))) + self.severity)
+                        numSmacks = rand(self.position.maintainability)
+                        attacker.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration, numSmacks))
                     #This will also need to be reworked to use the enemy's spanking strings.
-                    resultString = spanking.reversed_spanking(attacker, defender)
+                    resultString = spanking.reversed_spanking(attacker, defender, position)
                     successFlag = -1
                 else:
                     #This will also need to be reworked to use the enemy's spanking strings.
-                    resultString = spanking.failed_spanking(attacker, defender)
+                    resultString = spanking.failed_spanking(attacker, defender, position)
                     successFlag = 0
             return (resultString, [successFlag], self)
         else:

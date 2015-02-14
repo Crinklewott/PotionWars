@@ -531,6 +531,24 @@ class Person(universal.RPGObject):
     #tall : 5' 10" - 6'"
     #huge : over 6'
 
+    def hisher(self):
+        return person.hisher(self)
+
+    def manwoman(self):
+        return person.manwoman(self)
+
+    def himher(self): 
+        return person.himher(self)
+
+    def heroheroine(self):
+        return person.heroheroine(self)
+
+    def himselfherself(self):
+        return person.himselfherself(self)
+
+    def heshe(self):
+        return person.heshe(self)
+
     def is_average_or_shorter(self):
         return HEIGHTS.index(self.height) <= HEIGHTS.index('average')
 
@@ -1107,6 +1125,9 @@ class Person(universal.RPGObject):
 
     def wearing_pants_or_shorts(self):
         return self.lower_clothing().armorType == items.Pants.armorType or self.lower_clothing().armorType == items.Shorts.armorType
+
+    def wearing_lower_clothing(self):
+        return self.lower_clothing().name != items.emptyLowerArmor.name
 
     def clad_bottom(self, useName=True, pajama=False):
         if pajama:
@@ -3057,6 +3078,15 @@ def SonDaughter(person=None):
         person = universal.state.player
     return choose_string(person, 'Son', 'Daughter')
 
+    def heroheroine(person=None):
+        if person is None:
+            person = universal.state.player
+    return choose_string(person, 'hero', 'heroine')
+
+    def HeroHeroine(person=None):
+        if person is None:
+            person = universal.state.player
+    return choose_string(person, 'Hero', 'Heroine')
 
 #The following functions are used to simplify the LaTeX to Python translation. 
 
@@ -3103,3 +3133,4 @@ def is_female_msg(person, femaleMsg, maleMsg):
 
 def hair_length_based_msg(person, shortMsg, shoulderMsg, backMsg, buttMsg):
     return universal.msg_selector(person.hairLength, {HAIR_LENGTH[0]:shortMsg, HAIR_LENGTH[1]:shoulderMsg, HAIR_LENGTH[2]:backMsg, HAIR_LENGTH[3]:buttMsg})
+

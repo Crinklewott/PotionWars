@@ -232,6 +232,9 @@ class Armor(Item):
     def liftlower(self):
         return "lower"
 
+    def updown(self):
+        return "up"
+
     def restore_liftlower(self):
         return "lift"
 
@@ -329,6 +332,9 @@ class Dress(FullArmor):
     def liftlower(self):
         return "lift"
 
+    def updown(self):
+        return "down"
+
     def restore_liftlower(self):
         return "lower"
 
@@ -410,11 +416,17 @@ class Skirt(LowerArmor):
     def liftlower(self):
         return "lift"
 
+    def updown(self):
+        return "down"
+
     def restore_liftlower(self):
         return "lower"
 
     def lowerlift(self):
         return "lower"
+
+    def downup(self):
+        return "up"
 
     def restore_lowerlift(self):
         return "lift"

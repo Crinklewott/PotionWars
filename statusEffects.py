@@ -104,7 +104,7 @@ class StatusEffect(universal.RPGObject):
 
 class Humiliated(StatusEffect):
     #The number of smacks that need to be landed to increase the penalty by another point. This can be varied for balancing.
-    smacksPerPenaltyPoint = 5
+    smacksPerPenaltyPoint = 1
     name = 'Humiliation'
     def __init__(self, duration, numSmacks):
         super(Humiliated, self).__init__(Humiliated.name, duration, True)

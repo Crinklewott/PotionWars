@@ -20,13 +20,24 @@ import items
 import random
 import universal
 import person
+import positions
 
 LEATHER_STRAP_SEVERITY = 4
 CANE_SEVERITY = 6
 
 allSpankingPositions = {}
 
+OTK = 0 
+STANDING = 1
+ON_THE_GROUND = 2
+
 def spanking_string(top, bottom):
+    #Only enemies contain spanking text
+    try:
+        return top.spanks(bottom)
+    except AttributeError:
+        return bottom.spanked_by(top)
+    """
     spankingStrings = [universal.format_line(
         [top.printedName, '''grabs''', bottom.printedName + "'s", '''arm, and hauls''', person.himher(bottom), '''over''', person.hisher(top), 
             '''knee.''', top.printedName, '''lands a few quick smacks to''', bottom.printedName + "'s", bottom.muscle_adj(), '''bottom, before''', bottom.printedName, 
@@ -42,20 +53,39 @@ def spanking_string(top, bottom):
         ]
 
     return random.choice(spankingStrings)
+    """
 
-def reversed_spanking(top, bottom):
+def reversed_spanking(top, bottom, position):
+    if position == positions.overTheKnee
+        try:
+            return bottom.otk_reversal(top, bottom)
+        except AttributeError:
+            return top.otk_reversal(top, bottom)
+    elif position == positions.standing:
+        try:
+            return bottom.standing_reversal(top, bottom)
+        except AttributeError:
+            return top.standing_reversal(top, bottom)
+    elif position == positions.onTheGround:
+        try:
+            return bottom.on_the_ground_reversal(top, bottom)
+        except AttributeError:
+            return top.on_the_ground_reversal(top, bottom)
+    else:
+        assert False, "Position not defined: %s" % (str(position),)
+
+
+    """
     spankingStrings = [universal.format_line(
         [top.printedName, '''grabs''', bottom.printedName + "'s", '''arm and tries to haul''', person.himher(bottom), '''over''', person.hisher(top), '''knee. However,''',
             bottom.printedName, '''sweeps''', top.printedName + "'s", '''foot out from under''', person.himher(top) + ".", '''While''', top.printedName, '''faceplants,''',
             '''and then tries to scramble back to''', person.hisher(top), '''feet,''', bottom.printedName, '''lands a few hard spanks to''', person.hisher(top),
             top.bum_adj(), '''bottom.''']),
-
         universal.format_line([top.printedName, '''starts to spin''', bottom.printedName, '''around. However,''', bottom.printedName, '''grabs''', top.printedName + "'s", 
             '''arm, and spins''',
             '''into a lunge position.''', person.HeShe(bottom), '''yanks''', top.printedName, '''over''', person.hisher(bottom), '''knee and lands several quick, hard''',
             '''smacks to''', top.printedName + "'s", top.muscle_adj(), '''bottom, before''', top.printedName, '''manages to roll off of''', bottom.printedName + "'s", 
             '''knee and regain''', person.hisher(top), '''feet.''']),
-
         universal.format_line([top.printedName, '''tries to ram''', bottom.printedName, '''onto''', person.hisher(bottom), '''back. However,''', bottom.printedName, 
             '''turns with the push''',
             '''and yanks''', top.printedName + "'s", '''head down.''', top.printedName, '''bends over and stumbles forward, trying to maintain''', person.hisher(top),
@@ -64,8 +94,27 @@ def reversed_spanking(top, bottom):
         ]
 
     return random.choice(spankingStrings)
+    """
 
 def failed_spanking(top, bottom):
+    if position == positions.overTheKnee
+        try:
+            return bottom.otk_failure(top, bottom)
+        except AttributeError:
+            return top.otk_failure(top, bottom)
+    elif position == positions.standing:
+        try:
+            return bottom.standing_failure(top, bottom)
+        except AttributeError:
+            return top.standing_failure(top, bottom)
+    elif position == positions.onTheGround:
+        try:
+            return bottom.on_the_ground_failure(top, bottom)
+        except AttributeError:
+            return top.on_the_ground_failure(top, bottom)
+    else:
+        assert False, "Position not defined: %s" % (str(position),)
+    """
     spankingStrings = [universal.format_line(
         [top.printedName, '''tries to grab''', bottom.printedName + "'s", '''arm, but''', person.heshe(top), '''can't quite get a good grip.''']),
 
@@ -75,6 +124,7 @@ def failed_spanking(top, bottom):
         universal.format_line([top.printedName, '''rams''', bottom.printedName, '''who stumbles, but manages to keep''', person.hisher(bottom), '''feet.'''])
         ]
     return random.choice(spankingStrings)
+    """
             
 
 class SpankingPosition(object):
