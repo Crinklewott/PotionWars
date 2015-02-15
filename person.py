@@ -532,22 +532,28 @@ class Person(universal.RPGObject):
     #huge : over 6'
 
     def hisher(self):
-        return person.hisher(self)
+        return hisher(self)
+
+    def boygirl(self):
+        return boygirl(self)
 
     def manwoman(self):
-        return person.manwoman(self)
+        return manwoman(self)
 
     def himher(self): 
-        return person.himher(self)
+        return himher(self)
 
     def heroheroine(self):
-        return person.heroheroine(self)
+        return heroheroine(self)
 
     def himselfherself(self):
-        return person.himselfherself(self)
+        return himselfherself(self)
 
     def heshe(self):
-        return person.heshe(self)
+        return heshe(self)
+
+    def HeShe(self):
+        return HeShe(self)
 
     def is_average_or_shorter(self):
         return HEIGHTS.index(self.height) <= HEIGHTS.index('average')
@@ -1117,6 +1123,7 @@ class Person(universal.RPGObject):
 
     def is_pantsless(self):
         return self.lower_clothing().name == items.emptyLowerArmor.name
+
     def worn_lower_clothing(self):
         return self.lower_clothing().name if self.lower_clothing() != items.emptyLowerArmor else self.underwear().name
 

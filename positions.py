@@ -28,17 +28,17 @@ class Position(universal.RPGObject):
     """
     Defines the spanking positions
     """
-    def __init__(self, name, difficulty, maintainability, reversability, description):
+    def __init__(self, name, difficulty, maintainability, description):
         self.name = name
         self.difficulty = difficulty
         self.maintainability = maintainability
-        self.reversability = reversability
+        #We're going to eliminate the reversability stat. So we do that by setting it to 0 so we don't have to affect the reversability calculations at all.
+        self.reversability = 0
         self.description = description
         allPositions[self.name] = self
 
     def display(self):
-        return '\n'.join([self.description, 'difficulty: ' + rating(self.difficulty), 'maintainability: ' + rating(self.maintainability), 
-            'reversability: ' + rating(self.reversability)])
+        return '\n'.join([self.description, 'difficulty: ' + rating(self.difficulty), 'maintainability: ' + rating(self.maintainability)])
 
     def __eq__(self, other):
         return self.name == other.name
@@ -48,8 +48,13 @@ class Position(universal.RPGObject):
     def _load(data):
         raise NotImplementedError("Shouldn't be loading positions. These are constant.")
 
-overTheKnee = Position('over the knee', 1, 1, 1, "The spanker sits down on her heels, and yanks the spankee across her lap. This is the position to which all other positions are compared. It is relatively easy to pull off successfully, the spanker can maintain the position for a fair amount of time, and her opponent has a fair chance of reversing.")
+overTheKnee = Position('over the knee', 1, 1, "Positions in this class involve the spanker turning the spankee over her knee. This is the position to which all other positions are compared. It is relatively easy to pull off successfully, and the spanker can maintain the position for a fair amount of time.")
 
+standing = Position('standing', 0, 0, "The spanker remains standing when administering the spanking. Positions in this class include: grabbing the spankee's arm, underarm, and over the shoulder, amongst others. These positions are relatively easy to get into, but they're very hard to maintain. Useful against enemies with a relatively high grapple.")
+
+onTheGround = Position('on the ground', 2, 2, "Positions in this class involve the spankee being on the ground. Such positions include but are not limited to, diaper, reverse riding, and waist between legs. These positions are relatively difficult to get into, but are relatively easy to maintain. These can be devastating against enemies with a relatively low grapple.")
+
+"""
 frontalOverLap = Position('frontal over lap', 1, 2, 2, "The spanker sits down on her heels, spreads her knees, and yanks the spankee down over her lap so that the spankee is facing (roughly) the opposite direction as the spanker. The spanker then wraps her non-spanking arm around the spankee's torso to hold her in place while administering the spanking. Frontal over the lap has a higher chance of getting reversed than OTK. However, it is also easier to maintain.")
 
 overOneKnee = Position('over one knee', 0, 0, 1, "The spanker goes down into a lunge position,  one knee on the ground, with the other leg in front of her at right angles. At the same time, the spanker pulls the spankee across the proferred knee. It is more unstable than the other two over the knee positions, and therefore harder to maintain. However, it also has a lower chance of being successfully reversed.")
@@ -65,3 +70,4 @@ reverseRiding = Position('reverse riding', 1, 3, 3, "The spanker knocks the span
 waistBetweenLegs = Position('waist between legs', 2, 3, 2, "The spanker forces the spankee onto hands and knees, then locks her legs around the spankee's torso. Waist between legs is easier than head between legs, and harder than reverse riding, but almost as maintainable as both. However, it has a relatively high reversability, double that of head between legs, though not quite as bad as reverse riding.")
 
 diaper = Position('diaper', 3, 3, 1, "The spanker shoves the spankee onto her back, then lifts the spankee's legs up perpendicular to the spankee's torso. This is one is very similar to head between legs in that it is difficult to execute, but is easily maintained and is difficult to reverse. The primary difference is that it is slightly easier than head between legs, is slightly harder to maintain, and has a slightly lower chance of being reversed.")
+"""
