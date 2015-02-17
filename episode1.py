@@ -102,6 +102,7 @@ def wearing_underwear():
 
 def inventory():
     return universal.state.player.inventory
+    
 
 def increment_spankings_taken():
     universal.state.player.bumStatus += 1
@@ -950,223 +951,47 @@ class Necia(p.Person):
             self.spankingPositions = [positions.overOneKnee, positions.waistBetweenLegs, positions.headBetweenLegs]
             self.level = 0
 
-    def had_spanking_reversed_by(self, person, position):
-        return self.spanking_reversal_text(person, self, position)
+    def otk_intro(self, top, bottom):
+        if self is top:
+            return universal.format_text([[top.printedName, '''slides under a particularly heavy strike from''', bottom.printedName, '''and extends''', top.hisher(), '''bent leg in front of''',
+            '''the''', bottom.heroheroine() + ".", bottom.printedName, '''trips over the knee, throwing''', bottom.himher(), '''off balance enough for''', top.printedName, 
+            '''to easily pull''', bottom.himher(), '''over the proffered knee.''', top.printedName, '''plants''', top.hisher(), '''holds''', top.hisher(), '''opponent down with one hand while''',
+            top.heshe(), '''raining spank after spank down upon''', bottom.printedName + "'s", bottom.muscle_adj(), '''bottom with the other.''']])
+        else:
+            pass
 
-    def spanking_reversal_text(self, top, bottom, position):
-        T = top.printedName
-        B = bottom.printedName
-        if position == positions.overOneKnee:
-            reversalText = universal.format_text([[T, '''grabs''', B + "'s", '''face and tries to ram it into''', hisher(top), '''knee. However,''', B, '''grabs''', T  + "'s", 
-                '''knee,''',
-                '''and stops it dead. Then,''', heshe(bottom), '''drives''', hisher(bottom), '''fist into''', T + "'s", '''gut, wraps''', hisher(bottom), '''arm around''',
-                T + "'s", '''waist, pivots, and hauls''', T, '''over''', B + "'s", '''proffered knee.\n\n''']])
-            if top.name == 'Necia':
-                reversalText += universal.format_text([['''The woman growls, and twists around, trying to smack''', name(), '''in the face.''', name(), 
-                    '''easily dodges the flailing hand,''',
-                    '''catches it, and pins it against the woman's back. Then,''', heshe(), '''begins sharply slapping the woman's vulnerable bottom.'''],
-                    ['''Much to''', names(), '''chagrin, the woman takes the blows stoically, neither peeping nor twitching as''', names(), '''hand rains blow after blow''',
-                    '''to her round, trousers-clad bottom.'''],
-                    [name(), '''grabs the waistband of the woman's trousers, but before''', heshe(), '''could yank them down, the Vengador's free hand snaps back, and''',
-                        '''grabs''', names(), '''fingers, and gives them a sharp wrench.''', name(), '''cries out and clutches at''', hisher(), '''throbbing fingers.''',
-                        '''With neither hand holding the woman down, she easily falls off of''', names(), '''knee and rolls to her feet.'''],
-                    ['''Though she says nothing, her rage is obvious.''']])
-            else:
-                reversalText += universal.format_text([[name(), '''squirms nervously,''', hisher(), '''face flushing. This is not going according to plan.'''],
-                    ['''The woman chuckles, and smacks''', T + "'s", '''bottom.'''],
-                    ['''Not at all.'''],
-                    ['''The woman lands half a dozen hard smacks to''', top.clad_bottom() + "."],
-                    [name(), '''starts to squirm uneasily, as the heat in''', hisher(), '''bottom builds.''', HeShe(), '''tries several times to roll off of the woman's''',
-                        '''lap, but between the woman's strong grip, and''', names(), '''awkward position,''', heshe(), '''just can't get free.'''],
-                    [name(), '''cranes''', hisher(), '''head back and watches the steady rise and fall of the woman's hand (while trying to ignore the accompanying''',
-                    '''flashes of pain in''', hisher(), '''poor bottom). Once''', heshe(), '''has the timing of the slaps down,''', hisher(), '''hand lances back and''',
-                    '''catches the woman's wrist.''', name(), '''twists and yanks the woman forward. She lurches against''', names(), '''torso, and two fall to the ground''',
-                    '''in a heap. After a few seconds of flailing, the two manage to disentangle themselves, and roll to their feet.'''],
-                    [name(), '''gives''', hisher(), '''stinging bottom a quick rub. Though''', heshe(), '''can't see''', hisher(), '''opponent's expression through the''',
-                        '''mask,''', heshe(), '''is sure she's smirking.''']])
-        elif position == positions.waistBetweenLegs:
-            reversalText = universal.format_text([[T, '''starts to backhand''', B + ",", '''but''', B, '''catches''', T + "'s", '''hand, and kicks''', T, '''in the shin. As''', T,
-                '''hops in pain,''', B, '''sweeps''', hisher(top), '''feet out from under''', himher(top) + ".", '''As''', T, '''teeters,''', B, '''yanks on''', 
-                hisher(top), '''arm, and steps back and to the right.''', T, '''falls forward, landing hard on''', hisher(top), '''hands and knees.''', B, '''swings''', 
-                hisher(bottom), '''legs over''', T + "'s", '''waist, and straddles''', himher(T) + ".\n\n"]]) 
-            if top.name == 'Necia':
-                reversalText += universal.format_text([[name(), '''smiles, leans over, and gives the Vengador's round bottom, currently straining against tight trousers, a''',
-                '''mocking rub.'''],
-                    ['''The Vengador growls, and squirms in a failed attempt to break free.'''],
-                    ['''"Uh-uh. Take your licks like a good girl," says''', name() + ",", '''slapping the woman's vulnerable bottom.'''],
-                    ['''The woman pushes upward, trying to throw''', name(), '''off her back.''', name(), '''jerks''', hisher(), '''right leg back, and dislodges''',
-                        '''the insurgent's arm. While the Vengador teeters,''', name(), '''reaches back and pushes on the woman's shoulder blades, forcing her face and''',
-                        '''upper-body into the ground, and pushing her bottom higher into the air. While continuing to hold the woman down with one hand,''', name(),
-                        '''begins spanking the Vengador's bottom.'''],
-                    ['''Unfortunately,''', name(), '''isn't able to spank the Vengador for long, before the woman manages to get her hands back underneath herself, and''',
-                        '''heave upward, throwing''', name(), '''off.'''],
-                    [name(), '''stumbles forward, and spins back around to continue the confrontation.''']])
-            else:
-                reversalText += universal.format_text([[T, '''freezes. This wasn't what was supposed to-'''],
-                    ['''Crack!'''],
-                    [name(), '''gasps. Then the woman's hand collides with''', names(), '''bottom a second time. Then a third, a fourth, a fifth...'''],
-                    ['''The woman's hands drum against''', names(), '''bottom,''', name(), '''twitching and gasping beneath the bombardment.''', name(), '''reaches back''',
-                        '''and grabs the woman's ankles, tightening''', hisher(), '''abs to keep''', himselfherself(), '''from slumping. With a mighty heave,''', heshe(),
-                        '''surges upward, and throws the woman off of''', hisher(), '''back.''', HeShe(), '''jumps to''', hisher(), '''feet and spins to face the woman,''',
-                        '''who is scrambling back to her own feet.''']])
-        elif position == positions.headBetweenLegs:
-            reversalText = universal.format_text([[T, '''punches''', B, '''in the gut, grabs''', himher(bottom), '''by the hair, and forces''', himher(bottom), 
-            '''to bend over, locking''', hisher(top), '''legs around''', B + "'s", '''neck.''', B, '''grabs the backs of''', T + "'s", '''knees and yanks them forward.''', 
-            T, '''buckles, and for a second slumps over''', B + "'s", '''back.''', B, '''straightens, lifting''', T, '''into the air, and dropping''', himher(top), 
-            '''flat on''', hisher(top), '''back.'''],
-            [B, '''spins around to face''', T + ",", '''as''', T, '''is scrambling to''', hisher(top), '''feet.''', B, '''grabs''', T, '''by the hair, grabs the back of''',
-                T + "'s", T.clothing_below_the_waist().name, '''and yanks''', himher(top), '''towards''', himselfherself(bottom) + ".", HeShe(bottom), '''wraps''', 
-                hisher(bottom), '''legs around''', T + "'s", '''neck, tightens''', hisher(bottom), '''grip on''',  T + "'s", T.clothing_below_the_waist().name, 
-                '''and lifts''', T + "'s", '''bottom up higher into the air.''']])
-            if top.name == 'Necia':
-                reversalText += universal.format_text([[name(), '''yanks on the Vengador's tight trousers, giving her a small wedgie.''', Hisher(), '''hand snapped across the''',
-                '''woman's raised bottom, making it bounce slightly. The woman squirms, and tugs on''', names(), '''legs, but''', name(), '''ignores her, and continues''',
-                '''to batter her bottom. The woman kicks her leg a few times, and rocks her hips, but the squirming does little to mitigate the spanking. Then, the woman''',
-                '''starts to bounce her hips up and down. The bouncing becomes so bad, that''', names(), '''grip on her trousers slips. As soon as she feels the grip''',
-                '''slip, the woman drives forward, ramming her shoulders against''', names(), '''thighs.''', name(), '''sways dangerously for a moment. The woman,''',
-                '''sensing victory, snarls and drives forward a second time, knocking''', name(), '''on''', hisher(), '''back.''', name(), '''quickly rolls back to''', 
-                hisher(), '''feet.''', HeShe(), '''can't quite deny a little smirk as''', heshe(), '''sees the woman give her bottom a light rub.''']])
-            else:
-                if wearing_skirt_or_dress():
-                    reversalText += universal.format_text([[name(), '''grunts and tries futiely to pry apart the Vengador's thighs. Stupid, cow-thighed-'''],
-                        [name(), '''feels''', hisher(), universal.state.player.clothing_below_the_waist().armorType, '''being lifted up over''', hisher(), '''hips. "Hey, no stop!"'''],
-                        ['''The woman laughs mockingly. "Such sexy underwear. I'd mock you for it, but somehow, it really helps with targeting. Kinda like a bulls-eye."'''
-                            if not no_underwear() and PC.underwear().baring else universal.format_text([['''"Stop? Why would I stop? You need to learn what happens when you pick''',
-                            '''a fight with a REAL Taironan."'''], 
-                            ['''"But you started the fight," yelps''', name() + "."]])],
-                        ['''There is a sharp crack, and a shock of pain flares in''', names(), '''bottom. There is another crack, and another shock of pain. Soon, the''',
-                            '''cracks are coming hard and fast, and a hot pain blooms in''', names(), '''bottom.''', name(), '''struggles, squirms, and dances, but''',
-                            '''the wretched Vengador's thighs are like a vice. Desperately,''', name(), '''reaches up around and behind the Vengador's hips, and manages''',
-                            '''to snag the tail of the woman's shirt.''', name(), '''gives the shirt a vicious tug, yanking the woman's torso back. The woman's legs''',
-                            '''instinctively loosen as she backs up a step to mainain her balance.''', name(), '''quickly yanks''', hisher(), '''head free, and scrambles''',
-                            '''backward a few steps, furiously rubbing''', hisher(), '''stinging bottom.''']])
-        return reversalText
-                
+    def otk_round(self, top, bottom):
+        raise NotImplementedError()
 
-    def reversed_spanking_of(self, person, position):
-        return self.spanking_reversal_text(self, person, position)
+    def otk_failure(self, top, bottom):
+        raise NotImplementedError()
 
-    def spanked_by(self, person, position):
-        #self.spankingPositions = [positions.overOneKnee, positions.waistBetweenLegs, positions.headBetweenLegs]
-        top = person
-        bottom = self
-        T = person.printedName
-        Ts = T + "'s"
-        B = self.printedName
-        Bs = B + "'s"
-        if position == positions.overOneKnee:
-            spankedText = universal.format_text([[T, '''and''', B, '''sway and shuffle about the room, locked in the other's deadly grip, each trying to get the advantage. Then,''',
-                T, '''manages to latch onto the back of''', Bs, '''neck and sweeps''', Bs, '''legs out from underneath''', himher(bottom) + ".", B, '''falls painfully to''',
-                hisher(bottom), '''knees.''', T, '''pivots down into a lunge position, and hauls''', B, '''across''', hisher(top), '''knee.'''],
-                [B, '''yelps indignantly, and tries to roll off, but''', Ts, '''hand clamps down on the small of''', hisher(bottom), '''back and holds''', himher(bottom),
-                    '''fast.'''],
-                ['''"Let go of me," snarls''', B, '''squirming uselessly.'''],
-                ['''"Now why would I do that?" asks''', T + ".", HeShe(top), '''gives''', Bs, '''bottom a light rub, then followed by a stinging slap to''', Bs, 
-                    '''left cheek. The cheek bounces slightly beneath the slap, and''', B, '''grunts savagely.'''],
-                [T, '''then leans over''', Bs, '''bottom, and gives''', himher(bottom), '''a fast spanking, the next blow landing before the ripples from the previous''',
-                    '''blow finished.''', B, '''begins to squirm more and more frantically, and the occasional yelp slips from''', hisher(bottom), '''lips. Finally,''',
-                    B, '''manages to slip free of''', Ts, '''grip and roll off''', hisher(top), '''knee.''', B, '''leaps to''', hisher(bottom), '''feet, and charges''',
-                    T, '''with bared teeth.''']])
-        elif position == positions.waistBetweenLegs:
-            spankedText = universal.format_text([[T, '''pivots, and throws''', B, '''into a nearby chest.''', B, '''crashes into the piece of furniture, and rolls over it and''',
-                '''across the ground. As''', heshe(bottom), '''scrambles to''', hisher(bottom), '''feet,''', T, '''dashes up and straddles the other combatant, locking''',
-                hisher(top), '''legs around''', Bs, '''waist, with''', T, '''facing''', Bs, '''behind.'''],
-                [B, '''groans.''', T, '''smirks.'''],
-                ['''With a loud crack,''', T, '''smacks''', Bs, '''bottom. Over and over again,''', Ts, '''hand cracks against''', Bs, '''bottom.''', HeShe(top), 
-                    '''alternates between cheeks, quickly building a fire beneath the seat of''', Bs, '''pants.'''],
-                ['''For''', hisher(bottom), '''part,''', B, '''takes the first few smacks stoically, but soon begins to yelp, and squirm. At one point,''', hisher(bottom),
-                    '''squirming unsteadies''', T, '''giving''', himher(bottom), '''just enough freedom to throw''', T, '''off.'''],
-                [T, '''rolls across the ground, and leaps to''', hisher(top), '''feet. "Sorry. Was I being a little rough?"'''],
-                [B, '''sneers, and scrambles off of the chest. Then,''', heshe(bottom), '''charges the other Taironan.''']])
-        elif position == positions.headBetweenLegs:
-            spankedText = universal.format_text([[T, '''knees''', B, '''between the legs.''', B, '''gasps, and hunches, as waves of nauseating pain ripple across''', hisher(bottom),
-                '''body.'''],
-                [T, '''grabs''', Bs, '''head, and forces''', himher(bottom), '''over. Then,''', heshe(top), '''latches''', hisher(top), '''legs around''', Bs, 
-                    '''neck, and grabs the seat of''', Bs, '''trousers.''', T, '''lifts''', Bs, '''bottom slightly, forcing''', himher(bottom), '''into a (mostly)''',
-                    '''straight-legged position, and pushing''', Bs, '''bottom up into the air. Without further ado,''', T, '''begins slapping''', Bs, '''tight bottom.'''],
-                ['''The muffled crack of hand to clothed flesh echoes throughout the armory.''', Bs, '''bottom jerks slightly beneath each blow, and the trapped Taironan''',
-                    '''clutches at the back of''', Ts, '''knees. The''', boygirl(bottom), '''mewls pitifully.''', T, '''hesitates, and tries to crane back to look at''',
-                    '''the other Taironan's face. Suddenly,''', B, '''lurches, and flings''', T, '''off of''', himher(bottom) + "."],
-                [T, '''hits the ground, and rolls backt to''', hisher(top), '''feet.'''],
-                ['''"Moron," says''', B + "."],
-                ['''"Says the''', boygirl(bottom), '''with a smarting bottom," says''', T + "."],
-                [B, '''sneers, and charges''', T + "."]])
-        return spankedText
+    def otk_reversal(self, top, bottom):
+        raise NotImplementedError()
 
-    def spanks(self, person, position):
-        #self.spankingPositions = [positions.overOneKnee, positions.waistBetweenLegs, positions.headBetweenLegs]
-        top = self
-        bottom = person
-        T = self.printedName
-        Ts = T + "'s"
-        B = person.printedName
-        Bs = B + "'s"
-        if position == positions.overOneKnee:
-            spankedText = universal.format_text([[T, '''wrenches''', himselfherself(top), '''free of''', Bs, '''grip, and backs up a step.''', HeShe(top), '''lowers''', hisher(top), 
-            '''shoulder, and barrels shoulder-first into''', B + ".", '''The two stumble backwards, and crash into an empty armor rack.''', T, '''grabs''', B, 
-            '''around the waist, and drops down into a lunge, hauling''', B, '''over''', hisher(top), '''knee.'''],
-            [B, '''curses, and squirms uselessly in''', Ts, '''grip.'''],
-            ['''"Such naughty language," says''', T + ",", '''smacking''', Bs, '''right cheek. "Seems to me somebody desperately needs a spanking."'''],
-            ['''"Then let me go, and bend-oww!"''', B, '''yelps as another stinging smack cracks against''', hisher(bottom), '''left cheek.'''],
-            ['''"Oh very clever," says''', T + ".", HeShe(top), '''administers three hard smacks to''', Bs, '''right cheek. "Trying to make it sound like I need the''',
-                '''spanking. No one's ever done that before."'''],
-            ['''"Let go of me," says''', B + ",", '''kicking''', hisher(bottom), '''legs. "If anyone deserves a spanking it's you! You're the one who attacked me."'''],
-            ['''"Sorry, little''', boygirl(bottom) + ".", T, '''begins peppering''', Bs, '''bottom, quickly building a stinging burn. "But might makes right around''',
-                '''here."'''],
-            ['''"What does-oww-that have to with-aggh-anything?" snaps''', B + ",", '''vainly kicking''', hisher(bottom), '''feet.'''],
-            [T, '''gives''', Bs, '''bottom a squeeze. "It means I'm tough enough to spank you, so I decide what's a spanking offense."'''],
-            [B, '''growls savagely, and throws''', himselfherself(bottom), '''off of''', Ts, '''knee.''', HeShe(bottom), '''rolls across the ground, and springs to''',
-                hisher(bottom), '''feet. "I'll show you whose tough enough to spank who!"''']])
-        elif position == positions.waistBetweenLegs:
-            spankedText = universal.format_text([[T, '''grabs''', Bs, '''hair in a vicious, painful grip.''', B, '''cries out, and reaches back to grap''', Ts, '''hand.''', B,
-                '''sweeps''', Bs, '''feet out from underneath''', himher(bottom) + ",", '''forcing''', himher(bottom), '''to''', hisher(bottom), '''knees. Then,''', 
-                heshe(top), '''side-stepped, shoved hard on''', Bs, '''head, driving''', hisher(top), '''opponent onto''', hisher(bottom), '''hands and knees.''', 
-                HeShe(top), '''straddled''', Bs, '''waist, and locked''', hisher(top), '''legs around the other's waist.'''],
-                [T, '''leans over, and begins spanking''', Bs, '''bottom.'''],
-                [B, '''squirms, and rocks''', hisher(bottom), '''hips beneath the harsh smacks. Casting about desperately,''', hisher(bottom), '''hands chance upon an''',
-                '''empty armor rack that had been tipped over. With grunt,''', heshe(bottom), '''snaps the rack backwards, and cracks''', T, '''on the back of the head.'''],
-                [T, '''falls over''', Bs, '''bottom, who shakes''', hisher(bottom), '''opponent off.''', B, '''scramlbes to''', hisher(bottom), '''feet, and spins to''',
-                '''face''', T + "."]])
-        elif position == positions.headBetweenLegs:
-            spankedText = universal.format_text([[T, '''and''', B, '''wrestle back and forth, each fighting for an advantage. Then,''', T, '''pulls''', B, '''into a slight hunch,''',
-                '''smashes''', hisher(top), '''fist against the back of''', Bs, '''head.''', B, '''falls down onto''', hisher(bottom), '''hands and knees, and''', T, 
-                '''latches''', hisher(top), '''legs around''', Bs, '''neck.''', HeShe(top), '''grabs''', top.clad_bottom(), '''and pulls''', Bs, '''butt up high.'''],
-                ['''"Let me go you miserable-oww!"''', B, '''yelps as''', Ts, '''hand cracks against''', hisher(bottom), '''vulnerable bottom. Blow after blow rains down''',
-                    '''on''', Bs, '''bottom, while the crack of hand to bottom batters against''', hisher(bottom), '''ears.'''],
-                ['''"Anyone ever tell you what a perfect target your bottom makes?" asks''', T + ".", '''"Really, it's like fishing in a barrel."'''],
-                ['''"Oh shut up and let me go," says''', B + ",", '''tugging at''', Ts, '''legs.'''],
-                ['''"How pathetic."''', T, '''cracks''', hisher(top), '''lands four hard smacks to the middle of''', Bs, '''bottom. "A Taironan would never ask to be''',
-                    '''freed."''', HeShe(top), '''administers five hard smacks to''', Bs, '''right cheek.''', '"' + HeShe(bottom), '''would free''', himselfherself(bottom) +
-                    '!"'],
-                ['''"Fine."''', B, '''snarls, and with a mighty heave, drives forward, slamming''', hisher(bottom), '''shoulders against''', Ts, '''shins. The other''',
-                    '''Taironan sways, and with the extra freedom''', B, '''manages to get''', hisher(bottom), '''feet underneath''', himselfherself(bottom) + ".", 
-                    B, '''rockets upward, throwing''', T, '''off of''', himher(bottom) + "."],
-                [T, '''flies through the air and hits the ground hard.''', HeShe(T), '''rolls across the ground, and jumps to''', hisher(top), '''feet.''', HeShe(top),
-                    '''grins. "That's what I'm talking about. Come on, fight me like a true Taironan."''']])
-        return spankedText
+    def standing_intro(self, top, bottom):
+        raise NotImplementedError()
 
-    def avoided_spanking_by(self, person, position):
-        return self.spanking_missed_text(person, self, position)
+    def standing_round(self, top, bottom):
+        raise NotImplementedError()
 
-    def spanking_missed_text(self, top, bottom, position):              
-        T = top.printedName
-        Ts = T + "'s"
-        B = bottom.printedName
-        Ts = B + "'s"
-        if position == positions.overOneKnee:
-            return universal.format_text([[T, '''grabs''', B, '''around the shoulders, and starts to pivot, and haul''', B, '''across''', hisher(top), '''knee. However,''', B, 
-                '''smashes the heel of''', hisher(bottom), '''hand into''', Ts, '''cheek, right next to''', hisher(top), '''eye.''', Ts, '''head jerks to the side, and''',
-                heshe(top), '''stumbles, all attempts to paddle''', B, '''forgotten.''']])
-        elif position == positions.waistBetweenLegs:
-            return universal.format_text([[T, '''laces''', hisher(top), '''fingers around''', Bs, '''neck and tries to force''', himher(bottom), '''to bend over.''', B, 
-            '''smashes''', hisher(bottom), '''arms against''', Ts, '''elbows, forcing the other Taironan to release''', himher(bottom), '''or risk having''', hisher(top),
-            '''arms broken.''']])
-        elif position == positions.headBetweenLegs:
-            return universal.format_text([[T, '''rams''', hisher(top), '''knee into''', Bs, '''gut, but''', B, '''manages to block''', Ts, '''knee with''', hisher(top), 
-            '''own.''']])
+    def standing_failure(self, top, bottom):
+        raise NotImplementedError()
 
-    def failed_to_spank(self, person, position):
-        return self.spanking_missed_text(self, person, position)
+    def standing_reversal(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_intro(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_failure(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_reversal(self, top, bottom):
+        raise NotImplementedError()
 
     def set_default_stats(self):
         if universal.DEBUG:
