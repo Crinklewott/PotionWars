@@ -1,4 +1,4 @@
-""" Copyright 2014 Andrew Russell
+""" Copyright 2014-2015 Andrew Russell
 
 This file is part of PotionWars.
 PotionWars is free software: you can redistribute it and/or modify
@@ -119,7 +119,7 @@ class VengadorWarrior(Enemy):
     #def __init__(self, name, gender, defaultLitany, description="", printedName=None, 
             #coins=20, specialization=BALANCED)
     def __init__(self, gender, level=0, identifier=None):
-        super(VengadorWarrior, self).__init__('Vengador Warrior', gender, None, specialization=universal.WARFARE, bodyType='voluptuous', musculature='muscular', 
+        super(VengadorWarrior, self).__init__('Vengador Warrior', gender, None, specialization=universal.DEXTERITY, bodyType='voluptuous', musculature='muscular', 
                 height='tall', identifier=identifier)
         self.level = level
         #self.equip(copy.copy(itemspotionwars.leatherCuirass))
@@ -553,7 +553,7 @@ class VengadorSpellslinger(Enemy):
 
 class VengadorScout(Enemy):
     def __init__(self, gender, level=0, identifier=None):
-        super(VengadorScout, self).__init__('Vengador Scout', gender, None, specialization=person.GRAPPLE, bodyType='slim', height='average', musculature='fit', identifier=identifier)
+        super(VengadorScout, self).__init__('Vengador Scout', gender, None, specialization=person.STRENGTH, bodyType='slim', height='average', musculature='fit', identifier=identifier)
         self.level = level
         self.equip(copy.copy(itemspotionwars.tunic))
         self.equip(copy.copy(itemspotionwars.trousers))

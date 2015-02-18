@@ -288,7 +288,7 @@ class Person(universal.RPGObject):
     """
     def __init__(self, name, gender, defaultLitany, litany, description="", printedName=None, 
             coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle='', marks=None,
-            musculature='', hairLength='', height='', bodyType='', identifier=None): 
+            musculature='', hairLength='', height='', bodyType='', identifier=None, weaknesses=None): 
         self.name = name
         self.gender = gender
         self.previousTarget = 0
@@ -369,6 +369,7 @@ class Person(universal.RPGObject):
             self.marks = marks
         self.identifier = identifier
         universal.state.add_character(self)
+        self.weaknesses = weaknesses if weaknesses else []
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -493,7 +494,7 @@ class Person(universal.RPGObject):
 
     def quivering(self):
         if self.musculature == 'soft':
-            adjList = ['rippling', 'jumping', 'flattening']
+            adjList = ['rippling', 'jumping']
         elif self.musculature == 'fit':
             adjList = ['spasming', 'bouncing', 'shaking']
         elif self.musculature == 'muscular':
@@ -809,6 +810,9 @@ class Person(universal.RPGObject):
 
     def is_specialized_in(self, specialization):
         return self.specialization == specialization
+
+    def is_weak_in(self, stat):
+        return stat in self.weaknesses
 
     def is_specialized_in_magic(self):
         return (self.is_specialized_in(COMBAT_MAGIC) or self.is_specialized_in(BUFF_MAGIC) or 
@@ -1153,7 +1157,6 @@ class Person(universal.RPGObject):
     def wearing_underwear(self):
         return self.underwear().name == items.emptyUnderwear.name
 
-
     def pajama_top(self):
         return self.equipmentList[PAJAMA_TOP]
 
@@ -1181,8 +1184,8 @@ class Person(universal.RPGObject):
             statList.append('Mana: '   + str(self.primaryStats[-1]) + '/' + str(self.primaryStats[-3]))
         elif self.mainStatDisplay == 2:
             spellCategoryNames = {0:'combat', 1:'status', 2:'buff', 3:'spectral'}
-            statList = [': '.join([universal.primary_stat_name(stat) if stat < len(self.primaryStats[:-3]) else spellCategoryNames[stat-len(self.primaryStats[:-3])], pointStatus]) for (stat, pointStatus) in zip([i for i in 
-                range(0, len(self.primaryStats[:-3]) + NUM_SPELL_CATEGORIES)], self.compute_point_status())]
+            statList = [': '.join([universal.primary_stat_name(stat) if stat < len(self.primaryStats[:-3]) else spellCategoryNames[stat-len(self.primaryStats[:-3])], pointStatus]) for 
+                    (stat, pointStatus) in zip([i for i in range(0, len(self.primaryStats[:-3]) + NUM_SPELL_CATEGORIES)], self.compute_point_status())]
         return '\n'.join(statList)
 
     def compute_point_status(self):
@@ -1191,8 +1194,15 @@ class Person(universal.RPGObject):
         """
         statPointData = []
         for statPoint, statIndex in zip(self.increaseStatPoints, range(0, len(self.primaryStats[:-3]))):
+            spells = [universal.COMBAT_MAGIC, universal.BUFF_MAGIC, universal.STATUS_MAGIC, universal.SPECTRAL_MAGIC]
+            if self.is_specialized_in(statIndex) or (statIndex == universal.TALENT and self.specialization in spells):
+                specialtyModifier = .5
+            elif self.is_weak_in(statIndex):
+                specialtyModifier = 2
+            else:
+                specialtyModifier = 1
             primaryStatValue = self.primaryStats[statIndex]
-            statPointData.append('/'.join([str(statPoint), str(primaryStatValue if statIndex == universal.HEALTH else primaryStatValue * STAT_GROWTH_RATE_MULTIPLIER)]))
+            statPointData.append('/'.join([str(statPoint), str(primaryStatValue if statIndex == universal.HEALTH else primaryStatValue * STAT_GROWTH_RATE_MULTIPLIER * specialtyModifier)]))
         for statPoint, statIndex in zip(self.increaseSpellPoints, range(0, NUM_SPELL_CATEGORIES)):
             spellStatValue = self.tier * STAT_GROWTH_RATE_MULTIPLIER if self.tier else TIER_0_SPELL_POINTS
             statPointData.append('/'.join([str(statPoint), str(spellStatValue)]))

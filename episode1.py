@@ -694,7 +694,7 @@ offStage.add_character(ildri)
 
 class Edita(p.Person):
     def __init__(self, defaultLitany, litany, description="A short, painfully thin young woman with a nicked dagger and battered breastplate.", 
-            printedName=None, coins=20, specialization=universal.RESILIENCE):
+            printedName=None, coins=20, specialization=universal.WILLPOWER):
             super(Edita, self).__init__("Edita", p.FEMALE, defaultLitany, litany,
                         description, printedName, coins, specialization, p.sixth_order, musculature='fit', height='short', bodyType='slim', hairLength='shoulder-length')
             self.spankingPositions = [positions.overTheKnee, positions.underarm, positions.reverseRiding]
@@ -945,53 +945,89 @@ edita.equip(itemspotionwars.raggedTunic)
 
 class Necia(p.Person):
     def __init__(self, defaultLitany, litany, description="A short, painfully thin young woman with a wicked dagger and well-made leather breastplate.", 
-            printedName=None, coins=20, specialization=universal.WARFARE):
+            printedName=None, coins=20, specialization=universal.DEXTERITY):
             super(Necia, self).__init__("Necia", p.FEMALE, defaultLitany, litany,
                         description, printedName, coins, specialization, p.second_order, bodyType='average', height='average', musculature='fit', hairLength='short')
             self.spankingPositions = [positions.overOneKnee, positions.waistBetweenLegs, positions.headBetweenLegs]
             self.level = 0
 
     def otk_intro(self, top, bottom):
-        if self is top:
-            return universal.format_text([[top.printedName, '''slides under a particularly heavy strike from''', bottom.printedName, '''and extends''', top.hisher(), '''bent leg in front of''',
-            '''the''', bottom.heroheroine() + ".", bottom.printedName, '''trips over the knee, throwing''', bottom.himher(), '''off balance enough for''', top.printedName, 
-            '''to easily pull''', bottom.himher(), '''over the proffered knee.''', top.printedName, '''plants''', top.hisher(), '''holds''', top.hisher(), '''opponent down with one hand while''',
-            top.heshe(), '''raining spank after spank down upon''', bottom.printedName + "'s", bottom.muscle_adj(), '''bottom with the other.''']])
-        else:
-            pass
+        return universal.format_text([[top.printedName, '''slides under a particularly heavy strike from''', bottom.printedName, '''and extends''', top.hisher(), '''bent leg in front of''',
+        '''the''', bottom.heroheroine() if self is top else '''Vengador''' + ".", bottom.printedName, '''trips over the knee, throwing''', bottom.himher(), '''off balance enough for''', 
+        top.printedName, 
+        '''to easily pull''', bottom.himher(), '''over the proffered knee.''', top.printedName, '''plants''', top.hisher(), '''holds''', top.hisher(), '''opponent down with one hand while''',
+        top.heshe(), '''raining spank after spank down upon''', bottom.printedName + "'s", bottom.muscle_adj(), '''bottom with the other.''']])
 
     def otk_round(self, top, bottom):
-        raise NotImplementedError()
+        return universal.format_text([[bottom.printedName, '''struggles to extricate''', bottom.himselfherself(), '''from''', top.printedName + "'s", '''hold on''', bottom.himher() + ",", 
+            '''but being an expert grappler,''', bottom.hisher(), '''opponent simply catches the''', bottom.heroheroine() if self is top else "Vengador" + "'s", 
+            '''flailing hand and pins it to the small of''', 
+            bottom.hisher(), '''back.''', '''Continuing''', top.hisher(), '''work on''', bottom.printedName + "'s", '''backside,''', top.printedName, '''puts''', top.hisher(), 
+            '''considerable full strength behind the swats, bringing tears to the''', bottom.heroheroine() if self is top else 'Vengador' + "'s", '''eyes.''']])
 
     def otk_failure(self, top, bottom):
-        raise NotImplementedError()
+        return universal.format_text([[top.printedName, '''slides under a particularly heavy strike from''', bottom.printedName, '''and extends''', top.hisher(), '''bent leg in front of''',
+            bottom.printedName + ",", '''in an effort to trip''', bottom.printedName + ",", '''but the''', '''adventurer''' if self is top else '''Vengador''', '''makes a hasty leap back.''']])
 
     def otk_reversal(self, top, bottom):
-        raise NotImplementedError()
+        return universal.format_text([[top.printedName, '''slides under a particularly heavy strike from''', bottom.printedName, '''and extends''', top.hisher(), 
+            '''bent leg in front of the''', bottom.heroheroine() if self is top else '''Vengador''' + '''.''', '''But''', bottom.printedName, '''kicks the''', top.printedName + "'s", '''hard.''', 
+            top.printedName, '''stumbles,''',
+            '''and hunches over to clutch at''', top.hisher(), '''throbbing knee.''', bottom.printedName, '''drops onto''', bottom.hisher(), '''knee, and hauls''', bottom.hisher(), 
+            '''opponent across the other. Then,''', bottom.heshe(), '''begins to rain spanks upon''', top.printedName + "'s", top.muscle_adj(), '''bottom.''']])
 
     def standing_intro(self, top, bottom):
-        raise NotImplementedError()
+        return universal.format_text([[top.printedName, '''counters''', bottom.printedName + "'s", '''blow with a fierce strike, nearly knocking the other Taironan's weapon out of''', 
+            bottom.hisher(), '''hand. The moment''', bottom.printedName, '''takes to regain''', bottom.hisher(), '''grip is enough time for''', top.printedName, '''to dash up to''', 
+            bottom.himher() + ',', '''spin''', bottom.himher(), '''around by the arm and deliver several quick smacks to''', bottom.hisher(), bottom.bum_adj(), '''bottom.''']])
 
     def standing_round(self, top, bottom):
-        raise NotImplementedError()
+        return universal.format_text([[top.printedName, '''pins''', bottom.printedName + "'s", '''weapon arm against''', bottom.printedName + "'s", '''side long enough to land several more solid''',
+            '''swats to''', bottom.hisher(), '''behind, now''', bottom.quivering(), '''from the hard impacts.''', bottom.printedName, '''squeals and shakes''', bottom.hisher(), bottom.muscle_adj(),
+            '''bottom to lessen the sting, but''', top.printedName, '''holds''', bottom.himher(), '''firmly.''']])
 
     def standing_failure(self, top, bottom):
-        raise NotImplementedError()
+        return universal.format_text([[top.printedName, '''counters''', bottom.printedName + "'s", '''blow with a fierce strike, nearly knocking the''', 
+            bottom.heroheroine() if self is top else "Vengador" + "'s", '''weapon out''',
+            '''of''', bottom.hisher(), '''hand. However,''', bottom.printedName, '''is able to regain control too quickly for''', top.printedName, '''to take advantage of the momentary opening.''']])
 
     def standing_reversal(self, top, bottom):
-        raise NotImplementedError()
+        return universal.format_text([[bottom.printedName, '''stumbles after a fierce counter from''', top.printedName + ",", bottom.hisher(), '''grip loosening.''' top.printedName, 
+        '''pounces, grabbing''', bottom.printedName + "'s", '''arm and starting to spin''', bottom.himher(), '''around. However,''', bottom.printedName, '''suddenly headbutts''', top.printedName,
+        '''wrenches''', bottom.hisher(), '''arm free, and grabs''', top.printedName + "'s", '''forearm. Then,''', bottom.heshe(), '''spins''', top.printedName, '''around by the shoulder, and''',
+        '''begins delivering solid slaps to the''', '''Vengador''' if self is top else bottom.heroheroine() + "'s", top.muscle_adj(), '''bottom.''']])
 
     def on_the_ground_intro(self, top, bottom):
-        raise NotImplementedError()
+        return universal.format_text([[top.printedName, '''ducks''', bottom.printedName + "'s", '''close-range''', 
+            '''swipe''' if bottom.weapon().weaponType == items.Sword.weaponType else '''thrust''', '''and sweeps''', bottom.printedName + "'s", '''ankles out from under''', bottom.himher() + ".",
+            '''With the''', bottom.heroheroine() if self is top else '''Vengador''', '''on''', bottom.hisher(), '''hands and knees,''', top.printedName, '''has no trouble hooking a leg around''',
+            bottom.hisher(), '''waist and locking''', bottom.printedName, '''in place. After pulling the''', '''adventurer's''' if self is top else '''invader's''', 
+            bottom.clothing_below_the_waist(), 
+            ' '.join(['''tight against''', bottom.hisher(), bottom.bum_adj(), '''bottom,''']) if bottom.clothing_below_the_waist().liftlower() == 'lift' else ' '.join(['''up, over''', 
+                bottom.printedName + "'s", '''hips, and exposing''', bottom.printedName + "'s", bottom.underwear().name + ","]),
+            top.printedName, '''begins swatting''', bottom.printedName + "'s", bottom.muscle_adj(), '''bottom with the other, the smacks echoing through the room.''']])
+
 
     def on_the_ground_round(self, top, bottom):
-        raise NotImplementedError()
+        return universal.format_text([['''Desperate,''', bottom.printedName, '''twists''', bottom.hisher(), '''body around sharply in an attempt to knee''', top.printedName, 
+        ''''in the shin. However, the fighter deftly lifts''', top.hisher(), '''leg to dodge the blow, then brings''', top.hisher(), '''foot down on the inside of''', bottom.printedName + "'s", 
+        '''calf.''', top.printedName, '''then grabs''', bottom.printedName + "'s", '''other leg with''', top.hisher(), '''free hand and delivers four especially stinging smacks to the inside of''',
+        '''the vulnerable''', bottom.boygirl() + "'s", '''thigh as extra punishment for''', bottom.printedName + "'s", '''audacity, before returning to spanking''', bottom.hisher(), 
+        bottom.bum_adj(), '''bottom.''']])
 
     def on_the_ground_failure(self, top, bottom):
-        raise NotImplementedError()
+        return universal.format_text([[top.printedName, '''ducks''', bottom.printedName + "'s", '''close-range''', 
+            '''swipe''' if bottom.weapon().weaponType == items.Sword.weaponType else '''thrust''',
+            '''and tries to sweep''', bottom.printedName + "'s", '''ankles. The latter, however, is able to jump over the attack at the last moment and land solidly on''', bottom.hisher(), 
+            '''feet.''']])
 
     def on_the_ground_reversal(self, top, bottom):
-        raise NotImplementedError()
+        return universal.format_text([[top.printedName, '''ducks''', bottom.printedName + "'s", '''close-range''', 
+            '''swipe''' if bottom.weapon().weaponType == items.Sword.weaponType else '''thrust''', '''and tries to sweep the''', bottom.heroheroine() if self is top else '''Vengador''' + "'s", 
+            '''ankles.''', bottom.printedName, '''stops''', top.printedName, '''calf with''', bottom.hisher(), '''heel and knocks''', top.printedName + "'s", '''leg wide.''', top.printedName,
+            '''stumbles, and''', bottom.printedName, '''gives''', top.himher(), '''a hard shove, knocking''', top.himher(), '''on''', top.hisher(), '''back.''' top.printedName, '''rolls onto''',
+            top.hisher(), '''hands and knees, but then''', bottom.printedName, '''locks''', bottom.hisher(), '''legs around''', top.hisher(), '''midsection and starts swatting the writhing''',
+             '''Vengador''' if self is top else top.heroheroine() + "'s", ''' derriere.''']])
 
     def set_default_stats(self):
         if universal.DEBUG:

@@ -220,16 +220,11 @@ class AttackAction(CombatAction):
         except AttributeError:
             pass
         if defender.guardian:
-            success = rand(CHANCE_RANGE + compute_bonus(max(0, defender.guardian.warfare() - attacker.warfare())))
-            failure = rand(CHANCE_RANGE)
-            if failure <= success:
-                self.defenders[0] = defender.guardian
-                attackEffect = self.effect(inCombat, allies, enemies)
-                return ('\n'.join([' '.join([defender.guardian.printedName, 'defends', defender.printedName, 'from', attacker.printedName + '!']), attackEffect[0]]), 
-                        attackEffect[1], attackEffect[2]) 
-            else:
-                resultString = ' '.join([defender.guardian.printedName, 'fails to defend', defender.printedName, 'from', attacker.printedName + '!'])
-                defender.guardian = None
+            self.defenders[0] = defender.guardian
+            attackEffect = self.effect(inCombat, allies, enemies)
+            defender.guardian = None
+            return ('\n'.join([' '.join([defender.guardian.printedName, 'defends', defender.printedName, 'from', attacker.printedName + '!']), attackEffect[0]]), 
+                    attackEffect[1], attackEffect[2]) 
         if not defender.guardian:
             attacker = self.attacker
             wa = attacker.weapon()
@@ -319,22 +314,17 @@ class GrappleAction(CombatAction):
         if attacker.is_grappling() and not attacker.is_grappling(defender):
             return BreakGrappleAction(attacker, attacker.grapplingPartner).effect(inCombat, allies, enemies)
         elif defender.guardian is not None and not defender.is_grappling(attacker):
-            success = rand(CHANCE_RANGE + compute_bonus(max(0, defender.guardian.grapple() - attacker.grapple())))
-            failure = rand(CHANCE_RANGE)
-            if failure <= success:
-                resultString = ' '.join([defender.guardian.printedName, 'defended', defender.printedName, 'from', attacker.printedName + '!'])
-                self.defenders = [defender.guardian]
-                grappleEffect = self.effect(inCombat, allies, enemies)
-                if grappleEffect[1]:
-                    #If the attacker is grappling the defender's guardian, the guardian can no longer protect the defender.
-                    defender.guardian = None
-                return ('\n'.join([resultString, grappleEffect[0]]), grappleEffect[1], grappleEffect[2])
-            else:
-                resultString = ' '.join([defender.guardian.printedName, 'fails to defend', defender.printedName, 'from', attacker.printedName + '!'])
+            resultString = ' '.join([defender.guardian.printedName, 'defended', defender.printedName, 'from', attacker.printedName + '!'])
+            self.defenders = [defender.guardian]
+            defender.guardian = None
+            grappleEffect = self.effect(inCombat, allies, enemies)
+            if grappleEffect[1]:
+                #If the attacker is grappling the defender's guardian, the guardian can no longer protect the defender.
                 defender.guardian = None
+            return ('\n'.join([resultString, grappleEffect[0]]), grappleEffect[1], grappleEffect[2])
         elif attacker.is_grappling(defender):
             return AttackAction(attacker, defender).effect(True, allies, enemies)
-        if defender.guardian is None:               
+        if not defender.guardian:               
             if defender.is_grappling() and not defender.is_grappling(attacker):
                 return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
             wa = attacker.weapon()

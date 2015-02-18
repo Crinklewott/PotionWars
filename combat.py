@@ -437,13 +437,7 @@ def increment_stat_points():
         increaseStat = action.attacker.increaseStatPoints
         increaseSpellPoints = action.attacker.increaseSpellPoints
         if action.attacker in allies:
-            if action.attacker.is_bonus(action.primaryStat):
-                pointGain = PRIMARY_POINTS + 1
-            elif action.attacker.is_penalty(action.primaryStat):
-                pointGain = PRIMARY_POINTS - 1
-            else:
-                pointGain = PRIMARY_POINTS
-            increaseStat[action.primaryStat] += pointGain
+            increaseStat[action.primaryStat] += PRIMARY_POINTS
             try:
                 increaseSpellPoints[action.spellType] += action.spell_points()
             except AttributeError:
@@ -458,7 +452,7 @@ def increment_stat_points():
             for defender in action.defenders:
                 defender.increaseStatPoints[action.primaryStat] += SECONDARY_POINTS
     for ally in allies:
-        ally.increaseStatPoints[universal.ALERTNESS] += 2 if ally.is_bonus(universal.ALERTNESS) else 1
+        ally.increaseStatPoints[universal.ALERTNESS] += SECONDARY_POINTS
 
 def begin_round_interpreter(keyEvent):
     global chosenActions, chosenTargets
@@ -1602,13 +1596,19 @@ def improve_characters(victorious, afterCombatEvent=None):
             '''
             statPoints = ally.increaseStatPoints[i]
             stat = ally.stat(i) if i == universal.HEALTH else ally.stat(i) * universal.STAT_GROWTH_RATE_MULTIPLIER 
+            spells = [universal.COMBAT_MAGIC, universal.STATUS_MAGIC, universal.BUFF_MAGIC, universal.SPECTRAL_MAGIC]
+            specialtyModifier = 1
+            if ally.is_specialized_in(i) or (i == universal.TALENT and ally.specialization in spells):
+                specialtyModifier = .5
+            elif ally.is_weak_in(i):
+                specialtyModifier = 2
             gain = 0
             manaGain = 0
-            print("stat:" + universal.primary_stat_name(i))
-            print("stat points: " + str(statPoints))
-            print("stat points needed: " + str(stat))
-            while stat <= statPoints:
-                print(' '.join(["Improving stat:", universal.primary_stat_name(i)])) 
+            #print("stat:" + universal.primary_stat_name(i))
+            #print("stat points: " + str(statPoints))
+            #print("stat points needed: " + str(stat))
+            while int(floor(stat * specialtyModifier)) <= statPoints:
+                #print(' '.join(["Improving stat:", universal.primary_stat_name(i)])) 
                 if i == universal.HEALTH:
                     print("Improving Health")
                     gain += int(math.ceil(stat * .25)) + statPoints - stat
@@ -1627,9 +1627,9 @@ def improve_characters(victorious, afterCombatEvent=None):
                     ally.increaseStatPoints[i] -= stat 
                 statPoints = ally.increaseStatPoints[i]
                 stat = ally.stat(i) * universal.STAT_GROWTH_RATE_MULTIPLIER
-                print("Improving stat")
-                print(stat)
-                print(statPoints)
+                #print("Improving stat")
+                #print(stat)
+                #print(statPoints)
                 #print(maxStats[i])
                 #print(ally.get_stat(i))
                 #print(specialization_bonus(ally, i))
