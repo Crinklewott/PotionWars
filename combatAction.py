@@ -121,7 +121,7 @@ class CombatAction(universal.RPGObject):
         """
         return
 
-    def _save():
+    def _save(self):
         raise NotImplementedError()
 
     def grappling_string(self):
@@ -405,7 +405,7 @@ class BreakGrappleAction(CombatAction):
             else:
                 return(' '.join([attacker.printedName, 'fails to break the grapple with', defender.printedName + '!']), [False], self)
         else:
-            return DefendAction(attacker, attacker).effect(inCombat, allies, enemies).effect(inCombat, allies, enemies)
+            return DefendAction(attacker, attacker).effect(inCombat, allies, enemies)
 
 class RunAction(CombatAction):
     targetType = ALLY
@@ -464,6 +464,7 @@ class SpankAction(CombatAction):
         """
         attacker = self.attacker
         defender = self.defenders[0]
+        position = self.position
         opponents = enemies if self.attacker in allies else allies
         if not defender in opponents:
             return AttackAction(attacker, opponents[randrange(0, len(opponents))]).effect(inCombat, allies, enemies)
@@ -558,7 +559,7 @@ class ThrowAction(CombatAction):
                     failure = rand(wd.grapple_bonus())
                     success = rand(bonus + wa.grapple_bonus())
                     if failure <= success:
-                        dam1 = max(1, int(math.floor(rand(damRange[1] + betterStat) + damRange[0] - defender.defense())))
+                        dam1 = max(1, int(math.floor(rand(damRange[1] + attacker.grapple()) + damRange[0] - defender.defense())))
                         defender.receives_damage(dam1)
                         resultString = '\n'.join([' '.join([attacker.printedName, 'throws', grappler.printedName, 'for', str(dam), 'damage!']), 
                             ' '.join([attacker.printedName, 'strikes', defender.printedName, 'for', str(dam), 'damage!'])])

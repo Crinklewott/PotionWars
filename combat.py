@@ -115,9 +115,9 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
     initialEnemies = []
     initialAllies = []
     for ally in universal.state.allies:
-        initialAllies.append((ally.get_id(), list(ally.primaryStats), dict(ally.statusList), list(ally.increaseSpellPoints), list(ally.increaseStatPoints)))
+        initialAllies.append((ally.get_id(), list(ally.primaryStats), dict(ally.statusDict), list(ally.increaseSpellPoints), list(ally.increaseStatPoints)))
     for enemy in universal.state.enemies:
-        initialEnemies.append((enemy.get_id(), list(enemy.primaryStats), dict(enemy.statusList)))
+        initialEnemies.append((enemy.get_id(), list(enemy.primaryStats), dict(enemy.statusDict)))
     boss = bossFight
     ambush = ambushIn
     enemies = universal.state.enemies
@@ -745,34 +745,29 @@ def run():
     chosenActions.append(combatAction.RunAction(activeAlly, None))
     next_character()
 def spank():
-    chosenActions.append(combatAction.SpankAction(activeAlly, activeAlly.grapplingPartner))
-    next_character()
+    positions = activeAlly.grapplingPartner.positions
+    print_command('Select Position')
+    set_commands([''.join([str(num+1), '. ', pos.name]) for num, pos in enumerate(positions)])
+    universal.set_command_interpreter(spank_interpreter)
 
 chosenPos = None
 def spank_interpreter(keyEvent):
-    """
-    Not used.
-    """
     if keyEvent.key == K_BACKSPACE:
         display_combat_status(printAllies=False, printEnemies=False)
     elif keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key)) - 1
-        if 0 <= num and num <= len(activeAlly.grapplingPartner.spankingPositions):
+        if 0 <= num and num < len(activeAlly.grapplingPartner.positions):
             global chosenPos
-            chosenPos = activeAlly.grapplingPartner.spankingPositions[num]
-            say_title(chosenPos.name, surface=allySurface)
-            print_allies(chosenPos.display())
-            set_commands(['Use this position? (Y/N)'])
+            chosenPos = activeAlly.grapplingPartner.positions[num]
+            print_allies(chosenPos.display(), title=chosenPos.name)
+            set_commands(['(Enter) Use Position', '<==Back'])
             set_command_interpreter(confirm_spanking_interpreter)
 
 def confirm_spanking_interpreter(keyEvent):
-    """
-    Not used.
-    """
-    if keyEvent.key == K_y: 
+    if keyEvent.key == K_RETURN: 
         chosenActions.append(combatAction.SpankAction(activeAlly, activeAlly.grapplingPartner, chosenPos))
         next_character()
-    elif keyEvent.key == K_n:
+    elif keyEvent.key == K_BACKSPACE:
         print_allies(allies)
         spank()
 
@@ -935,8 +930,8 @@ def strap_cane_ai(enemy):
         """
         We've removed the positions, so the enemy no longer has to choose one.
         if chosenAction == combatAction.SpankAction:
-            posDifficulty = [pos.difficulty + pos.reversability - pos.maintainability for pos in enemy.spankingPositions]
-            posAndDiff = zip(enemy.spankingPositions, posDifficulty)
+            posDifficulty = [pos.difficulty + pos.reversability - pos.maintainability for pos in enemy.positions]
+            posAndDiff = zip(enemy.positions, posDifficulty)
             minDiff = float("inf")
             easiestPos = 0
             for pos, difficulty in posAndDiff:
@@ -999,8 +994,8 @@ def strap_cane_ai(enemy):
         """
         We've removed positions, so the enemy doesn't have to choose one.
         if chosenAction == combatAction.SpankAction:
-            posDifficulty = [pos.difficulty + pos.reversability - pos.maintainability for pos in enemy.spankingPositions]
-            posAndDiff = zip(enemy.spankingPositions, posDifficulty)
+            posDifficulty = [pos.difficulty + pos.reversability - pos.maintainability for pos in enemy.positions]
+            posAndDiff = zip(enemy.positions, posDifficulty)
             minDiff = 9000
             easiestPos = 0
             for pos, difficulty in posAndDiff:
@@ -1441,30 +1436,30 @@ def game_over_interpreter(keyEvent):
     if keyEvent.key == K_RETURN:
         global allies, enemies, chosenActions, actionResults, actionsEndured, actionsInflicted, defeatedAllies, defeatedEnemies
         #universal.set_state(copy.deepcopy(initialState))
-        for charid, primaryStats, statusList, spellPoints, statPoints in initialAllies:
+        for charid, primaryStats, statusDict, spellPoints, statPoints in initialAllies:
             print('------------------restoring: ' + charid + '-----------------------')
-            print((charid, primaryStats, statusList, spellPoints, statPoints))
-            print((charid, primaryStats, statusList, spellPoints, statPoints))
+            print((charid, primaryStats, statusDict, spellPoints, statPoints))
+            print((charid, primaryStats, statusDict, spellPoints, statPoints))
             character = universal.state.get_character(charid)
             print('defeated state:')
             print(character.primaryStats)
-            print(character.statusList)
+            print(character.statusDict)
             print(character.increaseSpellPoints)
             print(character.increaseStatPoints)
             character.primaryStats = list(primaryStats)
-            character.statusList = dict(statusList)
+            character.statusDict = dict(statusDict)
             character.increaseSpellPoints = list(spellPoints)
             character.increaseStatPoints = list(statPoints)
             print('restored state:')
             print(character.primaryStats)
-            print(character.statusList)
+            print(character.statusDict)
             print(character.increaseSpellPoints)
             print(character.increaseStatPoints)
             character.break_grapple()
-        for charid, primaryStats, statusList in initialEnemies:
+        for charid, primaryStats, statusDict in initialEnemies:
             character = universal.state.get_character(charid)
             character.primaryStats = list(primaryStats)
-            character.statusList = list(statusList)
+            character.statusDict = dict(statusDict)
             character.break_grapple()
         allies = universal.state.allies
         print(allies[0])
@@ -1607,7 +1602,7 @@ def improve_characters(victorious, afterCombatEvent=None):
             #print("stat:" + universal.primary_stat_name(i))
             #print("stat points: " + str(statPoints))
             #print("stat points needed: " + str(stat))
-            while int(floor(stat * specialtyModifier)) <= statPoints:
+            while int(math.floor(stat * specialtyModifier)) <= statPoints:
                 #print(' '.join(["Improving stat:", universal.primary_stat_name(i)])) 
                 if i == universal.HEALTH:
                     print("Improving Health")

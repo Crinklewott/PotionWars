@@ -301,7 +301,7 @@ class Person(universal.RPGObject):
         print(self.name)
         assert(not isinstance(self.description, list))
         #A mapping from the name of the status, to the actual status, and the duration.     
-        self.statusList = {}
+        self.statusDict = {}
         if rawName is None:
             self.rawName = name
         else:
@@ -325,7 +325,7 @@ class Person(universal.RPGObject):
         self.experience = 0
         self.spellPoints = 3
         self.ignoredSpells = []
-        self.spankingPositions = []
+        self.positions = []
         self.combatType = None
         self.litany = litany
         self.defaultLitany = defaultLitany
@@ -650,7 +650,7 @@ class Person(universal.RPGObject):
         self.name = original.name
         self.gender = original.gender
         self.description = original.description
-        self.statusList = original.statusList
+        self.statusDict = original.statusDict
         self.numSmacks = original.numSmacks
         self.grapplingPartner = original.grapplingPartner
         self.inventory = original.inventory
@@ -662,7 +662,7 @@ class Person(universal.RPGObject):
         self.spellPoints = original.spellPoints
         self.specialization = original.specialization
         self.ignoredSpells = original.ignoredSpells
-        self.spankingPositions = original.spankingPositions
+        self.positions = original.positions
         self.combatType = original.combatType
         self.litany = original.litany
         self.defaultLitany = original.defaultLitany
@@ -746,28 +746,29 @@ class Person(universal.RPGObject):
 
 #----------------------------------------------------------------Abstract Methods---------------------------------------------------------------------
     #abstractmethod
-    def had_spanking_reversed_by(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement reversed_spanking_of for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-    #abstractmethod
-    def reversed_spanking_of(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement reversed_spanking_of for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-    #abstractmethod
-    def spanked_by(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement spanked_by for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-    #abstractmethod
-    def avoided_spanking_by(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement avoided_spanking_by for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-    #abstractmethod
     def spanks(self, person, position):
         raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement spanks for', self.name, 'please send them an e-mail at', 
             get_author_email_bugs()]))
+
+    def spanked_by(self, person, position):
+        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement spanked_by for', self.name, 'please send them an e-mail at', 
+            get_author_email_bugs()]))
+
+    def reversed(self, person, position):
+        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement reverses for', self.name, 'please send them an e-mail at', 
+            get_author_email_bugs()]))
+
+    def reversed_by(self, person, position):
+        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement reversed_by for', self.name, 'please send them an e-mail at', 
+            get_author_email_bugs()]))
+
     #abstractmethod
-    def failed_to_spank(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement failed_to_spank for', self.name, 'please send them an e-mail at', 
+    def failed(self, person, position):
+        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement failed for', self.name, 'please send them an e-mail at', 
+            get_author_email_bugs()]))
+
+    def blocked(self, person, position):
+        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement blocked for', self.name, 'please send them an e-mail at', 
             get_author_email_bugs()]))
 
 #-----------------------------------------------------------------End Abstract Methods--------------------------------------------------------------------------
@@ -784,8 +785,8 @@ class Person(universal.RPGObject):
         except ValueError:
             pass
 
-    def set_spanking_positions(self, spankingPositions):
-        self.spankingPositions = spankingPositions
+    def set_spanking_positions(self, positions):
+        self.positions = positions
 
     def ignores_spells(self, ignoredSpells):
         self.ignoredSpells = ignoredSpells
@@ -979,7 +980,7 @@ class Person(universal.RPGObject):
         self.clear_statuses()
 
     def clear_statuses(self):
-        for status in self.statusList.copy():
+        for status in self.statusDict.copy():
             self.reverse_status(status)
 
     def fully_heals(self):
@@ -1294,10 +1295,10 @@ class Person(universal.RPGObject):
 
     def magic_defense_bonus(self):
         defenseBonus = 0
-        if statusEffects.LoweredMagicDefense.name in self.statusList:
-            defenseBonus = self.statusList[statusEffects.LoweredMagicDefense.name][0].inflict_status(self)
-        if statusEffects.MagicShielded.name in self.statusList: 
-            defenseBonus += self.statusList[statusEffects.MagicShielded.name][STATUS_OBJ].inflict_status(self)
+        if statusEffects.LoweredMagicDefense.name in self.statusDict:
+            defenseBonus = self.statusDict[statusEffects.LoweredMagicDefense.name][0].inflict_status(self)
+        if statusEffects.MagicShielded.name in self.statusDict: 
+            defenseBonus += self.statusDict[statusEffects.MagicShielded.name][STATUS_OBJ].inflict_status(self)
         return max(0, self.weapon().magicDefense + self.shirt().magicDefense + self.lower_clothing().magicDefense + self.underwear().magicDefense + defenseBonus)
 
     def inflict_status(self, status, originalList=None, newList=None):
@@ -1305,37 +1306,37 @@ class Person(universal.RPGObject):
             status.inflict_status(self, originalList, newList)
         else:
             status.inflict_status(self)
-        self.statusList[status.name] = [status, status.duration]
+        self.statusDict[status.name] = [status, status.duration]
 
     def reverse_status(self, statusName, originalList=None, newList=None):
         if self.is_inflicted_with(statusName):
             if originalList is not None and newList is not None:
-                self.statusList[statusName][STATUS_OBJ].reverse_status(self, originalList, newList)
+                self.statusDict[statusName][STATUS_OBJ].reverse_status(self, originalList, newList)
             else:
-                self.statusList[statusName][STATUS_OBJ].reverse_status(self)
-            del self.statusList[statusName] 
+                self.statusDict[statusName][STATUS_OBJ].reverse_status(self)
+            del self.statusDict[statusName] 
 
     def is_inflicted_with(self, statusName):
-        return statusName in self.statusList.keys()  
+        return statusName in self.statusDict.keys()  
 
     def status_string(self):
-        return ';'.join([statusEffects.status_shorthand(statusName) for statusName in self.statusList.keys()])
+        return ';'.join([statusEffects.status_shorthand(statusName) for statusName in self.statusDict.keys()])
 
     def decrement_statuses(self, amount=1):
         expiredStatuses = []
-        for statusName in self.statusList.keys():
-            self.statusList[statusName][STATUS_OBJ].every_round(self)
-            self.statusList[statusName][DURATION] -= amount
-            if self.statusList[statusName][DURATION] <= 0:
+        for statusName in self.statusDict.keys():
+            self.statusDict[statusName][STATUS_OBJ].every_round(self)
+            self.statusDict[statusName][DURATION] -= amount
+            if self.statusDict[statusName][DURATION] <= 0:
                 expiredStatuses.append(statusName)
         for statusName in expiredStatuses:
             self.reverse_status(statusName)
 
     def get_status(self, statusName):
-        return self.statusList[statusName][STATUS_OBJ]
+        return self.statusDict[statusName][STATUS_OBJ]
 
     def status_names(self):
-        return self.statusList.keys()
+        return self.statusDict.keys()
     
     def learn_spell(self, spell):
         print(self.spellList)
@@ -1368,18 +1369,18 @@ class Person(universal.RPGObject):
     def defense_bonus(self):
         defenseBonus = 0
         if self.is_inflicted_with(statusEffects.LoweredDefense.name):
-            defenseBonus = self.statusList[statusEffects.LoweredDefense.name][STATUS_OBJ].inflict_status(self)
+            defenseBonus = self.statusDict[statusEffects.LoweredDefense.name][STATUS_OBJ].inflict_status(self)
         if self.is_inflicted_with(statusEffects.Shielded.name):
             print('defense bonus:')
             print(self.shirt().attackDefense)
             print(self.lower_clothing().attackDefense)
             print(self.underwear().attackDefense)
             print(defenseBonus)
-            print(self.statusList)
-            print(self.statusList[statusEffects.Shielded.name][STATUS_OBJ])
-            print(self.statusList[statusEffects.Shielded.name][STATUS_OBJ].inflict_status(self))
-            print(self.statusList[statusEffects.Shielded.name][STATUS_OBJ].inflict_status)
-            defenseBonus += self.statusList[statusEffects.Shielded.name][STATUS_OBJ].inflict_status(self)
+            print(self.statusDict)
+            print(self.statusDict[statusEffects.Shielded.name][STATUS_OBJ])
+            print(self.statusDict[statusEffects.Shielded.name][STATUS_OBJ].inflict_status(self))
+            print(self.statusDict[statusEffects.Shielded.name][STATUS_OBJ].inflict_status)
+            defenseBonus += self.statusDict[statusEffects.Shielded.name][STATUS_OBJ].inflict_status(self)
         return self.shirt().attackDefense + self.lower_clothing().attackDefense + self.underwear().attackDefense + defenseBonus
 
     @staticmethod
@@ -1397,11 +1398,11 @@ class Person(universal.RPGObject):
         Person.add_data(self.name.strip(), saveData)
         Person.add_data(str(self.gender), saveData)
         Person.add_data(self.description.strip(), saveData)
-        statusList = []
-        for statusName, statusTuple in self.statusList.iteritems():
+        statusDict = []
+        for statusName, statusTuple in self.statusDict.iteritems():
             status, duration = statusTuple
-            statusList.extend(["Status:", statusName, status.save()])
-        Person.add_data('\n'.join(statusList), saveData)
+            statusDict.extend(["Status:", statusName, status.save()])
+        Person.add_data('\n'.join(statusDict), saveData)
         Person.add_data(self.rawName.strip(), saveData)
         spellNames = []
         for tier in self.spellList:
@@ -1478,14 +1479,14 @@ class Person(universal.RPGObject):
         person.description = description.strip()
         person.gender = int(gender.strip())
         person.specialization = int(specialization.strip())
-        person.statusList = {}
+        person.statusDict = {}
         if statuses.strip():
             statuses = [statusData.strip() for statusData in statuses.split("Status:") if statusData.strip()]
             for status in statuses:
                 name, statusData = (data.strip() for data in status.partition('\n') if data.strip())
                 statusEffect = statusEffects.build_status(name)
                 statusEffects.StatusEffect.load(statusData, statusEffect)
-                person.statusList[name] = (statusEffect, statusEffect.duration)
+                person.statusDict[name] = (statusEffect, statusEffect.duration)
         person.rawName = rawName.strip()
         if spellNames.strip():
             person.clear_spells()
@@ -1586,7 +1587,7 @@ class Person(universal.RPGObject):
         global currentPerson
         currentPerson = self
         say_title(self.name)
-        universal.say('\n'.join(['Order: ' + order_name(self.order), 'Status: ' + self.display_statusList(), 'Defense: ' + str(self.defense()), 
+        universal.say('\n'.join(['Order: ' + order_name(self.order), 'Status: ' + self.display_statusDict(), 'Defense: ' + str(self.defense()), 
             'Magic Defense: ' + str(self.magic_defense(False)),
             #'Exp to Next Level: ' + str(self.level * XP_INCREASE_PER_LEVEL - self.experience),
             self.display_stats(), '\t']))
@@ -1615,11 +1616,11 @@ class Person(universal.RPGObject):
             set_command_interpreter(interpreter)
         print(universal.commandInterpreter)
 
-    def display_statusList(self):
-        if self.statusList == {}:
+    def display_statusDict(self):
+        if self.statusDict == {}:
             return 'Healthy'
         else:
-            return ', '.join([status + ": " + str(statusDurationPair[DURATION]) for status, statusDurationPair in self.statusList.iteritems()])
+            return ', '.join([status + ": " + str(statusDurationPair[DURATION]) for status, statusDurationPair in self.statusDict.iteritems()])
 
     def equip_menu(self):
         set_commands(['(#) Select item to equip:_', '<==Back', '(Esc) Return to menu'])
@@ -2611,7 +2612,7 @@ class Buff(Spell):
             else:
                 #Because the buff spell is being cast on the caster, the magic never actually leaves the person's body, so it isn't affected by the caster's iron.
                 duration = self.magicMultiplier * caster.magic_attack(False)
-            if self.statusInflicted is not None and not self.statusInflicted.name in recipient.statusList:
+            if self.statusInflicted is not None and not self.statusInflicted.name in recipient.statusDict:
                 recipient.inflict_status(statusEffects.build_status(self.statusInflicted, duration))
                 didSomething = True
             resultStatement.append(self.effect_statement(recipient))
@@ -3095,14 +3096,14 @@ def SonDaughter(person=None):
         person = universal.state.player
     return choose_string(person, 'Son', 'Daughter')
 
-    def heroheroine(person=None):
-        if person is None:
-            person = universal.state.player
+def heroheroine(person=None):
+    if person is None:
+        person = universal.state.player
     return choose_string(person, 'hero', 'heroine')
 
-    def HeroHeroine(person=None):
-        if person is None:
-            person = universal.state.player
+def HeroHeroine(person=None):
+    if person is None:
+        person = universal.state.player
     return choose_string(person, 'Hero', 'Heroine')
 
 #The following functions are used to simplify the LaTeX to Python translation. 

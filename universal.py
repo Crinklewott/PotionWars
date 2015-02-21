@@ -18,7 +18,7 @@ import os
 import math
 import ast
 
-DEBUG = True
+DEBUG = False
 SAVE_DELIMITER = '%%%'
 
 
@@ -42,8 +42,8 @@ def key_name(keyEvent):
 def response(keyEvent):
     return int(key_name(keyEvent))
 
-author = 'AKA'
-programmer = 'AKA'
+author = 'Andrew Russell'
+programmer = 'Andrew Russell'
 authorEmailBugs = 'sprpgs@gmail.com+bugs'
 programmerEmailBugs = 'sprpgs@gmail.com+bugs'
 authorEmail = 'sprpgs@gmail.com'
