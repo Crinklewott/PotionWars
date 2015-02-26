@@ -23,7 +23,7 @@ def town_mode(sayDescription=True):
         universal.say_title(room.name)
     if sayDescription:
         universal.say_replace(room.get_description())
-    universal.set_commands(['(P)arty', '(G)o', '(M)odify Quick Spells', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', 't(I)tle Screen'])
+    universal.set_commands(['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', 't(I)tle Screen'])
     universal.set_command_interpreter(town_mode_interpreter)
     music.play_music(room.bgMusic)
 
@@ -589,8 +589,6 @@ def town_mode_interpreter(keyEvent, previousModeIn=None):
         talk(previousMode)
     elif keyEvent.key == K_g:
         select_destination(previousMode)
-    elif keyEvent.key == K_m:
-        select_char_quickspells(previousModeIn)
     elif keyEvent.key == K_p:
         previousMode = previousModeIn
         universal.set_commands(['(#)Character', '<==Back'])
@@ -627,86 +625,6 @@ def select_char_quickspells_interpreter(keyEvent):
             modify_quick_spells(universal.state.party[num])
         except IndexError:
             return
-
-
-def modify_quick_spells(selectedPerson):
-    global chosenPerson
-    chosenPerson = selectedPerson
-    universal.say_title(format_line([chosenPerson.name + "'s", "Quick Spells"]))
-    universal.say('\n'.join(['F' + str(spell) for spell in universal.numbered_list([str(spell) for spell in chosenPerson.quickSpells])]), justification=0)
-    set_commands(['(F#) Modify quick spell', '<==Back'])
-    set_command_interpreter(modify_quick_spells_interpreter)
-
-quickSpellIndex = None
-def modify_quick_spells_interpreter(keyEvent):
-    try:
-        num = universal.FUNCTION_KEYS.index(keyEvent.key)
-    except ValueError:
-        if keyEvent.key == K_BACKSPACE:
-            if len(universal.state.party) == 1:
-                previousMode()
-            else:
-                select_char_quickspells()
-    else:
-        global quickSpellIndex
-        quickSpellIndex = num
-        modify_chosen_spell()
-
-def modify_chosen_spell():
-    set_commands(['(F#) Swap with F' + str(quickSpellIndex + 1) + ".", '(S)et F' + str(quickSpellIndex + 1), '<==Back']) 
-    set_command_interpreter(modify_chosen_spell_interpreter)
-
-def modify_chosen_spell_interpreter(keyEvent):
-    try:
-        num = universal.FUNCTION_KEYS.index(keyEvent.key)
-    except ValueError:
-        if keyEvent.key == K_BACKSPACE:
-            modify_quick_spells(chosenPerson)
-        elif keyEvent.key == K_s:
-            select_new_quick_spell()
-    else:
-        global quickSpellIndex
-        chosenPerson.swap_quick_spells(quickSpellIndex, num)
-        quickSpellIndex = None
-        modify_quick_spells(chosenPerson)
-
-def select_new_quick_spell():
-    universal.say_title('Set F' + str(quickSpellIndex + 1))
-    chosenPerson.display_tiers(interpreter=select_new_quick_spell_interpreter)
-
-chosenTier = None
-def select_new_quick_spell_interpreter(keyEvent):
-    try:
-        num = int(universal.key_name(keyEvent))
-    except ValueError:
-        if keyEvent.key == K_BACKSPACE:
-            modify_chosen_spell()
-    else:
-        global chosenTier
-        chosenTier = num
-        select_spell()
-
-def select_spell():
-    universal.say_title('Select Quickspell for F' + str(quickSpellIndex + 1))
-    universal.say(chosenPerson.display_spells(chosenTier))
-    set_command_interpreter(select_spell_interpreter)
-    set_commands(['(#) Set spell to F' + str(quickSpellIndex + 1), '<==Back'])
-
-def select_spell_interpreter(keyEvent):
-    try:
-        num = int(universal.key_name(keyEvent)) - 1
-    except ValueError:
-        if keyEvent.key == K_BACKSPACE:
-            select_new_quick_spell()
-    else:
-        global chosenPerson, quickSpellIndex
-        try:
-            chosenPerson.quickSpells[quickSpellIndex] = chosenPerson.known_spells(chosenTier)[num]
-        except IndexError:
-            return
-        else:
-            quickSpellIndex = None
-            modify_quick_spells(chosenPerson)
 
 
 def select_character_interpreter(keyEvent):

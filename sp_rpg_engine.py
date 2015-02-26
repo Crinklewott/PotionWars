@@ -45,12 +45,10 @@ def begin_game(episode):
     import os
     if '.init.sav' in os.listdir('save'):
         os.remove(os.path.join('save', '.init.sav'))
-
 # Initialise screen
     #commandText = textrect.render_textrect(' '.join(commands), font, commandView, LIGHT_GREY, DARK_GREY, 1)
     #commandTextPos = commandText.get_rect()
     #commandTextPos.centerx, commandTextPos.centery = commandView.center;
-
     # Blit everything to the screen
     defaultFont = pygame.font.SysFont(universal.FONT_LIST, universal.DEFAULT_SIZE)
     titleFont = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.TITLE_SIZE)
@@ -110,7 +108,7 @@ def begin_game(episode):
                 #screen.blit(background, (0, 0))
         #The following is a bit of command position fiddling to make everything look nice and balanced.
         universal.display_commands()
-        pygame.draw.rect(screen, universal.LIGHT_GREY, pygame.Rect(commandView.topleft, commandView.size), 10)
+        pygame.draw.rect(screen, universal.LIGHT_GREY, pygame.Rect(commandView.topleft, commandView.size), universal.COMMAND_VIEW_LINE_WIDTH)
         pygame.display.flip()
 
 

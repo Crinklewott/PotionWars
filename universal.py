@@ -18,7 +18,7 @@ import os
 import math
 import ast
 
-DEBUG = False
+DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 
@@ -393,6 +393,7 @@ FONT_LIST = 'Georgia'
 FONT_LIST_TITLE = 'Verdana'
 
 
+COMMAND_VIEW_LINE_WIDTH = 10
 BLACK = (0,0,0)
 DARK_GREY = (10, 10, 10)
 LIGHT_GREY = (200, 200, 200)
@@ -402,6 +403,7 @@ GREEN = (50, 100, 50)
 BLUE = (50, 50, 100)
 YELLOW = (100, 100, 50)
 SLATE_GREY = (49, 79, 79)
+DARK_SLATE_GREY = (25, 40, 40)
 
 background = None
 screen = None
