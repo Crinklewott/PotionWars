@@ -15,6 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 from __future__ import division
 import universal
@@ -32,6 +33,8 @@ import random
 
 """
 TODO: My dungeon display code just outright isn't working. I need to delete the whole thing, and start over.
+
+I should probably better organize the whole damn thing.
 """
 
 """
@@ -46,6 +49,7 @@ NORTH = 1
 SOUTH = -1
 EAST = 2
 WEST = -2
+MARKED = 3
 
 #stepEffect = pygame.mixer.Sound(os.path.join('data', 'step.wav'))
 
@@ -62,9 +66,7 @@ def set_dungeon_commands(dungeon=None):
     #import traceback
     #traceback.print_stack()   
     commandColors = [LIGHT_GREY] * 8
-    universal.set_commands(['(P)arty', '(S)ave', '(Q)uick Save', '(M)odify Quick Spells', '(L)oad', 't(I)tle Screen', '(C)ast', '(Esc)Quit'])
-    print(dungeon)
-    print(dungeon.coordinates)
+    universal.set_commands(['(P)arty', '(S)ave', '(M)ap', '(Q)uick Save', '(L)oad', 't(I)tle Screen', '(C)ast', '(Esc)Quit'])
     if dungeon is not None:
         floor = dungeon.coordinates[0]
         row = dungeon.coordinates[1]
@@ -83,6 +85,7 @@ def set_dungeon_commands(dungeon=None):
             commandColors.insert(0, GREEN)
             print(commandColors)
             universal.set_commands(['(D)own'] + get_commands(), commandColors)
+
 
 def print_dir(direction):
     if direction == NORTH:
@@ -145,6 +148,9 @@ def right(direction):
     return inverse(left(direction))
 
 class DungeonFloor(universal.RPGObject):
+
+    MAX_HEIGHT = 20
+    MAX_WIDTH = 20
     """
         Implements a single floor. See the documentation for Dungeon for details.
         Floor should be a tuple of tuple of strings, events a list of list of functions.
@@ -185,6 +191,9 @@ class DungeonFloor(universal.RPGObject):
                 convertedMap[count].append(data)
             count -= 1
         self.floor = convertedMap
+
+
+
 
     def __getitem__(self, key):
         if key >= self.height:
@@ -313,6 +322,7 @@ class Dungeon(townmode.Room):
         self.dungeonMap = {}
         count = 0
         self.dungeonEvents = {}
+        self.visitedSquares = set()
         if dungeonEvents is not None:
             for floorEvents in dungeonEvents:
                 self.dungeonEvents[count] = floorEvents if type(floorEvents) == FloorEvents else FloorEvents(floorEvents)
@@ -337,36 +347,97 @@ class Dungeon(townmode.Room):
                 if ambushChance is not None:
                     self.dungeonMap[count].ambushChance = ambushChance
                 count += 1
-       
+
+    def display_map(self):
+        """
+        Displays the auto-map of the current floor, showing what's been explored so far.
+        """
+        worldView = universal.get_world_view()
+        viewHeight = worldView.height
+        viewWidth = worldView.width
+        bottomLeft = worldView.bottomleft
+        currentFloor = self.dungeonMap[self.coordinates[0]]
+        dungeonHeight = currentFloor.height
+        dungeonWidth = currentFloor.width
+        screen = universal.get_screen()
+        visitedSquares = (square for square in self.visitedSquares if square[0] == self.coordinates[0])
+        verticalLineLength = viewHeight // dungeonHeight
+        horizontalLineLength = viewWidth // dungeonWidth
+        grid = [None * dungeonWidth] * dungeonHeight
+        GAP = 1
+        for z, x, y in visitedSquares:
+            square = currentFloor[x][y]
+            startPos = (square[1] * horizontalLineLength, square[2] * verticalLineLength)
+            #Draws the walls.
+            if has_char('|', square):
+                endPos = (startPos[0], startPos[1]+verticalLineLength)
+                pygame.draw.line(screen, universal.LIGHT_GREY, startPos, endPos)
+            elif has_char(';', square):
+                #We insert a gap between the lines of the walls to indicate a door.
+                endPos = (startPos[0], startPos[1]+(verticalLineLength // 2) - GAP)
+                pygame.draw.line(screen, universal.LIGHT_GREY, startPos, endPos)
+                #Each side of the gap contributes equally to the width of the gap.
+                startPos = (startPos[0], endPos[1] + 2 * GAP)
+                endPos = (startPos[0], startPos[1]+verticalLineLength)
+                pygame.draw.line(screen, universal.LIGHT_GREY, startPos, endPos)
+            if has_char('_', square):
+                endPos = (startPos[0]+horizontalLineLength, startPos[1])
+                pygame.draw.line(screen, universal.LIGHT_GREY, startPos, endPos)
+            elif has_char('.,', square):
+                #We insert a gap between the lines of the walls to indicate a door.
+                endPos = (startPos[0]+(horizontalLineLength // 2) - GAP, startPos[1])
+                pygame.draw.line(screen, universal.LIGHT_GREY, startPos, endPos)
+                #Each side of the gap contributes equally to the width of the gap.
+                startPos = (endPos[0] + 2 * GAP, startPos[1])
+                endPos = (startPos[0]+verticalLineLength, startPos[1])
+                pygame.draw.line(screen, universal.LIGHT_GREY, startPos, endPos)
+            colorSquare = False
+            #Colors the squares based on events.
+            if has_char('e' , square):
+                #Note: Will actually want to draw the letter 'e' instead of coloring the square. Similar for the stairs, we'll want to insert the numbers.
+                color = BLUE
+                colorSquare = True
+            elif has_char('d', square):
+                color = GREEN
+                colorSquare = True
+            elif has_char('u', square):
+                color = GREEN
+                colorSquare = True
+            elif has_char('*', square):
+                Color = YELLOW
+                colorSquare = True
+            elif has_char('!', square):
+                bColor = RED
+                colorSquare = True
+            if colorSquare:
+                leftTop = (startPos[0], startPos[1]+verticalLineLength)
+                widthHeight = (horizontalLineLength, verticalLineLength)
+                screen.fill(color, Rect(leftTop, widthHeight))
+                #pygame.draw.rect(screen, color, Rect(leftTop, widthHeight))
+
     @staticmethod
     def add_data(data, saveData):
         saveData.extend(["Dungeon Data:", data])
 
     def save(self):
         saveData = [super(Dungeon, self).save(), "Room Data:", "Dungeon Only:"]
-        print("Saving dungeon:")
-        print(saveData)
         Dungeon.add_data(str(self.direction), saveData)
         Dungeon.add_data(str(self.coordinates), saveData)
+        Dungeon.add_data('\n'.join([str(visited) for visited in self.visitedSquares]), saveData)
         return '\n'.join(saveData)
 
     @staticmethod
     def load(loadData, room):
-        print("Printing room:")
-        print(room)
-        print("Printing dungeon map:")
-        print(room.dungeonMap)
-        _, direction, coordinates = loadData.split("Dungeon Data:")
+        _, direction, coordinates, visited = loadData.split("Dungeon Data:")
         room.direction = int(direction.strip())
         coordinates = coordinates.replace('(', '').replace(')', '')
         coordinates = coordinates.split(',')
-        print("loading coordinates:")
-        print(coordinates)
-        print('room coordinates before load:')
-        print(room.coordinates)
         room.coordinates = tuple(int(coord.strip()) for coord in coordinates)
-        print('room coordinates after load:')
-        print(room.coordinates)
+        try:
+            visited = '\n'.split(visited)
+        except ValueError:
+            visited = set()
+        room.visitedSquares = {tuple(int(s) for s in t[1:-1].split(',').strip()) for t in visited}
 
     def exit_dungeon(self):
         """
@@ -664,8 +735,6 @@ class Dungeon(townmode.Room):
                 coordinates = (coordinates[0], coordinates[1] + d * stepsAhead, coordinates[2] + d * (-1 if left else 1))
             elif self.direction == EAST or self.direction == WEST:
                 coordinates = (coordinates[0], coordinates[1] + d * (1 if left else -1), coordinates[2] + d * stepsAhead)
-            print('coordinates:')
-            print(coordinates)
             square = self[coordinates[0]][coordinates[1]][coordinates[2]]
             print(square)
 
@@ -680,13 +749,8 @@ class Dungeon(townmode.Room):
                     pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x1 + 20, y1 + 20, (x0 - x1) - 20, (y1Prime - y1) - 40), 5)
 
             elif (self.direction == EAST or self.direction == WEST) and (has_char('|', square[self.direction]) or has_char(':', square[self.direction])):
-                print('printing wall!')
-                print('self.direction:')
-                print(self.direction)
-                print(square[self.direction])
                 pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x0, y1, x1 - x0, y1Prime - y1), 5)
             elif (self.direction == EAST or self.direction == WEST) and has_char(';', square[self.direction]):
-                print('printing door!')
                 if left:
                     pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x0, y1, x1 - x0, y1Prime - y1), 5)
                     pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x0, y1 + 20, (x1 - x0) - 20, (y1Prime - y1) - 40), 5)
@@ -825,6 +889,7 @@ class Dungeon(townmode.Room):
             elif (direction == EAST or direction == WEST) and not has_char('|', self.current_square()[direction]) and not has_char('^', self.current_square()[direction]):
                 self.coordinates = (self.coordinates[0], self.coordinates[1], self.coordinates[2] + movement)
             #stepEffect.play()      
+        self.visitedSquares.add(self.coordinates)
         complete_dungeon_action()
         self.display()
         self.display_event()
@@ -919,7 +984,7 @@ def dungeon_interpreter(keyEvent):
         dungeon.direction = left(dungeon.direction)
         dungeon.display()
     elif keyEvent.key == K_m:
-        townmode.select_char_quickspells(dungeon_mode)
+        dungeon.display_map()
 
 def select_character_interpreter(keyEvent):
     party = person.get_party()
