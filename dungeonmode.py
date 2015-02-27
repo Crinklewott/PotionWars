@@ -386,37 +386,81 @@ class Dungeon(townmode.Room):
         verticalEnd = (startPos[0], startPos[1] + verticalLineLength//16) 
         pygame.draw.line(mapSurface, universal.LIGHT_GREY, verticalStart, verticalEnd, width) 
 
+    def draw_player(self, bottomLeft, width, height, mapSurface):
+        playerInitial = universal.state.player.name[0].upper()
+        self.draw_icon(playerInitial, bottomLeft, width, height, mapSurface)
+
+    def draw_icon(self, icon, bottomLeft, width, height, mapSurface, color=universal.LIGHT_GREY, center=True):
+        x, y = bottomLeft
+        font = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.DEFAULT_SIZE)
+        fontWidth, fontHeight = font.size(icon)
+        try:
+            heightRatio = height / fontHeight
+        except TypeError:
+            pass
+        else:
+            font = pygame.font.SysFont(universal.FONT_LIST_TITLE, int(math.floor(universal.DEFAULT_SIZE * (10 * heightRatio/11))))
+            fontWidth, fontHeight = font.size(icon)
+        iconSurface = font.render(icon, True, color)
+        if center:
+            coordinate = (x + (width // 2 - fontWidth // 2), y - height + 1)
+        else:
+            coordinate = bottomLeft
+        print(coordinate)
+        mapSurface.blit(iconSurface, coordinate)
+
     def display_map(self):
         """
         Displays the auto-map of the current floor, showing what's been explored so far.
         """
         universal.clear_world_view()
         worldView = universal.get_world_view()
-        viewHeight = worldView.height
-        viewWidth = worldView.width
-        mapSurface = pygame.Surface((viewWidth, viewHeight))
-        mapSurface.fill(DARK_GREY)
-        bottomLeft = worldView.bottomleft
         currentFloor = self.dungeonMap[self.coordinates[0]]
         dungeonHeight = currentFloor.height
         dungeonWidth = currentFloor.width
-        screen = universal.get_screen()
-        visitedSquares = [square for square in self.visitedSquares if square[0] == self.coordinates[0]]
+        viewWidth, viewHeight = worldView.width, worldView.height
+        mapSurface = pygame.Surface((viewWidth, viewHeight))
+        #originY -= verticalLineLength
+        #originY -= universal.COMMAND_VIEW_LINE_WIDTH // 2
+        font = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.DEFAULT_SIZE)
+        rowNumberWidth, rowNumberHeight = font.size(str(dungeonWidth))
+        columnNumberWidth, columnNumberHeight = font.size(str(dungeonHeight))
+        viewHeight = viewHeight - 2 * columnNumberHeight 
+        viewWidth = viewWidth - 2 * rowNumberWidth
         verticalLineLength = viewHeight // dungeonHeight
         horizontalLineLength = viewWidth // dungeonWidth
-        grid = [[None] * dungeonWidth] * dungeonHeight
-        VERTICAL_GAP = verticalLineLength // 6
-        HORIZONTAL_GAP = horizontalLineLength // 6
-        originX, originY = worldView.bottomleft
+        originX, originY = (worldView.left + rowNumberWidth, worldView.bottom - columnNumberHeight)
         originY -= verticalLineLength
         originY -= universal.COMMAND_VIEW_LINE_WIDTH // 2
-        grid = []
+        rowLeftX, rowBottomY = (worldView.left, originY + 2 * universal.COMMAND_VIEW_LINE_WIDTH // 3)
+        columnLeftX, columnTopY = (worldView.left + rowNumberWidth + horizontalLineLength // 2 - columnNumberWidth // 3, worldView.top)
+        rowRightX = worldView.right - rowNumberWidth
+        columnBottomY = worldView.bottom - columnNumberHeight
+        mapSurface.fill(DARK_GREY)
+        #number rows
+        for i in range(dungeonWidth):
+            self.draw_icon(str(i), (rowLeftX, rowBottomY), None, None, mapSurface, center=False)
+            self.draw_icon(str(i), (rowRightX, rowBottomY), None, None, mapSurface, center=False)
+            rowBottomY -= verticalLineLength
+        #bottomY = worldView.bottomleft[1]
+        #number columns
+        for i in range(dungeonHeight):
+            self.draw_icon(str(i), (columnLeftX, columnTopY), None, None, mapSurface, center=False)
+            self.draw_icon(str(i), (columnLeftX, columnBottomY), None, None, mapSurface, center=False)
+            columnLeftX += horizontalLineLength
+        screen = universal.get_screen()
+        visitedSquares = [square for square in self.visitedSquares if square[0] == self.coordinates[0]]
+        VERTICAL_GAP = verticalLineLength // 6
+        HORIZONTAL_GAP = horizontalLineLength // 6
+        z, y, x = self.coordinates
         for y in range(dungeonHeight):
-            xGrid = []
             for x in range(dungeonWidth):
                 pygame.draw.rect(mapSurface, universal.DARK_SLATE_GREY, pygame.Rect(originX + horizontalLineLength * x, originY - verticalLineLength * y, 
                     horizontalLineLength, verticalLineLength), 1)
         LINE_WIDTH = 2
+        #For some strange reason that I don't understand, I need to offset originY by the verticalLineLength in order to make the map display correctly, but then
+        #I need to undo that offset in order to get the visited squares to display correctly. Goddammit I hate graphics programming.
+        originY += verticalLineLength
         for z, y, x in visitedSquares:
             square = dungeon[z][y][x][HERE]
             eastSquare = dungeon[z][y][x][EAST]
@@ -424,6 +468,32 @@ class Dungeon(townmode.Room):
             startPos = (originX + x * horizontalLineLength, originY - y * verticalLineLength)
             eastPos = (startPos[0] + horizontalLineLength, startPos[1])
             northPos = (startPos[0], startPos[1]-verticalLineLength)
+            #Colors the squares based on events.
+            icon = None
+            if has_char('e' , square):
+                #Note: Will actually want to draw the letter 'e' instead of coloring the square. Similar for the stairs, we'll want to insert the numbers.
+                color = universal.BLUE
+                icon = 'e'
+            elif  has_char('s', square):
+                color = universal.BLUE
+                icon = 's'
+            elif has_char('d', square):
+                color = universal.GREEN
+                icon = str(self.coordinates[0]-1)
+            elif has_char('u', square):
+                color = universal.GREEN
+                icon = str(self.coordinates[0]+1)
+            elif has_char('*', square):
+                color = universal.YELLOW
+            elif has_char('!', square):
+                color = universal.RED
+            else:
+                color = universal.BLACK
+            leftTop = (startPos[0]+LINE_WIDTH, startPos[1]-verticalLineLength+LINE_WIDTH)
+            widthHeight = (horizontalLineLength-LINE_WIDTH, verticalLineLength-LINE_WIDTH)
+            mapSurface.fill(color, Rect(leftTop, widthHeight))
+            if icon and (z, y, x) != self.coordinates:
+                self.draw_icon(icon, (originX + horizontalLineLength * x, originY - verticalLineLength * y), horizontalLineLength, verticalLineLength, mapSurface)
             #Draws the walls.
             if has_char('|', eastSquare):
                 self.draw_vertical_line(eastPos, verticalLineLength, mapSurface, LINE_WIDTH)
@@ -441,30 +511,9 @@ class Dungeon(townmode.Room):
                 self.draw_horizontal_line(northPos, horizontalLineLength, mapSurface, LINE_WIDTH)
             elif has_char('.,', northSquare):
                 self.draw_horizontal_door(northPos, horizontalLineLength, verticalLineLength, HORIZONTAL_GAP, mapSurface, LINE_WIDTH)
-            colorSquare = False
-            #Colors the squares based on events.
-            if has_char('e' , square) or has_char('s', square):
-                #Note: Will actually want to draw the letter 'e' instead of coloring the square. Similar for the stairs, we'll want to insert the numbers.
-                color = BLUE
-                colorSquare = True
-            elif has_char('d', square):
-                color = GREEN
-                colorSquare = True
-            elif has_char('u', square):
-                color = GREEN
-                colorSquare = True
-            elif has_char('*', square):
-                color = YELLOW
-                colorSquare = True
-            elif has_char('!', square):
-                color = RED
-                colorSquare = True
-            if colorSquare:
-                print('coloring square')
-                leftTop = (startPos[0]+LINE_WIDTH, startPos[1]-verticalLineLength+LINE_WIDTH)
-                widthHeight = (horizontalLineLength-LINE_WIDTH, verticalLineLength-LINE_WIDTH)
-                mapSurface.fill(color, Rect(leftTop, widthHeight))
-                #pygame.draw.rect(mapSurface, color, Rect(leftTop, widthHeight))
+        z, y, x = self.coordinates
+        self.draw_player((originX + horizontalLineLength * x, originY - verticalLineLength * y), horizontalLineLength, verticalLineLength, 
+            mapSurface)
         screen.blit(mapSurface, worldView) 
 
     @staticmethod
@@ -623,7 +672,9 @@ class Dungeon(townmode.Room):
         column = self.coordinates[2]
         #At this point, if visibleArea[i][j] does *not* have None, then we need to draw something.
         self.draw_walls(visibleArea)
-        coordinate = str(self.coordinates)
+        #I eh, heh heh, kind of have the coordinates backwards from what they should be, so I reverse them before displaying them, and I'll be reversing them
+        #when taking them in as input.
+        coordinate = str((self.coordinates[2], self.coordinates[1], self.coordinates[0]))
         coordTopLeft = coordinateSurface.get_rect().topleft
         say_title(coordinate, surface=coordinateSurface)
         flush_text(13)

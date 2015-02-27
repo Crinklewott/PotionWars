@@ -927,10 +927,8 @@ def strap_cane_ai(enemy):
             chosenAction = chosenActionClass.pop(random.randrange(0, len(chosenActionClass)))
             defenders = select_targets(chosenAction, enemy)
             chosenActionClass = [actionClass for actionClass in chosenActionClass if actionClass.actionType != chosenAction.actionType]
-        """
-        We've removed the positions, so the enemy no longer has to choose one.
         if chosenAction == combatAction.SpankAction:
-            posDifficulty = [pos.difficulty + pos.reversability - pos.maintainability for pos in enemy.positions]
+            posDifficulty = [pos.difficulty - pos.maintainability for pos in enemy.positions]
             posAndDiff = zip(enemy.positions, posDifficulty)
             minDiff = float("inf")
             easiestPos = 0
@@ -946,7 +944,6 @@ def strap_cane_ai(enemy):
                 weightedPos.extend([pos for i in range(min(0, enemy.grapple() - difficulty))]) 
                 weightedPos.extend([pos for i in range(len([position for (position, result) in pastPositions if position == pos and result > 0]))])
             return chosenAction(enemy, defenders, weightedPos[random.randrange(0, len(weightedPos))])
-        """
         try:
             return chosenAction(enemy, defenders)
         except TypeError:
@@ -1312,8 +1309,6 @@ def start_round(chosenActions):
     #nonDefendActions.sort(key=lambda x : x.attacker.stat(x.primaryStat) + random.randrange(0, RANDOM_ORDER_MULTIPLIER))
     #We push all the defend actions to the beginning, so that every defending character is guaranteed to defend at the beginning.
     chosenActions = defendActions + sorted(nonDefendActions, key=lambda x : x.attacker.stat(x.primaryStat) // 2 + (x.attacker.alertness()), reverse=True) 
-    print('sorted actions:')
-    print(chosenActions)
     for action in chosenActions:
         activeAllies = [ally for ally in allies if ally.current_health() > 0]
         activeEnemies = [enemy for enemy in enemies if enemy.current_health() > 0]
@@ -1484,8 +1479,9 @@ def game_over_interpreter(keyEvent):
                 improve_characters(False, afterCombatEvent)
             except TypeError:
                 pass
+            #allies = universal.state.allies
             end_fight()
-            allies.members += defeatedAllies    
+            #allies.members += defeatedAllies    
         else:
             end_fight()
             universal.state.enemies = None
@@ -1550,45 +1546,13 @@ def improve_characters(victorious, afterCombatEvent=None):
     """
     Takes as argument the function that should be invoked after leveling up is complete.
     """
-    experience = []
-    #for i in range(len(enemies)):
-        #print(enemies[i].statList)
-    #maxStats = [max([enemy.get_stat(i) for enemy in enemies]) for i in range(person.NUM_STATS)]
-    #print(maxStats)
     #Characters can gain stat points even if they are knocked out.
     for ally in allies.members + defeatedAllies:
-        #print('chanceIncrease for ' + ally.name)
-        #print(ally.chanceIncrease)
-        #ally.chanceIncrease[HEALTH] += 25 + max(ally.chanceIncrease[WARFARE], ally.chanceIncrease[GRAPPLE]) // 2
-        #ally.chanceIncrease[MANA] += 25 + ally.chanceIncrease[MAGIC] // 2
-        #ally.chanceIncrease[STEALTH] += 5
+        #We temporarily remove the ally's status effects, so that they don't interfere with stat gain.
+        #TODO: Similarly remove the effect of bonuses.
+        allyStatuses = ally.get_statuses()
+        ally.clear_statuses()
         for i in range(len(ally.increaseStatPoints)):
-            '''
-            #We give a bonus 20% bonus to increasing the stat for every 5 points that a character is below the enemy' stat. This allows characters to more easily
-            #climb out of a hole. Note that you do need to use an action that relies on this stat at least once for the benefit to be of use.
-            if i < COMBAT_MAGIC:
-                ally.chanceIncrease[i] += (20 * ((maxStats[i] - ally.get_stat(i)) // 5)) if ally.chanceIncrease[i] > 0 and maxStats[i] > ally.get_stat(i) else 0 
-                ally.chanceIncrease[i] = ally.apply_specialization(i, ally.chanceIncrease[i])
-                if ally.get_stat(i) >= maxStats[i] + specialization_bonus(ally, i):
-                    #If your character already has a significantly higher stat than your opponent, the chances of increasing that stat drop off drastically
-                    ally.chanceIncrease[i] *= HIGH_STAT_PENALTY
-                #print('chanceIncrease for ' + ally.name + ' after end of combat bonuses.') 
-                #print(ally.chanceIncrease)
-            try:
-                print('stat:' + person.primary_stat_name(i)) 
-                print(ally.chanceIncrease[i])
-            except TypeError:
-                print('spell school: ' + str(i))
-            #The higher your stat, the lower the chances of increasing it, your stats hit max at 100. 
-            statChance = ally.chanceIncrease[i] * (((100 - ally.get_stat(i)) / 100) if i < COMBAT_MAGIC else 1)  #+ (100 if universal.DEBUG else 0)
-            #print('chance to increase:' + str(statChance))
-            success = random.randint(1, 100)
-            #print('success:' + str(success))
-            #print(success <= statChance)
-            gainedPoint = False
-            print('success:' + str(success))
-            print('statChance: ' + str(statChance))
-            '''
             statPoints = ally.increaseStatPoints[i]
             stat = ally.stat(i) if i == universal.HEALTH else ally.stat(i) * universal.STAT_GROWTH_RATE_MULTIPLIER 
             spells = [universal.COMBAT_MAGIC, universal.STATUS_MAGIC, universal.BUFF_MAGIC, universal.SPECTRAL_MAGIC]
@@ -1638,6 +1602,11 @@ def improve_characters(victorious, afterCombatEvent=None):
             if ally.increaseSpellPoints[i] >= (ally.tier*universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS) and not ally.knows_spell(person.allSpells[0][i][1]):
                 learn_spell(ally, i+universal.COMBAT_MAGIC)
                 ally.increaseSpellPoints[i] -= ally.tier*universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
+        #Now that we're done increasing stats, we can reinflict any lingering statuses
+        for statusName in allyStatuses:
+            status = allyStatuses[statusName][0]
+            status.duration = allyStatuses[statusName][1]
+            ally.inflict_status(status)
     if afterCombatEvent is not None:
         acknowledge(afterCombatEvent, defeatedAllies, defeatedEnemies, victorious)
     else:

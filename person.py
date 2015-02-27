@@ -1337,6 +1337,9 @@ class Person(universal.RPGObject):
 
     def status_names(self):
         return self.statusDict.keys()
+
+    def get_statuses(self):
+        return self.statusDict
     
     def learn_spell(self, spell):
         print(self.spellList)
