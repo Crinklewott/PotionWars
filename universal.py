@@ -18,7 +18,7 @@ import os
 import math
 import ast
 
-DEBUG = True
+DEBUG = False
 SAVE_DELIMITER = '%%%'
 
 
@@ -408,15 +408,21 @@ FONT_LIST_TITLE = 'Verdana'
 
 COMMAND_VIEW_LINE_WIDTH = 10
 BLACK = (0,0,0)
+DARK_BLUE = (11, 21, 40) 
+ORANGE =  (130, 84, 70)
+#DARK_BLUE = (70, 73, 130) 
+ORANGE = (130, 108, 70) 
 DARK_GREY = (10, 10, 10)
 LIGHT_GREY = (200, 200, 200)
 WHITE = (250,250,250)
-RED = (100, 50, 50)
-GREEN = (50, 100, 50)
-BLUE = (50, 50, 100)
-YELLOW = (100, 150, 50)
+#RED = 
+GREEN = (70, 90, 130)
+BLUE = (21, 41, 80)
+YELLOW = BLUE
 SLATE_GREY = (49, 79, 79)
 DARK_SLATE_GREY = (50, 50, 50)
+GOLD = (100, 80, 16)
+SILVER = (80, 80, 80)
 
 background = None
 screen = None

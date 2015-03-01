@@ -65,7 +65,7 @@ def set_dungeon_commands(dungeon=None):
     #import traceback
     #traceback.print_stack()   
     commandColors = [LIGHT_GREY] * 8
-    universal.set_commands(['(P)arty', '(S)ave', '(M)ap', '(Q)uick Save', '(L)oad', 't(I)tle Screen', '(C)ast', '(Esc)Quit'])
+    universal.set_commands(['(P)arty', '(S)ave', '(M)ap', '(Q)uick Save', '(L)oad', 't(I)tle Screen', '(C)ast', '(G)o', '(Esc)Quit'])
     if dungeon is not None:
         floor = dungeon.coordinates[0]
         row = dungeon.coordinates[1]
@@ -176,7 +176,6 @@ class DungeonFloor(universal.RPGObject):
                 convertedMap[count].append(data)
             count -= 1
         self.floor = convertedMap
-
 
 
 
@@ -335,6 +334,10 @@ class Dungeon(townmode.Room):
                 if ambushChance is not None:
                     self.dungeonMap[count].ambushChance = ambushChance
                 count += 1
+
+
+    def go(self):
+
 
 
     def draw_vertical_line(self, startPos, verticalLineLength, mapSurface, width=1):
@@ -525,23 +528,25 @@ class Dungeon(townmode.Room):
             icon = None
             if has_char('e' , square):
                 #Note: Will actually want to draw the letter 'e' instead of coloring the square. Similar for the stairs, we'll want to insert the numbers.
-                color = universal.BLUE
+                color = universal.GOLD
                 icon = 'e'
             elif  has_char('s', square):
-                color = universal.BLUE
+                color = universal.ORANGE
                 icon = 's'
             elif has_char('d', square):
-                color = universal.GREEN
+                color = universal.ORANGE
                 icon = str(self.coordinates[0]-1)
             elif has_char('u', square):
-                color = universal.GREEN
+                color = universal.ORANGE
                 icon = str(self.coordinates[0]+1)
             elif has_char('*', square):
-                color = universal.YELLOW
+                color = universal.ORANGE
+                icon = '*'
             elif has_char('!', square):
-                color = universal.RED
+                color = universal.ORANGE
+                icon = '!'
             elif (z, y, x) in visitedSquares:
-                color = universal.BLACK
+                color = universal.DARK_BLUE
             else:
                 color = universal.DARK_GREY
             leftTop = (startPos[0]+LINE_WIDTH, startPos[1]-verticalLineLength+LINE_WIDTH)
@@ -875,8 +880,8 @@ def dungeon_interpreter(keyEvent):
         dirtyRects = dungeon.move(K_u)
     elif keyEvent.key in universal.ARROW_KEYS:
         dirtyRects = dungeon.move(keyEvent.key)
-    print("Dungeon interpreter rects:")
-    print(dirtyRects)
+    elif keyEvent.key == K_g:
+        dungeon.go()
     return dirtyRects
 
 def select_character_interpreter(keyEvent):

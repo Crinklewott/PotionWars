@@ -35,19 +35,19 @@ def spanking_string(top, bottom, position):
     #Only enemies contain spanking text
     try:
         return top.spanks(bottom, position)
-    except NotImplementedError:
+    except NotImplementedError, AttributeError:
         return bottom.spanked_by(top, position)
 
 def reversed_spanking(top, bottom, position):
     try:
         return bottom.reverses(top, position)
-    except NotImplementedError:
+    except NotImplementedError, AttributeError:
         return top.reversed_by(bottom, position)
 
 def failed_spanking(top, bottom, position):
     try:
         return top.failed(bottom, position)
-    except NotImplementedError:
+    except NotImplementedError, AttributeError:
         return bottom.blocked(top, position)
 
 class Implement(items.Item):
