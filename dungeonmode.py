@@ -70,7 +70,7 @@ def set_dungeon_commands(dungeon=None):
         floor = dungeon.coordinates[0]
         row = dungeon.coordinates[1]
         column = dungeon.coordinates[2]
-        square = dungeon[floor][row][column][HERE]
+        square = dungeon[floor][row][column]
         if has_char('e', square):
             commandColors.insert(0, BLUE)
             universal.set_commands(['(E)xit'] + get_commands(), commandColors)
@@ -101,12 +101,12 @@ def dungeon_mode(sayDescription=True):
     music.play_music(dungeon.bgMusic)
     if dungeon.coordinates == (-1, -1, -1):
         dungeon.coordinates = start_coordinate(dungeon)
-        dungeon.visitedSquares.add(dungeon.coordinates)
         previousRoom = [room for room in universal.state.rooms.keys() if universal.state.get_room(room).characters is not None and 
             person.get_party()[0] in universal.state.get_room(room).characters.values()][0]
         universal.state.get_room(previousRoom).remove_characters(universal.state.party.members)
         dungeon.add_characters(universal.state.party.members)
         dungeon.display_event()
+        dungeon.visitedSquares.add(start_coordinate(dungeon))
     else:
         dungeon.display()
 
@@ -164,23 +164,15 @@ class DungeonFloor(universal.RPGObject):
 
     def convert_dungeon_map(self):
         """
-        Converts this dungeon's map into a three dimensional list, where each square consists of a map containing five items:
-        1. HERE - Contains information about any special events (*, s, e, d, u) on the square the player is standing on.
-        2. NORTH - Contains information about any walls, doors, and stairs on the square one to the north of this one.
-        3. SOUTH, EAST, WEST - See 2.
+        Converts this dungeon's map into a three dimensional list, where each square consists of a string containing the icons associated with each square.
         """
         convertedMap = []
         convertedMap.extend([[] for i in range(len(self))])
         count = len(self) - 1
         for row in range(len(self)):
             for column in range(len(self[row])):
-                square = self.floor[row][column]
                 data = {NORTH:'', SOUTH:'', EAST:'', WEST:'', HERE:''}
-                data[WEST] = self[row][column]
-                data[EAST] = self[row][(column+1) % len(self[row])]
-                data[NORTH] = self[(row+1) % len(self.floor)][column]
-                data[SOUTH] = self[row][column]
-                data[HERE] = self[row][column]
+                data = self[row][column]
                 convertedMap[count].append(data)
             count -= 1
         self.floor = convertedMap
@@ -316,6 +308,9 @@ class Dungeon(townmode.Room):
         count = 0
         self.dungeonEvents = {}
         self.visitedSquares = set()
+        self.visibleSquares = set()
+        self.mapSurface = None
+        self.drawnSquares = set()
         if dungeonEvents is not None:
             for floorEvents in dungeonEvents:
                 self.dungeonEvents[count] = floorEvents if type(floorEvents) == FloorEvents else FloorEvents(floorEvents)
@@ -406,20 +401,63 @@ class Dungeon(townmode.Room):
             coordinate = (x + (width // 2 - fontWidth // 2), y - height + 1)
         else:
             coordinate = bottomLeft
-        print(coordinate)
         mapSurface.blit(iconSurface, coordinate)
 
-    def display_map(self):
+    def compute_visible_area(self, dungeonWidth, dungeonHeight):
+        """
+        Returns a set of coordinates that the player should be able to see.
+        """
+        visibility = self.dungeonMap[self.coordinates[0]].visibility
+        visibleSquares = set()
+        lookingEastWest = True
+        lookingNorthSouth = True
+        firstZero = False
+        for i in range(0, -visibility, -1) + range(0, visibility):
+            if not i and firstZero:
+                lookingEastWest = True
+                lookingNorthSouth = True
+            else:
+                firstZero = True
+                floor = self.coordinates[0]
+                if lookingEastWest:
+                    eRow, eColumn = (self.coordinates[1], (self.coordinates[2] + i) % dungeonWidth)
+                    eastWestSquare = self[floor][eRow][eColumn]
+                    if '|' in eastWestSquare or ';' in eastWestSquare or '#' in eastWestSquare:
+                        lookingEastWest = False
+                        if i < 0:
+                            visibleSquares.add((floor, eRow, eColumn))
+                    else:
+                        visibleSquares.add((floor, eRow, eColumn))
+                if lookingNorthSouth:
+                    nRow, nColumn = ((self.coordinates[1] + i) % dungeonHeight, self.coordinates[2])
+                    northSouthSquare = self[floor][nRow][nColumn]
+                    if '_' in northSouthSquare or '.,' in northSouthSquare or '%' in northSouthSquare: 
+                        lookingNorthSouth = False
+                        if i < 0:
+                            visibleSquares.add((floor, nRow, nColumn))
+                    else:
+                        visibleSquares.add((floor, nRow, nColumn))
+        print(visibleSquares)
+        return visibleSquares
+
+
+    def display_map(self, clearScreen, previousCoordinates):
         """
         Displays the auto-map of the current floor, showing what's been explored so far.
         """
-        universal.clear_world_view()
         worldView = universal.get_world_view()
         currentFloor = self.dungeonMap[self.coordinates[0]]
         dungeonHeight = currentFloor.height
         dungeonWidth = currentFloor.width
         viewWidth, viewHeight = worldView.width, worldView.height
-        mapSurface = pygame.Surface((viewWidth, viewHeight))
+        if not self.mapSurface:
+            self.mapSurface = pygame.Surface((viewWidth, viewHeight))
+            clearScreen = True
+        mapSurface = self.mapSurface
+        if clearScreen:
+            universal.clear_world_view()
+            mapSurface.fill(universal.DARK_GREY)
+            self.drawnSquares = set()
         #originY -= verticalLineLength
         #originY -= universal.COMMAND_VIEW_LINE_WIDTH // 2
         font = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.DEFAULT_SIZE)
@@ -436,35 +474,50 @@ class Dungeon(townmode.Room):
         columnLeftX, columnTopY = (worldView.left + rowNumberWidth + horizontalLineLength // 2 - columnNumberWidth // 3, worldView.top)
         rowRightX = worldView.right - rowNumberWidth
         columnBottomY = worldView.bottom - columnNumberHeight
-        mapSurface.fill(DARK_GREY)
         #number rows
-        for i in range(dungeonWidth):
-            self.draw_icon(str(i), (rowLeftX, rowBottomY), None, None, mapSurface, center=False)
-            self.draw_icon(str(i), (rowRightX, rowBottomY), None, None, mapSurface, center=False)
-            rowBottomY -= verticalLineLength
+        #Don't need to track dirtyRects, because clearScreen means the entire worldview gets redrawn.
+        if clearScreen:
+            for i in range(dungeonWidth):
+                self.draw_icon(str(i), (rowLeftX, rowBottomY), None, None, mapSurface, center=False)
+                self.draw_icon(str(i), (rowRightX, rowBottomY), None, None, mapSurface, center=False)
+                rowBottomY -= verticalLineLength
         #bottomY = worldView.bottomleft[1]
         #number columns
-        for i in range(dungeonHeight):
-            self.draw_icon(str(i), (columnLeftX, columnTopY), None, None, mapSurface, center=False)
-            self.draw_icon(str(i), (columnLeftX, columnBottomY), None, None, mapSurface, center=False)
-            columnLeftX += horizontalLineLength
+        if clearScreen:
+            for i in range(dungeonHeight):
+                self.draw_icon(str(i), (columnLeftX, columnTopY), None, None, mapSurface, center=False)
+                self.draw_icon(str(i), (columnLeftX, columnBottomY), None, None, mapSurface, center=False)
+                columnLeftX += horizontalLineLength
         screen = universal.get_screen()
-        visitedSquares = [square for square in self.visitedSquares if square[0] == self.coordinates[0]]
+        visitedSquares = {square for square in self.visitedSquares if square[0] == self.coordinates[0]}
         VERTICAL_GAP = verticalLineLength // 6
         HORIZONTAL_GAP = horizontalLineLength // 6
-        z, y, x = self.coordinates
-        for y in range(dungeonHeight):
-            for x in range(dungeonWidth):
-                pygame.draw.rect(mapSurface, universal.DARK_SLATE_GREY, pygame.Rect(originX + horizontalLineLength * x, originY - verticalLineLength * y, 
-                    horizontalLineLength, verticalLineLength), 1)
+        if clearScreen:
+            for y in range(dungeonHeight):
+                for x in range(dungeonWidth):
+                    pygame.draw.rect(mapSurface, universal.DARK_SLATE_GREY, pygame.Rect(originX + horizontalLineLength * x, originY - verticalLineLength * y, 
+                        horizontalLineLength, verticalLineLength), 1)
         LINE_WIDTH = 2
         #For some strange reason that I don't understand, I need to offset originY by the verticalLineLength in order to make the map display correctly, but then
         #I need to undo that offset in order to get the visited squares to display correctly. Goddammit I hate graphics programming.
         originY += verticalLineLength
-        for z, y, x in visitedSquares:
-            square = dungeon[z][y][x][HERE]
-            eastSquare = dungeon[z][y][x][EAST]
-            northSquare = dungeon[z][y][x][NORTH]
+        if previousCoordinates:
+            try:
+                self.drawnSquares.remove(previousCoordinates)
+            except KeyError:
+                pass
+        try:
+            self.drawnSquares.remove(self.coordinates)
+        except KeyError:
+            pass
+        self.visibleSquares = visitedSquares | self.visibleSquares | self.compute_visible_area(dungeonWidth, dungeonHeight)
+        squaresToDraw = self.visibleSquares - self.drawnSquares
+        dirtyRects = []
+        for z, y, x in squaresToDraw:
+            square = dungeon[z][y][x]
+            self.drawnSquares.add((z, y, x))
+            eastSquare = dungeon[z][y][(x+1) % dungeonWidth]
+            northSquare = dungeon[z][(y+1) % dungeonHeight][x]
             startPos = (originX + x * horizontalLineLength, originY - y * verticalLineLength)
             eastPos = (startPos[0] + horizontalLineLength, startPos[1])
             northPos = (startPos[0], startPos[1]-verticalLineLength)
@@ -487,18 +540,30 @@ class Dungeon(townmode.Room):
                 color = universal.YELLOW
             elif has_char('!', square):
                 color = universal.RED
-            else:
+            elif (z, y, x) in visitedSquares:
                 color = universal.BLACK
+            else:
+                color = universal.DARK_GREY
             leftTop = (startPos[0]+LINE_WIDTH, startPos[1]-verticalLineLength+LINE_WIDTH)
             widthHeight = (horizontalLineLength-LINE_WIDTH, verticalLineLength-LINE_WIDTH)
-            mapSurface.fill(color, Rect(leftTop, widthHeight))
+            squareRect = Rect(leftTop, widthHeight)
+            mapSurface.fill(color, squareRect)
+            '''
+            If I don't have both of these, then sometimes walls along the southern wall aren't drawn properly. It probably has something to do with the 
+            fact that the wall are right on the edge of the updated triangle, so they aren't always properly drawn, depending on whether pygame considers it to
+            be inclusive or not. Or something. Or maybe I'm just incompetent. Regardless, making both of these rects dirty ensures proper wall drawing.
+            '''
+            dirtyRects.append(pygame.Rect((startPos[0], startPos[1]-verticalLineLength), (horizontalLineLength, verticalLineLength)))
+            dirtyRects.append(pygame.Rect((startPos[0], startPos[1]), (horizontalLineLength, verticalLineLength)))
             if icon and (z, y, x) != self.coordinates:
                 self.draw_icon(icon, (originX + horizontalLineLength * x, originY - verticalLineLength * y), horizontalLineLength, verticalLineLength, mapSurface)
             #Draws the walls.
             if has_char('|', eastSquare):
                 self.draw_vertical_line(eastPos, verticalLineLength, mapSurface, LINE_WIDTH)
+                dirtyRects.append(pygame.Rect((eastPos[0], eastPos[1] - verticalLineLength), (horizontalLineLength, verticalLineLength)))
             elif has_char(';', eastSquare):
                 self.draw_vertical_door(eastPos, horizontalLineLength, verticalLineLength, VERTICAL_GAP, mapSurface, LINE_WIDTH)
+                dirtyRects.append(pygame.Rect((eastPos[0], eastPos[1] - verticalLineLength), (horizontalLineLength, verticalLineLength)))
             if has_char('|', square):
                 self.draw_vertical_line(startPos, verticalLineLength, mapSurface, LINE_WIDTH)
             elif has_char(';', square):
@@ -507,14 +572,21 @@ class Dungeon(townmode.Room):
                 self.draw_horizontal_line(startPos, horizontalLineLength, mapSurface, LINE_WIDTH)
             elif has_char('.,', square):
                 self.draw_horizontal_door(startPos, horizontalLineLength, verticalLineLength, HORIZONTAL_GAP, mapSurface, LINE_WIDTH)
+                dirtyRects.append(pygame.Rect((startPos[0], startPos[1]), (horizontalLineLength, verticalLineLength)))
             if has_char('_', northSquare):
                 self.draw_horizontal_line(northPos, horizontalLineLength, mapSurface, LINE_WIDTH)
+                dirtyRects.append(pygame.Rect(northPos, (horizontalLineLength, verticalLineLength)))
             elif has_char('.,', northSquare):
                 self.draw_horizontal_door(northPos, horizontalLineLength, verticalLineLength, HORIZONTAL_GAP, mapSurface, LINE_WIDTH)
+                dirtyRects.append(pygame.Rect(northPos, (horizontalLineLength, verticalLineLength)))
         z, y, x = self.coordinates
-        self.draw_player((originX + horizontalLineLength * x, originY - verticalLineLength * y), horizontalLineLength, verticalLineLength, 
-            mapSurface)
+        self.draw_player((originX + horizontalLineLength * x, originY - verticalLineLength * y), horizontalLineLength, verticalLineLength, mapSurface)
+        dirtyRects.append(pygame.Rect((originX + horizontalLineLength * x, originY - verticalLineLength * y), (horizontalLineLength, verticalLineLength)))
         screen.blit(mapSurface, worldView) 
+        #If we've had to redraw the entire screen, then the entire worldview needs to be redrawn. Otherwise, we just redraw what changed.
+        if clearScreen:
+            dirtyRects = [worldView]
+        return dirtyRects
 
     @staticmethod
     def add_data(data, saveData):
@@ -543,9 +615,7 @@ class Dungeon(townmode.Room):
             visited = [coordinate.strip() for coordinate in visited.split('\n') if coordinate.strip()]
         except ValueError:
             visited = []
-        print(visited)
         room.visitedSquares = {tuple(int(s) for s in t[1:-1].split(',')) for t in visited}
-        print(room.visitedSquares)
         room.visitedSquares.add(room.coordinates)
 
     def exit_dungeon(self):
@@ -582,68 +652,7 @@ class Dungeon(townmode.Room):
         for floorEvents in dungeonEvents:
             self.dungeonMap.append(floorEvents if type(floorEvents) == FloorEvents else FloorEvents(floorEvents))
 
-    def look(self, sqsAhead, lineCoordinates):
-        pass
- 
-    def display_squares(self):
-        pass
-
-    def compute_visible_area(self):
-        """
-        Computes the parts of the dungeon that the player can see.
-
-        NOTE: I really really need to rework this. It's buggy as fuck, and I have no idea what's going on in this damned thing.
-
-        I'll probably have to bust out some kind of line of sight, or ray-tracing algorithm or something. *groan* Hate graphics coding.
-        """
-        visibleArea = ([], [], [])
-        floor = self.coordinates[0]
-        row = self.coordinates[1]
-        column = self.coordinates[2]
-        if self.direction == NORTH or self.direction == EAST:
-            d = 1
-        elif self.direction == SOUTH or self.direction == WEST:
-            d = -1
-        if self.direction == NORTH or self.direction == SOUTH:
-            #Note: visibleArea[0] still has the squares to the west, and visibleArea[1] has the squares to the east, regardless of whether the player is facing north or
-            #south.
-            for i in range(self[floor].visibility):
-                visibleArea[0].append(self.get_square((floor, row + d * i, column - 1)))
-                visibleArea[1].append(self.get_square((floor, row + d * i, column)))
-                visibleArea[2].append(self.get_square((floor, row + d * i, column + 1)))
-        elif self.direction == WEST or self.direction == EAST:
-            #Note: visibleArea[0] still has the squares to the south, and visibleArea[1] has the squares to the north, regardless of whether the player is facing east or
-            #west.
-            for i in range(self[floor].visibility):
-                visibleArea[0].append(self.get_square((floor, row - 1, column + d * i)))
-                visibleArea[1].append(self.get_square((floor, row, column + d * i)))
-                visibleArea[2].append(self.get_square((floor, row + 1, column + d * i)))
-        #Now we go through and replace each square with None if there's a wall or door in the way.
-        for i in range(self[floor].visibility):
-            mySquare = visibleArea[1][i]
-            #print(self.print_visible_column(visibleArea[1]))
-            if mySquare is not None:
-                if self.direction == NORTH or self.direction == SOUTH:
-                    if has_char('|', mySquare[WEST]) or has_char(':', mySquare[WEST]) or has_char(';', mySquare[WEST]):
-                        visibleArea[0][i] = None
-                    if has_char('_', mySquare[self.direction]) or has_char('..', mySquare[self.direction]) or has_char('.,', mySquare[self.direction]) or \
-                        has_char('%', mySquare[self.direction]):
-                            for j in range(i+1, self[floor].visibility):
-                                visibleArea[1][j] = None
-                    if has_char('|', mySquare[EAST]) or has_char(':', mySquare[EAST]) or has_char(';', mySquare[EAST]):
-                        visibleArea[2][i] = None
-                elif self.direction == EAST or self.direction == WEST:
-                    if has_char('_', mySquare[NORTH]) or has_char('..', mySquare[NORTH]) or has_char('.,', mySquare[NORTH]):
-                        visibleArea[0][i] = None
-                    if has_char('|', mySquare[self.direction]) or has_char(':', mySquare[self.direction]) or has_char(';', mySquare[self.direction]) or \
-                        has_char('#', mySquare[self.direction]):
-                            for j in range(i+1, self[floor].visibility):
-                                visibleArea[1][j] = None
-                    if has_char('_', mySquare[SOUTH]) or has_char('..', mySquare[SOUTH]) or has_char('.,', mySquare[SOUTH]):
-                        visibleArea[2][i] = None
-        return visibleArea
-
-    def display(self):
+    def display(self, clear=True, previousCoordinates=None):
         """
         a. "|" - This square has a wall to the east
         b. "_" - This square has a wall to the south
@@ -661,38 +670,13 @@ class Dungeon(townmode.Room):
         n. "#" - Darkness to the west
         o. "-" - Invisible wall to the south
         p. "^" - Invisible wall to the west
+
+        The argument clear is a Boolean that tells us whether we need to clear the screen before drawing the automap or not.
         """
         set_command_interpreter(dungeon_interpreter)
-        clear_screen()
         set_dungeon_commands(self)
-        #First, we build a 3 x visibility grid of all the potentially visible squares.
-        visibleArea = self.compute_visible_area()
-        floor = self.coordinates[0]
-        row = self.coordinates[1]
-        column = self.coordinates[2]
-        #At this point, if visibleArea[i][j] does *not* have None, then we need to draw something.
-        self.draw_walls(visibleArea)
-        #I eh, heh heh, kind of have the coordinates backwards from what they should be, so I reverse them before displaying them, and I'll be reversing them
-        #when taking them in as input.
-        coordinate = str((self.coordinates[2], self.coordinates[1], self.coordinates[0]))
-        coordTopLeft = coordinateSurface.get_rect().topleft
-        say_title(coordinate, surface=coordinateSurface)
-        flush_text(13)
-        pygame.draw.rect(coordinateSurface, LIGHT_GREY, pygame.Rect(coordTopLeft, (coordinateSurface.get_rect().width, coordinateSurface.get_rect().height + 5)), 5)
-        direction = print_dir(self.direction)
-        localDirSurface = directionSurface
-        if has_char('u', self.get_square(self.coordinates)[0]) or has_char('d', self.get_square(self.coordinates)[0]):
-            direction = "Stairs"
-            localFontSize = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.TITLE_SIZE).size(direction)
-            localDirSurface = pygame.Surface((localFontSize[0] + (localFontSize[1] - localFontSize[0]) + 75, localFontSize[1] + 15))
-            localDirSurface.fill(universal.DARK_GREY)
-        say_title(direction, surface=localDirSurface)
-        flush_text(13)
-        pygame.draw.rect(localDirSurface, LIGHT_GREY, pygame.Rect(localDirSurface.get_rect().topleft, localDirSurface.get_rect().size), 7)
-        get_screen().blit(coordinateSurface, (get_world_view().midbottom[0] - coordinateSurface.get_rect().width // 2,
-            get_world_view().midbottom[1] - coordinateSurface.get_rect().height))
-        get_screen().blit(localDirSurface, (get_world_view().midbottom[0] - localDirSurface.get_rect().width // 2, get_world_view().midbottom[1] - 
-            (coordinateSurface.get_rect().height + localDirSurface.get_rect().height)))
+        dirtyRects = self.display_map(clear, previousCoordinates)
+        return dirtyRects
 
     def print_visible_column(self, visibleArea):
         mapColumn = []
@@ -703,216 +687,19 @@ class Dungeon(townmode.Room):
                 mapColumn.append(['None'])
         return ' '.join(['{' + ', '.join(column) + '}' for column in mapColumn])
 
-    WIDTH_HEIGHT_MULTIPLIER = 2
-    def draw_walls(self, visibleArea):
-        """
-        Visible area is a 3 x visibility grid of blocks. If a block is None, then it is not visible (and a wall needs to be drawn). If it is not None, then it is visible, 
-        and needs to be handled depending on where it is.
-        """
-        westSouth = WEST if self.direction == NORTH or self.direction == SOUTH else SOUTH
-        eastNorth = EAST if self.direction == NORTH or self.direction == SOUTH else NORTH
-        width = get_world_view().width
-        height = get_world_view().height
-        #Meant to make things look a bit less stretched if on a wide (or tall) screen.
-        if width < height:
-            height = min(Dungeon.WIDTH_HEIGHT_MULTIPLIER * width, height)
-        elif height < width:
-            width = min(Dungeon.WIDTH_HEIGHT_MULTIPLIER * height, width)
-        leftCoordinates = ((-5, height // 40), (0, 39 * height // 40))
-        pLeftCoordinates = leftCoordinates
-        rightCoordinates = ((width+5, height // 40), (width, 39 * height // 40))
-        pRightCoordinates = rightCoordinates
-        angle = 24
-        wallAngle = math.radians(angle)
-        for i in range(len(visibleArea[1])):
-            square = visibleArea[1][i]
-            if self.direction == NORTH or self.direction == SOUTH:
-                if square is not None:
-                    north = self.direction == NORTH
-                    coordinates = self.draw_wall(leftCoordinates if north else rightCoordinates, wallAngle, i, north, visibleArea[1][i][WEST])
-                    if north:
-                        pLeftCoordinates = leftCoordinates
-                        leftCoordinates = coordinates
-                    else:
-                        pRightCoordinates = rightCoordinates
-                        rightCoordinates = coordinates
-                    coordinates = self.draw_wall(rightCoordinates if north else leftCoordinates, wallAngle, i, not north, visibleArea[1][i][EAST])
-                    if north:
-                        pRightCoordinates = rightCoordinates
-                        rightCoordinates = coordinates
-                    else:
-                        pLeftCoordinates = leftCoordinates
-                        leftCoordinates = coordinates
-                    #Drawing wall right in front.       
-                    if has_char('_', square[self.direction]) or has_char('..', square[self.direction]):
-                        pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(leftCoordinates[0], (rightCoordinates[0][0] - leftCoordinates[0][0], 
-                            leftCoordinates[1][1] - leftCoordinates[0][1])), 5)
-                    elif has_char('.,', square[self.direction]):
-                        pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(leftCoordinates[0], (rightCoordinates[0][0] - leftCoordinates[0][0], 
-                            leftCoordinates[1][1] - leftCoordinates[0][1])), 5)
-                        pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(leftCoordinates[0][0] + 20, rightCoordinates[0][1] + 20, 
-                            rightCoordinates[0][0] - leftCoordinates[0][0] - 40, leftCoordinates[1][1] - leftCoordinates[0][1] - 40), 5)
-                    #Drawing events
-                    eventSquare = visibleArea[1][i][HERE]
-                    self.draw_events(leftCoordinates, rightCoordinates, pLeftCoordinates, pRightCoordinates, eventSquare)
-                            
-            elif self.direction == EAST or self.direction == WEST:
-                if square is not None:
-                    east = self.direction == EAST
-                    coordinates = self.draw_wall(leftCoordinates if east else rightCoordinates, wallAngle, i, east, visibleArea[1][i][NORTH])
-                    if east:
-                        pLeftCoordinates = leftCoordinates
-                        leftCoordinates = coordinates
-                    else:
-                        pRightCoordinates = rightCoordinates
-                        rightCoordinates = coordinates
-                    coordinates = self.draw_wall(rightCoordinates if east else leftCoordinates, wallAngle, i, not east, visibleArea[1][i][SOUTH])
-                    if east:
-                        pRightCoordinates = rightCoordinates
-                        rightCoordinates = coordinates
-                    else:
-                        pLeftCoordinates = leftCoordinates
-                        leftCoordinates = coordinates
-                    #Drawing square in front
-                    if has_char('|', square[self.direction]) or has_char(':', square[self.direction]):
-                        pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(leftCoordinates[0], (rightCoordinates[0][0] - leftCoordinates[0][0], 
-                            leftCoordinates[1][1] - leftCoordinates[0][1])), 5)
-                    elif has_char(';', square[self.direction]):
-                        pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(leftCoordinates[0], (rightCoordinates[0][0] - leftCoordinates[0][0], 
-                            leftCoordinates[1][1] - leftCoordinates[0][1])), 5)
-                        pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(leftCoordinates[0][0] + 20, rightCoordinates[0][1] + 20, 
-                            rightCoordinates[0][0] - leftCoordinates[0][0] - 40, leftCoordinates[1][1] - leftCoordinates[0][1] - 40), 5)
-                    #Drawing events
-                    eventSquare = visibleArea[1][i][HERE]
-                    self.draw_events(leftCoordinates, rightCoordinates, pLeftCoordinates, pRightCoordinates, eventSquare)
-
-    def draw_events(self, leftCoordinates, pLeftCoordinates, pRightCoordinates, rightCoordinates, square):
-        top = False
-        bottom = False
-        if has_char('e', square) or has_char('s', square):
-            bColor = BLUE
-            bottom = True
-        elif has_char('d', square):
-            bColor = GREEN
-            bottom = True
-        elif has_char('*', square):
-            bColor = YELLOW
-            bottom = True
-        elif has_char('!', square):
-            bColor = RED
-            bottom = True
-        if has_char('u', square):
-            tColor = GREEN
-            top = True
-        if bottom:
-            pygame.draw.polygon(get_screen(), bColor, [leftCoordinates[1], pLeftCoordinates[1], rightCoordinates[1], pRightCoordinates[1]])
-        if top:
-            pygame.draw.polygon(get_screen(), tColor, [leftCoordinates[0], pLeftCoordinates[0], rightCoordinates[0], pRightCoordinates[0]])
-
-    def draw_wall_help(self, start, wallAngle, stepsAhead, left, square):   
-        neg = -1
-        if left:
-            neg = 1
-        x0 = start[0][0]
-        y0 = start[0][1]
-        y0Prime = start[1][1]
-        width = get_world_view().width
-        height = get_world_view().height
-        if height < width:
-            width = min(Dungeon.WIDTH_HEIGHT_MULTIPLIER * height, width)
-        x1 = x0 + neg * (1/(4.5 * (stepsAhead + 1))) * width
-        y1 = math.tan(wallAngle) * neg * (x1 - x0) + y0
-        y1Prime = y0Prime - math.tan(wallAngle) * neg * (x1 - x0) 
-        drawWall = False
-        if (self.direction == NORTH or self.direction == SOUTH) and (has_char('|', square) or has_char(':', square)):
-            drawWall = True
-        elif (self.direction == EAST or self.direction == WEST) and (has_char('_', square) or has_char('..', square)):
-            drawWall = True
-        if drawWall:
-            pygame.draw.line(get_screen(), LIGHT_GREY, (x0, y0), (x0, y0Prime), 5)
-            pygame.draw.line(get_screen(), LIGHT_GREY, (x1, y1), (x1, y1Prime), 5)
-            pygame.draw.line(get_screen(), LIGHT_GREY, (x0, y0), (x1, y1), 5)
-            pygame.draw.line(get_screen(), LIGHT_GREY, (x0, y0Prime), (x1, y1Prime), 5)
-        else:
-            coordinates = self.coordinates
-            if self.direction == SOUTH or self.direction == WEST:
-                d = -1
-            elif self.direction == NORTH or self.direction == EAST:
-                d = 1
-            if self.direction == NORTH or self.direction == SOUTH:
-                coordinates = (coordinates[0], coordinates[1] + d * stepsAhead, coordinates[2] + d * (-1 if left else 1))
-            elif self.direction == EAST or self.direction == WEST:
-                coordinates = (coordinates[0], coordinates[1] + d * (1 if left else -1), coordinates[2] + d * stepsAhead)
-            square = self[coordinates[0]][coordinates[1]][coordinates[2]]
-
-            if (self.direction == NORTH or self.direction == SOUTH) and (has_char('_', square[self.direction]) or has_char('..', square[self.direction])):
-                pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x0, y1, x1 - x0, y1Prime - y1), 5)
-            elif (self.direction == NORTH or self.direction == SOUTH) and has_char('.,', square[self.direction]):
-                if left:
-                    pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x0, y1, x1 - x0, y1Prime - y1), 5)
-                    pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x0, y1 + 20, (x1 - x0) - 20, (y1Prime - y1) - 40), 5)
-                else:
-                    pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x1, y1, x0 - x1, y1Prime - y1), 5)
-                    pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x1 + 20, y1 + 20, (x0 - x1) - 20, (y1Prime - y1) - 40), 5)
-
-            elif (self.direction == EAST or self.direction == WEST) and (has_char('|', square[self.direction]) or has_char(':', square[self.direction])):
-                pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x0, y1, x1 - x0, y1Prime - y1), 5)
-            elif (self.direction == EAST or self.direction == WEST) and has_char(';', square[self.direction]):
-                if left:
-                    pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x0, y1, x1 - x0, y1Prime - y1), 5)
-                    pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x0, y1 + 20, (x1 - x0) - 20, (y1Prime - y1) - 40), 5)
-                else:
-                    pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x1, y1, x0 - x1, y1Prime - y1), 5)
-                    pygame.draw.rect(get_screen(), LIGHT_GREY, pygame.Rect(x1 + 20, y1 + 20, (x0 - x1) - 20, (y1Prime - y1) - 40), 5)
-
-        return ((x1, y1), (x1, y1Prime))
-
-    def draw_wall(self, start, wallAngle, stepsAhead, left, square):
-        drawDoor = False
-        if (self.direction == NORTH or self.direction == SOUTH) and has_char(';', square):
-            drawDoor = True
-            square += '|'
-        elif (self.direction == EAST or self.direction == WEST) and has_char('.,', square):
-            drawDoor = True
-            square += '_'
-        coordinates = self.draw_wall_help(start, wallAngle, stepsAhead, left, square)
-        if drawDoor:
-            neg = -1 
-            if left:
-                neg = 1
-            x0 = start[0][0]
-            y0 = start[0][1]
-            y0Prime = start[1][1]
-            x1 = coordinates[0][0]
-            y1 = coordinates[0][1]
-            y1Prime = coordinates[1][1]
-            x2 = x0 + neg * 20
-            y2 = y0 + 20
-            y2Prime = y0Prime - 20
-            m = (y1 - y0) / (x1 - x0)
-            mPrime = (y1Prime - y0Prime) / (x1 - x0)
-            x3 = x1 - neg * 20
-            y3 = m * (x3 - x2) + y2
-            y3Prime = mPrime * (x3 - x2) + y2Prime
-            pygame.draw.line(get_screen(), LIGHT_GREY, (x2, y2), (x2, y2Prime), 5)
-            pygame.draw.line(get_screen(), LIGHT_GREY, (x3, y3), (x3, y3Prime), 5)
-            pygame.draw.line(get_screen(), LIGHT_GREY, (x2, y2), (x3, y3), 5)
-            pygame.draw.line(get_screen(), LIGHT_GREY, (x2, y2Prime), (x3, y3Prime), 5)
-        return coordinates
-        
-    def display_event(self):
+    def display_event(self, previousCoordinates=None):
         floor = self.coordinates[0]
         row = self.coordinates[1]
         column = self.coordinates[2]
-        square = self[floor][row][column][HERE]
+        square = self[floor][row][column]
         event = False
-        universal.clear_world_view()
         global changingFloors
         changingFloors = 0
         set_dungeon_commands(self)
-        if (has_char('*', square) or has_char('s', square)) and self.dungeonEvents[floor][row][column] is not None:
+        if ((has_char('*', square) or has_char('s', square))) and self.dungeonEvents[floor][row][column] and (floor, row, column) not in self.visitedSquares:
             event = True
             self.dungeonEvents[floor][row][column]()
+            universal.clear_world_view()
         elif has_char('!', square):
             event = True
             self.encounter()
@@ -928,8 +715,9 @@ class Dungeon(townmode.Room):
             self.encounter(clear_encounter, enemies)
         if has_char('e', square):
             universal.set_commands(get_commands())
-            if self.dungeonEvents[floor][row][column]:
+            if self.dungeonEvents[floor][row][column] and (floor, row, column) not in self.visitedSquares:
                 event = True
+                universal.clear_world_view()
                 self.dungeonEvents[floor][row][column]()
         if has_char('u', square):
             changingFloors = 1
@@ -939,8 +727,9 @@ class Dungeon(townmode.Room):
             universal.set_commands(get_commands())
         #if not event and random.randint(0, 99) < self[floor].encounterRate:
             #self.encounter()
+        self.visitedSquares.add(self.coordinates)
         if not event:
-            dungeon.display()
+            return self.display(changingFloors, previousCoordinates)
 
     def encounter(self, afterCombatEvent=None, encounteredEnemies=None):
         currentFloor = self.dungeonMap[self.coordinates[0]]
@@ -965,32 +754,44 @@ class Dungeon(townmode.Room):
         #combat.fight(encounteredEnemies, afterCombatEventIn=post_combat_spanking, ambushIn=ambushFlag) 
         combat.fight(encounteredEnemies, ambushIn=ambushFlag, randomEncounterIn=True, coordinatesIn=self.coordinates) 
 
-    def move(self, forward=True, down=False, up=False):
+    def move(self, key):
         """
-        Moves the character through the dungeon. If forward is True, then the player is going forwards (i.e. the player pressed the "Up" key). If forward is False,
-        
-        then the player moved backwards (i.e. pressed the "Down" key).
+        Moves the character through the dungeon, depending on the direction key pressed.
         """
         party = person.get_party()
-        if down:
+        previousCoordinates = self.coordinates
+        if key == K_d:
             self.coordinates = (self.coordinates[0]-1, self.coordinates[1], self.coordinates[2])
-        elif up:
+        elif key == K_u:
             self.coordinates = (self.coordinates[0]+1, self.coordinates[1], self.coordinates[2])
         else:
-            direction = self.direction if forward else inverse(self.direction)
-            if direction == NORTH or direction == EAST:
+            dungeonHeight = self[self.coordinates[0]].height
+            dungeonWidth = self[self.coordinates[0]].width
+            if key == K_UP:
                 movement = 1
-            elif direction == SOUTH or direction == WEST:
+                direction = NORTH
+                currentSquare = self.get_square((self.coordinates[0], (self.coordinates[1] + 1) % dungeonHeight, self.coordinates[2]))
+            elif key == K_DOWN:
                 movement = -1
-            if (direction == NORTH or direction == SOUTH) and not has_char('_', self.current_square()[direction]) and not has_char('-', self.current_square()[direction]):
-                self.coordinates = (self.coordinates[0], self.coordinates[1] + movement, self.coordinates[2])
-            elif (direction == EAST or direction == WEST) and not has_char('|', self.current_square()[direction]) and not has_char('^', self.current_square()[direction]):
-                self.coordinates = (self.coordinates[0], self.coordinates[1], self.coordinates[2] + movement)
+                direction = SOUTH
+                currentSquare = self.current_square()
+            elif key == K_RIGHT:
+                movement = 1
+                direction = EAST
+                currentSquare = self.get_square((self.coordinates[0], self.coordinates[1], (self.coordinates[2] + 1) % dungeonWidth))
+            elif key == K_LEFT:
+                movement = -1
+                direction = WEST
+                currentSquare = self.current_square()
+            if (direction == NORTH or direction == SOUTH) and not has_char('_', currentSquare) and not has_char('-', currentSquare):
+                self.coordinates = (self.coordinates[0], (self.coordinates[1] + movement) % dungeonHeight, self.coordinates[2])
+            elif (direction == EAST or direction == WEST) and not has_char('|', currentSquare) and not has_char('^', currentSquare):
+                self.coordinates = (self.coordinates[0], self.coordinates[1], (self.coordinates[2] + movement) % dungeonWidth)
             #stepEffect.play()      
-        self.visitedSquares.add(self.coordinates)
         complete_dungeon_action()
-        self.display()
-        self.display_event()
+        displayRects = self.display_event(previousCoordinates)
+        return displayRects
+            
 
     def get_square(self, coordinate):
         floor = coordinate[0] % len(self)
@@ -1047,6 +848,7 @@ def set_dungeon(dungeonIn):
 changingFloors = 0
 def dungeon_interpreter(keyEvent):
     global dungeon
+    dirtyRects = None
     if keyEvent.key == K_ESCAPE:
         townmode.confirm_quit(dungeon_mode)
     elif keyEvent.key == K_s:
@@ -1068,27 +870,14 @@ def dungeon_interpreter(keyEvent):
         universal.say(universal.state.party.display_party(), columnNum=3)
         set_command_interpreter(select_character_interpreter)
     elif keyEvent.key == K_d and changingFloors == -1:
-        dungeon.move(down=True)
+        dirtyRects = dungeon.move(K_d)
     elif keyEvent.key == K_u and changingFloors == 1:
-        dungeon.move(up=True)
-    elif keyEvent.key == K_UP:
-        dungeon.move(True)
-    elif keyEvent.key == K_DOWN:
-        dungeon.move(False)
-    elif keyEvent.key == K_RIGHT:
-        dungeon.direction = right(dungeon.direction)
-        dungeon.display()
-    elif keyEvent.key == K_LEFT:
-        dungeon.direction = left(dungeon.direction)
-        dungeon.display()
-    elif keyEvent.key == K_m:
-        dungeon.display_map()
-        universal.set_commands(["(G)o", "<==Back"])
-        set_command_interpreter(map_interpreter)
-
-def map_interpreter(keyEvent):
-    if keyEvent.key == K_BACKSPACE:
-        dungeon.display()
+        dirtyRects = dungeon.move(K_u)
+    elif keyEvent.key in universal.ARROW_KEYS:
+        dirtyRects = dungeon.move(keyEvent.key)
+    print("Dungeon interpreter rects:")
+    print(dirtyRects)
+    return dirtyRects
 
 def select_character_interpreter(keyEvent):
     party = person.get_party()
@@ -1218,7 +1007,7 @@ def start_coordinate(dungeon):
     for floor in range(len(dungeonMap)):
         for row in range(len(dungeonMap[floor])):
             for column in range(len(dungeonMap[floor][row])):
-                if has_symbol("s", dungeonMap[floor][row][column][HERE]):
+                if has_symbol("s", dungeonMap[floor][row][column]):
                     return (floor, row, column)
     raise ValueError("Start square not found.")
 

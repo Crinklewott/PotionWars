@@ -70,7 +70,10 @@ def begin_game(episode):
     #screen.blit(commandSurface, commandView.topleft)
     #screen.blit(background, (0,))
     # Event loop
-    while 1:
+    #fps = 30
+    #clock = pygame.time.Clock()
+    dirtyRects = []
+    while True:
         #screen.blit(commandSurface, commandView.topleft)
         #pygame.draw.rect(commandSurface, LIGHT_GREY, commandView, 5)
         #Technically, this for loop is silly now, because I'm only allowing one event in
@@ -83,7 +86,11 @@ def begin_game(episode):
                     #CLEAR
                     #This will have to be changed if I ever implement something that requires rapid key combinations.
                     pygame.event.clear()
-                    universal.get_command_interpreter()(event)
+                    newDirtyRects = universal.get_command_interpreter()(event)
+                    try:
+                        dirtyRects.extend(newDirtyRects)
+                    except TypeError:
+                        pass
             elif event.type == QUIT:
                 music.close_music_files()
                 import os
@@ -99,6 +106,7 @@ def begin_game(episode):
                     universal.display_text(universal.get_title_text(), worldView, position, isTitle=True)
                 displayPosition = (worldView.topleft[0], worldView.topleft[1] + 2 * titleFont.get_linesize())
                 textRect = worldView.copy()
+                dirtyRects.append(textRect)
                 textRect.height = textRect.height - 2 * titleFont.get_linesize()
                 universal.display_text(universal.get_text_to_display(), textRect, displayPosition, isTitle=False)
                 universal.clear_text_to_display()
@@ -109,6 +117,13 @@ def begin_game(episode):
         #The following is a bit of command position fiddling to make everything look nice and balanced.
         universal.display_commands()
         pygame.draw.rect(screen, universal.LIGHT_GREY, pygame.Rect(commandView.topleft, commandView.size), universal.COMMAND_VIEW_LINE_WIDTH)
-        pygame.display.flip()
+        #pygame.display.flip()
+        #clock.tick_busy_loop(fps)
+        if universal.dirtyCommand:
+            dirtyRects.append(get_command_view())
+            universal.dirtyCommand = False
+        if dirtyRects:
+            pygame.display.update(dirtyRects)
+        dirtyRects = []
 
 

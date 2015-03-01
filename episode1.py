@@ -4121,7 +4121,7 @@ def e1_0_4():
         [names(), '''musings are interrupted by a piercing scream to''', hisher(), '''right, and by yelps of pain to''', hisher(), '''left.''']]))
         universal.acknowledge(backOfGuild.display, ())
     else:
-        backOfGuild.display()
+        backOfGuild.display(False)
 def e1_2_3():
     universal.say_title('Guild Kitchen')
     if not 'Ildri_event' in keywords():
@@ -4144,7 +4144,7 @@ def e1_2_3():
         universal.acknowledge(backOfGuild.display, ())
     else:
         backOfGuild = universal.state.get_room('Guild')
-        backOfGuild.display()
+        backOfGuild.display(False)
         return
 def e1_2_1():
     universal.say_title('The Cook')
@@ -4301,7 +4301,7 @@ def e1_2_5():
         universal.say(healerText)
     else:
         backOfGuild = universal.state.get_room('Guild')
-        backOfGuild.display()
+        backOfGuild.display(False)
         return
         #healerText = universal.format_text([healerText, ['''Paloma moves about the injured adventurers, untying them and helping them to the various cots, and tending to any''',
         #'''injuries that the adventurers' last dregs of health couldn't handle.''']])
@@ -5464,7 +5464,7 @@ palLostWarriorDown.quip_function = palLostWarriorDown_qf
 def e1_7_1():
     backOfGuild = universal.state.get_room('Guild')
     if "helped_Morey" in keywords() or 'met_Airell' in keywords():
-        backOfGuild.display()
+        backOfGuild.display(False)
         #universal.say(universal.format_text([['''There's nothing here, except a pile of dazed Taironans.''', name(), '''can't help but notice that, despite the clear gap between Morey's''',
         #'''power, and that of his attackers, none of the attackers are injured; Morey managed to inflict just enough damage to drain their health, and no more.''',
         #'''An impressive (and rather scary) testament of skill.''']]))  
@@ -5546,7 +5546,7 @@ def help_Morey(allies, enemies, won):
 def e1_7_3():
     backOfGuild = universal.state.get_room('Guild')
     if 'helped_Morey' in keywords() or 'met_Airell' in keywords():
-        backOfGuild.display()
+        backOfGuild.display(False)
         return
         #universal.say(universal.format_text([[name(), '''enters a large, open space. Blunted weapons of all shapes and sizes line the south wall. To''', names(), '''astonishment, there''',
         #'''is a full length mirror hanging on the northern wall.''', name(), '''has never seen such a massive, expensive luxury.''']]))
@@ -5567,7 +5567,7 @@ def e1_7_5():
         insurgentScout = pwenemies.VengadorScout(random.randint(0, 1))
         universal.acknowledge(combat.fight, [insurgentScout], None, dungeonmode.dungeon_mode, False, None, False)
     else:
-        backOfGuild.display()
+        backOfGuild.display(False)
         #universal.say(universal.format_text([[name(), '''enters the dining room, and finds a battle nearly as pitched as the one in the main entrance. The massive dining table has been''',
         #'''upended, and is covered in pockmarks, burns, and coats of ice. The deafening ring of steel on steel, howls of rage, and screams of pain batter against''', 
         #names(), '''ears.''']]))
@@ -5614,12 +5614,12 @@ def e0_8_4():
         '''upstairs.''','''Somewhere down here is the armory, and the end of''', names(), '''first "mission" with the Adventurer's Guild.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
     else:
-        backOfGuild.display()
+        backOfGuild.display(False)
 
 def e0_6_3():
     if 'met_Airell' in keywords():
         backOfGuild = universal.state.get_room('Guild')
-        backOfGuild.display()
+        backOfGuild.display(False)
         #universal.say_title('Magic Training Room')
         #universal.say(universal.format_line(['''In the center of the room are over half a dozen sniffling Taironans. Their pants (resp. skirts) are around their ankles (resp. waist),''',
         #'''and their''', '''bottoms are an angry red. Airell has left, but his spell holding the Taironans aloft remains, forcing them to endure a unique''',
@@ -5654,7 +5654,7 @@ def e0_6_1():
                 set_command_interpreter(e0_6_1_caning_revenge_interpreter)
             elif 'spectral_spanked_Taironans' in keywords():
                 backOfGuild = universal.state.get_room('Guild')
-                backOfGuild.display()
+                backOfGuild.display(False)
                 #universal.say(format_text([['''One of the hanging Taironans gasps when he sees''', name() + ".", '''"Oh, no, please no more we're sorry, honest!"'''],
                 #    ['''"Relax," says''', name() + ".", '''"Just coming by to see how you're doing. Hanging in there?"'''],
                 #    ['''The Taironan groans.'''],
@@ -5663,7 +5663,7 @@ def e0_6_1():
                 return
             else:
                 backOfGuild = universal.state.get_room('Guild')
-                backOfGuild.display()
+                backOfGuild.display(False)
                 #universal.say([name(), '''glares up at the Taironans, who studiously ignore''', himher() + ".", HisHer(), 
                 #    '''bottom still burns like the dickens from that wretched caning. Wonder if Adrian would let''',himher(), 
                 #    '''cane the lot of them when this was done?'''], justification=0)
@@ -6180,7 +6180,7 @@ def e0_8_5():
             '''a Taironan''','''into the diaper position, and is vigorously spanking the other woman's exposed ass with a small paddle.''']))
     else:
         backOfGuild = universal.state.get_room('Guild')
-        backOfGuild.display()
+        backOfGuild.display(False)
         return
         #universal.say(universal.format_line(['''Other than the chastised Vengadores scattered about, the room is empty; Cosima has left to aid in repulsing the attackers.''']), 
         #        justification=0)
@@ -6250,7 +6250,7 @@ def e0_8_7():
                 universal.set_command_interpreter(cosima_noRibbon_interpreter)
     else:
         backOfGuild = universal.state.get_room('Guild')
-        backOfGuild.display()
+        backOfGuild.display(False)
 
 
 
@@ -6746,7 +6746,7 @@ def e0_3_5():
             [name(), '''glances over''', hisher(), '''shoulder at the door, and considers the wisdom of continuing into these dark corridors.\n\n''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
     else:
-        backOfGuild.display()
+        backOfGuild.display(False)
     if not 'met_Cosima' in keywords():
         universal.say_title('Stealth Maze')
         universal.say(universal.format_text([['''Eventually,''', heshe(), '''backs away, deciding not to enter the scary looking maze. Perhaps''', heshe(), 
@@ -6760,7 +6760,7 @@ def e0_5_5():
         universal.say(universal.format_text([[name(), '''freezes. For a second there,''', heshe(), '''thought''', heshe(), '''heard a faint scrabbling.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
     else:
-        backOfGuild.display()
+        backOfGuild.display(False)
 def e0_1_6():
     backOfGuild = universal.state.get_room('Guild')
     if not 'met_Mai' in keywords():
@@ -6769,7 +6769,7 @@ def e0_1_6():
             '''freezes, and waits for the movement to occur again. After several minutes,''', heshe(), '''takes a deep breath and continues moving.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
     else:
-        backOfGuild.display()
+        backOfGuild.display(False)
     
 def e0_2_9():
     backOfGuild = universal.state.get_room('Guild')
@@ -6778,7 +6778,7 @@ def e0_2_9():
         universal.say(universal.format_text([['''A faint, haunting giggle wafts through the air.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
     else:
-        backOfGuild.display()
+        backOfGuild.display(False)
 def e0_5_9():
     backOfGuild = universal.state.get_room('Guild')
     if not 'met_Mai' in keywords():
@@ -6787,11 +6787,11 @@ def e0_5_9():
             hisher(), '''left is a dim figure. The figure is standing so perfectly still, that''', name(), '''almost didn't see it. Almost.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
     else:
-        backOfGuild.display()
+        backOfGuild.display(False)
 def e0_5_8():
     backOfGuild = universal.state.get_room('Guild')
     if 'met_Mai' in keywords():
-        backOfGuild.display()
+        backOfGuild.display(False)
         return
     increment_spankings_taken()
     add_keyword('met_Mai')

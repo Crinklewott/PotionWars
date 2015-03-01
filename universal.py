@@ -18,7 +18,7 @@ import os
 import math
 import ast
 
-DEBUG = False
+DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 
@@ -27,6 +27,8 @@ NUM_TIERS = 10
 
 SELECT_NUMBER_COMMAND = ['(#) Select a number.']
 SELECT_NUMBER_BACK_COMMAND = SELECT_NUMBER_COMMAND + ['<==Back']
+
+ARROW_KEYS = [K_UP, K_DOWN, K_LEFT, K_RIGHT]
 
 def resource_path(relative):
     # PyInstaller creates a temp folder and stores path in _MEIPASS
@@ -166,13 +168,24 @@ def get_programmer():
 
 commands = []
 commandInterpreter = None
+dirtyCommand = False
 def set_command_interpreter(ci):
     """
     Allows the user to change the function that processes the key presses. This is particularly valuable for different game modes: i.e. moving through the city versus
     exploring a dungeon versus combat versus conversation.  
+    We wrap ci in ci_wrapper because I didn't know about dirtyRects until I was thousands of lines of code in, and I didn't want to slog through each command interpreter and manually update them.
+    Basically, if a command interpreter doesn't return any dirty rects, then it just updates the entire world view.
+    I also set a boolean that updates the command interpreter. It's a bit of a hack, but it's the best I can come up with that doesn't involve trying to slog through thousands of lines of 
+    code to add one line.
     """
-    global commandInterpreter
-    commandInterpreter = ci
+    global commandInterpreter, dirtyCommand
+    dirtyCommand = True
+    def ci_wrapper(keyEvent):
+        dirtyRects = ci(keyEvent)
+        if dirtyRects is None:
+            dirtyRects = [get_world_view()]
+        return dirtyRects
+    commandInterpreter = ci_wrapper 
 
 def get_command_interpreter():
     return commandInterpreter
@@ -401,9 +414,9 @@ WHITE = (250,250,250)
 RED = (100, 50, 50)
 GREEN = (50, 100, 50)
 BLUE = (50, 50, 100)
-YELLOW = (100, 100, 50)
+YELLOW = (100, 150, 50)
 SLATE_GREY = (49, 79, 79)
-DARK_SLATE_GREY = (25, 40, 40)
+DARK_SLATE_GREY = (50, 50, 50)
 
 background = None
 screen = None
@@ -425,14 +438,15 @@ def clear_screen():
     clearScreen = pygame.Surface((commandView.width, commandView.height))
     clearScreen.fill(DARK_GREY)
     screen.blit(clearScreen, commandView)
-    pygame.display.flip()
+    pygame.display.update()
 
 def clear_world_view():
     worldView = get_world_view()
+    print("-----------------------------Clearing Screen---------------------------")
     clearScreen = pygame.Surface((worldView.width, worldView.height))
     clearScreen.fill(DARK_GREY)
     get_screen().blit(clearScreen, worldView)
-    pygame.display.flip()
+    pygame.display.update(worldView)
 
 def clear_commands():
     global textToDisplay
@@ -677,7 +691,7 @@ def init_game():
     if DEBUG:
         set_screen(pygame.display.set_mode((1920, 1080)))
     else:
-        set_screen(pygame.display.set_mode(size, pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE))
+        set_screen(pygame.display.set_mode(size, pygame.FULLSCREEN | pygame.DOUBLEBUF))
     #set_screen(pygame.display.set_mode(size))
     # Fill background
     set_background(pygame.Surface(get_screen().get_size()))

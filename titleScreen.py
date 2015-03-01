@@ -266,7 +266,7 @@ def title_screen(episode=None):
     textSurface = None
     titleImage = None
     try:
-        titleImage = pygame.image.load(TITLE_IMAGES[0])
+        titleImage = pygame.image.load(TITLE_IMAGES[0]).convert()
         titleImage = pygame.transform.scale(titleImage, (pygame.display.Info().current_w, pygame.display.Info().current_h))
     except IOError:
         textSurface = textrect.render_textrect(get_title(), #+ (":" if get_subtitle() != "" else ""), 
