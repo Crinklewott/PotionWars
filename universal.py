@@ -1,3 +1,17 @@
+from __future__ import print_function 
+""" Copyright 2014, 2015 Andrew Russell 
+
+This file is part of PotionWars.  PotionWars is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+PotionWars is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
 """
     Universal.py contains various functions and operations that need to be accessible by every other file in the engine, in particular: 
     1. The say function for displaying text
@@ -10,7 +24,6 @@ that keywords are registering properly for people loading saves from versions wh
 """
 
 #NOTE: I've had to add some code to keep save files compatible with the name change of Peter's shop. That code should be deleted before using this engine for future games.
-from __future__ import print_function 
 import sys, pygame, textrect, abc
 import Queue
 from pygame.locals import *
@@ -18,7 +31,7 @@ import os
 import math
 import ast
 
-DEBUG = False
+DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 
@@ -1108,7 +1121,7 @@ class State(object):
             #&&& Working on replacing leather cuirass with a gem. We'll also need to replace qualityDagger with the player's weapon at some point, in case the player decided to sell off their family weapon.
             say_immediate(format_text([["Due to changes to the armor system, the leather cuirass no longer exists. Instead, you will receive an enhancement gem (if you haven't received one already for having the quality dagger) that Peter at Wesley and Anne's",
             "Smithy can forge into your weapon, and Carol at Therese's Tailors can",
-            "forge into your clothing. You will also receive 20 coins, enough to purchase a clothing item of your choice to cover your rather exposed chest."],
+            "forge into your clothing. You will also receive 20 matrons, enough to purchase a clothing item of your choice to cover your rather exposed chest."],
             ["Hit Enter to continue loading your game."]]))
             if not itemspotionwars.attackGem in self.player.inventory:
                 self.player.take_item(itemspotionwars.attackGem)

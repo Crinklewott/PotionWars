@@ -1,5 +1,5 @@
 """
-Copyright 2014 Andrew Russell
+Copyright 2014, 2015 Andrew Russell
 
 This file is part of PotionWars.
 PotionWars is free software: you can redistribute it and/or modify
@@ -1432,24 +1432,11 @@ def game_over_interpreter(keyEvent):
         global allies, enemies, chosenActions, actionResults, actionsEndured, actionsInflicted, defeatedAllies, defeatedEnemies
         #universal.set_state(copy.deepcopy(initialState))
         for charid, primaryStats, statusDict, spellPoints, statPoints in initialAllies:
-            print('------------------restoring: ' + charid + '-----------------------')
-            print((charid, primaryStats, statusDict, spellPoints, statPoints))
-            print((charid, primaryStats, statusDict, spellPoints, statPoints))
             character = universal.state.get_character(charid)
-            print('defeated state:')
-            print(character.primaryStats)
-            print(character.statusDict)
-            print(character.increaseSpellPoints)
-            print(character.increaseStatPoints)
             character.primaryStats = list(primaryStats)
             character.statusDict = dict(statusDict)
             character.increaseSpellPoints = list(spellPoints)
             character.increaseStatPoints = list(statPoints)
-            print('restored state:')
-            print(character.primaryStats)
-            print(character.statusDict)
-            print(character.increaseSpellPoints)
-            print(character.increaseStatPoints)
             character.break_grapple()
         for charid, primaryStats, statusDict in initialEnemies:
             character = universal.state.get_character(charid)
@@ -1457,7 +1444,6 @@ def game_over_interpreter(keyEvent):
             character.statusDict = dict(statusDict)
             character.break_grapple()
         allies = universal.state.allies
-        print(allies[0])
         enemies = universal.state.enemies
         defeatedEnemies = []
         defeatedAllies = []

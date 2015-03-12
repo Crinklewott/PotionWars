@@ -148,7 +148,7 @@ class VengadorWarrior(Enemy):
         self.equip(copy.copy(itemspotionwars.warspear))
         self.description = universal.format_line(['''A tall, broad-shouldered''', person.manwoman(self) + ".", person.HeShe(self), '''is wielding a''', self.weapon().name, 
         '''and is wearing''', self.shirt().name, '''and''', self.lower_clothing().name + "."])
-        self.set_all_stats(strength=1, dexterity=3, willpower=0, talent=0, health=12, mana=0, alertness=1)
+        self.set_all_stats(strength=1, dexterity=2, willpower=0, talent=0, health=12, mana=0, alertness=1)
 
     def otk_intro(self, top, bottom):
         if self is top:
@@ -354,7 +354,7 @@ class VengadorSpellslinger(Enemy):
     def __init__(self, gender, level=0, identifier=None):
         super(VengadorSpellslinger, self).__init__('Vengador', gender, None, specialization=universal.COMBAT_MAGIC, bodyType='voluptuous', height='short', musculature='soft', identifier=identifier)
         self.level = level
-        self.set_all_stats(strength=0, dexterity=1, willpower=2, talent=4, health=6, mana=10, alertness=0)
+        self.set_all_stats(strength=0, dexterity=1, willpower=2, talent=2, health=6, mana=10, alertness=0)
         if gender == person.FEMALE:
             self.equip(copy.copy(itemspotionwars.wornDress))
         else:
@@ -581,7 +581,7 @@ class VengadorScout(Enemy):
         self.equip(copy.copy(itemspotionwars.dagger))
         self.description = format_line(['''A short, thin Taironan''', person.manwoman(self), '''dresssed in a''', self.shirt().name + "," ''' and''', 
             self.lower_clothing().name + ".", person.HeShe(self), '''carries a''', self.weapon().name + "."])
-        self.set_all_stats(strength=1, dexterity=3, willpower=2, talent=1, health=9, mana=7, alertness=2)
+        self.set_all_stats(strength=3, dexterity=1, willpower=2, talent=1, health=9, mana=7, alertness=2)
         self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
         self.learn_spell(spells_PotionWars.heal)
         self.learn_spell(spells_PotionWars.weaken)

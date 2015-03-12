@@ -1,6 +1,5 @@
-
 """
-Copyright 2014 Andrew Russell
+Copyright 2014, 2015 Andrew Russell
 
 This file is part of PotionWars.
 PotionWars is free software: you can redistribute it and/or modify
@@ -79,7 +78,7 @@ def window_shop():
         set_command_interpreter(select_character_to_buy_interpreter)
 
 def window_shop_person_chosen():
-    say_title('Coins: ' + str(chosenPerson.coins))
+    say_title('Matrons: ' + str(chosenPerson.coins))
     listOne = [i + ". " + good.name + ': ' + price for (i, good, price) in shopGoods[:10]]
     #listOne.append('\t')
     listTwo = [i + ". " + good.name + ': ' + price for (i, good, price) in shopGoods[10:]]
@@ -140,7 +139,7 @@ chosenGood = None
 def buy(num):
     global chosenGood
     chosenGood = shopGoods[num-1][ITEM]
-    say_title('Coins: ' + str(chosenPerson.coins))
+    say_title('Matrons: ' + str(chosenPerson.coins))
     universal.say(chosenGood.display())
     set_commands(['(Enter) Purchase', '<==Back'])
     set_command_interpreter(confirm_buy_interpreter)
@@ -173,7 +172,7 @@ def confirm_buy_interpreter(keyEvent):
             chosenPerson.coins -= chosenGood.price
             shopkeeper.inventory.remove(chosenGood)
             chosenPerson.take_item(chosenGood)
-            say_title([chosenPerson.name + "'s", 'Coins: ', str(chosenPerson.coins)])
+            say_title([chosenPerson.name + "'s", 'Matrons: ', str(chosenPerson.coins)])
             if chosenGood.is_equippable():
                 if len(person.get_party()) == 1:
                     universal.say(['\nShould', chosenPerson.printedName, 'equip it?'])
@@ -277,7 +276,7 @@ def window_sell():
         set_command_interpreter(select_party_member_to_sell_interpreter)
 
 def window_sell_person_chosen():
-    say_title([chosenPerson.name + "'s", 'Coins: ', str(chosenPerson.coins)])
+    say_title([chosenPerson.name + "'s", 'Matrons: ', str(chosenPerson.coins)])
     playerGoods = zip([str(i) for i in range(1, len(chosenPerson.inventory) + 
             len(chosenPerson.equipmentList)+1)], 
         chosenPerson.inventory + chosenPerson.equipmentList, 
@@ -328,16 +327,16 @@ def window_sell_interpreter(keyEvent):
             confirm_sell()
 
 def confirm_sell():
-    say_title('Coins: ' + str(chosenPerson.coins))
+    say_title('Matrons: ' + str(chosenPerson.coins))
     universal.say(chosenGood.display())
     set_commands([' '.join(['Sell for', str(chosenGood.price // 2), 
-        ('coins' if chosenGood.price // 2 > 1 else 'coin') + "?", '(Y/N)'])])
+        ('matrons' if chosenGood.price // 2 > 1 else 'matron') + "?", '(Y/N)'])])
     set_command_interpreter(confirm_sell_interpreter)
 
 def confirm_sell_interpreter(keyEvent):
     if keyEvent.key == K_y:
         universal.say([chosenPerson.name, 'has sold', chosenGood.name, 'for', str(chosenGood.price // 2), 
-                'coins.'])
+                'matrons.'])
         success = chosenPerson.drop_item(chosenGood)
         if success:
             chosenPerson.coins += chosenGood.price // 2

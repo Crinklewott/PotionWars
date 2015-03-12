@@ -1,6 +1,6 @@
 
 """
-Copyright 2014 Andrew Russell
+Copyright 2014, 2015 Andrew Russell
 
 This file is part of PotionWars.
 PotionWars is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ def failed_spanking(top, bottom, position):
     try:
         return top.failed(bottom, position)
     except NotImplementedError, AttributeError:
-        return bottom.blocked(top, position)
+        return bottom.blockes(top, position)
 
 class Implement(items.Item):
     """

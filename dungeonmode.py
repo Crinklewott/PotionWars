@@ -1,5 +1,5 @@
 """
-Copyright 2014 Andrew Russell
+Copyright 2014, 2015 Andrew Russell
 
 This file is part of PotionWars.
 PotionWars is free software: you can redistribute it and/or modify
@@ -231,6 +231,62 @@ class FloorEvents(universal.RPGObject):
         key = self.height - 1 - key
         return self.events[key]
 
+
+currentCoordinate = 0
+COORDINATE_DIMENSION = 3
+moveTo = ["_"] * 3
+def go_interpreter(keyEvent):
+    global currentCoordinate, moveTo, dungeon
+    dirtyRects = []
+    if keyEvent.key in universal.NUMBER_KEYS:
+        moveTo[currentCoordinate] = moveTo[currentCoordinate][:-1] + pygame.key.name(keyEvent.key) + moveTo[currentCoordinate][-1]
+        universal.set_commands([''.join(["Coordinates to travel to:", ', '.join(moveTo)]), '(Esc) Cancel', '<==Back'])  
+    elif keyEvent.key == K_RETURN:
+        if moveTo[currentCoordinate] == '_':
+            return
+        moveTo[currentCoordinate] = moveTo[currentCoordinate][:-1]
+        currentCoordinate += 1
+        if currentCoordinate >= COORDINATE_DIMENSION:
+            z, x, y = tuple(map(int, moveTo))
+            newCoordinates = (z, y, x)
+            if newCoordinates in dungeon.visitedSquares:
+                moveTo = ["_"] * 3
+                previousCoordinates = dungeon.coordinates
+                dungeon.coordinates = newCoordinates
+                dirtyRects = dungeon.display_event(previousCoordinates)
+            else:
+                set_commands(["Cannot travel to unvisited square.", "(Enter) Acknowledge."])
+                set_command_interpreter(go_error_interpreter)
+        else:
+            universal.set_commands([''.join(["Coordinates to travel to:", ', '.join(moveTo)]), '(Esc) Cancel', '<==Back'])  
+    elif keyEvent.key == K_BACKSPACE:
+        if moveTo[currentCoordinate] == '_':
+            currentCoordinate -= 1
+            if currentCoordinate < 0:
+                set_dungeon_commands(dungeon)
+                universal.set_command_interpreter(dungeon_interpreter)
+                return dirtyRects
+            else:
+                moveTo[currentCoordinate] = moveTo[currentCoordinate][:-1] + '_'
+        else:
+            moveTo[currentCoordinate] = moveTo[currentCoordinate][:-2] + '_'
+        universal.set_commands([''.join(["Coordinates to travel to:", ', '.join(moveTo)]), '(Esc) Cancel', '<==Back'])  
+    elif keyEvent.key == K_ESCAPE:
+        set_dungeon_commands(dungeon)
+        universal.set_command_interpreter(dungeon_interpreter)
+    dirtyRects.append(universal.commandView)
+    return dirtyRects
+
+def go_error_interpreter(keyEvent):
+    if keyEvent.key == K_RETURN:
+        global currentCoordinate, moveTo
+        currentCoordinate = COORDINATE_DIMENSION-1
+        moveTo[-1] += '_'
+        universal.set_commands([''.join(["Coordinates to travel to:", ', '.join(moveTo)]), '(Esc) Cancel', '<==Back'])  
+        universal.set_command_interpreter(go_interpreter)
+
+
+
 class Dungeon(townmode.Room):
     """
     A dungeon, D. D[i][j][k] corresponds to coordinate (j,k) on floor i.
@@ -337,7 +393,8 @@ class Dungeon(townmode.Room):
 
 
     def go(self):
-
+        universal.set_commands([''.join(["Coordinates to travel to:", ', '.join(moveTo)]), '(Esc) Cancel', '<==Back'])  
+        set_command_interpreter(go_interpreter)
 
 
     def draw_vertical_line(self, startPos, verticalLineLength, mapSurface, width=1):
@@ -444,15 +501,27 @@ class Dungeon(townmode.Room):
         return visibleSquares
 
 
+    def display_coordinate_rect(self):
+        coordTopLeft = coordinateSurface.get_rect().topleft
+        z, y, x = self.coordinates
+        print("-------------------------coordinate box--------------------------")
+        print((z, y, x))
+        universal.say_title(str((z, x, y)), coordinateSurface)
+        flush_text(13)
+        coordinateRect = pygame.Rect(coordTopLeft, (coordinateSurface.get_rect().width, coordinateSurface.get_rect().height))
+        pygame.draw.rect(coordinateSurface, LIGHT_GREY, coordinateRect, 5)
+        return coordinateRect
+    
     def display_map(self, clearScreen, previousCoordinates):
         """
         Displays the auto-map of the current floor, showing what's been explored so far.
         """
         worldView = universal.get_world_view()
+        coordinateRect = self.display_coordinate_rect()
         currentFloor = self.dungeonMap[self.coordinates[0]]
         dungeonHeight = currentFloor.height
         dungeonWidth = currentFloor.width
-        viewWidth, viewHeight = worldView.width, worldView.height
+        viewWidth, viewHeight = worldView.width, worldView.height - coordinateRect.height // 2
         if not self.mapSurface:
             self.mapSurface = pygame.Surface((viewWidth, viewHeight))
             clearScreen = True
@@ -461,6 +530,7 @@ class Dungeon(townmode.Room):
             universal.clear_world_view()
             mapSurface.fill(universal.DARK_GREY)
             self.drawnSquares = set()
+            self.visibleSquares = set()
         #originY -= verticalLineLength
         #originY -= universal.COMMAND_VIEW_LINE_WIDTH // 2
         font = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.DEFAULT_SIZE)
@@ -470,13 +540,13 @@ class Dungeon(townmode.Room):
         viewWidth = viewWidth - 2 * rowNumberWidth
         verticalLineLength = viewHeight // dungeonHeight
         horizontalLineLength = viewWidth // dungeonWidth
-        originX, originY = (worldView.left + rowNumberWidth, worldView.bottom - columnNumberHeight)
+        originX, originY = (worldView.left + rowNumberWidth, worldView.bottom - columnNumberHeight - coordinateRect.height // 2)
         originY -= verticalLineLength
         originY -= universal.COMMAND_VIEW_LINE_WIDTH // 2
-        rowLeftX, rowBottomY = (worldView.left, originY + 2 * universal.COMMAND_VIEW_LINE_WIDTH // 3)
+        rowLeftX, rowBottomY = (worldView.left, originY + universal.COMMAND_VIEW_LINE_WIDTH // 3)
         columnLeftX, columnTopY = (worldView.left + rowNumberWidth + horizontalLineLength // 2 - columnNumberWidth // 3, worldView.top)
         rowRightX = worldView.right - rowNumberWidth
-        columnBottomY = worldView.bottom - columnNumberHeight
+        columnBottomY = originY - columnNumberHeight
         #number rows
         #Don't need to track dirtyRects, because clearScreen means the entire worldview gets redrawn.
         if clearScreen:
@@ -489,7 +559,7 @@ class Dungeon(townmode.Room):
         if clearScreen:
             for i in range(dungeonHeight):
                 self.draw_icon(str(i), (columnLeftX, columnTopY), None, None, mapSurface, center=False)
-                self.draw_icon(str(i), (columnLeftX, columnBottomY), None, None, mapSurface, center=False)
+                #self.draw_icon(str(i), (columnLeftX, columnBottomY), None, None, mapSurface, center=False)
                 columnLeftX += horizontalLineLength
         screen = universal.get_screen()
         visitedSquares = {square for square in self.visitedSquares if square[0] == self.coordinates[0]}
@@ -588,9 +658,12 @@ class Dungeon(townmode.Room):
         self.draw_player((originX + horizontalLineLength * x, originY - verticalLineLength * y), horizontalLineLength, verticalLineLength, mapSurface)
         dirtyRects.append(pygame.Rect((originX + horizontalLineLength * x, originY - verticalLineLength * y), (horizontalLineLength, verticalLineLength)))
         screen.blit(mapSurface, worldView) 
+        screen.blit(coordinateSurface, (worldView.midbottom[0] - coordinateRect.width // 2, worldView.midbottom[1] - coordinateSurface.get_rect().height))
         #If we've had to redraw the entire screen, then the entire worldview needs to be redrawn. Otherwise, we just redraw what changed.
         if clearScreen:
             dirtyRects = [worldView]
+        dirtyRects.append(pygame.Rect((worldView.midbottom[0] - coordinateRect.width // 2, worldView.midbottom[1] - coordinateSurface.get_rect().height),
+            (coordinateRect.width, coordinateRect.height)))
         return dirtyRects
 
     @staticmethod
@@ -622,6 +695,7 @@ class Dungeon(townmode.Room):
             visited = []
         room.visitedSquares = {tuple(int(s) for s in t[1:-1].split(',')) for t in visited}
         room.visitedSquares.add(room.coordinates)
+        room.drawnSquares = set()
 
     def exit_dungeon(self):
         """

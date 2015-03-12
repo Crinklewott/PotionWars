@@ -1,4 +1,4 @@
-""" Copyright 2014 Andrew Russell 
+""" Copyright 2014, 2015 Andrew Russell 
 
 This file is part of PotionWars.  PotionWars is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
@@ -754,7 +754,7 @@ class Person(universal.RPGObject):
         raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement spanked_by for', self.name, 'please send them an e-mail at', 
             get_author_email_bugs()]))
 
-    def reversed(self, person, position):
+    def reverses(self, person, position):
         raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement reverses for', self.name, 'please send them an e-mail at', 
             get_author_email_bugs()]))
 
@@ -767,7 +767,7 @@ class Person(universal.RPGObject):
         raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement failed for', self.name, 'please send them an e-mail at', 
             get_author_email_bugs()]))
 
-    def blocked(self, person, position):
+    def blocks(self, person, position):
         raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement blocked for', self.name, 'please send them an e-mail at', 
             get_author_email_bugs()]))
 
@@ -965,7 +965,7 @@ class Person(universal.RPGObject):
         self.increase_all_stats(0-penalty)
 
     def decrease_stat(self, stat, num):
-        self.increase_stat(stat, 0 - num)
+        self.increase_stat(stat, int(0 - num))
 
     def receives_damage(self, num):
         self.set_stat(universal.CURRENT_HEALTH, self.current_health() - min(self.current_health(), num))
@@ -1524,7 +1524,10 @@ class Person(universal.RPGObject):
             items.Item.load(equipmentData, universal.state.get_item(name))
             person.equip(universal.state.get_item(name))
         stats = [stat.strip() for stat in stats.split('\n') if stat.strip()] 
-        person.primaryStats = [int(stat.strip()) for stat in stats]
+        try:
+            person.primaryStats = [int(stat.strip()) for stat in stats]
+        except ValueError:
+            person.primaryStats = [int(float(stat.strip())) for stat in stats]
         person.tier = int(tier.strip())
         person.specialization = int(specialization.strip())
         ignoredSpells = [spellName.strip() for spellName in ignoredSpells if spellName.strip()]
@@ -1535,7 +1538,10 @@ class Person(universal.RPGObject):
             person.combatType = int(combatType.strip())
         if litany.strip() != "None":
             person.litany = int(litany.strip())
-        person.coins = int(coins.strip())
+        try:
+            person.coins = int(coins.strip())
+        except ValueError:
+            person.coins = int(float(coins.strip()))
         if 'zeroth_order' in order:
             person.order = zeroth_order
         elif 'first_order' in order:

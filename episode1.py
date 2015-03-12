@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-Copyright 2014 Andrew Russell
+Copyright 2014, 2015 Andrew Russell
 
 This file is part of PotionWars.
 PotionWars is free software: you can redistribute it and/or modify
@@ -2814,7 +2814,7 @@ def peter_2_1_1qf():
 ['''"What about cold weather''', '''or the male gaze?"''' if universal.state.player.is_female() else '',  
 '''asks''', universal.state.player.name + ".", '''"Does it protect you against that too?"'''],
 ['''"Well, I imagine you could wear it under other clothing," says Peter, scratching''',
-'''his chin. "You interested in purchasing it? 5000 coins."'''],
+'''his chin. "You interested in purchasing it? 5000 matrons."'''],
 '''"Eh, little bit outside my price range."''',
 '''"Thought so," says Peter. "Ah well. What else can I do for you?"'''])
     try:
@@ -3137,7 +3137,7 @@ def adrian_1_1_1_qf():
     adrian = universal.state.get_character('Adrian.person')
     adrian_1_1_1.quip = universal.format_line(['''"You're in luck," says Adrian.''',
     '''"We could''', '''definitely use more adventurers. The sign up fee is''',
-    str(adrian.myPrice), '''coins."'''])
+    str(adrian.myPrice), '''matrons."'''])
     if 'Maria_intimidated_you' in universal.state.player.keywords:
         adrian_1p2_1_1.comment = universal.format_line(['''"Great. Maria treats me''',
             '''like dirt, and now I have to pay some cursed sign up fee.''',
@@ -3156,7 +3156,7 @@ def adrian_1p1_1_1_qf():
         '''we don't''',
     '''all have our own personal narrator telling us everything we'll''',
     '''ever need to know?" says Adrian.''', '"' + str(adrian.myPrice), 
-    '''coins, please."'''])
+    '''matrons, please."'''])
     universal.state.player.add_keyword('full_conversation')
     universal.state.player.add_keyword('learned_about_signup_fee')
 adrian_1p1_1_1.quip_function = adrian_1p1_1_1_qf
@@ -3179,7 +3179,7 @@ def adrian_1p2_1_1_qf():
                 '''anyone else that can handle this solo."'''],
             ['''"Fine."'''],
             ['''"Anyway," says Adrian. "Are you interested in joining?''',
-                str(adrian.myPrice), '''coins, remember."''']])
+                str(adrian.myPrice), '''matrons, remember."''']])
     else:
         adrian_1p2_1_1.quip = universal.format_text([['''Adrian's face lights up.''',
         '''"Oh, Maria! Have you seen her recently? She hasn't been in for''',
@@ -3198,20 +3198,20 @@ def adrian_1p2_1_1_qf():
         ['''"I don't know." Adrian shrugs. "But since you know her, and she recommends you,''',
             '''I'll happily give you a discount. Woman's real good at''',
             '''finding new talent. So how about''', str(adrian.myPrice - 10), 
-            '''coins instead?"''']])
+            '''matrons instead?"''']])
     universal.state.player.add_keyword('Maria_lied_about_job')
     if 'Maria_intimidated_you' not in universal.state.player.keywords:
         adrian.myPrice -= 10
 adrian_1p2_1_1.quip_function = adrian_1p2_1_1_qf
 
-adrian_1p3_1_1.comment = '''"How about I give you 5 coins instead?"'''  
+adrian_1p3_1_1.comment = '''"How about I give you 5 matrons instead?"'''  
 adrian_1p3_1_1.children = [adrian_1p2_1_1, adrian_1p5_1_1, adrian_3_1_1]
 def adrian_1p3_1_1_qf():
     adrian = universal.state.get_character('Adrian.person')
     if 'snarked_at_Adrian' in universal.state.player.keywords:
         adrian_1p3_1_1.quip = universal.format_line(['''"First you waste my time''',
             '''with sarcasm, now you try to haggle on something''',
-            '''non-negotiable. The sign up fee is now 25 coins," says''',
+            '''non-negotiable. The sign up fee is now 25 matrons," says''',
             '''Adrian.'''])
     else:
         adrian_1p3_1_1.quip = universal.format_line(['''"How about 20 gold instead?"''',
@@ -3241,7 +3241,7 @@ adrian_1p4_1_1.children = [adrian_1p4p1_1_1, adrian_1p4p2_1_1]
 def adrian_1p4_1_1_qf():
     adrian = universal.state.get_character('Adrian.person')
     adrian_1p4_1_1.quip = universal.format_text([['''"That's not a problem," says''',
-        '''Adrian. "We'll just give you''', str(adrian.myPrice), '''coins''',
+        '''Adrian. "We'll just give you''', str(adrian.myPrice), '''matrons''',
         '''worth of credit. The price will come out of the''',
         '''payment for your first real mission."'''],
         ['''"You're not going to charge like 500% interest or something''',
@@ -3256,7 +3256,7 @@ def adrian_1p4_1_1_qf():
     ['''"Relax kid,' says one of the other adventurers, a man who looks''',
             '''to be in his late thirties. "Adrian's true to his word. I''', 
         '''was in the exact same situation you are, he gave me a 15 coin''',
-        '''credit, and 15 coins is all he took."''']]); 
+        '''credit, and 15 matrons is all he took."''']]); 
 adrian_1p4_1_1.quip_function = adrian_1p4_1_1_qf
 
 adrian_1p4p1_1_1.comment = universal.format_line(['''"Well, alright. I mean, it's''',
@@ -3272,7 +3272,7 @@ def adrian_1p4p1_1_1_qf():
     [universal.state.player.name, '''nods.'''],
     ['''"Excellent," says Adrian. He passes the forms across to you.''',
     '''"First, we have an IOU. Just a slip of paper that you and I each''',
-    '''get a copy that says you owe me''', str(adrian.myPrice), '''coins,''',
+    '''get a copy that says you owe me''', str(adrian.myPrice), '''matrons,''',
     '''and that the debt will''',
     '''be paid out of the fee of your first mission.'''],
     ['''"Then we have the real forms. I highly recommend that you read''',
@@ -3311,12 +3311,12 @@ def adrian_1p5_1_1_qf():
                 '''of you. I was an adventurer once too, and I remember''',
                 '''well how hard it can be to find enough money for food,''',
                 '''let alone some silly sign up fee. You will owe''',
-                '''me''', str(adrian.myPrice), '''coins and only''',
-                str(adrian.myPrice), '''coins."'''],
+                '''me''', str(adrian.myPrice), '''matrons and only''',
+                str(adrian.myPrice), '''matrons."'''],
             ['''"He's on the level miss," says an adventurer behind''', 
                 universal.state.player.name + ",", '''a woman a few years older than''', 
                 himher(universal.state.player) + ".", '''"Most of us didn't have the sign up''',
-                '''fee either, and he only took the 15 coins he needed''',
+                '''fee either, and he only took the 15 matrons he needed''',
                 '''from us."'''],
             ['''"Besides," says another, chuckling. "Adrian makes most''',
             '''of his money by skinning his customers. He doesn't need''',
@@ -3366,7 +3366,7 @@ def adrian_2_1_1_qf():
     '''imagination, unless you actually are rich enough to hire''',
     '''adventurers. Now I'm going to take your lip as''',
     '''a yes, you are looking for employment. The sign-up fee is''',
-    str(adrian.myPrice), '''coins."''']])
+    str(adrian.myPrice), '''matrons."''']])
     universal.state.player.add_keyword('snarked_at_Adrian')
     if 'Maria_intimidated_you' in universal.state.player.keywords:
         adrian_1p2_1_1.comment = universal.format_line(['''"Great. Maria treats me''',
@@ -3429,7 +3429,7 @@ def adrian_5_1_1_qf():
             [universal.state.player.name + "'s", '''hackles rise. "Plus 500% interest, I suppose?"'''],
             ['''"No, actually," says Adrian. "See, I was an adventurer at one time, too. I know how''',
             '''hard it is to scrape up enough money for food, let alone a sign up fee. It'll be''',
-            str(adrian.myPrice), '''coins, and only''', str(adrian.myPrice), '''coins."'''],
+            str(adrian.myPrice), '''matrons, and only''', str(adrian.myPrice), '''matrons."'''],
             ['''"He's on the level, kid," says one of the adventurers at the table. "Most of us''',
             '''were in a similar situation. He took the sign up fee, and not a coin more."'''],
             '''The other adventurers all nod.''',
@@ -3466,15 +3466,15 @@ adrian_6_1_1.quip_function = adrian_6_1_1_qf
 
 adrian_7_1_1.comment = '''"How much will I get paid per mission?"'''
 def adrian_7_1_1_qf():
-    adrian_7_1_1.quip = universal.format_text([['''"The standard base fee is 100 coins,' says''',
+    adrian_7_1_1.quip = universal.format_text([['''"The standard base fee is 100 matrons,' says''',
     '''Adrian. "You get paid that whether you succeed or not. Living expenses in''',
-    '''Avaricum are about 90 to 200 coins per month, depending on where you live. We do have rooms here, however. Rent for them is 90 coins a month, but you also have''',
+    '''Avaricum are about 90 to 200 matrons per month, depending on where you live. We do have rooms here, however. Rent for them is 90 matrons a month, but you also have''',
     '''to help with various chores, and we have several rules you would need to follow. So,''',
     '''you should be able to live on''', 
-    '''your fees, so long as you're careful. Anyway, secondary objectives usually net you an additional 20 coins each. Don't''',
+    '''your fees, so long as you're careful. Anyway, secondary objectives usually net you an additional 20 matrons each. Don't''',
     '''get your hopes up, though, there aren't usually that many. One or two, when''',
     '''there are any at all. Completing the primary objective gets you an extra 50''',
-    '''coins."''']])
+    '''matrons."''']])
     try:
         adrianRootChildren.remove(adrian_7_1_1) 
     except ValueError:
@@ -6242,7 +6242,7 @@ def e0_8_7():
                 universal.say(universal.format_text(['''1. Make a run for it.''', 
                                 ['''2. Turn around and bend over.'''], 
                                 ['''3. "Globos de la Madre, this is so stupid! Your precious Guild is being''',
-                    '''attacked by La Madre only knows who, they're making off with hundreds if not thousands of coins worth of equipment, at least one person''',
+                    '''attacked by La Madre only knows who, they're making off with hundreds if not thousands of matrons worth of equipment, at least one person''',
                     '''is probably seriously hurt, and the damage everyone is doing to this place will take months if not years to repair, and you're standing here''',
                     '''getting ready to spank me? In case you haven't noticed, the Vengadores have this obnoxious habit of attacking anyone who isn't them.''',
                     '''See me, standing here not attacking you? Can't that be enough to convince you I'm not your enemy?''']]), justification=0)
@@ -7731,7 +7731,7 @@ def necia_wimpy_spanked():
         ['''"Exactly," says the Vengador. She grabs''', names(), universal.state.player.clothing_below_the_waist().name, universal.format_line(['''and yanks''', items.itthem(universal.state.player.clothing_below_the_waist()), '''down to''', hisher(), '''knees.''']) if
             wearing_skirt_or_pants() or wearing_underwear() else universal.format_line(['''lifts it up over''', names(), '''bottom and drapes it across''', hisher(), '''back.''']), name(), '''squeals indignantly as''', hisher(),
                 universal.format_line([universal.state.player.underwear().name, '''is exposed.''']) if (wearing_skirt_or_dress() or wearing_pants()) and wearing_underwear() else '''bare bottom is exposed. "You've done absolutely nothing.''',
-                '''"Our people are being crushed, and all you care about are a couple handfuls of coins!"'''],
+                '''"Our people are being crushed, and all you care about are a couple handfuls of matrons!"'''],
         ['''"This is ridiculous," wails''', name(), '''pounding''', hisher(), '''feet against the ground as the Vengador's heavy hand crashes into''', hisher(), '''bare''' if universal.state.player.underwear().baring or
             (not wearing_skirt_or_dress() and not wearing_pants) else universal.state.player.underwear().name + "-clad", '''bottom over and over again.''', '''"I've only been here a day."'''],
         ['''Before the Vengador can respond, the door bangs open, and the warslinger bursts in.'''],
@@ -8903,7 +8903,7 @@ def adrian_request_bed_qf():
             '''typically geared towards maintaining the Guild. Failure to complete these tasks will earn you similar penalties as with cleanliness, except your second violation will get you twenty-six''',
             '''strokes of''',
             '''the tawse, and move up to twenty-six strokes of the tawse, and ten with the cane for subsequent violations. Finally, I will take a cut out of each of your payments to finish paying for your''',
-            '''lodging, up to ninety coins a month. If you don't work enough to make ninety coins in a month, we will try to find extra work around the Guild for you to do to make up the difference. If that doesn't work, then we may have to force you to go on''',
+            '''lodging, up to ninety matrons a month. If you don't work enough to make ninety matrons in a month, we will try to find extra work around the Guild for you to do to make up the difference. If that doesn't work, then we may have to force you to go on''',
             '''rations.''',
             '''Understand?"'''],
         [name(), '''nods, feeling slightly overwhelmed.'''],
@@ -8988,7 +8988,7 @@ def ep1_peter_apologize_qf():
         '''in the middle, distrusted by both because of her mixed heritage. Besides, I was a camp follower in the last war." His eyes take on a distant,''',
         '''haunted look. "I've seen what happens to defenseless women on the losing side."'''],
     ['''"That seems like an awful lot for an apology," says''', name() + ".", '''"Think I could get paid?"'''],
-    ['''Peter nods. "Yeah, you should be, sorry for not offering it right away. I can't pay much. Does twenty coins a month work?"'''],
+    ['''Peter nods. "Yeah, you should be, sorry for not offering it right away. I can't pay much. Does twenty matrons a month work?"'''],
     ['''"Fifty."'''],
     ['''"Thirty. Can't go above that."'''],
     ['''"Forty."'''],
@@ -9033,7 +9033,7 @@ def ep1_peter_apologize_flirt_qf():
             '''happy and uncaring, to brooding and tense, to angry to the point of violence. The city's angry right now, and I worry what'll happen to''',
             '''Anne when things explode. I've seen... Well, point is, I just want her safe."'''],
         ['''"That's an awful lot for an apology," says''', name() + " hesitantly.", '''"I, I really should get paid."'''],
-        ['''Peter nods. "Yeah, you should be, sorry for not offering it right away. I can't pay much. Does twenty coins a month work?"'''],
+        ['''Peter nods. "Yeah, you should be, sorry for not offering it right away. I can't pay much. Does twenty matrons a month work?"'''],
         ['''"Fifty."'''],
         ['''"Thirty. Can't go above that."'''],
         ['''"Forty."'''],
@@ -9066,7 +9066,7 @@ def ep1_peter_apologize_flirt_lesbian_qf():
             '''happy and uncaring, to brooding and tense, to angry to the point of violence. The city's angry right now, and I worry what'll happen to''',
             '''Anne when things explode. I've seen... Well, point is, I just want her safe."'''],
         ['''"That's an awful lot for an apology," says''', name() + " hesitantly.", '''"I, I really should get paid."'''],
-        ['''Peter nods. "Yeah, you should be, sorry for not offering it right away. I can't pay much. Does twenty coins a month work?"'''],
+        ['''Peter nods. "Yeah, you should be, sorry for not offering it right away. I can't pay much. Does twenty matrons a month work?"'''],
         ['''"Fifty."'''],
         ['''"Thirty. Can't go above that."'''],
         ['''"Forty."'''],
@@ -11817,7 +11817,7 @@ def maria_no_problems_function(node):
                 '''you turn out a bit less pleasant, and a bit more violent than I thought."'''],
                 ['''"Good to know," says''', name() + ".", '''"Shall we go?"'''],
                 ['''"Do you even have a place to sleep?" asks Maria. "Because you can come live with me, if you'd like. I live in a bit of a hole, on the edge of the slums.''',
-                '''But if we live together, we can upgrade a bit and still only pay fifty coins a month each. For now, the place will be a bit crowded, but I can''',
+                '''But if we live together, we can upgrade a bit and still only pay fifty matrons a month each. For now, the place will be a bit crowded, but I can''',
                 '''go for a walk, and give you two some privacy for a while."'''],
                 ['''"Isn't that a little bit dangerous?" asks Carrie.'''],
                 ['''"I'm not actually in the slums," says Maria. "Plus, I've been a successful adventurer for ten years. People know not to mess with me."''']])
@@ -11886,7 +11886,7 @@ def maria_no_problems_qf(node):
                 '''you turn out a bit less pleasant, and a bit more violent than I thought."'''],
                 ['''"Good to know," says''', name() + ".", '''"Shall we go?"'''],
                 ['''"Do you even have a place to sleep?" asks Maria. "Because you can come live with me, if you'd like. I live in a bit of a hole, on the edge of the slums.''',
-                '''But if we live together, we can upgrade a bit and still only pay fifty coins a month each. For now, the place will be a bit crowded, but I can''',
+                '''But if we live together, we can upgrade a bit and still only pay fifty matrons a month each. For now, the place will be a bit crowded, but I can''',
                 '''go for a walk, and give you two some privacy for a while."'''],
                 ['''"Isn't that a little bit dangerous?" asks Carrie.'''],
                 ['''"I'm not actually in the slums," says Maria. "Plus, I've been a successful adventurer for ten years. People know not to mess with me."''']])
@@ -12117,8 +12117,8 @@ ep1_maria_temper_forgive.children = [ep1_maria_live, ep1_maria_dont_live]
 
 def ep1_maria_live_question():
     quip = universal.format_text([['''Anyway, I was wondering if you'd like to live with me. It's not much, but it's a home. In fact, we could even upgrade a little, and still only''',
-        '''cost us each fifty coins a month."'''],
-        ['''"But what about rent?" asks''', name() + ".", '''"I don't have fifty coins, and I have no idea when I'll be getting some."'''],
+        '''cost us each fifty matrons a month."'''],
+        ['''"But what about rent?" asks''', name() + ".", '''"I don't have fifty matrons, and I have no idea when I'll be getting some."'''],
         ['''"Well, a friend of mine runs a clinic for helping Taironans break their addiction to potions. It's not as fancy as the one run by the Matirian Church, but it's run by Taironans, for''',
             '''Taironans, so it's an option for people who don't trust Matirians. How about, in exchange for the first month's rent, you spend one morning volunteering there with me."''']])
     if 'boarding_with_Adrian' in keywords(): 

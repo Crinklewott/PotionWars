@@ -1,6 +1,5 @@
-
 """
-Copyright 2014 Andrew Russell
+Copyright 2014, 2015 Andrew Russell
 
 This file is part of PotionWars.
 PotionWars is free software: you can redistribute it and/or modify
@@ -111,12 +110,8 @@ class Humiliated(StatusEffect):
         self.penalty = numSmacks // Humiliated.smacksPerPenaltyPoint
 
     def inflict_status(self, person):
-        print(' '.join([person.name, 'before humiliation:']))
-        print(person.primaryStats)
         #stat = max([i for i in range(len(person.primaryStats[:-4]))], key=lambda x : person.primaryStats[x])
         person.decrease_stat(person.highest_stat(), self.penalty)
-        print(' '.join([person.name, 'after humiliation:']))
-        print(person.primaryStats)
         return 0
 
 
