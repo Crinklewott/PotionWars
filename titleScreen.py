@@ -318,9 +318,7 @@ def title_screen(episode=None):
         universal.titleText = ''
         for event in pygame.event.get():
             if event.type == KEYUP:
-                import traceback
-                #traceback.print_stack()
-                return
+                return [universal.get_command_view()]
     #subtitleLocation = (wvMidLeft[0], wvMidLeft[1]+50)
     #textSurface = textrect.render_textrect(get_subtitle(), pygame.font.SysFont(universal.FONT_LIST, 30), worldView, LIGHT_GREY, DARK_GREY, 1)
     #screen.blit(textSurface, subtitleLocation)

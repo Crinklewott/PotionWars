@@ -432,7 +432,7 @@ PUNCTUATION_NO_SPACE_FOLLOWING = ['"("', '""', '"--"', '"-"']
 
 PUNCTUATION_NO_SPACE_PRECEDING = ['"."', '","', '"!"', '"?"', '")"', '".)"', '"?)"', '"!)"', '"--"', '"-"']
 
-QUOTE = "'" + '"' + "'"
+QUOTE = "'\"'"
 
 class Paragraph(ParseTree):
     """
@@ -453,14 +453,18 @@ class Paragraph(ParseTree):
                 nextText = translatedText[i+1]
             except IndexError:
                 nextText = ''
-            if text == QUOTE:
+            if text.strip() == QUOTE:
                 if quoteSeen:
                     translatedText[i] = ' '.join(["''.join([", text, ", ' '])"])
+                else:
+                    translatedText[i] = ' '.join(["''.join([", text, "])"])
                 quoteSeen = not quoteSeen
-            elif nextText == QUOTE:
+            elif nextText.strip() == QUOTE:
                 if not quoteSeen:
                     translatedText[i] = ' '.join(["''.join([", text, ", ' '])"])
-            elif text not in PUNCTUATION_NO_SPACE_FOLLOWING and nextText not in PUNCTUATION_NO_SPACE_PRECEDING: 
+                else:
+                    translatedText[i] = ' '.join(["''.join([", text, "])"])
+            elif text.strip() not in PUNCTUATION_NO_SPACE_FOLLOWING and nextText.strip() not in PUNCTUATION_NO_SPACE_PRECEDING: 
                 translatedText[i] = ' '.join(["''.join([", text, ", ' '])"])
         return ('[' + ', '.join(translatedText) + ']', 'text')
 
@@ -473,9 +477,9 @@ class Text(ParseTree):
     def translate(self):
         text = ' '.join(self.data)
         if text == '"':
-            return "'" + text + "'"
+            return "'" + text + "'\n"
         else:
-            return '"' + text + '"'
+            return '"' + text + '"\n'
 
 #This is returned when translating empty text.
 EMPTY_TEXT_TRANSLATION = '[""]'

@@ -299,6 +299,7 @@ class FullArmor(Armor):
     def __init__(self, name, description, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, price=0, enchantments=None, maxEnchantment=12, risque=0):
         super(FullArmor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
         self.armorType = 'full armor'
+        self.baring = False
 
     def unequip(self, char, couldBeNaked=True):
         if couldBeNaked and char.underwear() == emptyUnderwear:

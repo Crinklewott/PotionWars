@@ -32,7 +32,7 @@ import math
 import ast
 
 DEBUG = False
-SAVE_DELIMITER = '%%%'
+SAVE_DELIMITE = '%%%'
 
 
 STAT_GROWTH_RATE_MULTIPLIER = 10
@@ -597,9 +597,9 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
                     newPage = ''
         if pageLength > 1 and pageCount < pageLength-1:
             if DEBUG:
-                set_commands(['(Enter) to continue.', '<==Back', '(Esc) Skip'])
+                set_commands(['(Enter) to continue.', '<==Back'])
             else:
-                set_commands(['(Enter) to continue.', '(Esc) Skip'])
+                set_commands(['(Enter) to continue.'])
             #commandSurface = pygame.Surface((commandView.width, commandView.height))
             pygame.draw.rect(screen, LIGHT_GREY, pygame.Rect(commandView.topleft, commandView.size), 10)
             #commandSurface.fill(DARK_GREY)
@@ -614,19 +614,12 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
                     elif event.type == KEYUP and event.key == K_RETURN:
                         acknowledged = True
                         break
-                    elif event.type == KEYUP and event.key == K_BACKSPACE and DEBUG:
+                    elif DEBUG and event.type == KEYUP and event.key == K_BACKSPACE:
                         acknowledged = True
                         del pages[pageCount]
                         pageLength -= 1
                         if pageCount > 0:
                             pageCount -= 2
-                        break
-                    elif event.type == KEYUP and event.key == K_ESCAPE:
-                        acknowledged = True
-                        pageCount = pageLength-2
-                        global playedMusic
-                        playedMusic.queue.clear()
-                        playMusic = False
                         break
         set_commands(previousCommands, previousColors)
         pageCount += 1 

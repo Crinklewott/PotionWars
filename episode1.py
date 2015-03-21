@@ -11497,8 +11497,8 @@ def ep1_roland_despite_taironan_qf():
         ['''"Is this another one of Carrie's boasts?" asks''', name(), '''sardonically.'''],
         [universal.format_line(['''Carrie lightly smacks''', name(), '''upside the head, and then yelps when he pulls her to her feet and smacks her bum a few times.''']) if 
             'flirting_with_Carrie' in keywords() else universal.format_line(['''"I don't boast," says Carrie with exaggerated indignation. "I always tell the complete truth."'''])],
-        ['''"While Carrie is exagerating a little bit, she's not that far off," says Roland. "See-"'''],
-        ['''"Oh, do we really have to talk about it?" asks Elise. "It's embarassing."'''],
+        ['''"While Carrie is exaggerating a little bit, she's not that far off," says Roland. "See-"'''],
+        ['''"Oh, do we really have to talk about it?" asks Elise. "It's embarrassing."'''],
         ['''"Then think of it as part of your punishment for your actions tonight," says Roland.'''],
         ['''Elise pouts, but doesn't say anything else.'''],
         ep1_elise_meeting_roland(ep1_roland_despite_taironan)])
@@ -11617,7 +11617,7 @@ def ep1_taironan_no_qf():
             ['"' + name() + '-"'],
             ['''"I didn't 'pat myself on the back!'" roars Roland. "Do you think I enjoy dragging people kicking and screaming into the dungeons? DO you think I like''',
                 '''watching my puppeteers dig into the deepest corners of their soul-"'''],
-            ['''"Well you sure as curses don't seem to be losing any sleep over it!"'''],
+            ['''"Well you sure as hell don't seem to be losing any sleep over it!"'''],
             ['''"I will not let my job consume my life!"'''],
             ['''"Guys, please-"'''],
             ['''"'Your job?' That's all it is? We're talking about people's lives!"'''],
@@ -11628,7 +11628,7 @@ def ep1_taironan_no_qf():
             ['''Roland takes a deep breath. "No. No problem. Just an argument between friends."'''],
             ['''"I see," says Bruce. He gestures at''', name() + ".", '''"Well, if''', heshe(), '''gives you any trouble. Let me know."'''],
             ['''"And what if he gives me any trouble?" asks''', name(), '''angrily.'''],
-            ['''"If he gives you trouble, it'll because it's guard business, and I don't get involved in guard business," says Bruce, walking away.'''],
+            ['''"If he gives you trouble, it'll be because it's guard business, and I don't get involved in guard business," says Bruce, walking away.'''],
             ['''"I think it's best that we stop, before we trigger a bar fight," says Roland, glancing at everyone.'''],
             ['''"Fine, but this isn't over," says''', name() + "."],
             ['''Roland rolls his eyes. "Indeed. I wish it was. Honey, you can stop twisting your dress. The moment of crisis is past."''']])

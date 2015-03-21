@@ -66,13 +66,12 @@ def begin_game(episode):
     leftCommandView = universal.get_left_command_view()
     rightCommandView = universal.get_right_command_view()
     middleCommandView = universal.get_middle_command_view()
-    titleScreen.title_screen(episode)
+    dirtyRects = titleScreen.title_screen(episode)
     #screen.blit(commandSurface, commandView.topleft)
     #screen.blit(background, (0,))
     # Event loop
     #fps = 30
     #clock = pygame.time.Clock()
-    dirtyRects = []
     while True:
         #screen.blit(commandSurface, commandView.topleft)
         #pygame.draw.rect(commandSurface, LIGHT_GREY, commandView, 5)

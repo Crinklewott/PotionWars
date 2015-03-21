@@ -21,8 +21,8 @@ import universal
 import titleScreen
 import textCommandsMusic
 import pygame
-import episode2CharRooms
 import episode1
+import episode2CharRooms
 import episode2
 
 universal.set_author('Andrew Russell')
