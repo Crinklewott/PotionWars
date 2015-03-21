@@ -634,7 +634,7 @@ offStage.add_character(maria)
 #---------------------------------------Elise---------------------------------------------------
 class Elise(p.Person):
     def __init__(self, defaultLitany, litany):
-        super(Elise, self).__init__('Elise', p.FEMALE, defaultLitany, litany, "She's in her early twenties. She has shoulder-length brown hair (currently pulled back into a ponytail to keep it out of the way) and brown eyes. She is also fairly short. She's wearing a blue dress that obscures much of her figure. If her humming is any indication, she has a beautiful singing voice.")
+        super(Elise, self).__init__('Elise', p.FEMALE, None, litany, "She's in her early twenties. She has shoulder-length brown hair (currently pulled back into a ponytail to keep it out of the way) and brown eyes. She is also fairly short. She's wearing a blue dress that obscures much of her figure. If her humming is any indication, she has a beautiful singing voice.")
     def reset_stats(self, episode=None):
         return Elise(self.defaultLitany, self.litany)
 

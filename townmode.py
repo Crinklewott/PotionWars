@@ -898,7 +898,14 @@ def select_destination_interpreter(keyEvent):
 def go(room, party=None, sayDescription=True):
     try:
         universal.state.location.leaving()    
-    except (TypeError, AttributeError):       
+    except TypeError:
+        try:
+            universal.state.location.leaving(room)
+        except TypeError:
+            pass
+        else:
+            return
+    except AttributeError:       
         pass
     try:
         if room.before_arrival():
