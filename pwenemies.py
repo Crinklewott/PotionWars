@@ -30,11 +30,11 @@ def name():
 
 class Enemy(person.Person):
     def __init__(self, name, gender, defaultLitany, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3, musculature='', 
-            bodyType='', height='', hairLength='', hairStyle='', eyeColor='', skinColor='', order=person.zeroth_order, identifier=None):
+            bodyType='', height='', hairLength='', hairStyle='', eyeColor='', skinColor='', order=person.zeroth_order, identifier=None, litany=None):
         """
         Drop chance determines the chances that this character will drop a piece of equipment.
         """
-        super(Enemy, self).__init__(name, gender, defaultLitany, defaultLitany, description, printedName, coins, specialization, order, musculature=musculature,
+        super(Enemy, self).__init__(name, gender, defaultLitany, litany if litany else defaultLitany, description, printedName, coins, specialization, order, musculature=musculature,
                 bodyType=bodyType, height=height, hairLength=hairLength, hairStyle=hairStyle, eyeColor=eyeColor, skinColor=skinColor, identifier=identifier)
         self.dropChance = dropChance
         self.printedName = self.printedName + (' (M)' if self.is_male() else ' (F)')
@@ -261,12 +261,12 @@ class VengadorWarrior(Enemy):
                 top.hisher(), top.lower_clothing().name]) if top.wearing_lower_clothing() else '', '''and clutches it tightly.''']) if top.wearing_underwear() else 
             ' '.join(['''grabs the back of''', top.printedName + "'s", top.lower_clothing.name + "."]),
                     ['''Then,''', bottom.printedName, '''lifts''', top.printedName + "'s", '''bottom up by to hip level.''', top.printedName, '''curses and kicks, but that doesn't stop''',
-                        bottom.printedNamep, '''from putting''', top.printedName, '''in the same vulnerable position in which''', top.heshe(), '''had tried to place''', bottom.printedName + ".",
+                        bottom.printedName, '''from putting''', top.printedName, '''in the same vulnerable position in which''', top.heshe(), '''had tried to place''', bottom.printedName + ".",
                         '''With''', top.hisher(), '''head locked tightly between''', bottom.printedName + "'s", '''calves, the warrior can do little more than wriggle''', top.hisher(), 
                         '''bottom as''', bottom.printedName, '''assaults it with stinging spanks, turning it the same color as the humiliated''', top.printedName + "'s", '''face.''']]])
         
     def on_the_ground_reversal(self, top, bottom):
-        return format_text([[self.on_the_ground_intro(top, bottom)], [top.printedName, '''But then,''', bottom.printedName, '''flips''', bottom.hisher(), '''hips over, and slings one of''', 
+        return format_text([[self.on_the_ground_intro(top, bottom)], ['''But then,''', bottom.printedName, '''flips''', bottom.hisher(), '''hips over, and slings one of''', 
             top.printedName + "'s", '''legs away from''', top.hisher(), '''body. The other combatant lands on all fours but isn't there for long, because''', bottom.printedName, '''quickly sits on''',
             top.hisher(), '''back with enough force to slam''', top.himher(), '''to the floor.''', bottom.printedName, '''begins''', bottom.hisher(), '''spanking revenge by focusing all of''', 
             bottom.hisher(), '''swats on one cheek, leaving''', top.printedName, '''writhing under the relentless punishment.''']])
@@ -682,7 +682,8 @@ class VengadorScout(Enemy):
             '''of''', bottom.printedName + "'s", '''back with''', top.hisher(), '''elbow, and lifts the other Taironan's hips up enough to give''', top.himher(),
             '''a target. However,''', bottom.printedName, '''is able to plant''', bottom.hisher(), '''feet, and with a mighty shove, drives''', bottom.hisher(), '''torso up with enough force''',
             '''to throw''', top.printedName, '''off balance, breaking free of the other's grip.''',
-            '''The''', bottom.heroheroine(), '''rights''', bottom.himselfherself() + ",", '''and''', '''glowers at the''', top.height, '''scout.''']])
+            '''The''', bottom.heroheroine() if top is self else '''scout''', '''rights''', bottom.himselfherself() + ",", '''and''', '''glowers at the''', top.height, 
+            top.herheroine if bottom is self else '''scout''']])
 
     def standing_reversal(self, top, bottom):
         return universal.format_text([['''The wily''', top.printedName, '''ducks a mighty swing from''', bottom.printedName + "'s", bottom.weapon().weaponType, '''and wraps''', top.hisher(), 

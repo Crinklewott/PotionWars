@@ -565,11 +565,12 @@ def guild_bedroom_after_arrival():
         if not alondraSleeping  in guildBedroom.description:
             guildBedroom.description = universal.format_text([guildBedroom.description, alondraSleeping])
         if not universal.format_line(['''If''', name(), '''wishes,''', heshe(), '''can rest, and put an end to this seemingly neverending day.''']) in guildBedroom.description:
-            guildBedroom.description = universal.format_text([guildBedroom.description, universal.format_line(['''If''', name(), '''wishes,''', heshe(), 
-                '''can rest, and put an end to this seemingly neverending day.'''])])
-        if 'Elise_shows_you_around' in textCommandsMusic.keywords() and universal.state.player.currentEpisode == episode1.name:
-            guildBedroom.description = universal.format_text([guildBedroom.description, universal.format_line(['''If''', name(), '''hasn't already,''', p.heshe(), 
-                '''should go meet Elise at the Shrine. After all,''', p.heshe(), '''shouldn't keep her waiting!'''])])
+            guildBedroom.description = universal.format_text([guildBedroom.description, ['''If''', name(), '''wishes,''', heshe(), 
+                '''can rest, and put an end to this seemingly neverending day.''']])
+        if 'Elise_shows_you_around' in textCommandsMusic.keywords() and universal.state.player.currentEpisode == episode1.name and not ("should go meet Elise at the Shrine" in 
+                guildBedroom.description):
+            guildBedroom.description = universal.format_text([guildBedroom.description, ['''If''', name(), '''hasn't already,''', p.heshe(), 
+                '''should go meet Elise at the Shrine. After all,''', p.heshe(), '''shouldn't keep her waiting!''']])
     if guildBedroom.boarding:
         townmode.rest_mode(guildBedroom)
     else:
@@ -693,11 +694,11 @@ ildri = p.Person("Ildri", p.FEMALE, None, None)
 offStage.add_character(adrian)
 offStage.add_character(ildri)
 
-class Edita(p.Person):
+class Edita(pwenemies.Enemy):
     def __init__(self, defaultLitany, litany, description="A short, painfully thin young woman with a nicked dagger and battered breastplate.", 
             printedName=None, coins=20, specialization=universal.WILLPOWER):
-            super(Edita, self).__init__("Edita", p.FEMALE, defaultLitany, litany,
-                        description, printedName, coins, specialization, p.sixth_order, musculature='fit', height='short', bodyType='slim', hairLength='shoulder-length')
+            super(Edita, self).__init__("Edita", p.FEMALE, defaultLitany,
+                        description, printedName, coins, specialization, order=p.sixth_order, musculature='fit', height='short', bodyType='slim', hairLength='shoulder-length', litany=litany)
             self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
             self.level = 0
 
@@ -943,11 +944,11 @@ edita.equip(itemspotionwars.raggedTunic)
 
 #-----------------------------------------------------------------------Necia-------------------------------------------------------------------
 
-class Necia(p.Person):
+class Necia(pwenemies.Enemy):
     def __init__(self, defaultLitany, litany, description="A short, painfully thin young woman with a wicked dagger and well-made leather breastplate.", 
             printedName=None, coins=20, specialization=universal.DEXTERITY):
-            super(Necia, self).__init__("Necia", p.FEMALE, defaultLitany, litany,
-                        description, printedName, coins, specialization, p.second_order, bodyType='average', height='average', musculature='fit', hairLength='short')
+            super(Necia, self).__init__("Necia", p.FEMALE, defaultLitany, 
+                        description, printedName, coins, specialization, order=p.second_order, bodyType='average', height='average', musculature='fit', hairLength='short', litany=litany)
             self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
             self.level = 0
 
@@ -2760,7 +2761,10 @@ def peter_greeting_quip_function():
                 peterRootChildren.remove(peter_2_1_1)
             except ValueError:
                 pass
-        peterRootChildren.remove(peter_3_1_1)
+        try:
+            peterRootChildren.remove(peter_3_1_1)
+        except ValueError:
+            pass
         peter_greeting.children = peterRootChildren
 peter_greeting.quip_function = peter_greeting_quip_function
 
@@ -4120,8 +4124,10 @@ def e1_0_4():
         '''thing viable.'''], 
         [names(), '''musings are interrupted by a piercing scream to''', hisher(), '''right, and by yelps of pain to''', hisher(), '''left.''']]))
         universal.acknowledge(backOfGuild.display, ())
+        return True
     else:
-        backOfGuild.display(False)
+        return False
+
 def e1_2_3():
     universal.say_title('Guild Kitchen')
     if not 'Ildri_event' in keywords():
@@ -4142,10 +4148,11 @@ def e1_2_3():
         universal.say(cookText)
         backOfGuild = universal.state.get_room('Guild')
         universal.acknowledge(backOfGuild.display, ())
+        return True
     else:
         backOfGuild = universal.state.get_room('Guild')
-        backOfGuild.display(False)
-        return
+        return False
+
 def e1_2_1():
     universal.say_title('The Cook')
     if 'Ildri_event' in keywords():
@@ -4276,6 +4283,7 @@ def e1_2_1():
     backOfGuild = universal.state.get_room('Guild')
     universal.say(cookText, justification=0)
     universal.acknowledge(backOfGuild.display, ())
+    return True
 
 def e1_2_5():
     universal.say_title('Infirmary')
@@ -4299,14 +4307,15 @@ def e1_2_5():
     ['''The healer glares over her shoulder. There is a steely glint in her eyes, despite the tears. "Get buried."'''],
     ['''"Shame," says the amazon, snapping the belt down a second time.''']])
         universal.say(healerText)
+        event = True
     else:
         backOfGuild = universal.state.get_room('Guild')
-        backOfGuild.display(False)
-        return
         #healerText = universal.format_text([healerText, ['''Paloma moves about the injured adventurers, untying them and helping them to the various cots, and tending to any''',
         #'''injuries that the adventurers' last dregs of health couldn't handle.''']])
+        event = False
     backOfGuild = universal.state.get_room('Guild')
     universal.acknowledge(backOfGuild.display, ())
+    return event
 
 def e1_2_7():
     universal.say_title('Paloma')
@@ -4345,6 +4354,7 @@ def e1_2_7():
         paloma = universal.state.get_character('Paloma.person')
         paloma.litany = helpPaloma.index
         conversation.converse_with(paloma, dungeonmode.dungeon_mode)
+    return True
 
 responseMap = {}
 def request_ribbon_interpreter(keyEvent):
@@ -5464,7 +5474,7 @@ palLostWarriorDown.quip_function = palLostWarriorDown_qf
 def e1_7_1():
     backOfGuild = universal.state.get_room('Guild')
     if "helped_Morey" in keywords() or 'met_Airell' in keywords():
-        backOfGuild.display(False)
+        return False
         #universal.say(universal.format_text([['''There's nothing here, except a pile of dazed Taironans.''', name(), '''can't help but notice that, despite the clear gap between Morey's''',
         #'''power, and that of his attackers, none of the attackers are injured; Morey managed to inflict just enough damage to drain their health, and no more.''',
         #'''An impressive (and rather scary) testament of skill.''']]))  
@@ -5480,6 +5490,7 @@ def e1_7_1():
         gender = random.randint(0, 1)
         insurgentScout = pwenemies.VengadorScout(gender)
         universal.acknowledge(combat.fight, [insurgentScout], help_Morey, dungeonmode.dungeon_mode, False, None, False)
+        return True
 
 def help_Morey(allies, enemies, won):
     moreyText = universal.format_text([['''"Whew," says someone nearby.''', name(), '''spins, and raises''', hisher(), '''weapon, only to realize with a start that the''',
@@ -5546,8 +5557,7 @@ def help_Morey(allies, enemies, won):
 def e1_7_3():
     backOfGuild = universal.state.get_room('Guild')
     if 'helped_Morey' in keywords() or 'met_Airell' in keywords():
-        backOfGuild.display(False)
-        return
+        event = False
         #universal.say(universal.format_text([[name(), '''enters a large, open space. Blunted weapons of all shapes and sizes line the south wall. To''', names(), '''astonishment, there''',
         #'''is a full length mirror hanging on the northern wall.''', name(), '''has never seen such a massive, expensive luxury.''']]))
     else: 
@@ -5555,7 +5565,10 @@ def e1_7_3():
         universal.say(universal.format_text([['''Directly to the west, in the center of the large room is a brutal melee. Six insurgents surround a whirling, slender''',
         '''pale-skinned man with jet black hair. He is holding a rapier in one hand, and a dueling dagger in the other. He runs one insurgent through, blocks another's attack''',
         '''with his dagger, and ducks under a third's spear thrust. A fourth, however, manages to club the warrior across the face with the the butt of his spear.''']]))
+        event = True
     universal.acknowledge(backOfGuild.display, ())
+    return event
+
 def e1_7_5():
     universal.say_title('Dining Room')
     if not 'first_time_in_dining_room' in keywords():
@@ -5566,12 +5579,9 @@ def e1_7_5():
         '''watch each other warily for a moment. Then,''', name(), '''goes for''', hisher(), '''weapon, and battle is joined.''']]))
         insurgentScout = pwenemies.VengadorScout(random.randint(0, 1))
         universal.acknowledge(combat.fight, [insurgentScout], None, dungeonmode.dungeon_mode, False, None, False)
+        return True
     else:
-        backOfGuild.display(False)
-        #universal.say(universal.format_text([[name(), '''enters the dining room, and finds a battle nearly as pitched as the one in the main entrance. The massive dining table has been''',
-        #'''upended, and is covered in pockmarks, burns, and coats of ice. The deafening ring of steel on steel, howls of rage, and screams of pain batter against''', 
-        #names(), '''ears.''']]))
-        #universal.acknowledge(dungeonmode.dungeon_mode, ())
+        return False
 
 def c1_8_4():
     return [pwenemies.VengadorWarrior(p.MALE)]
@@ -5613,18 +5623,18 @@ def e0_8_4():
         '''air is filled with the chaotic sounds of battle. However, the sounds aren't quite as overwhelming; likely the most intense fighting is still occuring''',
         '''upstairs.''','''Somewhere down here is the armory, and the end of''', names(), '''first "mission" with the Adventurer's Guild.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+        return True
     else:
-        backOfGuild.display(False)
+        return False
 
 def e0_6_3():
     if 'met_Airell' in keywords():
         backOfGuild = universal.state.get_room('Guild')
-        backOfGuild.display(False)
         #universal.say_title('Magic Training Room')
         #universal.say(universal.format_line(['''In the center of the room are over half a dozen sniffling Taironans. Their pants (resp. skirts) are around their ankles (resp. waist),''',
         #'''and their''', '''bottoms are an angry red. Airell has left, but his spell holding the Taironans aloft remains, forcing them to endure a unique''',
         #'''(though ostentatious) version of "corner time."''']))
-        return
+        return False
     else:
         universal.say_title('Magic Training Room')
         universal.say(universal.format_text([['''The next room is a large, open, bare space. The walls are covered in old scorch marks and water damage. Large chunks are missing from''',
@@ -5636,6 +5646,8 @@ def e0_6_3():
                 '''spectral hands''','''arc through the air and smack against over a dozen wobbling bottoms, and over a dozen cries of pain echo throughout''',
                 '''the room.''']]))
     universal.acknowledge(dungeonmode.dungeon_mode, ())
+    return True
+
 def e0_6_1():
     if 'met_Airell' in keywords():
         universal.say_title('Punished Taironans')
@@ -5660,7 +5672,7 @@ def e0_6_1():
                 #    ['''The Taironan groans.'''],
                 #    ['''"Great."''']]), justification=0)
                 #universal.acknowledge(dungeonmode.dungeon_mode, ())
-                return
+                return False
             else:
                 backOfGuild = universal.state.get_room('Guild')
                 backOfGuild.display(False)
@@ -5744,6 +5756,7 @@ def e0_6_1():
             universal.set_commands(['(#) Select a number.'])
             universal.set_command_interpreter(e0_6_1_no_ribbon_interpreter)
         add_keyword('met_Airell')
+        return True
 
 def e0_6_1_no_ribbon_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
@@ -5835,6 +5848,7 @@ def e0_6_1_no_ribbon_interpreter(keyEvent):
                 ['''3. "Indeed. Why, just the other day I kicked a puppy because I thought''',
                 '''it was a vicious attack dog."'''], '''4. "Don't worry about it. It's understandable."''']), justification=0)
             universal.set_command_interpreter(e0_6_1_attack_mage_interpreter)
+
 def e0_6_1_dodge_or_submit_interpeter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
@@ -6181,10 +6195,12 @@ def e0_8_5():
     else:
         backOfGuild = universal.state.get_room('Guild')
         backOfGuild.display(False)
-        return
+        return False
         #universal.say(universal.format_line(['''Other than the chastised Vengadores scattered about, the room is empty; Cosima has left to aid in repulsing the attackers.''']), 
         #        justification=0)
     universal.acknowledge(dungeonmode.dungeon_mode, ())
+    return True
+
 def e0_8_7():
     universal.say_title('Cosima')
     if not 'met_Cosima' in keywords():
@@ -6248,9 +6264,9 @@ def e0_8_7():
                     '''See me, standing here not attacking you? Can't that be enough to convince you I'm not your enemy?''']]), justification=0)
                 universal.set_commands('(#) Select a number.')
                 universal.set_command_interpreter(cosima_noRibbon_interpreter)
+        return True
     else:
-        backOfGuild = universal.state.get_room('Guild')
-        backOfGuild.display(False)
+        return False
 
 
 
@@ -6480,7 +6496,7 @@ def cosima_failedPaloma_see_Paloma_interpreter(keyEvent):
                     '''holding the armory. Understand?"'''],
                 [name(), '''nods, as''', heshe(), '''rubs''', hisher(), '''stinging bottom.'''],
                 ['''"Good. Any of them give you trouble, tell them Cosima sent you." With that, Cosima runs out the door.'''],
-                ['''"Thank La Madre, she's gone," says one of the defeated Taironans. She drags herself to her feet, lifting her trousers back up over her scorched''',
+                ['''"Thank La Madre, she's gone," says one of the defeated Vengadores. The Vengador drags herself to her feet, and lifts her trousers back up over her scorched''',
                     '''bottom. "Let's get out of here, before she returns."'''],
                 ['''Slowly, the defeated Taironans drag themselves to their feet, and begin stumbling towards the door.''']]), justification=0)
             add_keyword('Cosimas_task')
@@ -6745,22 +6761,28 @@ def e0_3_5():
             '''claustrophobic maze. The whole maze has the feeling of a forest where the birds have suddenly gone quiet.'''],
             [name(), '''glances over''', hisher(), '''shoulder at the door, and considers the wisdom of continuing into these dark corridors.\n\n''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+        event = True
     else:
-        backOfGuild.display(False)
+        event = False
     if not 'met_Cosima' in keywords():
         universal.say_title('Stealth Maze')
         universal.say(universal.format_text([['''Eventually,''', heshe(), '''backs away, deciding not to enter the scary looking maze. Perhaps''', heshe(), 
             '''would be better off checking out a different place for now. Like the training room to the north.''']]))
         backOfGuild.coordinates = (backOfGuild.coordinates[0], backOfGuild.coordinates[1], backOfGuild.coordinates[2] - 1)
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+        event = True
+    return True
+
 def e0_5_5():
     backOfGuild = universal.state.get_room('Guild')
     if not 'met_Mai' in keywords():
         universal.say_title('Stealth Maze')
         universal.say(universal.format_text([[name(), '''freezes. For a second there,''', heshe(), '''thought''', heshe(), '''heard a faint scrabbling.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+        return True
     else:
-        backOfGuild.display(False)
+        return False
+
 def e0_1_6():
     backOfGuild = universal.state.get_room('Guild')
     if not 'met_Mai' in keywords():
@@ -6768,8 +6790,9 @@ def e0_1_6():
         universal.say(universal.format_text([['''A dead end. As''', name(), '''turns,''', heshe(), '''catches a glimpse of something moving through the shadows.''', HeShe(), 
             '''freezes, and waits for the movement to occur again. After several minutes,''', heshe(), '''takes a deep breath and continues moving.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+        return True
     else:
-        backOfGuild.display(False)
+        return False
     
 def e0_2_9():
     backOfGuild = universal.state.get_room('Guild')
@@ -6777,8 +6800,10 @@ def e0_2_9():
         universal.say_title('Stealth Maze')
         universal.say(universal.format_text([['''A faint, haunting giggle wafts through the air.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+        return True
     else:
-        backOfGuild.display(False)
+        return False
+
 def e0_5_9():
     backOfGuild = universal.state.get_room('Guild')
     if not 'met_Mai' in keywords():
@@ -6786,13 +6811,15 @@ def e0_5_9():
         universal.say(universal.format_text([['''As''', name(), '''draws abreast of another shadowy alcove,''', heshe(), '''glances to''', hisher(), '''left. And freezes. In the alcove to''',
             hisher(), '''left is a dim figure. The figure is standing so perfectly still, that''', name(), '''almost didn't see it. Almost.''']]))
         universal.acknowledge(dungeonmode.dungeon_mode, ())
+        return True
     else:
-        backOfGuild.display(False)
+        return False
+
 def e0_5_8():
     backOfGuild = universal.state.get_room('Guild')
     if 'met_Mai' in keywords():
         backOfGuild.display(False)
-        return
+        return False
     increment_spankings_taken()
     add_keyword('met_Mai')
     universal.say_title('Mai')
@@ -6932,6 +6959,7 @@ def e0_5_8():
             ['''"Good." Cosima stands, and gives Mai a glare. "And you. Come on. We've got an armory to defend."'''],
             ['''"Yes ma'am," mutters the elf, meekly following Cosima into the maze.''']]), justification=0)
         universal.acknowledge(dungeonmode.dungeon_mode, None)
+    return True
 
 def mai_apologizes_intepreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
@@ -7383,6 +7411,7 @@ def e0_1_3():
         ['''3. "You think so? You hiring?"''']]), justification=0)
     universal.set_command_interpreter(warslinger_interpreter)
     universal.set_commands(['(#) Select a number.'])
+    return True
 
 
 def warslinger_interpreter(keyEvent):
@@ -8425,8 +8454,9 @@ def start_scene_3_episode_1(loading=False):
     adventurersGuild = universal.state.get_room("Adventurer's Guild")
     backOfGuild = universal.state.get_room('Guild')
     infirmary = universal.state.get_room('Infirmary')
-    exitLeft(universal.state.player, backOfGuild)
-    enterLeft(universal.state.player, adventurersGuild)
+    if not loading:
+        exitLeft(universal.state.player, backOfGuild)
+        enterLeft(universal.state.player, adventurersGuild)
     universal.state.set_init_scene(init_episode_1_scene_3)
     southGuard = universal.state.get_character('Guard.person')
     southGuard.litany = too_busy.index
@@ -8448,14 +8478,15 @@ def start_scene_3_episode_1(loading=False):
     peter.defaultLitany = peter_end_episode_1
     peter.litany = peter_end_episode_1.index
     edita = universal.state.get_character('Edita.person')
-    exitLeft(edita, adventurersGuild)
+    if not loading:
+        exitLeft(edita, adventurersGuild)
     mariasHome = universal.state.get_room("Maria's Home")
-    if not 'Elise_shows_you_around' in keywords():
+    if not 'Elise_shows_you_around' in keywords() and not loading:
         shrine = universal.state.get_room('Shrine')
         exitLeft(elise, shrine)
         mariasHome = universal.state.get_room("Maria's Home")
         enterLeft(maria, mariasHome)
-    else:
+    elif not loading:
         mariasHome = universal.state.get_room("Maria's Home")
         assert(not maria in mariasHome.characters)
     if not loading:
@@ -8471,7 +8502,7 @@ def scene_3_guild():
             if not 'met_Paloma' in keywords() else universal.format_line(['''Paloma, stepping up next to''', names(), '''cot. "How you feeling?"'''])],
         ['''"Like I just got run over by a herd of wild horses," says''', name() + ".", HeShe(), '''groans, and rubs''', hisher(), '''aching head.'''],
         ['''"That's because that idiot slung Pain Spikes at you," says Paloma angrily. She lightly touches''', names(), '''face, wrists, and neck.''',
-        '''"Pain spikes slung at a''', boygirl(), '''of your power! He could have killed you. Wretched, reckless, selfish bastard son of an iguanadon."'''],
+        '''"Pain spikes slung at a''', boygirl(), '''of your power! He could have killed you. Wretched, reckless, selfish bastard son of a bitch."'''],
         universal.format_text([[name(), '''flushes guiltily, touched by Paloma's concern. "Look, about what happened-"'''],
             ['''"Don't worry about it," says Paloma, waving her hand dismissively. "I wasn't in any serious danger, and you were outnumbered two to''',
             '''one."'''],
@@ -9593,7 +9624,7 @@ def ep1_peter_child_alright_qf():
         [universal.format_line(['''"Aside from a spanking or''', num_to_word(universal.state.player.numSpankings), '''not really.''']) if universal.state.player.numSpankings > 1 else 
             '''"Not really.''', '''They weren't really interested in hurting anyone, I think. They just wanted our stuff."'''],
         ['''"That's good," says Peter. "It'd be unfortunate if something really bad happened to you on your first day."'''],
-        ['''"Yeah, terrible," says''', name() + universal.format_line([",", hisher(), '''thoughts flitting back to the abyss.''']) if 'charmed_by_Deidre' in keywords() else "."]])
+        ['''"Yeah, terrible," says''', name() + (universal.format_line([",", hisher(), '''thoughts flitting back to the abyss.''']) if 'charmed_by_Deidre' in keywords() else ".")]])
     if not 'teaching_Anne' in keywords():
         ep1_peter_child_alright.quip = universal.format_text([ep1_peter_child_alright.quip, ['''"Anyway, this attack has gotten me thinking," says Peter. "Things have been getting kind of ugly lately, and''',
         '''I'm worried about Anne. I've been a camp follower, I know the hell that is''',
@@ -9675,10 +9706,6 @@ def elise_end_episode_1_qf():
             ['''"Not talking about this now."'''],
             ['''Elise sighs. "Fine."''']])
     #import universal
-    #print('playedMusic:')
-    #print(universal.playedMusic.queue)
-    #print('setting elises end episode 1 music.')
-    #print(CARRIE)
     elise_end_episode_1.quip = universal.format_text([elise_end_episode_1.quip, carrie_arrival()])
     elise_end_episode_1.music = [textCommandsMusic.ELISE, textCommandsMusic.CARRIE]
     if universal.state.player.is_female():
@@ -9890,7 +9917,7 @@ def carrie_arrival():
     quip = universal.format_text([['''\m"Brace yourselves boys and girls, Carrie has arrived!" declares a singsong voice from the left end of''',
         '''the Shrine.''', name(), '''turns to look at the new arrival.'''],
         ['''Standing with one hand on her right-cocked hip, her back straight and her chest pushed out is a blonde woman about''',
-        '''Elise's age. She twirls in place, her brown eyes flashing as she smiles. "What do you think, Elise?"'''],
+        '''Elise's age. She twirls in place, her brown eyes sparkling as she smiles. "What do you think, Elise?"'''],
         ['''She is a little bit taller and slimmer than Elise, and her breasts are''',
         '''larger. Her hips are not quite as rounded as Elise's (though they're close). Her bum is also only a little bit smaller than Elise's, but''',
         '''manages to achieve the same sexy balance between being firm and wobbly. She is''',
@@ -11975,8 +12002,8 @@ def ep1_maria_resist_qf():
     if 'Elise_shows_you_around' in keywords():
         ep1_maria_resist.quip = universal.format_text([ep1_maria_resist.quip, ['''"It doesn't matter how fair it is," snaps Maria. She kicks''', name(), '''right leg out from under''', himher() + ".", '''When''', name(), '''stumbles, Maria''',
             '''yanks''', himher(), '''across her lap. She grabs''', universal.format_line(['''the waistband of''', names(), '''trousers and underpants, and yanks them both down''',
-            '''to his knees.''']) if universal.state.player.is_male() else universal.format_line(['''the hem of''', names(), '''dress, and pulls it over her hips, exposing her round bottom and tiny''',
-            '''black thong.''']), '''"What matters is that you never do something that stupid again!"'''],
+            '''to his knees.''']) if universal.state.player.is_male() else universal.format_line(['''the hem of''', names(), '''dress, and pulls it over her hips, exposing her round bottom and the tiny''',
+            '''black thong she borrowed from Carrie for the night out.''']), '''"What matters is that you never do something that stupid again!"'''],
             ['''"Let go of me!" screams''', name(), '''flailing uselessly.'''], ['''The harsh slaps and cries from Elise's and Carrie's spankings pound at''',
                 hisher(), '''ears.'''], ep1_maria_hairbrushing(ep1_maria_resist), ep1_maria_temper(ep1_maria_resist)])
     else:
@@ -12813,7 +12840,7 @@ def ep1_catalin():
             ['''"They don't trust you," says Catalin, rubbing her hands together.'''],
             [name(), '''frowns. "Are you-"'''],
             ['''Catalin's smile widens. "Do me a favor, alright? Befriend Sister Elise. Get to know-"'''], ep1_roland()]), justification=0, music=[textCommandsMusic.ROLAND])
-    episode.allEpisodes[universal.state.player.currentEpisode].end_episode()
+    universal.acknowledge(episode.allEpisodes[universal.state.player.currentEpisode].end_episode)
 
 def ep1_roland():
     return universal.format_text([[''' She stops. Her eyes narrow, and she spins to face the door, her notched''',
@@ -12878,9 +12905,6 @@ episode1.init = init_episode1
 #episode2 = episode.Episode(2, 'Back Alleys', scenes=[episode2Scene1])
 #--------------------------------------------End Episode 2: Back Alleys-------------------------------------------------------------------------
 #episode1.nextEpisode = episode2
-#print("next episode:")
-#print(episode1.nextEpisode)
-#print(episode1)
 
 def init_episode_1_scene_1():
     global episode1

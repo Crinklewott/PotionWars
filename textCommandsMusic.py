@@ -102,7 +102,9 @@ def bummarks(character, mark):
         character.numSpankings += 1
     except AttributeError:
         pass
-    character.welts.append(mark)
+    character.marks.append(mark)
+    #Necessary because I'm too fucking lazy to do anything special with bummarks to have it not show up in a join. So, it just returns an empty string.
+    return ""
 
 def stage_directions(stageDirections):
     """

@@ -31,7 +31,7 @@ import os
 import math
 import ast
 
-DEBUG = True
+DEBUG = False
 SAVE_DELIMITER = '%%%'
 
 
@@ -108,7 +108,6 @@ TALENT = 3
 ALERTNESS = 4
 
 def primary_stat_name(stat):
-    print(stat)
     if stat == STRENGTH:
         return 'Strength'    
     elif stat == DEXTERITY:
@@ -197,6 +196,9 @@ def set_command_interpreter(ci):
         dirtyRects = ci(keyEvent)
         if dirtyRects is None:
             dirtyRects = [get_world_view()]
+        if isinstance(dirtyRects, pygame.Rect):
+            dirtyRects = [dirtyRects]
+        assert all(isinstance(rect, pygame.Rect) for rect in dirtyRects), str(dirtyRects)
         return dirtyRects
     commandInterpreter = ci_wrapper 
 
@@ -212,12 +214,6 @@ def set_commands(newCommands, colors=None):
     """
     global commands 
     global commandColors
-    print('commands:')
-    print(commands)
-    print('colors to be used:')
-    print(colors)
-    import traceback
-    #traceback.print_stack()
     if commands != newCommands:
         clear_commands()
     if not type(newCommands) == list:
@@ -234,8 +230,6 @@ def set_commands(newCommands, colors=None):
         commands = newCommands
         #(LIGHT_GREY,) is necessary as opposed to LIGHT_GREY in order to ensure that we get len(commands) copies of LIGHT_GREY, rather than the numbers in the tuple that LIGHT_GREY represents.
         commandColors = colors if colors else [LIGHT_GREY] * len(commands)
-    print('commandColors')
-    print(commandColors)
 
 def get_commands():
     """
@@ -300,17 +294,12 @@ def say(text, columnNum=1, justification=1, fontSize=36, italic=False, bold=Fals
     else:
         textToDisplay += text
     if music is not None:
-        print(music)
         global playedMusic
         try:
             for song in music:
                 playedMusic.put(song)
         except TypeError:
             playedMusic.put(music)
-        #print('putting a song into playedMusic:')
-        #print(music)
-        #import traceback
-        #traceback.print_stack()
     """
     if textToDisplay:
         textToDisplay.append((text, fontSize, italic, bold))
@@ -449,7 +438,6 @@ def get_screen():
 
 def clear_screen():
     global textToDisplay
-    print('clearing screen!')
     textToDisplay = ""
     clearScreen = pygame.Surface((worldView.width, worldView.height))
     clearScreen.fill(DARK_GREY)
@@ -461,7 +449,6 @@ def clear_screen():
 
 def clear_world_view():
     worldView = get_world_view()
-    print("-----------------------------Clearing Screen---------------------------")
     clearScreen = pygame.Surface((worldView.width, worldView.height))
     clearScreen.fill(DARK_GREY)
     get_screen().blit(clearScreen, worldView)
@@ -592,16 +579,8 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
                 if playMusic:
                     import music
                     global playedMusic
-                    try:
-                        print("Playing music:")
-                        nextSong = playedMusic.get_nowait()
-                        print(nextSong)
-                        music.play_music(nextSong)
-                    except Queue.Empty:
-                        print("------You tried to add a music flag '\m', but didn't also include some music. Text that generated the exception:------")
-                        print(text)
-                        print('---------------Music:---------------------')
-                        sys.exit(1)
+                    nextSong = playedMusic.get_nowait()
+                    music.play_music(nextSong)
                 #if isTitle:
                     #titleRect = textSurface.get_rect().copy()
                 if justification == 0:
@@ -617,8 +596,6 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
                     pageLength += 1
                     newPage = ''
         if pageLength > 1 and pageCount < pageLength-1:
-            #import traceback
-            #traceback.print_stack()
             if DEBUG:
                 set_commands(['(Enter) to continue.', '<==Back', '(Esc) Skip'])
             else:
@@ -649,6 +626,7 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
                         pageCount = pageLength-2
                         global playedMusic
                         playedMusic.queue.clear()
+                        playMusic = False
                         break
         set_commands(previousCommands, previousColors)
         pageCount += 1 
@@ -738,8 +716,6 @@ def acknowledge(function, *args):
     set_commands(['(Enter) to continue.'])
 
 def acknowledge_interpreter(keyEvent):
-    print(postAcknowledgeFunction)
-    print(postAcknowledgeArgs)
     if keyEvent.key == K_RETURN:
         if postAcknowledgeArgs == ((),):
             postAcknowledgeFunction()
@@ -809,7 +785,6 @@ def display_commands():
                 try:
                     middleCommandList.append(leftCommandList.pop())  
                 except AttributeError: 
-                    print('The following command is not a list, like it should be: ' + middleCommandList + '. Make sure you wrapped your most recent command in a list.')
                     return
                 else:
                     try:
@@ -884,33 +859,24 @@ def format_text(text, doubleSpaced=True):
     Good-Bye!
     """
     textList = []
-    try:
-        for line in text:
-            #I don't know why this is necessary, but apparently it is. Stupid fucking Python and its bullshit "strings are lists" crap.
-            if type(line) is list:
-                textList.append(' '.join(line))
-            else:
-                textList.append(line)
-    except TypeError, e:
-        print(e)
-        print(text)
-        sys.exit()
+    for line in text:
+        #I don't know why this is necessary, but apparently it is. Stupid fucking Python and its bullshit "strings are lists" crap.
+        if type(line) is list:
+            textList.append(' '.join(line))
+        else:
+            textList.append(line)
     return '\n\n'.join(textList) if doubleSpaced else '\n'.join(textList)
 
 
-def format_text_translate(text):
+def format_text_translate(text, dontCrash=True):
     """
     Given a list of (lists of) text, returns the text joined using '\n\n' as a separator. Note that any lists of text that are contained in text are joined using ''.
     Used by the translated python code in order to provide better control over spacing between words.
     """
     textList = []
-    try:
-        for line in (l for l in text if l):
-            textList.append(''.join(line))
-    except TypeError, e:
-        print(e)
-        print(text)
-        sys.exit()
+    assert dontCrash
+    for line in (l for l in text if l):
+        textList.append(''.join(line))
     return '\n\n'.join(textList)
 
 def format_text_no_space(text, doubleSpaced=True):
@@ -927,16 +893,11 @@ def format_text_no_space(text, doubleSpaced=True):
     This is typically used by the auto-generated code, because it's easier to replace latex commands without worrying about context.
     """
     textList = []
-    try:
-        for line in text:
-            if type(line) is list:
-                textList.append(''.join(line))
-            else:
-                textList.append(line)
-    except TypeError, e:
-        print(e)
-        print(text)
-        sys.exit()
+    for line in text:
+        if type(line) is list:
+            textList.append(''.join(line))
+        else:
+            textList.append(line)
     return '\n\n'.join(textList) if doubleSpaced else '\n'.join(textList)
 
 def quit_interpreter(keyEvent):
@@ -1069,7 +1030,6 @@ class State(object):
                except KeyError:
                    pass
         rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
-        print("loading rooms")
         for roomData in rooms:
            name, _, roomData = roomData.partition('\n')
            try:
@@ -1099,13 +1059,11 @@ class State(object):
             self.difficulty = None
         clearedSquares = [square for square in clearedSquares.split('Square:') if square.split()]
         self.clearedSquares = []
-        print(clearedSquares)
         for square in clearedSquares:
             if square:
                 self.clearedSquares.append(ast.literal_eval(square))
         if self.player.currentEpisode:
             currentEpisode = episode.allEpisodes[self.player.currentEpisode]
-            print("initializing scene")
             currentEpisode.init()
             currentScene = currentEpisode.scenes[currentEpisode.currentSceneIndex]
             currentScene.startScene(True)
@@ -1300,7 +1258,6 @@ class State(object):
         3. Pass "name." Then, the function will first try to find a player character with that name, then an NPC. This is because we generally know a priori when we want to obtain a particular NPC, but we can't hard-code the
         player's name, because we don't know the player's name yet.
         """
-        print(self.characters)
         try:
             return self.characters[character.get_id()]
         except AttributeError:

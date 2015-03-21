@@ -59,7 +59,7 @@ END = 'r\end'
 nodeNum = 0
 
 codeCommands = {
-        r'\keyword':("textCommandsMusic.add_keyword(", 1),
+        r'\keyword':('''textCommandsMusic.add_keyword(''', 1),
         r'\music':("universal.say('\m') ; universal.playedMusic.put(", 1)
         }
 
@@ -109,7 +109,7 @@ inlineCommandsPlayer = {
     r'\muscleadj': ("universal.state.player.muscle_adj()",),
     r'\bumadj': ("universal.state.player.bum_adj()",),
     r'\quiver': ("universal.state.player.quiver()",),
-    r'\qivering':("universal.state.player.quivering()",),
+    r'\quivering':("universal.state.player.quivering()",),
     r'\liftlower': ("items.liftlower(universal.state.player.lower_clothing()",),
     r'\lowerlift': ("items.lowerlift(universal.state.player.lower_clothing()",),
     r'\liftslowers': ("items.liftlower(universal.state.player.lower_clothing()",),
@@ -147,9 +147,12 @@ inlineCommandsPlayer = {
     r'\pisloose':("items.loose_msg(universal.state.player.lower_clothing(), ", 2),
     r'\pwearingshirt':("items.wearing_shirt(universal.state.player, ", 2),
     r'\pwearingdress':("items.wearing_dress(universal.state.player, ", 2),
-    r'\isfemale':("person.is_female_msg(universal.state.player, ", 2)
+    r'\isfemale':("person.is_female_msg(universal.state.player, ", 2),
+    r'\stageDirections':("textCommandsMusic.stage_directions(", 1),
+    r'\ppajamatype':("items.pajama_type_msg(universal.state.player,", 3),
     }
 
+#The first line of all these commands is code: the person to apply the function to.
 inlineCommands = {
     #r'\hisher':("person.hisher(universal.state.get_character(", 1),
     #r'\HisHer':("person.HisHer(universal.state.get_character(", 1),
@@ -183,37 +186,40 @@ inlineCommands = {
     #r'\SirMaam':("person.SirMaam(universal.state.get_character(", 1),  
     #r'\bastardbitch':("person.bastardbitch(universal.state.get_character(", 1),  
     #r'\BastardBitch':("person.BastardBitch(universal.state.get_character(", 1),  
-    r'\weaponName':("items.weapon_name(", 1),  
-    r'\weapon':("items.weapon_name(", 1),
-    r'\cladbottom': ("items.clad_bottom(", 1),
-    r'\muscleadj': ("person.muscle_adj(", 1),
-    r'\bumadj': ("person.bum_adj(", 1),
-    r'\liftlower': ("items.liftlower(", 1),
-    r'\lowerlift': ("items.lowerlift(", 1),
-    r'\liftslowers': ("items.liftslowers(", 1),
-    r'\lowerslifts': ("items.lowerslifts(", 1),
-    r'\underwear':("items.underwear_name(", 1),
-    r'\trousers': ("items.lower_clothing_name(", 1),
-    r'\pajamabottoms': ("items.pajama_bottom_name(", 1),
-    r'\speed': ("person.speed(", 1),
-    r'\warfare': ("person.warfare(", 1),
-    r'\magic': ("person.magic(", 1),
-    r'\grapple': ("person.grapple(", 1),
-    r'\resilience': ("person.resilience(", 1),
-    r'\waistbandhem': ("items.waistband_hem(", 1),
-    r'\hemwaistband': ("items.hem_waistband(", 1),
-    r'\height':("person.height_based_msg(", 5),
-    r'\bodyType':("person.bodytype_based_msg(",5),
-    r'\musculature':("person.musculature_based_msg(",4),
-    r'\hairlength':("person.hair_length_based_msg(",5),
-    r'\pjtype': ("items.dropseat_based_msg(", 3),
-    r'\isliftedlowered':("items.liftlowered_based_msg(", 3),
-    r'\isloweredlifted':("items.loweredlifted_based_msg(", 3),
-    r'\isliftedlowered':("items.liftlowered_based_msg(", 3),
+    r'\oweaponName':("items.weapon_name(", 1),  
+    r'\oweapon':("items.weapon_name(", 1),
+    r'\ocladbottom': ("items.clad_bottom(", 1),
+    r'\omuscleadj': ("person.muscle_adj(", 1),
+    r'\obumadj': ("person.bum_adj(", 1),
+    r'\oliftlower': ("items.liftlower(", 1),
+    r'\olowerlift': ("items.lowerlift(", 1),
+    r'\oliftslowers': ("items.liftslowers(", 1),
+    r'\olowerslifts': ("items.lowerslifts(", 1),
+    r'\ounderwear':("items.underwear_name(", 1),
+    r'\otrousers': ("items.lower_clothing_name(", 1),
+    r'\opajamabottoms': ("items.pajama_bottom_name(", 1),
+    r'\ospeed': ("person.speed(", 1),
+    r'\owarfare': ("person.warfare(", 1),
+    r'\omagic': ("person.magic(", 1),
+    r'\ograpple': ("person.grapple(", 1),
+    r'\oresilience': ("person.resilience(", 1),
+    r'\owaistbandhem': ("items.waistband_hem(", 1),
+    r'\ohemwaistband': ("items.hem_waistband(", 1),
+    r'\oheight':("person.height_based_msg(", 5),
+    r'\obodyType':("person.bodytype_based_msg(",5),
+    r'\omusculature':("person.musculature_based_msg(",4),
+    r'\ohairlength':("person.hair_length_based_msg(",5),
+    r'\opjtype': ("items.dropseat_based_msg(", 3),
+    r'\oisliftedlowered':("items.liftlowered_based_msg(", 3),
+    r'\oisloweredlifted':("items.loweredlifted_based_msg(", 3),
+    r'\oisliftedlowered':("items.liftlowered_based_msg(", 3),
     r'\cond':("universal.cond(", 3),
     r'\bummarks':("textCommandsMusic.bummarks(", 2),
-    r'\stageDirections':("textCommandsMusic.stage_directions(", 1)
+    r'\opajamatype':("items.pajama_type_msg(", 4),
+    r'\itthem':("items.itthem(", 1)
     }
+
+
 
 
 parseTreeNodeNum = 0
@@ -289,14 +295,6 @@ class OpenScene(ParseTree):
 
     def translate(self):
         openSceneCode = [line.replace('\n', '') for line in self.data]
-        """
-        for child in self.children:
-            translation = child.translate()
-            print(translation)
-            print('-----------------')
-            if isinstance(translation, basestring):
-                print(translation)
-        """
         openSceneCode.extend([''.join(['\n\n', 'def init_scene_', str(self.sceneNum), '_episode_', str(self.episodeNum), '():'])])
         openSceneCode.extend([TAB + ('\n' + TAB).join(child.translate()) for child in self.children])
         return openSceneCode 
@@ -502,13 +500,10 @@ class InlineCommand(ParseTree):
         numParens = code.count('(') - code.count(')')
         translatedChildren = [child.translate()[0] for child in self.children]
         translatedChildren = [translatedChild for translatedChild in translatedChildren if translatedChild != EMPTY_TEXT_TRANSLATION]
-        #print(code)
-        #print(translatedChildren)
         if translatedChildren:
             check = ''
-            if self.data[0] == r'\cond':
-                #Note: Since the first argument is code, the first argument is a list of lines of code, whose list contains a single line of code.
-                #This adding and removing check garbage is necessary because of the weirdness of cond.
+            if self.data[0] in inlineCommands:
+            #Note: Since the first argument is code, the first argument is a list of lines of code, whose list contains a single line of code.
                 check = translatedChildren[0][0]
                 translatedChildren = translatedChildren[1:]
             translatedChildren = [check] + ["' '.join(" + child + ")" for child in translatedChildren]

@@ -48,7 +48,7 @@ def failed_spanking(top, bottom, position):
     try:
         return top.failed(bottom, position)
     except NotImplementedError, AttributeError:
-        return bottom.blockes(top, position)
+        return bottom.blocks(top, position)
 
 class Implement(items.Item):
     """

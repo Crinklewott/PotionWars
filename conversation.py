@@ -42,11 +42,8 @@ def continue_to_node(origin, destination, newPage=False):
 
 
 def converse_with(person, previousModeIn=None):
-    print('invoking converse_with')
     global conversationPartner
     conversationPartner = person
-    print(conversationPartner.name)
-    print(conversationPartner.litany)
     if person.litany is not None:
         litany = person.litany
     elif person.defaultLitany is not None:
@@ -67,32 +64,22 @@ def say_node(litanyIndex):
     #This may appear redundant, but it's possible for a node's quip_function to immediately invoke a different node, without going through the player. In that case,
     #we need to make sure that the current litany of the conversationPartner is properly updated.
     global previousMode
-    print('invoking say_node')
     conversationPartner.litany = litanyIndex
     try:
         litany = allNodes[litanyIndex]
     except KeyError:
-        print('keyError!')
-        print(litanyIndex)
         try:
             litany = allNodes[litanyIndex.index]
         except KeyError:
-            print('keyError!')
-            print(litanyIndex.index)
             say("There is nothing to be said.")
             acknowledge(previousMode, ())
             return
         else:
             conversationPartner.litany = litanyIndex.index
-    print('conversationPartner.litany:')
-    print(conversationPartner.litany)
     function = None
     args = None
     executeImmediately = False
-    print('quip function:')
-    print(litany.quip_function)
     if litany.quip_function is not None:
-        print('invoking quip function')
         result = litany.quip_function()
         if result is not None:
             function = result[0]
@@ -109,23 +96,15 @@ def say_node(litanyIndex):
         return
     else:
         if litany.music is not None:
-            print("music is not none:")
-            print(litany.music)
             #universal.playedMusic.queue.clear()
             universal.say(litany.quip, justification=0, music=litany.music)
         else:
             universal.say(litany.quip, justification=0)
-    print(litany.name)
-    print('*****children*****:')
-    print(litany.children)
-    print(litany.playerComments)
     if function == SPLIT:
-        print('splitting')
         litany.quip_function = result[1]
         acknowledge(say_node, (litany))
         return
     elif litany.playerComments:
-        print('selecting commands')
         universal.say('\p')
         universal.say('\n'.join([str(i) + '. ' + comment for (i, comment) in zip([i for i in range(1, len(litany.playerComments)+1)], litany.playerComments)]), justification=0)
         set_commands(['(#)Select a number.'])
@@ -164,14 +143,8 @@ def set_litany(person, litany):
 
 def converse_with_interpreter(keyEvent):
     global conversationPartner
-    print('invoking converse_with_interpreter')
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
-        if DEBUG:
-            try:
-                print(conversationPartner.litany.index)
-            except AttributeError:
-                pass
         if 0 < num and num <= len(allNodes[conversationPartner.litany].children):
             if DEBUG:
                 global previousConversation

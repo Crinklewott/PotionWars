@@ -69,10 +69,7 @@ def open_scene(tokenIterator, parent):
                 raise transExceptions.TranslationError(' '.join([parseTree.color("Error:", parseTree.bcolors.RED), 'Error in Python code found in', parseTree.color('openScene',parseTree.bcolors.YELLOW),  
                     'environment. Environment start line:', parseTree.color(str(startLine), parseTree.bcolors.GREEN),  'Python error:\n\n', str(e)]))
             else:
-                print(' '.join([parseTree.color("Success:", parseTree.bcolors.GREEN), "Parsed Python code in", parseTree.color("openScene", parseTree.bcolors.YELLOW), ":", color_line(startLine)]))
-                #print(pythonCode)
                 tree = parseTree.OpenScene(lineNum=startLine, parent=parent, data=pythonCode)
-                #print(tree)
                 return tree
         else:
             if token.strip(' \t') == '\n':
@@ -142,7 +139,6 @@ def node(tokenIterator, parent):
     startLine, args = extract_args(tokenIterator, parseTree.Node, NUM_NODE_ARGS)
     tree = parse_node(tokenIterator, parseTree.Node(parent=parent, data=args), startLine)      
     tree.data = args 
-    print(' '.join([success, color_line(startLine), "Parsed node:", parseTree.color(args[0], parseTree.bcolors.BLUE)])) 
     return tree
 
 def parse_node(tokenIterator, node, startLine):
@@ -169,7 +165,6 @@ def parse_node(tokenIterator, node, startLine):
         elif token in parseTree.codeCommands:
             tree.children.append(code_command(token, tokenIterator, tree))
             continue
-        #print((token, lineNum))
         if token.strip(' ') == '\n':
             #If the previous line number is strictly less than this one, then that means that the only token on this line is a new line, which means the line is blank, which means we're about to 
             #start a new paragraph. 
@@ -198,9 +193,6 @@ def parse_paragraph(tokenIterator, parent):
     #tokenList = list(tokenIterator)
     #tokenIterator = iter(tokenList)
     tree = parseTree.Paragraph(parent=parent, data=parent.data, lineNum=parent.lineNum)
-    #print("Start")
-    #print(tokenList)
-    #print("Done")
     for token, lineNum in tokenIterator:
         if not startLine:
             startLine = lineNum
@@ -253,7 +245,6 @@ def parse_command(inlineCmd, startLineNum, tokenIterator, parent):
         try:
             token, lineNum = next(tokenIterator)
         except StopIteration:
-            #print(tokenList)
             raise transExceptions.TranslationError(' '.join([parseTree.color("Error", parseTree.bcolors.RED), color_line(startLineNum), "Missing", parseTree.color(str(numArgs - len(args)), parseTree.bcolors.GREEN), "arguments for", 
                 parseTree.color(inlineCmd, parseTree.bcolors.GREEN)]))
         if token == '{':
@@ -265,7 +256,7 @@ def parse_command(inlineCmd, startLineNum, tokenIterator, parent):
             numOpenBraces -= 1
             if not numOpenBraces:
                 #If we're looking at a cond, then the first command is supposed to code: Some sort of boolean expression, with the next two arguments text.
-                if inlineCmd == r'\cond' and not args:
+                if inlineCmd in parseTree.inlineCommands and not args:
                     args.append(parseTree.Code(lineNum=lineNum, parent=tree, data=[' '.join(token for (token, lineNum) in argumentTokens)]))
                 else:
                     args.append(parse_paragraph(iter(argumentTokens), tree))
@@ -384,7 +375,6 @@ def child_node(tokenIterator, parent):
     startLine, args = extract_args(tokenIterator, parseTree.ChildNode, NUM_CHILD_NODE_ARGS)
     tree = parse_node(tokenIterator, parseTree.ChildNode(parent=parent, data=args), startLine)      
     tree.data = args
-    print(' '.join([success, color_line(startLine), "Parsed node:", parseTree.color(args[0], parseTree.bcolors.BLUE)])) 
     return tree
 
 class MadeUpException(Exception):

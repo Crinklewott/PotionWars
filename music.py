@@ -102,7 +102,6 @@ def play_music(fileObject, fadeoutTime=250, wait=False):
     """
     This function assumes we only have one (open) file object for each music file.
     """
-    print(fileObject)
     global currentMusic
     if fileObject is not None:
         if currentMusic != fileObject:

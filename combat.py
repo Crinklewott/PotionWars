@@ -127,9 +127,6 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
     defeatedAllies = []
     defeatedEnemies = []
     optional = optionalIn
-    #print(enemiesIn)
-    #print(person.get_party().members)
-    #print(additionalAllies if additionalAllies is not None else [])
     try:
         actionsInflicted = {combatant:[] for combatant in enemiesIn + person.get_party().members + (additionalAllies if additionalAllies is not None else [])}
     except TypeError:
@@ -179,10 +176,6 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
     global runnable
     runnable = runnableIn
     activeAlly = allies[0]
-    print([sum(ally.get_battle_stats()) for ally in allies])
-    print([ally.get_battle_stats() for ally in allies])
-    print('maxAllyLevel: ' + str(maxAllyLevel))
-    print('maxEnemyLevel: ' + str(maxEnemyLevel))
     if ambush < 0:
         say_delay('The party has been ambushed!')
         ambush = 0
@@ -279,8 +272,6 @@ def print_command(command):
 
 def battle_interpreter(keyEvent):
     global chosenActions, activeAlly
-    print(len(activeAlly.quickSpells))
-    print(activeAlly.quickSpells)
     if keyEvent.key == K_ESCAPE:
         set_commands(['Are you sure you want to quit? (Y/N)'])
         set_command_interpreter(confirm_to_title_interpreter)
@@ -447,8 +438,6 @@ def increment_stat_points():
             except (AttributeError, TypeError):
                 continue
         elif action.attacker in enemies:
-            print('----------------defenders of action: ' + str(action) + '-------------------')
-            print(action.defenders)
             for defender in action.defenders:
                 defender.increaseStatPoints[action.primaryStat] += SECONDARY_POINTS
     for ally in allies:
@@ -612,7 +601,6 @@ def target_spell_interpreter(keyEvent):
             chosenTier = None
             next_character()
         elif keyEvent.key == K_BACKSPACE:
-            print(chosenTier)
             if chosenTier is not None:
                 print_allies(allies)
                 print_enemies(enemies)
@@ -621,45 +609,27 @@ def target_spell_interpreter(keyEvent):
                 display_combat_status(printAllies=True, printEnemies=True)
 
     else:
-        print('targeting.')
         if keyEvent.key == K_BACKSPACE:
-            print('reducing targets.')
             if numTargetsChosen == 0:
-                print('numTargetsChosen is 0')
-                print_allies(allies)
-                print_enemies(enemies)
                 if chosenTier:
                     select_spell(chosenTier)
                 else:
                     display_combat_status(printAllies=True, printEnemies=True)
             else:
-                print('removing target')
-                print(chosenTargets)
                 chosenTargets.pop()
                 printTargets(targets, chosenTargets)
-                print('chosenTarget removed.')
-                print(chosenTargets)
         elif keyEvent.key in NUMBER_KEYS:
             num = int(pygame.key.name(keyEvent.key)) - 1
             if 0 <= num and num < len(targets) and not targets[num] in chosenTargets:
-                print('targeting enemy. targets remaining:' + str(chosenTargets))
                 chosenTargets.append(targets[num])
                 numTargetsChosen += 1
                 printTargets(targets, chosenTargets)
-                print('chosenSpell.numTargets - numTargetsChosen: ' +  str(chosenSpell.numTargets - numTargetsChosen))
-                print('len(enemies) - numTargetsChosen: ' +  str(len(enemies) - numTargetsChosen))
                 if chosenSpell.numTargets - numTargetsChosen > 0 and len(enemies) - numTargetsChosen > 0:
-                    print('setting commands:' + str([format_line(['(#) Select', str(chosenSpell.numTargets - numTargetsChosen),
-                        targetStrs if chosenSpell.numTargets - numTargetsChosen > 1 else targetStr]), 
-                        '<==Back', '(Enter)Cast spell']))
                     set_commands([format_line(['(#) Select', str(chosenSpell.numTargets - numTargetsChosen),
                         targetStrs if chosenSpell.numTargets - numTargetsChosen > 1 else targetStr]), 
                         '<==Back', '(Enter)Cast spell'])
                 else:
-                    #set_commands([' '.join(['Cast', chosenSpell.name + '?(Y/N)'])])
-                    #set_command_interpreter(confirm_cast_interpreter)
                     chosenActions.append(chosenSpell.__class__(activeAlly, chosenTargets))
-                    #activeAlly.chanceIncrease[chosenSpell.spellSchool] += spellIncrease
                     next_character()
         elif keyEvent.key == K_RETURN and len(chosenTargets) > 0:
             chosenActions.append(chosenSpell.__class__(activeAlly, chosenTargets))
@@ -703,7 +673,6 @@ def defend_interpreter(keyEvent):
 possibleTargets = []
 def break_grapple():
     global possibleTargets
-    print(activeAlly.is_grappling())
     if activeAlly.is_grappling():
         chosenActions.append(combatAction.BreakGrappleAction(activeAlly, activeAlly.grapplingPartner))
         next_character()
@@ -801,8 +770,6 @@ def select_action(enemy):
             allActions.append(combatAction.BreakAllysGrappleAction)
         allActions.extend([spell.__class__ for spell in enemy.flattened_spell_list() if spell.grappleStatus != combatAction.ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY and 
             spell.grappleStatus != combatAction.ONLY_WHEN_GRAPPLED and spell.cost <= enemy.current_mana()])
-    print('difficulty:')
-    print(get_difficulty())
     if get_difficulty() == HAND:
         return hand_ai(enemy, allActions)
     elif get_difficulty() == STRAP or get_difficulty() == CANE:
@@ -821,14 +788,17 @@ def hand_ai(enemy, allActions):
             if targetList == [] and action == combatAction.ThrowAction:
                 defenders.append(defenders[0])
                 break
-    action = action(enemy, defenders)
+    if action == combatAction.SpankAction:
+        action = action(enemy, defenders, enemy.positions[random.randrange(0, len(enemy.positions))])
+    else:
+        action = action(enemy, defenders)
     return action   
 
 def strap_cane_ai(enemy):
     """
     If we're using the strap difficulty, then targeting is random, and action choice depends only on what a character is good at.
     """
-        #This allows us to use this ai for any computer controlled allies of the player as well.
+    #This allows us to use this ai for any computer controlled allies of the player as well.
     companions = enemies if enemy in enemies else allies
     opponents = allies if enemy in enemies else enemies
     warfareActions = [combatAction.AttackAction]
@@ -861,17 +831,11 @@ def strap_cane_ai(enemy):
                 spell.grappleStatus != combatAction.ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY and enemy.current_mana() >= spell.cost]
 
     magicActions = list(availableSpells)
-    print("---------Possible actions for: " + enemy.get_id() + '-----------------')
-    print(warfareActions)
-    print(grappleActions)
-    print(magicActions)
 
     #We have one reference to each action type for every value in a character's stat + 1 so that every class appears.
     weightedActionClasses = [warfareActions for i in range(max(1, enemy.warfare()))] + [grappleActions for i in range(max(1, enemy.grapple()))]
     if magicActions != []:
         weightedActionClasses += [magicActions for i in range(max(1, enemy.magic()))]
-    print('----------Weighted action classes for: ' + enemy.get_id() + '-------------------')
-    print(weightedActionClasses)
     if get_difficulty() == CANE:
         #For now, this does nothing. Not sure if we want to do anything to perform additional weighting on the classes for cane difficulty.
         weightedActionClasses = weight_classes_cane(weightedActionClasses)
@@ -910,21 +874,18 @@ def strap_cane_ai(enemy):
                         magicActions.extend([spell for i in range(spell.tier)])
             if chosenActionClass != []:
                 chosenActionClass = weight_healing(magicActions, companions)
-                print('chosenActionClass:')
-                print(chosenActionClass)
             if chosenActionClass != []:
                 chosenActionClass = weight_status_buff(enemy, chosenActionClass)
     #We want to guarantee that the magicActions contain only spells when weighting them for the cane difficulty.
     chosenActionClass.extend([combatAction.DefendAction for statName in enemy.status_names() if statusEffects.is_negative(enemy.get_status(statName))])
     chosenAction = chosenActionClass[random.randrange(0, len(chosenActionClass))]
-    print('chosenActionClass:')
-    print(chosenActionClass)
     if get_difficulty() == CANE:
         defenders = []
         while defenders == []:
             if chosenActionClass == []:
                 return strap_cane_ai(enemy)
             chosenAction = chosenActionClass.pop(random.randrange(0, len(chosenActionClass)))
+            assert chosenAction, ("Chosen Action is None! ChosenAction class: %s", str(chosenActionClass))
             defenders = select_targets(chosenAction, enemy)
             chosenActionClass = [actionClass for actionClass in chosenActionClass if actionClass.actionType != chosenAction.actionType]
         if chosenAction == combatAction.SpankAction:
@@ -988,12 +949,10 @@ def strap_cane_ai(enemy):
                 defenders.append(activeOpponents.pop(random.randrange(0, len(activeOpponents))))
                 if activeOpponents == []:
                     break
-        """
-        We've removed positions, so the enemy doesn't have to choose one.
         if chosenAction == combatAction.SpankAction:
-            posDifficulty = [pos.difficulty + pos.reversability - pos.maintainability for pos in enemy.positions]
+            posDifficulty = [pos.difficulty for pos in enemy.positions]
             posAndDiff = zip(enemy.positions, posDifficulty)
-            minDiff = 9000
+            minDiff = float("inf")
             easiestPos = 0
             for pos, difficulty in posAndDiff:
                 if difficulty < minDiff:
@@ -1003,7 +962,6 @@ def strap_cane_ai(enemy):
             for pos, difficulty in posAndDiff:
                 weightedPos.extend([pos for i in range(min(0, enemy.grapple() - difficulty))]) 
             return chosenAction(enemy, defenders, weightedPos[random.randrange(0, len(weightedPos))])
-        """
         try:
             return chosenAction(enemy, defenders)
         except TypeError:
@@ -1219,8 +1177,6 @@ def avg_damage_endured(target, action=None):
 
 #TODO: Once we add a spell for "resurrecting" characters with zero hitpoints, need to modify this function to handle that.
 def weight_healing(actionClass, companions):
-    print('calling weight_healing')
-    print(actionClass)
     healingSpells = [spell for spell in actionClass if isinstance(spell, person.Healing)]
     activeCompanions = [comp for comp in companions if comp.current_health() > 0]
     if [spell for spell in actionClass if isinstance(spell, person.Resurrection)] != []:
@@ -1238,8 +1194,6 @@ def weight_healing(actionClass, companions):
         actionClass = [action for action in actionClass if not isinstance(action, person.Healing)]
     else:
         actionClass.extend([spell for i in range(len(hurting)) for spell in healingSpells])
-    print('done weighting for healing.')
-    print(actionClass)
     return actionClass
 
 ACTION = 0
@@ -1309,7 +1263,10 @@ def start_round(chosenActions):
     #nonDefendActions.sort(key=lambda x : x.attacker.stat(x.primaryStat) + random.randrange(0, RANDOM_ORDER_MULTIPLIER))
     #We push all the defend actions to the beginning, so that every defending character is guaranteed to defend at the beginning.
     chosenActions = defendActions + sorted(nonDefendActions, key=lambda x : x.attacker.stat(x.primaryStat) // 2 + (x.attacker.alertness()), reverse=True) 
-    for action in chosenActions:
+    for index in range(len(chosenActions)):
+        action = chosenActions[index]
+        if action is None:
+            continue
         activeAllies = [ally for ally in allies if ally.current_health() > 0]
         activeEnemies = [enemy for enemy in enemies if enemy.current_health() > 0]
         if len(activeAllies) == 0 or len(activeEnemies) == 0:
@@ -1322,7 +1279,6 @@ def start_round(chosenActions):
                 action = combatAction.DefendAction(attacker, [attacker])
             actionEffect = action.effect(inCombat=True, allies=activeAllies, enemies=activeEnemies)
             count = 0
-            print(action)
             if actionEffect[combatAction.ACTION].actionType == combatAction.RunAction.actionType and actionEffect[1][0]:
                 end_combat()
                 return
@@ -1330,18 +1286,23 @@ def start_round(chosenActions):
                 try:    
                     actionsInflicted[action.attacker].append((combatAction.executed_action(actionEffect), combatAction.effects(actionEffect)))
                 except KeyError, e:
-                    print(actionsInflicted)
                     raise KeyError(str(e))
                 defenders = combatAction.executed_action(actionEffect).defenders
                 attacker = combatAction.executed_action(actionEffect).attacker
-                print(defenders)
-                print('action effects!')
-                print(combatAction.effects(actionEffect))
                 for defender, effect in zip(defenders, combatAction.effects(actionEffect)):
                     if defender is not None:
                         actionsEndured[defender].append((combatAction.executed_action(actionEffect), effect))
                         if defender.current_health() <= 0:
                             defender.break_grapple()
+                            #A defeated character can't guard anyone.
+                            for char in activeEnemies:
+                                if char.guardian == defender:
+                                    char.guardian = None
+                            #A defeated character can't do anything.
+                            for index2 in range(len(chosenActions)):
+                                action2 = chosenActions[index2]
+                                if action2.attacker == defender:
+                                    chosenActions[index2] = None
                     if not (action.attacker, action.defenders, combatAction.result_string(actionEffect), 
                         isinstance(combatAction.executed_action(actionEffect), combatAction.SpankAction) or 
                         isinstance(combatAction.executed_action(actionEffect), person.SpectralSpanking)) in actionResults:
@@ -1368,7 +1329,6 @@ def print_round_results():
         for result in actionResultSplit:
             if result.strip() == '':
                 continue
-            print('result: ' + result)
             if universal.state.instant_combat:
                 universal.say(result + '\n')
             else:
@@ -1549,35 +1509,20 @@ def improve_characters(victorious, afterCombatEvent=None):
                 specialtyModifier = 2
             gain = 0
             manaGain = 0
-            #print("stat:" + universal.primary_stat_name(i))
-            #print("stat points: " + str(statPoints))
-            #print("stat points needed: " + str(stat))
             while int(math.floor(stat * specialtyModifier)) <= statPoints:
-                #print(' '.join(["Improving stat:", universal.primary_stat_name(i)])) 
                 if i == universal.HEALTH:
-                    print("Improving Health")
                     gain += int(math.ceil(stat * .25)) + statPoints - stat
                     ally.improve_stat(i, gain)
                     ally.increaseStatPoints[i] = 0
                 else:
                     gain += 1
                     ally.improve_stat(i, 1)
-                    print("stat:")
-                    print(stat)
-                    print(universal.TALENT)
                     if i == universal.TALENT:
-                        print("Improving Mana")
                         manaGain += int(math.ceil(ally.mana() * .5))
                         ally.improve_stat(person.MANA, manaGain)
                     ally.increaseStatPoints[i] -= stat 
                 statPoints = ally.increaseStatPoints[i]
                 stat = ally.stat(i) * universal.STAT_GROWTH_RATE_MULTIPLIER
-                #print("Improving stat")
-                #print(stat)
-                #print(statPoints)
-                #print(maxStats[i])
-                #print(ally.get_stat(i))
-                #print(specialization_bonus(ally, i))
             if gain:
                 universal.say(format_line([ally.name, 'has gained', str(gain), person.primary_stat_name(i) + '.\n']))
             if manaGain:
@@ -1608,12 +1553,6 @@ def learn_spell(ally, spellSchool):
     for i in range(0, ally.tier+1):
         #Need to learn basic before you can learn advanced before you can learn specialized. Can only learn specialized if you are specialized in this particular type of
         #magic.
-        #print('spell information')
-        #print(person.allSpells)
-        #print(i)
-        #print(spellIndex)
-        #print(ally.tier)
-        print(i)
         try:
             if not ally.knows_spell(person.allSpells[i][spellIndex][0]):
                 #We weight the spells based on their tier level. Spells that have tier 0 have 1 weight, spells of tier 1 have 2 weight and so on. This increases the chances
@@ -1636,14 +1575,11 @@ def learn_spell(ally, spellSchool):
 
 """ 
 def add_experience(experience, afterCombatEvent, activeAllies, activeEnemies, victorious):
-    #print('calling add_experience')
     assert len(allies) == len(experience), 'allies and experience should be the same length.'
     for i in range(len(experience) - 1):
-        print('adding experience to: ' + str(i) + " ally.")
         allies[i].add_experience(experience[i])
     if afterCombatEvent is None:
         afterCombatEvent = previousMode
-    print('adding experience to last ally.')
     allies[-1].add_experience(experience[-1], afterCombatEvent, activeAllies, activeEnemies, victorious)
 """
 

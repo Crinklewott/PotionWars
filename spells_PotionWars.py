@@ -372,7 +372,6 @@ heal = Heal(None, None)
 fortify = Fortify(None, None)
 superFortify = SuperFortify(None, None)
 p.allSpells[0].append((heal, fortify, superFortify))
-print(p.allSpells[0])
 
 #-------------------------------------------------------------------------Tier 0 Spectral--------------------------------------------------------------
 
@@ -447,13 +446,10 @@ class SpectralPush(p.Spectral):
             effects.append((damage, False))
         if defender.current_health() <= 0:
             resultStatement[-1] = ['\n'.join([resultStatement[-1][0], ' '.join([defender.printedName, 'collapses!'])])]
-        #print(resultStatement)
         return (universal.format_text(resultStatement, False), effects, self)
 
 
     def effect_statement(self, defender, dam):
-        import traceback
-        #print(traceback.print_stack())
         A = self.attacker.printedName
         attacker = self.attacker
         D = defender.printedName
@@ -658,7 +654,6 @@ class SpectralShove(p.Spectral):
 spectralPush = SpectralPush(None, None)
 spectralPull = SpectralPull(None, None)
 spectralShove = SpectralShove(None, None)
-print(p.allSpells)
 p.allSpells[1] = [(spectralPush, spectralPush, spectralPush)]
 
 #---------------------------------------------------------Tier 1-------------------------------------------------------------------------------
@@ -934,7 +929,6 @@ class Shield(p.Buff):
         self.numTargets = 1
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.effectClass = combatAction.SPELL_SLINGERS
-        print(defenders)
 
 
     def effect_statement(self, defender):
@@ -948,7 +942,6 @@ class Shield(p.Buff):
         #return super(Shield, self).effect_statement(defender)
 
     def success_statement(self, defender):
-        print(defender)
         return [defender.printedName, 'is protected!']
 
 

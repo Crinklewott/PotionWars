@@ -51,7 +51,6 @@ ACTION = 2
 #Increasing this would lessen the impact of the modifiers, decreasing it would increase the impact.
 CHANCE_RANGE = 5
 def rand(bonus=0):
-    print('range:' + str(bonus) + ' to ' + str(bonus + CHANCE_RANGE))
     #If we do this, then the bonus will have a HUGE impact, because it essentially moves your random number range up. So if your bonus is greater than the other 
     #character's maximum role, then you're guaranteed to succeed. In other words, a specialist will dominate in his specialty, but will get dominated everywhere else,
     #whereas a jack-of-all-trades will hold his own everywhere. Which is pretty much what we want. It also means that even a bonus of +1 will have a significant impact.
@@ -59,7 +58,6 @@ def rand(bonus=0):
 
 ACTION_INDEX = 2
 def executed_action(actionEffect):
-    print(actionEffect)
     return actionEffect[ACTION_INDEX]
 
 STRING_INDEX = 0
@@ -103,7 +101,6 @@ class CombatAction(universal.RPGObject):
         defined right away. So they need to be defined in the concrete version of this method, and then you can invoke this abstract version to get a random choice.
         It's not the most elegant implementation ever, and I may come back someday and rework it.
         """
-        print(self.effectStatements)
         return random.choice(self.effectStatements)
 
     @abc.abstractmethod
@@ -165,25 +162,16 @@ def compute_bonus(difference):
     """
     Computes the bonus the initiator of an action receives for having higher stats than her opponents.
     """
-    print('computing bonus:')
     remainder = difference % POINT_DROP_OFF
-    print('remainder:')
-    print(remainder)
     bonusLevels = difference // POINT_DROP_OFF             
-    print('bonusLevels:')
-    print(bonusLevels)
     multiplier = 1.0
     bonus = 0
     while bonusLevels > 0:
         bonus += int(math.floor(POINT_DROP_OFF * multiplier))
-        print('bonus:')
-        print(bonus)
         multiplier -= MULTIPLIER_DECREASE
         bonusLevels -= 1
     if remainder:
         bonus += int(math.floor(remainder * multiplier))
-    print('final bonus:')
-    print(bonus)
     return bonus
 
 class AttackAction(CombatAction):
@@ -232,41 +220,17 @@ class AttackAction(CombatAction):
             attackBonus = wa.attack_bonus(attacker.is_grappling())
             defendBonus = wd.parry_bonus(defender.is_grappling())
             warfareDifference = max(0, attacker.warfare() - defender.warfare())
-            print('warfareDifference:')
-            print(warfareDifference)
             bonus = compute_bonus(warfareDifference)
             #attackBonus += attacker.warfare()
             #defendBonus += defender.warfare() // 2
             #assert attacker.attack_penalty() >= 0, '%s attack penalty: %s' % (attacker.name, attacker.attack_penalty())
             #attackBonus += attacker.attack_penalty()
             #defendBonus += defender.attack_penalty()
-            print('attacker:')
-            print(attacker.name)
-            print('defender:')
-            print(defender.name)
-            print('bonus:')
-            print(bonus)
-            print('attack success:')
-            print('attacker warfare:')
-            print(attacker.warfare())
-            print('defender warfare:')
-            print(defender.warfare())
             success = rand(bonus + attackBonus) 
-            print(success)
-            print('attack failure:')
             failure = rand(defendBonus)
-            print(failure)
             if failure <= success:
-                print('damageBonus for ' + attacker.name)
                 #damageBonus = attacker.warfare() + wa.attack_bonus(attacker.is_grappling()) - defender.defense()
-                print(bonus)
-                print(' '.join([attacker.name, 'warfare:', str(attacker.warfare())]))
-                print(' '.join([defender.name, 'warfare:', str(defender.warfare())]))
-                print(' '.join([defender.name, 'grapple:', str(defender.grapple())]))
-                print(' '.join([defender.name, 'defense:', str(defender.defense())]))
                 dam = max(1, wa.damage(attacker.is_grappling()) + bonus - defender.defense())
-                print('damage for ' + attacker.name)
-                print(dam)
                 defender.receives_damage(dam)
                 damageString = ' '.join([attacker.printedName, 'hits', defender.printedName, 'for', str(dam), 'damage!'])
             else:
@@ -331,8 +295,6 @@ class GrappleAction(CombatAction):
             wd = defender.weapon()
             bonus = compute_bonus(max(0, attacker.grapple() - defender.grapple()))
             #grappleABonus = wa.grappleAttempt + attacker.grapple() - attacker.attack_penalty()
-            print('grappleABonus:')
-            print(bonus)
             #grappleDBonus = wd.grappleAttemptDefense + max(defender.grapple(), defender.warfare()) // 2 - defender.attack_penalty()
             success = rand(CHANCE_RANGE + bonus + wa.grappleAttempt)
             failure = rand(CHANCE_RANGE + wd.grappleAttemptDefense)
@@ -375,30 +337,8 @@ class BreakGrappleAction(CombatAction):
             bonus = compute_bonus(max(0, attacker.grapple() - defender.grapple()))
             #grappleABonus = wa.grappleAttemptDefense + max(attacker.warfare(), attacker.grapple()) - attacker.attack_penalty()
             #grappleDBonus = wd.grapple_bonus() // 2 + defender.grapple() - defender.attack_penalty()
-            print('wa grapple attempt defense:')
-            print(wa.grappleAttemptDefense)
-            #print('max attacker warfare, grapple:')
-            #print(max(attacker.warfare(), attacker.grapple()))
-            print('attack penalty:')
-            print(attacker.attack_penalty())
-            print('attacker grapple:')
-            print(attacker.grapple())
-            print('defender grapple bonus:')
-            print(wd.grapple_bonus())
-            print('defender grapple:')
-            print(defender.grapple())
-            print('defender attack penalty:')
-            print(defender.attack_penalty())
-            #print('attacker:')
-            #print(grappleABonus)
-            #print('defender:')
-            #print(grappleDBonus)
             success = rand(bonus + wa.grapple_bonus())
-            print('success:')
-            print(success)
             failure = rand(wd.grapple_bonus())
-            print('failure:')
-            print(failure)
             if failure <= success:
                 attacker.break_grapple()
                 return (' '.join([attacker.printedName, 'breaks the grapple with', defender.printedName + '!']), [True], self)
@@ -602,7 +542,6 @@ class BreakAllysGrappleAction(CombatAction):
         """
         defenders = self.defenders
         attacker = self.attacker
-        print(defenders[0])
         if (attacker in allies and not defenders[0] in allies) or (attacker in enemies and not defenders[0] in enemies):
             return DefendAction(self.attacker, self.attacker).effect(inCombat, allies, enemies)
         wa = attacker.weapon()

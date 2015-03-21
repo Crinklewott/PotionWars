@@ -215,7 +215,6 @@ class Gem(Item):
 
 class Armor(Item):
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6, risque=0):
-        #print(' '.join([name, 'price:', str(price), 'attackDefense:', str(attackDefense)]))
         super(Armor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment)
         self.armorType = 'armor'
         self.risque = 0
@@ -495,7 +494,6 @@ class Weapon(Item):
 
     @staticmethod
     def load(weaponData, weapon):
-        print(weaponData)
         _, minDamage, maxDamage, grappleAttempt, grappleAttemptDefense, grappleBonus, armslengthBonus, genericBonus = weaponData.split("Weapon Data:")
         weapon.minDamage = int(minDamage.strip())
         weapon.maxDamage = int(maxDamage.strip())
@@ -841,6 +839,14 @@ def pjliftedlowered_based_msg(person, liftedMsg, loweredMsg):
 def pjloweredlifted_based_msg(person, loweredMsg, liftedMsg):
     return universal.msg_selector(person.pajama_bottoms().lowerlift() == "lower", {True:loweredMsg, False:liftedMsg})
 
+def pajama_type_msg(person, dropSeatMsg, pantsMsg, dressMsg):
+    if person.pajama_bottoms().armorType == DropSeatPajamas.armorType:
+        return dropSeatMsg
+    elif person.pajama_bottoms().armorType == PajamaPants.armorType:
+        return pantsMsg
+    else:
+        return dressMsg
+
 def is_tight(clothing):
     try:
         return clothing.tightness == 'tight'
@@ -876,7 +882,7 @@ def wearing_dress(person, wearingDress, notWearingDress='', noOuterClothing=''):
     if person.shirt() == emptyUpperArmor and person.lower_clothing() == emptyLowerArmor:
         return noOuterClothing
     else:
-        return universal.msg_selector(person.lower_clothing().armorType == Skirt.armorType or person.lower_clothing().armorType == Dress.armorType, {True:wearingUnderwear, False:notWearingUnderwear})
+        return universal.msg_selector(person.lower_clothing().armorType == Skirt.armorType or person.lower_clothing().armorType == Dress.armorType, {True:wearingDress, False:notWearingDress})
 
 def baring_underwear(underwear, baringMsg, notBaringMsg, notWearingUnderwearMsg=''):
     return notWearingUnderwearMsg if underwear == emptyUnderwear else universal.msg_selector(underwear.baring, {True:baringMsg, False:notBaringMsg})

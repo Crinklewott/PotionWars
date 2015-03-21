@@ -119,11 +119,19 @@ def begin_game(episode):
         pygame.draw.rect(screen, universal.LIGHT_GREY, pygame.Rect(commandView.topleft, commandView.size), universal.COMMAND_VIEW_LINE_WIDTH)
         #pygame.display.flip()
         #clock.tick_busy_loop(fps)
-        if universal.dirtyCommand:
-            dirtyRects.append(get_command_view())
-            universal.dirtyCommand = False
+        newDirtyRects = []
+        #Bonemouth was having a strange error where the game would crash when trying to save, apparently because the game only takes one list of dirty rects? Not sure, and couldn't replicate it,
+        #and of course the error message doesn't actually print the value of dirty rects :-/, so I can't figure out what dirty rects look like when the bug is thrown. So I'm assuming for some
+        #strange reason I'm ending up with a nested list. So I flatten it first. Note that since every atomic element is a rectangle, and those aren't iterable, we don't need to worry about 
+        #accidentally flattening tuples or strings.
+        for maybeList in dirtyRects:
+            if isinstance(maybeList, pygame.Rect):
+                newDirtyRects.append(maybeList)
+            else:
+                newDirtyRects.extend(maybeList)
+        newDirtyRects.append(get_command_view())
         if dirtyRects:
-            pygame.display.update(dirtyRects)
+            pygame.display.update(newDirtyRects)
         dirtyRects = []
 
 

@@ -62,10 +62,8 @@ directionSurface = pygame.Surface((fontSize[0] + (fontSize[1] - fontSize[0]), fo
 directionSurface.fill(universal.DARK_GREY)
 
 def set_dungeon_commands(dungeon=None):
-    #import traceback
-    #traceback.print_stack()   
     commandColors = [LIGHT_GREY] * 8
-    universal.set_commands(['(P)arty', '(S)ave', '(M)ap', '(Q)uick Save', '(L)oad', 't(I)tle Screen', '(C)ast', '(G)o', '(Esc)Quit'])
+    universal.set_commands(['(P)arty', '(S)ave', '(Q)uick Save', '(L)oad', 't(I)tle Screen', '(C)ast', '(G)o', '(Esc)Quit'])
     if dungeon is not None:
         floor = dungeon.coordinates[0]
         row = dungeon.coordinates[1]
@@ -75,11 +73,11 @@ def set_dungeon_commands(dungeon=None):
             commandColors.insert(0, BLUE)
             universal.set_commands(['(E)xit'] + get_commands(), commandColors)
         if has_char('u', square):
-            changingFloors = True
+            #changingFloors = True
             commandColors.insert(0, GREEN) 
             universal.set_commands(['(U)p'] + get_commands(), commandColors)
         if has_char('d', square):
-            changingFloors = True
+            #changingFloors = True
             commandColors.insert(0, GREEN)
             universal.set_commands(['(D)own'] + get_commands(), commandColors)
 
@@ -497,15 +495,12 @@ class Dungeon(townmode.Room):
                             visibleSquares.add((floor, nRow, nColumn))
                     else:
                         visibleSquares.add((floor, nRow, nColumn))
-        print(visibleSquares)
         return visibleSquares
 
 
     def display_coordinate_rect(self):
         coordTopLeft = coordinateSurface.get_rect().topleft
         z, y, x = self.coordinates
-        print("-------------------------coordinate box--------------------------")
-        print((z, y, x))
         universal.say_title(str((z, x, y)), coordinateSurface)
         flush_text(13)
         coordinateRect = pygame.Rect(coordTopLeft, (coordinateSurface.get_rect().width, coordinateSurface.get_rect().height))
@@ -526,11 +521,13 @@ class Dungeon(townmode.Room):
             self.mapSurface = pygame.Surface((viewWidth, viewHeight))
             clearScreen = True
         mapSurface = self.mapSurface
+        #If we're changing floors, then we need to redraw everything.
+        if previousCoordinates and self.coordinates[0] != previousCoordinates[0]:
+            clearScreen = True
         if clearScreen:
             universal.clear_world_view()
             mapSurface.fill(universal.DARK_GREY)
             self.drawnSquares = set()
-            self.visibleSquares = set()
         #originY -= verticalLineLength
         #originY -= universal.COMMAND_VIEW_LINE_WIDTH // 2
         font = pygame.font.SysFont(universal.FONT_LIST_TITLE, universal.DEFAULT_SIZE)
@@ -583,8 +580,10 @@ class Dungeon(townmode.Room):
             self.drawnSquares.remove(self.coordinates)
         except KeyError:
             pass
-        self.visibleSquares = visitedSquares | self.visibleSquares | self.compute_visible_area(dungeonWidth, dungeonHeight)
-        squaresToDraw = self.visibleSquares - self.drawnSquares
+        #Only care about visible squares on the current floor.
+        self.visibleSquares |= visitedSquares | self.compute_visible_area(dungeonWidth, dungeonHeight)
+        visibleSquares = {square for square in self.visibleSquares if square[0] == self.coordinates[0]}
+        squaresToDraw = visibleSquares - self.drawnSquares
         dirtyRects = []
         for z, y, x in squaresToDraw:
             square = dungeon[z][y][x]
@@ -775,10 +774,10 @@ class Dungeon(townmode.Room):
         global changingFloors
         changingFloors = 0
         set_dungeon_commands(self)
-        if ((has_char('*', square) or has_char('s', square))) and self.dungeonEvents[floor][row][column] and (floor, row, column) not in self.visitedSquares:
-            event = True
-            self.dungeonEvents[floor][row][column]()
-            universal.clear_world_view()
+        if ((has_char('*', square) or has_char('s', square))) and self.dungeonEvents[floor][row][column]: #and (floor, row, column) not in self.visitedSquares:
+            event = self.dungeonEvents[floor][row][column]()
+            if event:
+                universal.clear_world_view()
         elif has_char('!', square):
             event = True
             self.encounter()
@@ -786,6 +785,7 @@ class Dungeon(townmode.Room):
             def clear_encounter(x, y, z):
                 #These three are just dummy arguments that are used because the combat function expects the postCombatEvent to have three arguments.
                 universal.state.clear_encounter((floor, row, column))
+
             event = True
             enemies = None
             if self.dungeonEvents[floor][row][column]:
@@ -794,10 +794,9 @@ class Dungeon(townmode.Room):
             self.encounter(clear_encounter, enemies)
         if has_char('e', square):
             universal.set_commands(get_commands())
-            if self.dungeonEvents[floor][row][column] and (floor, row, column) not in self.visitedSquares:
-                event = True
+            if self.dungeonEvents[floor][row][column]: #and (floor, row, column) not in self.visitedSquares:
                 universal.clear_world_view()
-                self.dungeonEvents[floor][row][column]()
+                event = self.dungeonEvents[floor][row][column]()
         if has_char('u', square):
             changingFloors = 1
             universal.set_commands(get_commands())
@@ -808,7 +807,7 @@ class Dungeon(townmode.Room):
             #self.encounter()
         self.visitedSquares.add(self.coordinates)
         if not event:
-            return self.display(changingFloors, previousCoordinates)
+            return self.display(False, previousCoordinates)
 
     def encounter(self, afterCombatEvent=None, encounteredEnemies=None):
         currentFloor = self.dungeonMap[self.coordinates[0]]
@@ -949,7 +948,8 @@ def dungeon_interpreter(keyEvent):
         universal.say(universal.state.party.display_party(), columnNum=3)
         set_command_interpreter(select_character_interpreter)
     elif keyEvent.key == K_d and changingFloors == -1:
-        dirtyRects = dungeon.move(K_d)
+        dungeon.move(K_d)
+        dirtyRects = [universal.get_world_view()]
     elif keyEvent.key == K_u and changingFloors == 1:
         dirtyRects = dungeon.move(K_u)
     elif keyEvent.key in universal.ARROW_KEYS:

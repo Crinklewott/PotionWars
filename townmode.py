@@ -30,7 +30,6 @@ def town_mode(sayDescription=True):
     say the description.
     """
     room = universal.state.location
-    print('calling town mode')
     if sayDescription:
         universal.say_title(room.name)
     if sayDescription:
@@ -142,9 +141,6 @@ class Room(universal.RPGObject):
             self.bgMusic = bgMusic
             self.bgMusicName = bgMusicName
         self.description = ' '.join(description) if not isinstance(description, str) else description
-        print("modifying adjacent")
-        import traceback
-        traceback.print_stack(file=sys.stdout)
         if not isinstance(adjacent, list):
             if adjacent:
                 self.adjacent = [adjacent]
@@ -185,17 +181,11 @@ class Room(universal.RPGObject):
 
     @staticmethod
     def load(loadData, room):
-        print("loading room")
-        print(room)
         rest = ""
         try:
             _, name, bgMusicName, description, adjacent, characters, rest = loadData.split("Room Data:")
         except ValueError:
             _, name, bgMusicName, description, adjacent, characters = loadData.split("Room Data:")
-        print("rest of room:")
-        print(rest)
-        print("characters:")
-        print(characters)
         room.name = name.strip()
         room.description = description.strip()
         room.bgMusicName = bgMusicName.strip()
@@ -204,9 +194,6 @@ class Room(universal.RPGObject):
             module = sys.modules[moduleName]
             room.bgMusic = getattr(module, musicName)
         adjacent = [roomName.strip() for roomName in adjacent.split('\n') if roomName.strip()]
-        print("modifying adjacent")
-        import traceback
-        traceback.print_stack(file=sys.stdout)
         room.adjacent = [universal.state.get_room(roomName) for roomName in adjacent]
         characters = [charName.strip() for charName in characters.split('\n') if charName.strip()]
         room.characters = {}
@@ -229,7 +216,6 @@ class Room(universal.RPGObject):
             state['bgMusic'] = [name for name, song in music.musicFiles.items() if song == self.bgMusic][0]
         except IndexError:
             state['bgMusic'] = None 
-        print(state)
         return state
 
     def __setstate__(self, state):
@@ -302,9 +288,6 @@ class Room(universal.RPGObject):
         if not adjacent in self.adjacent:
             return
         if type(adjacent) is list:
-            print("Modifying adjacent")
-            import traceback
-            traceback.print_stack(file=sys.stdout)
             self.adjacent = [a for a in self.adjacent if not a in adjacent]
             for adj in adjacent:
                 adj.remove_adjacent(self)
@@ -314,9 +297,6 @@ class Room(universal.RPGObject):
             
 
     def set_adjacent(self, adjacent):
-        print("Modifying adjacent")
-        print(self)
-        print(self.adjacent)
         self.remove_adjacent(self.adjacent)
         self.add_adjacent(adjacent)
 
@@ -371,9 +351,6 @@ class Bedroom(Room):
         bedroom.dirtiness = int(dirtiness.strip())
         bedroom.numTransgressions = int(numTransgressions.strip())
         bedroom.punisher = None if punisherName.strip() == "None" else universal.state.get_character(punisherName.strip())
-        print("Loading bedroom:")
-        print(bedroom.name)
-        print(boarding)
         bedroom.boarding = boarding.strip() == "True"
         bedroom.items = [universal.state.get_item(itemName) for itemName in itemList]
 
@@ -396,12 +373,9 @@ class Bedroom(Room):
 
     def after_arrival(self):
         universal.say_title('Bedroom')
-        print('calling after arrival')
         if self.after_after_arrival is not None:
             self.after_after_arrival()
         universal.say(self.description)
-        print('boarding:')
-        print(self.boarding)
         if self.boarding:
             rest_mode(self)
         else:
@@ -423,21 +397,16 @@ class Bedroom(Room):
         #This is such a horrible, quick and dirty hack. I really need to make a function that allows one to modify this
         #kind of thing without having to dig into this code, but I'm too lazy. I'll rework this the next time I need to have some episode-specific event trigger on
         #rest.
-        print('called sleep')
         try:
             import episode1
         except ImportError, e:
-            print('-------------------ImportError!--------------------')
-            print(e)
             self.clean_check()
         else:
-            print('checking episode!')
             #Horrible, horrible hack. Must figure out a better way of implementing this kind of thing.
             if universal.state.player.currentEpisode == "Tension":
                 if 'taking_Carrie_home' in person.get_PC().keywords:
                     episode1.ep1_carrie_sex()
                 else:
-                    print('calling ep1_catalin')
                     episode1.ep1_catalin()
             else:
                 self.clean_check()
@@ -482,9 +451,6 @@ class Bedroom(Room):
 
 
 def clear_rooms():
-    print('calling clear rooms')
-    import traceback
-    traceback.print_stack(file=sys.stdout)
     for room in allRooms:
         allRooms[room].clear_characters()
 offStage = Room('offStage', "If you're seeing this, it means you've reached the end of the content.")
@@ -607,8 +573,6 @@ def town_mode_interpreter(keyEvent, previousModeIn=None):
         universal.say_title('Characters:')
         #universal.say(''.join(['Name:', universal.tab("Name:"), 'Health:', universal.tab("Health:"), 'Mana:\n']))
         universal.say('\t'.join(['Name:', 'Health:', 'Mana:\n\t']), columnNum=3)
-        print("displaying party:")
-        print(universal.state.party.display_party())
         universal.say(universal.state.party.display_party(), columnNum=3)
         universal.set_command_interpreter(select_character_interpreter)
 
@@ -760,6 +724,7 @@ def save_interpreter(keyEvent):
         numLastInput = False
     universal.set_commands([''.join(['Provide a save name:', saveName, '_']), 
         ''.join(['(#) Select a save file:', saveNum, '_']), '<==Back'])
+    return universal.get_command_view()
 
 
 possibleSave = ''
@@ -781,8 +746,6 @@ def confirm_save_interpreter(keyEvent):
 
 saveDirectory = os.path.join(os.getcwd(), 'save')
 def save_game(saveName, previousModeIn=None, preserveSaveName=True):
-    #import traceback
-    #traceback.print_stack()
     global previousMode
     if previousModeIn is not None:
         previousMode = previousModeIn
@@ -858,6 +821,7 @@ def load_interpreter(keyEvent):
         confirm_load()
         return
     universal.set_commands([''.join(['(#) Select a file to load:', loadName, '_']), '<==Back'])
+    return universal.get_command_view()
 
 def confirm_load():
     global loadName
@@ -941,6 +905,7 @@ def go(room, party=None, sayDescription=True):
             perform_go(room, party, sayDescription)
     except (TypeError, AttributeError):
         perform_go(room, party, sayDescription)
+    assert universal.state.location == room
 
 def perform_go(room, party=None, sayDescription=True):
     if party is None:
@@ -964,8 +929,6 @@ def talk(previousModeIn):
             not party.inParty(c)]
     if talkableCharacters:
         universal.say('Who would you like to speak to?\n')
-        for c in talkableCharacters:
-            print(c.printedName)
         universal.say('\n'.join([j + name for j, name in zip(
             [str(i) + '. ' for i in range(1, len(talkableCharacters)+1)],
             [c.printedName for c in talkableCharacters])]))

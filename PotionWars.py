@@ -54,6 +54,6 @@ errorLog.addHandler(logging.FileHandler("errors.log"))
 if __name__ == '__main__':
     try:
         sp_rpg_engine.begin_game(episode1.episode1)
-    except Exception:
+    except Exception, e:
         errorLog.exception("My life is pain!")
         raise

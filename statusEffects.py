@@ -90,7 +90,6 @@ class StatusEffect(universal.RPGObject):
 
     @staticmethod
     def load(statusData, status):
-        print([data.strip() for data in statusData.split('\n') if data.strip()])
         _, name, duration = (data.strip() for data in statusData.split('\n') if data.strip())
         status.name = name
         status.duration = duration
@@ -107,42 +106,34 @@ class Humiliated(StatusEffect):
     name = 'Humiliation'
     def __init__(self, duration, numSmacks):
         super(Humiliated, self).__init__(Humiliated.name, duration, True)
-        self.penalty = numSmacks // Humiliated.smacksPerPenaltyPoint
+        self.penalty = int(numSmacks // Humiliated.smacksPerPenaltyPoint)
+        self.inflictedStat = None
 
     def inflict_status(self, person):
         #stat = max([i for i in range(len(person.primaryStats[:-4]))], key=lambda x : person.primaryStats[x])
-        person.decrease_stat(person.highest_stat(), self.penalty)
+        self.inflictedStat = person.highest_stat()
+        person.decrease_stat(self.inflictedStat, self.penalty)
         return 0
 
 
     def reverse_status(self, person):
-        print(' '.join([person.name, 'before reversing humiliation:']))
-        print(person.primaryStats)
-        person.increase_all_stats(self.penalty)
-        print(' '.join([person.name, 'after humiliation:']))
-        print(person.primaryStats)
+        person.increase_stat(self.inflictedStat, self.penalty)
         return 0
 
 class Weakened(StatusEffect):
     name = 'Weakness'
+    penalty = 1
     def __init__(self, duration):
         super(Weakened, self).__init__(Weakened.name, duration, False)
 
     def inflict_status(self, person):
-        print(' '.join([person.name, 'before weakened:']))
-        print(person.primaryStats)
-        person.decrease_stat(STRENGTH, 1)
-        person.decrease_stat(DEXTERITY, 1)
-        print(' '.join([person.name, 'after weakened:']))
-        print(person.primaryStats)
+        person.decrease_stat(STRENGTH, Weakened.penalty)
+        person.decrease_stat(DEXTERITY, Weakened.penalty)
         return 0
 
     def reverse_status(self, person):
-        print(person.primaryStats)
-        person.increase_stat(STRENGTH, 2)
-        person.increase_stat(DEXTERITY, 2)
-        print(' '.join([person.name, 'after reverse weakened:']))
-        print(person.primaryStats)
+        person.increase_stat(STRENGTH, Weakened.penalty)
+        person.increase_stat(DEXTERITY, Weakened.penalty)
         return 0
 
 class Shielded(StatusEffect):
@@ -153,7 +144,6 @@ class Shielded(StatusEffect):
 
     def inflict_status(self, person):
         assert(self.defenseBonus is not None)
-        print("calling shield's inflict_status")
         return self.defenseBonus
 
     def reverse_status(self, person):
@@ -169,7 +159,6 @@ class MagicShielded(StatusEffect):
         self.defenseBonus = defenseBonus
 
     def inflict_status(self, person):
-        print("calling magic shield's inflict_status")
         assert(self.defenseBonus is not None)
         return self.defenseBonus
 
@@ -272,27 +261,17 @@ class DefendStatus(StatusEffect):
         When a character is defending, they get a +3 bonus to strength, dexterity, willpower, and talent, to help them defend against enemy attacks.
         Note: This does not apply when a character is defending another character. This only works when a character is defending themselves.
         """
-        print('inflicting defense status.')
-        print('stats before defense:')
-        print(p.primaryStats)
         p.set_stat(STRENGTH, p.strength() + 2)
         p.set_stat(DEXTERITY, p.dexterity() + 2)
         p.set_stat(WILLPOWER, p.willpower() + 2)
         p.set_stat(TALENT, p.talent() + 2)
-        print('stats after defense:')
-        print(p.primaryStats)
         return
 
     def reverse_status(self, p):
-        print('reversing defense status.')
-        print('stats before reversing defense:')
-        print(p.primaryStats)
         p.set_stat(STRENGTH, p.strength() - 2)
         p.set_stat(DEXTERITY, p.dexterity() - 2)
         p.set_stat(WILLPOWER, p.willpower() - 2)
         p.set_stat(TALENT, p.talent() - 2)
-        print('stats after reversing defense:')
-        print(p.primaryStats)
         return
 
 class FirstOrder(StatusEffect):

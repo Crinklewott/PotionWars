@@ -46,7 +46,6 @@ def set_title_image(image, extension, numImages):
     TITLE_IMAGES.append(image + "." + extension)
     for i in range(1, numImages):
         TITLE_IMAGES.append(image + str(i) + "." + extension)
-    print(TITLE_IMAGES)
 
 def title(text):
     global gameTitle
@@ -88,10 +87,11 @@ def display_acknowledgments():
     universal.get_screen().blit(universal.get_background(), universal.get_world_view().topleft)
     universal.say(format_text([['Code, Story, Concept: Andrew Russell'], 
         ['Editor: Emily'],
-        ['Beta Testers: Uninventive, Johny741'],
+        ['Support Writers: Emily the Eccentric Emu, Bonemouth the Boxfish'],
+        ['Beta Testers: Uninventive the Umbrellabird, Johny741 the Jackal, Bonemouth the Boxfish, Emily the Eccentric Emu'],
         ['Images:'],
         ['  title screen image: Rak'],
-        ['  Episode 1 titlecard: Lys'],
+        #['  Episode 1 titlecard: Lys'],
         #['Sound Effects: Filippo Vicarelli. Downloaded from his website: noiseforfun.com'],
         #['Dungeon step: Click Switch'],
         ['Music: Filippo Vicarelli. Purchased through his website: playonloop.com.'], 
@@ -277,7 +277,6 @@ def title_screen(episode=None):
     titleImages = []
     if os.path.exists(os.path.join(os.getcwd(), 'save')) and '.init.sav' in os.listdir(os.path.join(os.getcwd(), 'save')):
         #townmode.clear_rooms()
-        print('loading .init.sav')
         townmode.previousMode = None
         townmode.load_game('.init.sav', preserveLoadName=False)
     else:
@@ -306,7 +305,6 @@ def title_screen(episode=None):
     if not skip:
         pygame.time.delay(125)
         for i in range(0, len(titleImages)):
-            print('printing image: ' + str(i))
             screen.blit(titleImages[i], worldView.topleft)
             pygame.time.delay(25)
             pygame.display.flip()
@@ -402,8 +400,6 @@ def request_nickname():
     global partialName
     universal.say('Provide a nickname for your character:\n')
     universal.set_commands(['Esc'])
-    print(universal.state.player)
-    print(universal.state.player.gender)
     if universal.state.player.is_male():
         partialName = 'Juli'
     elif universal.state.player.is_female():
@@ -470,8 +466,6 @@ def request_height():
             ''.join(['''over 6' (''', str(inches_to_meters(72)), '''m)'''])]
     heightNums = '\n'.join(heightNums)
     height = '\n'.join(height)
-    print('---------------height------------------')
-    print('\n'.join(height))
     universal.say(height + '\t' + heightNums, columnNum=4, justification=0)
     set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(request_height_interpreter)
@@ -677,7 +671,6 @@ def select_underwear_interpreter(keyEvent):
         num = int(universal.key_name(keyEvent)) - 1
     except ValueError:
         if keyEvent.key == K_BACKSPACE:
-            print('keyError!')
             if universal.state.player.shirt() is universal.state.player.lower_clothing():
                 select_shirt()
             else:
@@ -839,7 +832,6 @@ Stats:
 statPoints = 3
 
 def final_confirmation():
-    print(universal.state.player.spellList)
     universal.state.player.learn_spell(person.allSpells[0][0][0])
     universal.state.player.learn_spell(person.allSpells[0][1][0])
     universal.state.player.learn_spell(person.allSpells[0][2][0])
@@ -850,7 +842,6 @@ def final_confirmation():
     for i in range(len(spells)):
         universal.state.player.quickSpells[i] = spells[i]
     universal.say(universal.state.player.appearance(True), justification=0)
-    #print(universal.state.player.character_sheet_spells())
     universal.set_commands(['(Enter) Begin Game', '<==Back', '(Esc) To Title Screen'])
     universal.set_command_interpreter(final_confirmation_interpreter)
 

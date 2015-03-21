@@ -161,9 +161,7 @@ def second_order(unleasher, allies, enemies):
     firstOrderEnemies = [enemy for enemy in enemies if enemy.order == first_order]
     if firstOrderEnemies == []:
         for ally in allies:
-            #print('ally stats before second_order:' + str(ally.statList))
             ally.inflict_status(statusEffects.build_status(statusEffects.SECOND_ORDER))
-            #print('ally stats after second_order:' + str(ally.statList))
         return ' '.join([unleasher.printedName, 'unleashes the Second Order.\n\n'])
     else:
         return ' '.join([unleasher.printedName + "'s", 'Order has been blocked.\n\n'])
@@ -293,12 +291,9 @@ class Person(universal.RPGObject):
         self.gender = gender
         self.previousTarget = 0
         if type(description) is list:
-            print("Found a list!")
-            print(description)
             self.description = '\n'.join(description)
         else:
             self.description = description
-        print(self.name)
         assert(not isinstance(self.description, list))
         #A mapping from the name of the status, to the actual status, and the duration.     
         self.statusDict = {}
@@ -374,9 +369,6 @@ class Person(universal.RPGObject):
     def __getstate__(self):
         state = self.__dict__.copy()
         known_spells = [[] for i in range(universal.NUM_TIERS)]
-        #print(self)
-        #print("'s spell list!")
-        #print(self.spellList)
         state['spellList'] = [[(allSpells[tier].index((get_basic_spell(tier, action_type_to_spell_type(spell.actionType)), 
             get_advanced_spell(tier, action_type_to_spell_type(spell.actionType)), get_expert_spell(tier, action_type_to_spell_type(spell.actionType)))), spell.expertise) 
             for spell in self.spellList[tier]] for tier in range(len(self.spellList)) if self.spellList[tier] is not None]
@@ -387,14 +379,9 @@ class Person(universal.RPGObject):
             except AttributeError:
                 pass
         state['quickSpells'] = quickSpellList
-        #print("state's spell list!")
-        #print(state['spellList'])
         return state
 
     def __setstate__(self, state):
-        #import traceback
-        #print(traceback.print_stack())
-        #print(state['spellList'])
         state['spellList'] = [[allSpells[tier][index][expertise] for (index, expertise) in state['spellList'][tier]] for tier in range(len(state['spellList']))]
         state['spellList'].extend([None for i in range(universal.NUM_TIERS - len(state['spellList']))])
         state['quickSpells'] = [get_spell(name) for name in state['quickSpells']]
@@ -416,9 +403,6 @@ class Person(universal.RPGObject):
                         
         self.__dict__.update(state)
         assert(self.spellList != [])
-        #print('done settingt state!')
-        #print(self.spellList)
-        #print(self)
         self.spellList = state['spellList']
 
     def add_quick_spell(self, spell):
@@ -995,15 +979,11 @@ class Person(universal.RPGObject):
         """
         healedAmount = 0
         if self.current_health() + num > self.health():
-            #print('fully healing.')
             healedAmount = max(0, self.health() - self.current_health())
             self.fully_heals()
         else:
             self.increase_stat(universal.CURRENT_HEALTH, num)
-            #print('partially healing.')
             healedAmount = num
-        #print('--------------' + self.name + ' healing---------------')
-        #print(str(self.current_health()) + '/' + str(self.health()))
         return healedAmount
 
     def restores_mana(self, num):
@@ -1342,7 +1322,6 @@ class Person(universal.RPGObject):
         return self.statusDict
     
     def learn_spell(self, spell):
-        print(self.spellList)
         if self.spellList[spell.tier] is None:
             self.spellList[spell.tier] = [spell]
         else:
@@ -1374,15 +1353,6 @@ class Person(universal.RPGObject):
         if self.is_inflicted_with(statusEffects.LoweredDefense.name):
             defenseBonus = self.statusDict[statusEffects.LoweredDefense.name][STATUS_OBJ].inflict_status(self)
         if self.is_inflicted_with(statusEffects.Shielded.name):
-            print('defense bonus:')
-            print(self.shirt().attackDefense)
-            print(self.lower_clothing().attackDefense)
-            print(self.underwear().attackDefense)
-            print(defenseBonus)
-            print(self.statusDict)
-            print(self.statusDict[statusEffects.Shielded.name][STATUS_OBJ])
-            print(self.statusDict[statusEffects.Shielded.name][STATUS_OBJ].inflict_status(self))
-            print(self.statusDict[statusEffects.Shielded.name][STATUS_OBJ].inflict_status)
             defenseBonus += self.statusDict[statusEffects.Shielded.name][STATUS_OBJ].inflict_status(self)
         return self.shirt().attackDefense + self.lower_clothing().attackDefense + self.underwear().attackDefense + defenseBonus
 
@@ -1590,7 +1560,6 @@ class Person(universal.RPGObject):
             more detail
         """
         global currentMode
-        print('character sheet!')
         if mode is not None:
             currentMode = mode
         global currentPerson
@@ -1617,13 +1586,9 @@ class Person(universal.RPGObject):
         universal.say('Tiers: ' + ', '.join(str(i) for i in range(self.tier + 1)))
         set_commands(['(#)select tier', '<==Back'])
         if interpreter == None:
-            print('interpreter is none.')
             set_command_interpreter(display_tiers_interpreter)
         else:
-            print('interpreter is not none. interpreter:')
-            print(interpreter)
             set_command_interpreter(interpreter)
-        print(universal.commandInterpreter)
 
     def display_statusDict(self):
         if self.statusDict == {}:
@@ -1632,7 +1597,7 @@ class Person(universal.RPGObject):
             return ', '.join([status + ": " + str(statusDurationPair[DURATION]) for status, statusDurationPair in self.statusDict.iteritems()])
 
     def equip_menu(self):
-        set_commands(['(#) Select item to equip:_', '<==Back', '(Esc) Return to menu'])
+        #set_commands(['(#) Select item to equip:_', '<==Back', '(Esc) Return to menu'])
         global selectedPerson
         selectedPerson = self
         set_command_interpreter(equip_interpreter)
@@ -1661,13 +1626,8 @@ class Person(universal.RPGObject):
             appearance.append([self.name + "'s", bumDesc, '''bottom is a dark red. Every inch of''', hisher(), '''bum is covered in marks and welts. Every step makes''',
                 hisher(), '''bottom buzz with pain, and the thought of sitting makes''', himher(), '''wince.'''])
         elif self.bumStatus > 2:
-            print('bumStatus greater than 2')
-            print('appearance before append:')
-            print(appearance)
             appearance.append([self.name + "'s", bumDesc, '''bottom is a deep red. Several welts mar''', hisher(), '''cheeks.''', HeShe(), '''can't sit without wincing''',
                 '''and there is a slight stiffness to''', hisher(), '''gait.'''])
-            print('appearance after append:')
-            print(appearance)
         elif self.bumStatus > 0:
             appearance.append([self.name + "'s", bumDesc, '''bottom is a dark pink, interspersed with patches of dark red.''', HisHer(), '''bottom tingles with the''',
                     '''lingering sting of''', hisher(), '''recent spankings. Sitting is best done with great care.'''])
@@ -1691,8 +1651,11 @@ def equip_interpreter(keyEvent):
     global equipNum
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
-        if 0 < num and num <= len(selectedPerson.inventory) + len(selectedPerson.equipmentList): 
-            if len(selectedPerson.inventory) + len(selectedPerson.equipmentList) < 10:
+        if 0 <= num and num <= len(selectedPerson.inventory) + len(selectedPerson.equipmentList): 
+            numItems = len(selectedPerson.inventory) + len(selectedPerson.equipmentList) 
+            if numItems < 10 and 0 == num:
+                return
+            if numItems < 10:
                 num = num - len(selectedPerson.equipmentList) - 1
                 try:
                     selectedPerson.equip(selectedPerson.inventory[num])
@@ -1702,16 +1665,17 @@ def equip_interpreter(keyEvent):
                     return
                 except IndexError:
                     pass
+                selectedPerson.character_sheet()
+                selectedPerson.equip_menu()
             else:
                 equipNum += pygame.key.name(keyEvent.key)
-                set_command_interpreter(['(#) Select input to equip: ' + equipNum + '_', '<==Back', '(Esc) Return to menu'])
-            selectedPerson.character_sheet()
-            selectedPerson.equip_menu()
+                set_commands(['(#) Select item to equip: ' + equipNum + '_', '<==Back', '(Esc) Return to menu'])
     elif keyEvent.key == K_BACKSPACE: 
         if equipNum != '':
             equipNum = equipNum[:-1]
         else:
             selectedPerson.character_sheet(currentMode)
+        set_commands(['(#) Select item to equip: ' + equipNum + '_', '<==Back', '(Esc) Return to menu'])
     elif keyEvent.key == K_ESCAPE:
         selectedPerson.character_sheet(currentMode)
     elif keyEvent.key == K_RETURN and equipNum != '':
@@ -1723,8 +1687,9 @@ def equip_interpreter(keyEvent):
                 say('''That cannot be equipped!''')
                 acknowledge(selectedPerson.equip_menu, ())
                 return
+        equipNum = ''
         selectedPerson.character_sheet()
-        selectedPerson.equip_menu()
+        #selectedPerson.equip_menu()
 
                 
 
@@ -1762,8 +1727,6 @@ class PlayerCharacter(Person):
     def save(self):
         saveString = super(PlayerCharacter, self).save()
         saveData = [saveString, "Player Character Only:"]
-        print("saving keywords:")
-        print(self.keywords)
         PlayerCharacter.add_data('\n'.join(keyword.strip() for keyword in self.keywords if keyword.strip()), saveData)
         PlayerCharacter.add_data(str(self.currentEpisode), saveData)
         import episode
@@ -1785,10 +1748,7 @@ class PlayerCharacter(Person):
         loadData = playerCharacterData
         _, keywords, currentEpisode, currentSceneIndex, numSpankings, numSpankingsGiven, fakeName, nickname, reputation = loadData.split("Player Data:")
         player.keywords = [keyword.strip().replace('Lucilla', 'Carlita').replace('Anastacia', 'Carlita').replace('Carlita', 'Edita') for keyword in keywords.split('\n') if keyword.strip()]
-        print("loading keywords")
-        print(player.keywords)
         player.currentEpisode = currentEpisode.strip()
-        print(player.currentEpisode)
         if player.currentEpisode == "None":
             player.currentEpisode = None
         else:
@@ -1901,11 +1861,11 @@ def character_viewer_interpreter(keyEvent):
         modify_quick_spells(currentPerson)
     elif keyEvent.key == K_s:
         currentPerson.display_tiers()
-    #elif keyEvent.key == K_e:
-        #currentPerson.equip_menu()
+    elif keyEvent.key == K_e:
+        set_commands(['(#) Select item to equip:_', '<==Back', '(Esc) Return to menu'])
+        currentPerson.equip_menu()
     elif keyEvent.key in NUMBER_KEYS:
         if len(currentPerson.inventory) + len(currentPerson.equipmentList) < 10:
-            print('num items in inventory less than 10!')
             num = int(pygame.key.name(keyEvent.key)) - 1
             allEquipment = currentPerson.equipmentList + currentPerson.inventory
             try:
@@ -1926,22 +1886,17 @@ def character_viewer_interpreter(keyEvent):
                 set_commands(commandList)
                 set_command_interpreter(view_item_interpreter)
         else:
-            print('num items in inventory more than ten!')
             if len(equipNum) < NUM_DIGITS:
                 equipNum += pygame.key.name(keyEvent.key)
             set_commands(['(A)ppearance','(S)pells', '(E)quip', '(#)View Item:' + equipNum + '_', '(T)oggle Stats', '<==Back']) 
     elif keyEvent.key == K_RETURN and len(currentPerson.equipmentList) + len(currentPerson.inventory) >= 10:
-        print('calling return!')
         #This has turned into a nightmare, and really needs to be refactored. I'll do it later. All I want is for the damn thing to work.
         try:
             num = int(equipNum) - 1
         except ValueError:
-            print('value error!')
-            print(equipNum)
             equipNum = ''
             return
         else:
-            print('no value error!')
             equipNum = ''
         commandList = []
         if len(currentPerson.equipmentList) <= num and currentPerson.inventory[num - len(currentPerson.equipmentList)].is_equippable():
@@ -1949,22 +1904,14 @@ def character_viewer_interpreter(keyEvent):
             selectedNum = num - len(currentPerson.equipmentList)
         elif num < len(currentPerson.equipmentList): 
             commandList.append('(Enter) Unequip')
-        print('player input:')
-        print(num)
         if num < 0:
             set_commands(['(A)ppearance','(S)pells', '(E)quip', '(#)View Item:' + equipNum + '_', '(T)oggle Stats', '<==Back']) 
             return
         elif num >= len(currentPerson.equipmentList):
-            print('number greater than equipment list!')
             num -= len(currentPerson.equipmentList)
             try:
-                print(currentPerson.inventory[num].display())
                 universal.say(currentPerson.inventory[num].display())
             except IndexError:
-                print('index error. inventory len:')
-                print(len(currentPerson.inventory))
-                print('num:')
-                print(num)
                 set_commands(['(A)ppearance','(S)pells', '(E)quip', '(#)View Item:' + equipNum + '_', '(T)oggle Stats', '<==Back']) 
                 return
         elif num < len(currentPerson.equipmentList):
@@ -2146,8 +2093,6 @@ class Party(universal.RPGObject):
             allyIndex = self.members.index(ally)
         if targeted is not None:
             targetedIndices = [i for i in [self.index(t) for t in targeted]] 
-        #print([member.printedName for member in self])
-        #print([member.status_string() for member in self])
         memberNames = [': '.join([member.printedName, member.status_string()]) for member in self]
         if showHP:
             partyTxt = ['\t'.join([target(n, arrow(n, allyIndex), targetedIndices) + '. '
@@ -2465,19 +2410,10 @@ class Combat(Spell):
                     currentDefenders.append(defender)
             damage = 0
             if not defender.ignores_spell(self):
-                print('-------------------' + self.name + '------------------')
-                print('-------------------' + self.attacker.name + '---------')
-                print('-------------------' + defender.name + '---------')
-                print('magicMultiplier: ' + str(self.magicMultiplier))
-                print('magic_attack: ' + str(attacker.magic_attack()))
-                print('magic_defense: ' + str(defender.magic_defense(self.rawMagic)))
-                print('min damage: ' + str(self.minDamage))
-                print('max damage: ' + str(self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))))
                 try:
                     damage = random.randint(self.minDamage, self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic)))
                 except ValueError:
                     damage = self.minDamage
-                print('damage: ' + str(damage))
             defender.receives_damage(damage)
             effects.append(damage)
             if damage == 0:
@@ -2534,13 +2470,6 @@ class Status(Spell):
                     defender = availableOpponents[random.randrange(0, len(availableOpponents))]
                     currentDefenders.append(defender)
             successProbability = self.resilienceMultiplier * (attacker.resilience() - attacker.magic_penalty() - defender.resilience())
-            print('casing weaken')
-            print("caster's resilience():")
-            print(attacker.resilience())
-            print("recipient's resilience():")
-            print(defender.resilience())
-            print('success probability:')
-            print(successProbability)
             assert attacker.resilience() is not None, 'attacker has no resilience()'
             assert attacker.magic_penalty() is not None, 'attacker has no magic penalty'
             assert defender.resilience() is not None, 'defender has no resilience()'
@@ -2559,19 +2488,6 @@ class Status(Spell):
                     duration = self.minDuration
                 assert duration is not None, 'no min duration.'
                 success = random.randint(1, 100)
-                #print('casting' + str(self))
-                #print('successProbability:' + str(successProbability))
-                #print('success: ' + str(success))
-                #print('resilienceMultiplier: ' + str(self.resilienceMultiplier))
-                #print('attacker resilience(): ' + str(attacker.resilience()))
-                #print('attacker magic penalty: ' + str(attacker.magic_penalty()))
-                #print('defender resilience(): ' + str(defender.resilience()))
-                #print('defender magic defense: ' + str(defender.magic_defense(self.rawMagic)))
-                print('success probability:')
-                print(successProbability)
-                print('success:')
-                print(success)
-                print(success <= successProbability)
                 if defender.ignores_spell(self):
                     resultString.append(self.immune_statement(defender))
                     effects.append(False)
@@ -2708,7 +2624,6 @@ class Buff(Spell):
                 didSomething = True
             resultStatement.append(self.effect_statement(recipient))
             resultStatement.append(self.success_statement(recipient))
-            print(resultStatement)
             effects.append(True)
         if not inCombat:
             return (universal.format_text(resultStatement, False), effect, self, didSomething)
@@ -2860,8 +2775,6 @@ class SpectralSpanking(Spectral):
         duration = self.resilienceMultiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier(self.rawMagic) + severity)
         if duration < self.minDuration:
             duration = self.minDuration
-        print('spectral spanking duration:')
-        print(duration)
         resultStatement = []
         effects = []
         effectString = self.effect_statement(defender)
@@ -2871,17 +2784,13 @@ class SpectralSpanking(Spectral):
             effects.append((0, 0))
         else:
             successProbability = self.probModifier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-            print(successProbability)
             if successProbability < self.minProbability:
                 successProbability = self.minProbability
             if successProbability > self.maxProbability:
                 successProbability = self.maxProbability
-            print('spectral spanking success probability:')
             success = random.randint(1, 100)
-            print('success:')
-            print(success)
             if success <= successProbability:
-                #Yeah, I know I'm abusing the shit out of import. Suck it."
+                #Yeah, I know I'm abusing the shit out of import. Suck it.
                 from combatAction import compute_bonus
                 bonus = compute_bonus(attacker.magic() - defender.magic())
                 numSmacks = self.smackMultiplier * bonus
@@ -2889,7 +2798,8 @@ class SpectralSpanking(Spectral):
                 defender.receives_damage(damage)
                 resultStatement.append(self.success_statement(defender))
                 effects.append(damage)
-                effectString = effectString + [universal.format_line(self.success_statement(defender)), universal.format_line(['\n\n' + self.attacker.printedName, 'does', str(damage), 'damage to', defender.printedName + "!"])]
+                effectString = effectString + [universal.format_line(self.success_statement(defender)), universal.format_line(['\n\n' + self.attacker.printedName, 'does', str(damage), 'damage to', 
+                    defender.printedName + "!"])]
                 if defender.current_health() <= 0:
                     resultStatement = [effectString  + ['\n' + defender.printedName + ' collapses!']]
                 else:

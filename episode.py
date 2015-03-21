@@ -42,69 +42,48 @@ class Episode(universal.RPGObject):
         self.init = init
         allEpisodes[name] = self
 
-    def start_episode(self, *startingSceneArgs):
-        global postTitleCardFunction, postTitleCardFuncArgs
-        universal.get_screen().fill(universal.DARK_GREY)
-        music.play_music(self.titleTheme)
-        universal.state.player.clear_marks()
-        universal.display_text('Episode ' + str(self.num) + ':\n' + self.name, universal.get_world_view(), universal.get_world_view().midleft, isTitle=True)
-        """
-        if startingSceneArgs is None:
-            startingSceneArgs = (self,)
-        else:
-            startingSceneArgs = (self,) + startingSceneArgs
-        """
-        #print('printing starting scene args')
-        universal.acknowledge(self.initialize_episode, *startingSceneArgs)
 
-    def initialize_episode(self, *startingSceneArgs):       
-        conversation.maxIndex = 0
-        print('starting scene currentSceneIndex: ')
-        print(self.currentSceneIndex)
-        if startingSceneArgs is ():
-            self.scenes[self.currentSceneIndex].startScene()
-        else:
-            self.scenes[self.currentSceneIndex].startScene(*startingSceneArgs)
-        try:
-            print(postTitleCardFuncArgs)
-            postTitleCardFunction(*postTitleCardFuncArgs)
-        except TypeError:
-            try:
-                postTitleCardFunction() 
-            except TypeError:
-                pass
+    def start_episode(self, *startingSceneArgs):
+         global postTitleCardFunction, postTitleCardFuncArgs
+         universal.get_screen().fill(universal.DARK_GREY)
+         music.play_music(self.titleTheme)
+         universal.state.player.clear_marks()
+         self.init()
+         universal.display_text('Episode ' + str(self.num) + ':\n' + self.name, universal.get_world_view(), universal.get_world_view().midleft, isTitle=True)
+         universal.acknowledge(self.initialize_episode, *startingSceneArgs)
+
+    def initialize_episode(self, *startingSceneArgs):
+         conversation.maxIndex = 0
+         if startingSceneArgs is ():
+             self.scenes[self.currentSceneIndex].startScene()
+         else:
+             self.scenes[self.currentSceneIndex].startScene(*startingSceneArgs)
+             try:
+                 postTitleCardFunction(*postTitleCardFuncArgs)
+             except TypeError:
+                 try:
+                     postTitleCardFunction()
+                 except TypeError:
+                     pass
+
 
     def end_episode(self, endingSceneArgs=()):
-        print("ending episode:")
-        print(self.name)
-        print(self)
-        print("next episode:")
-        print(self.nextEpisode)
         if endingSceneArgs is ():
             self.scenes[self.currentSceneIndex].endScene()
         else:
             self.scenes[self.currentSceneIndex].endScene(*endingSceneArgs)
         universal.state.player.currentEpisode = self.nextEpisode.name
-        set_post_title_card(allEpisodes[universal.state.player.currentEpisode].init)
+        #set_post_title_card(allEpisodes[universal.state.player.currentEpisode].init)
         universal.state.clear_one_time_encounters()
         allEpisodes[universal.state.player.currentEpisode].start_episode()
 
     def next_scene(self, previousSceneArgs=(), startingSceneArgs=()):
-        print('invoking next scene!')
-        print('endScene of previous scene:')
-        print('currentSceneIndex:')
-        print(self.currentSceneIndex)
-        print(self.scenes[self.currentSceneIndex].endScene)
         if self.scenes[self.currentSceneIndex].endScene is not None:
             if previousSceneArgs is ():
                 self.scenes[self.currentSceneIndex].endScene()      
             else:
                 self.scenes[currentSceneIndex].endScene(*previousSceneArgs)
         self.currentSceneIndex += 1
-        #print('next scene start:')
-        #print(self.scenes[self.currentSceneIndex].startScene)
-        #print('startingSceneArgs:')
-        #print(startingSceneArgs)
         try:
             if self.scenes[self.currentSceneIndex].init_scene:
                 self.scenes[self.currentSceneIndex].init_scene()

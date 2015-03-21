@@ -90,11 +90,9 @@ def build_chars():
 
 def build_rooms():
     global kitchen
-    print("starting to build kitchen")
     try:
         kitchen = universal.state.get_room('Kitchen')
     except KeyError:
-        print("Building kitchen!")
         kitchen = townmode.Room("Kitchen", ' '.join(["The kitchen is a rather large room with two long, waist-high counters running through the middle. Along the sides of the walls are a few small",
             "tables and",
             "stools. A pair of massive hearths sit at the far end, a pair of turnspit coelophysii are lying next to the hearth. Their heads come up, and they gurgle happily as", 
