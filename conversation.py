@@ -96,7 +96,6 @@ def say_node(litanyIndex):
         return
     else:
         if litany.music is not None:
-            #universal.playedMusic.queue.clear()
             universal.say(litany.quip, justification=0, music=litany.music)
         else:
             universal.say(litany.quip, justification=0)
@@ -119,7 +118,6 @@ def say_node(litanyIndex):
         set_commands(['(#)Select a number.'])
         set_command_interpreter(converse_with_interpreter)
     else:
-        universal.playedMusic.queue.clear()
         conversationPartner.litany = conversationPartner.defaultLitany
         if function is not None and function == acknowledge:
             if args is not None and args != []:

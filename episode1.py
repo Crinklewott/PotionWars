@@ -216,11 +216,11 @@ shrine.add_adjacent(avaricumSquare)
 orphanage = Room('Orphanage', universal.format_line(["The orphanage is a dizzying maze of twisting hallways. Children sprint through the hallways, gasping and laughing, playing hide and seek, tag, and countless other games. About a dozen Younger Brothers and Sisters in light blue, and students in light grey run after the children. In the center of the orphanage is a large dining hall. Two dozen or so children are crowded around an older woman sitting in the corner telling a story. Sitting in the center of the hall is a woman in her mid forties. She is wearing a dark red robe, which denotes her rank as a Sister of the Spectral Persuasion. She has light brown shoulder-length hair with a hint of grey, and pale skin. Her hair is pulled back into a complex braid. She is of average height, but carries herself with a level of",
                 '''confidence and conviction that makes her appear taller. Crows feet spread out from her blue eyes. Her eyes flick all over the dining room, keeping an eye on the children and Younger Brothers and Sisters both. At the same time, she braids the hair of a young girl to match her own.''']), bgMusic=textCommandsMusic.LIGHT_HEARTED, bgMusicName="textCommandsMusic.LIGHT_HEARTED")
 
-orphanage.add_adjacent(shrine)
+#orphanage.add_adjacent(shrine)
 
 hospital = Room('Hospital', "The hospital is a busy, but somber place. People afflicted with various diseases and injuries (crookedly healed bones appearing to be the most common) sit waiting to be treated. Brothers and Sisters in white walk back and forth, some disappearing into the patient rooms in the back, others speaking with those waiting, still others handing off paperwork to each other. Sitting behind a large desk at the back of the room is a woman about Elise's age. She is wearing the light grey robes of a student, and is hunched over some parchment, her forehead wrinkled in thought.", bgMusic=textCommandsMusic.CHURCH, bgMusicName="textCommandsMusic.CHURCH")
 
-hospital.add_adjacent(shrine)
+#hospital.add_adjacent(shrine)
 hospital.add_adjacent(orphanage)
 
 craftmansCorridor = Room("Craftman's Corridor", '''The Craftman's Corridor is almost as bustling as the main square, though the people here tend to be better dressed. Shops line the street on both sides, but only three of them are of any interest: the Adventurer's Guild, a weapons and armor shop, and a tailor. The road continues to the northeast, snakes around the base of the hill upon which the Inner City sits, and eventually leads into the slums on the far eastern side.''') 
@@ -269,6 +269,7 @@ def armor_shop_after_arrival():
             '''short-cropped''',
             '''dark brown hair, a trimmed beard, and blue eyes. He is wearing''',
             '''a thick leather apron, and a pair of heavily patched trousers.''']])
+    wesleyAndAnnesArmorShop.after_arrival = None
     townmode.town_mode()
 
 def armor_shop_before_arrival():
@@ -288,8 +289,8 @@ wesleyAndAnnesArmorShop.add_adjacent(craftmansCorridor)
 theresesTailors = Room("Therese's Tailors", "")
 
 def thereses_tailors_after_arrival():
+    theresesTailors = universal.state.get_room("Therese's Tailors")
     if 'visited_tailors' not in universal.state.player.keywords:
-        theresesTailors = universal.state.get_room("Therese's Tailors")
         theresesTailors.description = universal.format_text([[universal.state.player.name + "'s", '''eyes widen when''', 
             heshe(universal.state.player), '''enters the tailors.''', HeShe(universal.state.player) + "'d", 
             '''expected to find a small, mostly bare shop with a''', 
@@ -324,6 +325,7 @@ def thereses_tailors_after_arrival():
             '''rehanging clothing, while keeping an eye on the various customers.''',
             '''One in particular, a woman about''', universal.state.player.name + "'s", '''age, watches''',
             universal.state.player.name, '''out of the corner of her eye.'''])
+    theresesTailors.after_arrival = None
     townmode.town_mode()
 
 theresesTailors.after_arrival = thereses_tailors_after_arrival  
@@ -424,11 +426,11 @@ carol.inventory = [itemspotionwars.thong, itemspotionwars.lacyUnderwear, itemspo
 restfulRoad = Room("Restful Road", "Place holder")
 #avaricumSquare.add_adjacent(restfulRoad)
 
-slums = Room("Slums", "", bgMusic=textCommandsMusic.TAIRONAN, bgMusicName="textCommandsMusic.TAIRONAN")
+slums = Room("Slums", "", bgMusic=textCommandsMusic.VENGADOR, bgMusicName="textCommandsMusic.VENGADOR")
 
 def slums_after_arrival():
+    slums = universal.state.get_room('Slums')
     if 'visited_slums' in keywords():
-        slums = universal.state.get_room('Slums')
         slums.description = universal.format_text([['''The roads have been churned into mud by''',
         '''the steps of hundreds, perhaps even thousands, of feet. The wooden''',
         '''buildings seem''', 
@@ -475,6 +477,7 @@ def slums_after_arrival():
             '''Looking more closely,''', universal.state.player.name, '''notices several individuals''',
             '''mingling with the various groups, and showing them something in''',
             '''a small satchel.''']])
+    slums.after_arrival = None
     townmode.town_mode()
 slums.after_arrival = slums_after_arrival
 slums.add_adjacent(craftmansCorridor)
@@ -8194,6 +8197,7 @@ def necia_chastised_warslinger_interpreter(keyEvent):
             [name(), '''presses''', hisher(), '''lips together.''', HeShe(), '''grabs the woman by the arm and yanks her to her feet. "Let's see how stoic you are after I've tanned your ass."\n\n''']]),
             justification=0)
         #universal.state.player.take_item(itemspotionwars.qualityDagger)
+        universal.state.player.take_item(itemspotionwars.attackGem)
         necia_chastised_spank_interpreter()
     elif num == 2:
         universal.say(universal.format_text([['''The woman gives''', name(), '''a mystified look, and''', name(), '''explicitly points at the woman's face.'''],

@@ -235,4 +235,4 @@ bluePajamaShirt = items.PajamaTop('blue pajama shirt', 'A delightfully soft, dar
 
 #----------------------------------Gems-----------------------------------------
 
-attackGem = items.Gem('Attack Gem', 'Weapons enchanted with this gem gain a bonus to attack. Clothing enchanted with the gem gain a bonus to evasion.', items.AttackEnchantment)
+attackGem = items.Gem('Attack Gem', 'Weapons enchanted with this gem gain a bonus to damage. Clothing enchanted with the gem gain a bonus to defense.', items.AttackEnchantment)

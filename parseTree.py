@@ -137,8 +137,8 @@ inlineCommandsPlayer = {
     r'\ppjtype': ("items.dropseat_based_msg(universal.state.player, ", 3),
     r'\pisliftedlowered':("items.liftlowered_based_msg(universal.state.player, ", 2),
     r'\pisloweredlifted':("items.loweredlifted_based_msg(universal.state.player, ", 2),
-    r'\ptrousers':("items.wearing_dress(universal.state.player, ", 3),
-    r'\pdress':("items.wearing_trousers(universal.state.player, ", 3),
+    r'\ptrousers':("items.wearing_trousers(universal.state.player, ", 3),
+    r'\pdress':("items.wearing_dress(universal.state.player, ", 3),
     r'\pwearingunderwear':("items.wearing_underwear(universal.state.player, ", 2),
     #Note: This is not ideal, because it has itemspotionwars baked in. Need to figure out an alternative.
     r'\phasbelt':("itemspotionwars.has_belt(universal.state.player, )", 2),
@@ -552,8 +552,8 @@ class Link(ParseTree):
             playerComment = ''.join(['universal.format_line_translate(', self.children[0].translate()[0], ')'])
             destination = self.extract_destination(1)
             destination = destination.replace("'''", '')
-            return ([''.join([nodeName, '.children.append(', destination, ')']),
-                     ''.join([nodeName, '.playerComments.append(', playerComment, ')'])], 'link')
+            return ([''.join([nodeName, '.add_child(', destination, ')']),
+                     ''.join([nodeName, '.add_player_comment(', playerComment, ')'])], 'link')
         else:
             raise transExceptions.TranslationError(' '.join([color("Error", bcolors.RED), color_line(self.lineNum), "Invalid linking command:", cmd]))
 

@@ -61,7 +61,7 @@ class Enchantment(universal.RPGObject):
 
 class AttackEnchantment(Enchantment):
     """
-    Grants a +1 attack bonus to weapons, and a +1 evade bonus to clothing.
+    Grants a +1 damage bonus to weapons, and a +1 defense bonus to clothing.
     """
     pass
 
@@ -869,7 +869,7 @@ def loose_msg(person, looseMsg, tightMsg):
 def wearing_trousers(person, wearingTrousers, notWearingTrousers='', noLowerClothing=''):
     if person.lower_clothing() == emptyLowerArmor:
         return noLowerClothing
-    return universal.msg_selector(person.wearing_pants_or_shorts(), {True:wearingTrousers, False:notWearingTrousers})
+    return universal.msg_selector(person.wearing_pants_or_shorts() or person.lower_clothing().armorType == Skirt.armorType, {True:wearingTrousers, False:notWearingTrousers})
 
 def wearing_shirt(person, wearingShirt, notWearingShirt='', noLowerClothing=''):
     if person.shirt() == emptyUpperArmor:

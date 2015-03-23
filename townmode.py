@@ -900,11 +900,12 @@ def go(room, party=None, sayDescription=True):
         universal.state.location.leaving()    
     except TypeError:
         try:
-            universal.state.location.leaving(room)
-        except TypeError:
+            canLeave = universal.state.location.leaving(room)
+        except TypeError, e:
             pass
         else:
-            return
+            if not canLeave:
+                return
     except AttributeError:       
         pass
     try:

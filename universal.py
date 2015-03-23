@@ -295,11 +295,13 @@ def say(text, columnNum=1, justification=1, fontSize=36, italic=False, bold=Fals
         textToDisplay += text
     if music is not None:
         global playedMusic
-        try:
+        #I know this is bad python code, but honestly, my GUI stuff is a mess from top to bottom. This is just a kludge until I can rip all this shit out and 
+        #put in a proper GUI.
+        if isinstance(music, basestring):
+            playedMusic.put(music)
+        else:
             for song in music:
                 playedMusic.put(song)
-        except TypeError:
-            playedMusic.put(music)
     """
     if textToDisplay:
         textToDisplay.append((text, fontSize, italic, bold))
@@ -600,10 +602,7 @@ def display_text(text, rectIn, position, isTitle=False, justification=None):
                 set_commands(['(Enter) to continue.', '<==Back'])
             else:
                 set_commands(['(Enter) to continue.'])
-            #commandSurface = pygame.Surface((commandView.width, commandView.height))
             pygame.draw.rect(screen, LIGHT_GREY, pygame.Rect(commandView.topleft, commandView.size), 10)
-            #commandSurface.fill(DARK_GREY)
-            #screen.blit(commandSurface, commandView.topleft)
             display_commands()
             pygame.display.flip()
             acknowledged = False
@@ -1069,7 +1068,6 @@ class State(object):
         except AttributeError:
             itemName = item
         if itemName == 'leather cuirass':
-            #&&& Working on replacing leather cuirass with a gem. We'll also need to replace qualityDagger with the player's weapon at some point, in case the player decided to sell off their family weapon.
             say_immediate(format_text([["Due to changes to the armor system, the leather cuirass no longer exists. Instead, you will receive an enhancement gem (if you haven't received one already for having the quality dagger) that Peter at Wesley and Anne's",
             "Smithy can forge into your weapon, and Carol at Therese's Tailors can",
             "forge into your clothing. You will also receive 20 matrons, enough to purchase a clothing item of your choice to cover your rather exposed chest."],
