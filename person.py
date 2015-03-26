@@ -1706,7 +1706,7 @@ class PlayerCharacter(Person):
     def __init__(self, name, gender, description="", currentEpisode=None, order=zeroth_order, nickname=""):
         super(PlayerCharacter, self).__init__(name, gender, None, None, description=description, order=zeroth_order, rawName='$$$universal.state.player$$$', skinColor='rich caramel',
                 eyeColor='brown', hairColor='dark brown')
-        self.keywords = []
+        self.keywords = {}
         self.currentEpisode = currentEpisode
         self.numSpankings = 0
         self.numSpankingsGiven = 0
@@ -1747,7 +1747,7 @@ class PlayerCharacter(Person):
         Person.load(personData, player)
         loadData = playerCharacterData
         _, keywords, currentEpisode, currentSceneIndex, numSpankings, numSpankingsGiven, fakeName, nickname, reputation = loadData.split("Player Data:")
-        player.keywords = [keyword.strip().replace('Lucilla', 'Carlita').replace('Anastacia', 'Carlita').replace('Carlita', 'Edita') for keyword in keywords.split('\n') if keyword.strip()]
+        player.keywords = {keyword.strip().replace('Lucilla', 'Carlita').replace('Anastacia', 'Carlita').replace('Carlita', 'Edita') for keyword in keywords.split('\n') if keyword.strip()}
         player.currentEpisode = currentEpisode.strip()
         if player.currentEpisode == "None":
             player.currentEpisode = None
@@ -1780,13 +1780,12 @@ class PlayerCharacter(Person):
     def willpower_check(self, num):
         return checkWillpower and self.willpower() >= num
 
-    def add_keyword(self, keyword):
-        if not keyword in self.keywords:
-            self.keywords.append(keyword)
-
     def remove_keyword(self, keyword):
         if keyword in self.keywords:
-            self.keywords.remove(keyword)
+            try:
+                self.keywords.remove(keyword)
+            except KeyError:
+                pass
 
     def failed_to_spank(self, person):
         person.avoided_spanking_by(self)

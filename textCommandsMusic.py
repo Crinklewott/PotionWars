@@ -47,10 +47,7 @@ def add_keyword(keyword):
     universal.state.player.add_keyword(keyword)
 
 def remove_keyword(keyword):
-    try:
-        keywords().remove(keyword)
-    except ValueError:
-        return
+    universal.state.player.remove_keyword(keyword)
 
 def keywords():
     return universal.state.player.keywords

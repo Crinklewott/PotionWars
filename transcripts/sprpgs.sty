@@ -49,7 +49,7 @@
 \newcommand{\KingQueen}{\ifx\gender\female Queen\else King\fi}
 \newcommand{\lordlady}{\ifx\gender\female lady\else lord\fi}
 \newcommand{\LordLady}{\ifx\gender\female Lady\else Lord\fi}
-\newcommand{\brothersister}{\ifx\gender\female Lady\else Lord\fi}
+\newcommand{\brothersister}{\ifx\gender\female sister\else brother\fi}
 \newcommand{\pigcow}{\ifx\gender\female cow\else pig\fi}
 \newcommand{\PigCow}{\ifx\gender\female Cow\else Pig\fi}
 \newcommand{\BrotherSister}{\ifx\gender\female Sister\else Brother\fi}
@@ -77,7 +77,7 @@
 \newcommand{\hairlength}[5]{\textcolor{blue}{#2}}
 %Short, 
 \newcommand{\phairlength}[4]{\textcolor{blue}{#2}}
-\newcommand{\isfemale}[2]{\ifx\gender\female #1 \else #2 \fi}
+\newcommand{\isfemale}[2]{\ifx\gender\female #1\else #2\fi}
 
 %If that automatically hyperlinks between the if statement and the ending fi. Useful for large if's that might span multiple pages, making it possible for the reader
 %to lose track of what sitation they're in.
@@ -141,7 +141,7 @@
 \newenvironment{node}[4]
 {
     \refstepcounter{Nodecount}
-    \section*{\#\#\#\arabic{Nodecount}}
+    \section*{\#\#\#\arabic{Nodecount}: #1}
     %\addtocounter{Nodecount}{1}
     \textit{Location: #2}
 
@@ -156,7 +156,7 @@
 \newenvironment{childnode}[2]
 {
     \refstepcounter{Nodecount}
-    \section*{\#\#\#\arabic{Nodecount}}
+    \section*{\#\#\#\arabic{Nodecount}: #1}
     \textit{Author: #2}
     %\addtocounter{Nodecount}{1}
     \label{#1}
