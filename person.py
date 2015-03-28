@@ -1706,7 +1706,7 @@ class PlayerCharacter(Person):
     def __init__(self, name, gender, description="", currentEpisode=None, order=zeroth_order, nickname=""):
         super(PlayerCharacter, self).__init__(name, gender, None, None, description=description, order=zeroth_order, rawName='$$$universal.state.player$$$', skinColor='rich caramel',
                 eyeColor='brown', hairColor='dark brown')
-        self.keywords = {}
+        self.keywords = set()
         self.currentEpisode = currentEpisode
         self.numSpankings = 0
         self.numSpankingsGiven = 0
@@ -1759,12 +1759,6 @@ class PlayerCharacter(Person):
         player.nickname = nickname.strip()
         player.reputation = int(reputation.strip())
 
-
-
-
-                
-
-
     def get_id(self):
         if self.identifier:
             rawName = self.rawName + str(self.identifier)
@@ -1777,15 +1771,18 @@ class PlayerCharacter(Person):
             self.fakeName = 'Cascada' if self.name == 'Adelina' else 'Adelina'
         elif self.gender == MALE:
             self.fakeName = 'Adriano' if self.name == 'Cesar' else 'Cesar'
+
     def willpower_check(self, num):
         return checkWillpower and self.willpower() >= num
 
+    def add_keyword(self, keyword): 
+        self.keywords.add(keyword)
+
     def remove_keyword(self, keyword):
-        if keyword in self.keywords:
-            try:
-                self.keywords.remove(keyword)
-            except KeyError:
-                pass
+        try:
+            self.keywords.remove(keyword)
+        except KeyError:
+            pass
 
     def failed_to_spank(self, person):
         person.avoided_spanking_by(self)
