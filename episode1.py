@@ -5659,10 +5659,10 @@ def e0_6_1():
         universal.say_title('Punished Taironans')
         if 'spectral_caned' in keywords():
             if universal.state.player.knows_spell(p.SpectralSpanking) and not 'spectral_spanked_Taironans' in keywords():
-                universal.say([name(), '''glares up at the Taironans, who studiously ignore''', himher() + ".", HisHer(), 
+                universal.say(universal.format_text([[name(), '''glares up at the Taironans, who studiously ignore''', himher() + ".", HisHer(), 
                     '''bottom still burns like the dickens from that wretched caning. Wonder if Adrian would let''',himher(), 
-                    '''cane the lot of them when this was done?'''], justification=0)
-                universal.say(format_text([['''Or,''', heshe(), '''could cast Spectral Spanking now. Why wait until the attack was done?''', HeShe(), 
+                    '''cane the lot of them when this was done?'''],
+                ['''Or,''', heshe(), '''could cast Spectral Spanking now. Why wait until the attack was done?''', HeShe(), 
                 '''would probably forget anyway.'''],
                 ['''Does''', name(), '''cast spectral spanking on the helpless Taironans?'''],
                 ['\p'],
@@ -5670,6 +5670,7 @@ def e0_6_1():
                     ['''2. No.''']]), justification=0)
                 set_commands(['(#) Select a number.'])
                 set_command_interpreter(e0_6_1_caning_revenge_interpreter)
+                return True
             elif 'spectral_spanked_Taironans' in keywords():
                 backOfGuild = universal.state.get_room('Guild')
                 backOfGuild.display(False)

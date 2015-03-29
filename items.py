@@ -238,7 +238,7 @@ class Armor(Item):
         return "lift"
 
     def lowerlift(self):
-        return self.lowerlift()
+        return "lower"
 
     def liftslowers(self):
         return self.liftlower() + "s"
