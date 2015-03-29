@@ -185,7 +185,7 @@ rapier  = items.Sword('rapier', ' '.join(["Long, thin and blinding fast, rapiers
 
 
 #-----------------------------Spears-------------------------------------
-warspear = items.Spear('warspear', "A heavy wooden pole with a thick metal spike on one end, and an iron band on the other for balance. Very dangerous when you can keep your opponents at arms length.", price=50, genericBonus=1)
+warspear = items.Spear('warspear', "A heavy wooden pole with a thick metal spike on one end, and an iron band on the other for balance. Very dangerous when you can keep your opponents at arms length.", price=50, genericBonus=0)
 
 familySpear = items.Spear('family spear', "Engraved on the spear shaft is a green, serpentine dragon. Though the weapon itself is nothing special, the intricate design would fetch it a very nice price, assuming one didn't mind selling a family heirloom.", price=100)
 

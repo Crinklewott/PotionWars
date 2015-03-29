@@ -34,6 +34,8 @@ FIRST_ORDER = 9
 SECOND_ORDER = 10
 THIRD_ORDER = 11
 FOURTH_ORDER = 12
+STRIKE_TRUE = 13
+STRIKE_POOR = 14
 
 def is_negative(status):
     return status.isNegative
@@ -138,7 +140,7 @@ class Weakened(StatusEffect):
 
 class Shielded(StatusEffect):
     name = 'Shield'
-    def __init__(self, duration, defenseBonus=2):
+    def __init__(self, duration, defenseBonus=10):
         super(Shielded, self).__init__(Shielded.name, duration, False, isNegative=False)
         self.defenseBonus = defenseBonus
 
@@ -154,7 +156,7 @@ class Shielded(StatusEffect):
 
 class MagicShielded(StatusEffect):
     name = 'Magic Shield'
-    def __init__(self, duration, defenseBonus=2):
+    def __init__(self, duration, defenseBonus=10):
         super(MagicShielded, self).__init__(MagicShielded.name, duration, False, isNegative=False)
         self.defenseBonus = defenseBonus
 
@@ -167,7 +169,6 @@ class MagicShielded(StatusEffect):
         Since MagicShielded doesn't actually do anything to the person, it doesn't need to do anything.
         """
         return 0
-
 
 class MagicDistorted(StatusEffect):
     name = 'Magic Distorted'
@@ -228,9 +229,9 @@ class Charmed(StatusEffect):
 
 class LoweredDefense(StatusEffect):
     name = 'Lowered Defense'
-    def __init__(self, duration, defensePenalty=4):
+    def __init__(self, duration, defensePenalty=10):
         super(LoweredDefense, self).__init__(LoweredDefense.name, duration, False)
-        self.defensePenalty = 4
+        self.defensePenalty = 10
 
     def inflict_status(self, person):
         return self.defensePenalty
@@ -240,9 +241,9 @@ class LoweredDefense(StatusEffect):
 
 class LoweredMagicDefense(StatusEffect):
     name = 'Lowered Magic Defense'
-    def __init__(self, duration, defensePenalty=4):
+    def __init__(self, duration, defensePenalty=10):
         super(LoweredDefense, self).__init__(LoweredDefense.name, duration, False)
-        self.defensePenalty = 4
+        self.defensePenalty = 10
 
     def inflict_status(self, person):
         return self.defensePenalty
@@ -273,6 +274,40 @@ class DefendStatus(StatusEffect):
         p.set_stat(WILLPOWER, p.willpower() - 2)
         p.set_stat(TALENT, p.talent() - 2)
         return
+
+
+class StrikePoor(StatusEffect):
+    name = 'Strike Poor'
+    def __init__(self, duration, damagePenalty=10):
+        super(StrikeTrue, self).__init__(DamageBonus.name, duration, False, isNegative=False)
+        self.damagePenalty = damagePenalty
+
+    def inflict_status(self, person):
+        assert self.damagePenalty is not None
+        return self.damagePenalty
+
+    def reverse_status(self, person):
+        """ 
+        Since StrikePoor doesn't actually do anything to the person, it doesn't need to do anything.
+        """
+        return 0
+
+class StrikeTrue(StatusEffect): 
+    name = 'Strike True'
+    def __init__(self, duration, damageBonus=10):
+        super(StrikeTrue, self).__init__(DamageBonus.name, duration, False, isNegative=False)
+        self.damageBonus = damageBonus
+
+    def inflict_status(self, person):
+        assert self.damageBonus is not None
+        return self.damageBonus
+
+    def reverse_status(self, person):
+        """ 
+        Since StrikeTrue doesn't actually do anything to the person, it doesn't need to do anything.
+        """
+        return 0
+
 
 class FirstOrder(StatusEffect):
     combatOnly = True
@@ -363,6 +398,12 @@ def status_shorthand(statusName):
         return '3'
     elif statusName == FourthOrder.name:
         return '4'
+    elif statusName == StrikeTrue.name:
+        return 'ST'
+    elif statusName == StrikePoor.name:
+        return 'SP'
+    else:
+        raise ValueError(' '.join([statusName, "does not have a shorthand associated with it."]))
 
 def get_name(status):
     if status == HUMILIATED:
@@ -422,6 +463,10 @@ def build_status(status, duration=0, numSmacks=0, allies=None, enemies=None):
         return ThirdOrder()
     elif status == FOURTH_ORDER or status == FourthOrder.name:
         return FourthOrder()
+    elif status == STRIKE_TRUE or status == StrikeTrue.name:
+        return StrikeTrue()
+    elif status == STRIKE_POOR or status == StrikeTrue.name:
+        return StrikePoor()
     else:
         if status == None:
             raise ValueError(' '.join(['None is not a status effect.'])) 

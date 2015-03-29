@@ -283,6 +283,9 @@ def compute_stat(stat, primaryStats):
 class Person(universal.RPGObject): 
     """
         People are complicated.
+
+        Note: I've removed the orders. Sixth order is no longer necessary since I've eliminated random encounters, and that was the primary motivation for orders. Without the need for
+        fully healing before the boss, orders just provide unnecessary complexity.
     """
     def __init__(self, name, gender, defaultLitany, litany, description="", printedName=None, 
             coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle='', marks=None,
@@ -326,7 +329,7 @@ class Person(universal.RPGObject):
         self.defaultLitany = defaultLitany
         self.coins = coins
         self.specialization = specialization
-        self.order = order
+        self.order = zeroth_order
         #Last four indices are the appropriate spell categories
         #We have as many quick spells as we do function keys.
         self.quickSpells = [None for i in range(12)]
@@ -1250,36 +1253,25 @@ class Person(universal.RPGObject):
         else:
             return self.grapplingPartner == opponent
 
-    def damage(self):
-        weaponDamage = random.randrange(self.weapon().minDamage, self.weapon().maxDamage)
-        if self.is_grappling():
-            weaponDamage += self.weapon().grappleBonus
-        else:
-            weaponDamage += self.weapon().armslengthBonus
-        return self.warfare() + weaponDamage
-
     def magic_defense(self, rawMagic=False):
         return max(0, self.magic() + self.magic_defense_bonus() + (self.magic_penalty() if rawMagic else 0))
 
+    def attack(self):
+        return self.attack_bonus() + self.weapon().damage_multiplier(self.is_grappling()) * self.warfare()
+
     def defense(self):
-        if self.is_grappling():
-            return max(0, self.defense_bonus() + self.weapon().grapple_bonus())
-        else:
-            return max(0, self.defense_bonus() + self.weapon().armslength_bonus())
-            #return self.grapple() + self.defense_bonus()
-        #else:
-            #return self.warfare() + self.defense_bonus()
+        return self.defense_bonus() + self.weapon().damage_multiplier(self.is_grappling()) * self.warfare()
 
     def magic_penalty(self, rawMagic=True):
         return self.weapon().castingPenalty + self.shirt().castingPenalty + self.lower_clothing().castingPenalty + self.underwear().castingPenalty
 
     def magic_defense_bonus(self):
         defenseBonus = 0
-        if statusEffects.LoweredMagicDefense.name in self.statusDict:
-            defenseBonus = self.statusDict[statusEffects.LoweredMagicDefense.name][0].inflict_status(self)
         if statusEffects.MagicShielded.name in self.statusDict: 
             defenseBonus += self.statusDict[statusEffects.MagicShielded.name][STATUS_OBJ].inflict_status(self)
-        return max(0, self.weapon().magicDefense + self.shirt().magicDefense + self.lower_clothing().magicDefense + self.underwear().magicDefense + defenseBonus)
+        if statusEffects.LoweredMagicDefense.name in self.statusDict:
+            defenseBonus -= self.statusDict[statusEffects.LoweredMagicDefense.name][0].inflict_status(self)
+        return self.weapon().magicDefense + self.shirt().magicDefense + self.lower_clothing().magicDefense + self.underwear().magicDefense + defenseBonus
 
     def inflict_status(self, status, originalList=None, newList=None):
         if originalList is not None and newList is not None:
@@ -1348,12 +1340,21 @@ class Person(universal.RPGObject):
     def attack_penalty(self):
         return self.shirt().attackPenalty + self.lower_clothing().attackPenalty + self.underwear().attackPenalty
 
+    def attack_bonus(self):
+        attackBonus = 0
+        if self.is_inflicted_with(statusEffects.StrikeTrue.name): 
+            attackBonus += self.statusDict[statusEffects.StrikeTrue.name][STATUS_OBJ].inflict_status(self)
+        if self.is_inflicted_with(statusEffects.StrikePoor.name): 
+            attackBonus -= self.statusDict[statusEffects.StrikeTrue.name][STATUS_OBJ].inflict_status(self)
+        return attackBonus
+
+
     def defense_bonus(self):
         defenseBonus = 0
-        if self.is_inflicted_with(statusEffects.LoweredDefense.name):
-            defenseBonus = self.statusDict[statusEffects.LoweredDefense.name][STATUS_OBJ].inflict_status(self)
         if self.is_inflicted_with(statusEffects.Shielded.name):
             defenseBonus += self.statusDict[statusEffects.Shielded.name][STATUS_OBJ].inflict_status(self)
+        if self.is_inflicted_with(statusEffects.LoweredDefense.name):
+            defenseBonus -= self.statusDict[statusEffects.LoweredDefense.name][STATUS_OBJ].inflict_status(self)
         return self.shirt().attackDefense + self.lower_clothing().attackDefense + self.underwear().attackDefense + defenseBonus
 
     @staticmethod

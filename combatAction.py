@@ -208,38 +208,38 @@ class AttackAction(CombatAction):
         except AttributeError:
             pass
         if defender.guardian:
+            #If the defender is being guarded, then we use the guardian instead of the current defender. 
             self.defenders[0] = defender.guardian
             attackEffect = self.effect(inCombat, allies, enemies)
             defender.guardian = None
             return ('\n'.join([' '.join([defender.guardian.printedName, 'defends', defender.printedName, 'from', attacker.printedName + '!']), attackEffect[0]]), 
                     attackEffect[1], attackEffect[2]) 
-        if not defender.guardian:
+        else:
             attacker = self.attacker
-            wa = attacker.weapon()
-            wd = defender.weapon()
-            attackBonus = wa.attack_bonus(attacker.is_grappling())
-            defendBonus = wd.parry_bonus(defender.is_grappling())
-            warfareDifference = max(0, attacker.warfare() - defender.warfare())
-            bonus = compute_bonus(warfareDifference)
-            #attackBonus += attacker.warfare()
-            #defendBonus += defender.warfare() // 2
-            #assert attacker.attack_penalty() >= 0, '%s attack penalty: %s' % (attacker.name, attacker.attack_penalty())
-            #attackBonus += attacker.attack_penalty()
-            #defendBonus += defender.attack_penalty()
-            success = rand(bonus + attackBonus) 
-            failure = rand(defendBonus)
-            if failure <= success:
-                #damageBonus = attacker.warfare() + wa.attack_bonus(attacker.is_grappling()) - defender.defense()
-                dam = max(1, wa.damage(attacker.is_grappling()) + bonus - defender.defense())
-                defender.receives_damage(dam)
-                damageString = ' '.join([attacker.printedName, 'hits', defender.printedName, 'for', str(dam), 'damage!'])
-            else:
-                dam = 0
-                damageString = ' '.join([attacker.printedName, 'misses', defender.printedName + '!'])
+            dam = self.compute_damage(attacker.warfare(), attacker.warfare() + attacker.attack() - defender.warfare() + defender.defense())
+            defender.receives_damage(dam)
+            damageString = ' '.join([attacker.printedName, 'hits', defender.printedName, 'for', str(dam), 'damage!'])
             resultString = '\n'.join([resultString, damageString]) if resultString != '' else damageString
             if defender.current_health() <= 0:
                 resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
             return (resultString, [dam], self)
+
+    MINIMUM_NEGATIVE_DAMAGE = -5
+    DIVISION_CONSTANT = 10
+    MAX_BONUS = 5
+    def compute_damage(self, attWarfare, warfareDiff):
+        """
+        Given the attacker's warfare, and the difference between the attacker's attack and defender's defense, computes the damage administered by the attacker.
+        """
+        assert self.MINIMUM_NEGATIVE_DAMAGE < 0 < self.MAX_BONUS, "MINIMUM NEGATIVE DAMAGE: %d not negative or MAX_BONUS: %d not positive." % (self.MINIMUM_NEGATIVE_DAMAGE, self.MAX_BONUS)
+        assert self.DIVISION_CONSTANT != 0, "DIVISION_CONSTANT cannot be zero."
+        if self.MINIMUM_NEGATIVE_DAMAGE <= warfareDiff <= self.MAX_BONUS:
+            return attWarfare + int(math.trunc(warfareDiff / self.DIVISION_CONSTANT * attWarfare))
+        elif warfareDiff < self.MINIMUM_NEGATIVE_DAMAGE:
+            return max(1, self.compute_damage(attWarfare, warfareDiff + 1) - 1)
+        else:
+            return 1 + self.compute_damage(attWarfare, warfareDiff - 1)
+
 
 
 class GrappleAction(CombatAction):
@@ -596,4 +596,5 @@ class DefendAction(CombatAction):
                 return DefendAction(attacker, attacker).effect(inCombat, allies, enemies)
             defender.guardian = attacker
             return (' '.join([attacker.printedName, 'defends', defender.printedName + '!']), [None], self)
+
 
