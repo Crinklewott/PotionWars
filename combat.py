@@ -807,7 +807,11 @@ def strap_cane_ai(enemy):
     if enemy.is_grappling():
         if get_difficulty() == STRAP or (get_difficulty() == CANE and enemy.weapon().weaponType == items.Sword.weaponType):
             warfareActions.append(combatAction.BreakGrappleAction)
-            grappleActions = [combatAction.ThrowAction, combatAction.AttackAction]#, combatAction.DefendAction]
+            #If half an enemy's grapple is less than the amount of grapple left, then she can't throw her enemy, so she doesn't even bother.
+            if enemy.grapple() // 2 < enemy.grappleDuration():
+                grappleActions = [combatAction.AttackAction]#, combatAction.DefendAction]
+            else:
+                grappleActions = [combatAction.ThrowAction, combatAction.AttackAction]#, combatAction.DefendAction]
         elif get_difficulty() == CANE and enemy.weapon().weaponType == items.Knife.weaponType:
             #warfareActions.append(combatAction.BreakGrappleAction)
             grappleActions = [combatAction.ThrowAction, combatAction.AttackAction]#, combatAction.DefendAction]
@@ -885,7 +889,7 @@ def strap_cane_ai(enemy):
             if chosenActionClass == []:
                 return strap_cane_ai(enemy)
             chosenAction = chosenActionClass.pop(random.randrange(0, len(chosenActionClass)))
-            assert chosenAction, ("Chosen Action is None! ChosenAction class: %s", str(chosenActionClass))
+            assert chosenAction, "Chosen Action is None! ChosenAction class: %s" % str(chosenActionClass)
             defenders = select_targets(chosenAction, enemy)
             chosenActionClass = [actionClass for actionClass in chosenActionClass if actionClass.actionType != chosenAction.actionType]
         if chosenAction == combatAction.SpankAction:
@@ -1071,15 +1075,15 @@ def select_targets(chosenAction, enemy):
     elif chosenAction == combatAction.GrappleAction:
         targets = [target for target in targets if not target.is_grappling()]
         for target in targets:
-            targets.extend([target for i in range(0, len([effect for (action, effect) in actionsEndured[target] if action == combatAction.GrappleAction]))])
+            maxGrappleDuration = max([effect[0] for (action, effect) in actionsEndured[target] if action == combatAction.grappleAction])
+            targets.extend([target for i in range(maxGrappleDuration)])
     elif chosenAction == combatAction.BreakGrappleAction:
         return [enemy.grapplingPartner]
     elif chosenAction == combatAction.BreakAllysGrappleAction:
         targets = [target for target in targets if target.is_grappling() and target.grapple() < enemy.grapple()]
         for target in list(targets):
-            #The idea here that if this character has a much higher grapple than his ally, then not only is this character good for breaking a grapple, but 
-            #it's likely that his ally has a low grapple, in which case the ally needs all the help he can get.
-            targets.extend([target for i in range(enemy.grapple() - target.grapple())])
+            #Note we're only looking at grappled targets with a lower grapple. Therefore, if there's a high grapple duration, the target is at a disadvantage and needs to be freed.
+            targets.extend([target for i in range(target.grappleDuration)])
     elif isCombat:
         avgdam = avg_damage(targets, chosenAction)
         #we'll be modifying the original targets list
@@ -1364,6 +1368,9 @@ def end_round():
     enemies = person.Party(activeEnemies)
     for ally in allies:
         ally.decrement_statuses()
+        if ally.is_grappling():
+            ally.reduce_grapple_duration(1)
+            ally.grapplingPartner.reduce_grapple_duration(1)
     for enemy in enemies:
         enemy.decrement_statuses()
     if len(activeAllies) == 0 : 

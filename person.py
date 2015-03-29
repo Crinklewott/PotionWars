@@ -11,24 +11,24 @@ You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 
 WARNING: Due to fiddling with the name of Edita (she was Carlita, then Lucilla, then Carlita again, then Edita), I've had to add some code to the state object to exchange Lucilla and Carlita for Edita in the player's keywords, in order to ensure
-that keywords are registering properly for people loading saves from versions where Ita's name was Lucilla or Carlita. This code should be removed for any future games. Otherwise, if you name a character Lucilla or Carlita, you end up with one
-named Edita!
+that keywords are registering properly for people loading saves from versions where Edita's name was Lucilla or Carlita. This code should be removed for any future games. Otherwise, if you name a 
+character Lucilla or Carlita, you end up with one named Edita!
 
 The same is true about the Person class' load feature.
 """
+import abc
+import combatAction
+from combatAction import GRAPPLER_ONLY, ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY, ONLY_WHEN_GRAPPLED, UNAFFECTED, NOT_WHEN_GRAPPLED, WARRIORS_GRAPPLERS, SPELL_SLINGERS, ALL, ALLY, ENEMY
+import conversation
+import copy
+import episode
+import inspect
+import items
+import operator
+import random
+import statusEffects
 import universal
 from universal import *
-import statusEffects
-import combatAction
-import random
-import abc
-import episode
-import items
-import conversation
-import operator
-from combatAction import GRAPPLER_ONLY, ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY, ONLY_WHEN_GRAPPLED, UNAFFECTED, NOT_WHEN_GRAPPLED, WARRIORS_GRAPPLERS, SPELL_SLINGERS, ALL, ALLY, ENEMY
-import inspect
-import copy
 
 checkWillpower = True
 
@@ -250,7 +250,7 @@ def display_person(person):
     if person is None:
         return ' '
     else:
-        return person.printedName
+        return ''.join([person.printedName, '(', str(person.grappleDuration), ')'])
 
 BODY_TYPES = ['slim', 'average', 'voluptuous', 'heavyset']
 
@@ -368,6 +368,7 @@ class Person(universal.RPGObject):
         self.identifier = identifier
         universal.state.add_character(self)
         self.weaknesses = weaknesses if weaknesses else []
+        self.grappleDuration = None
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -1036,24 +1037,35 @@ class Person(universal.RPGObject):
             value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.RESILIENCE])
         return value
 
-    def grapple(self, person=None):
+    def grapple(self, person=None, duration=None):
         """
-        If person is none, we want the value of the grapple stat. If person is not None, then we want to start grappling that person.
+        If person is none, we want the value of the grapple stat. If person is not None, then we want to start grappling that person for duration turns.
         """
         if person is not None:
+            assert duration, "Person: %s is not None, but duration is." % person.printedName
             self.grapplingPartner = person
             person.grapplingPartner = self
+            self.grappleDuration = duration
+            person.grappleDuration = duration
         else:
             value = 2 * self.strength() + self.dexterity()
             for equipment in self.equipmentList:
                 value += sum([enchantment.bonus for enchantment in equipment.enchantments if enchantment.stat == universal.GRAPPLE])
             return value
 
+    def grapple_duration(self):    
+        return self.grappleDuration
+
+    def reduce_grapple_duration(self, amount):
+        self.grappleDuration = max(0, self.grappleDuration - amount)
+
     def break_grapple(self):
         gp = self.grapplingPartner
         self.grapplingPartner = None
+        self.grappleDuration = None
         if gp is not None:
             gp.grapplingPartner = None
+            gp.grappleDuration = None
 
     def speed(self):
         value = 2 * self.alertness()
@@ -1257,10 +1269,10 @@ class Person(universal.RPGObject):
         return max(0, self.magic() + self.magic_defense_bonus() + (self.magic_penalty() if rawMagic else 0))
 
     def attack(self):
-        return self.attack_bonus() + self.weapon().damage_multiplier(self.is_grappling()) * self.warfare()
+        return self.attack_bonus() + int(math.trunc(self.weapon().damage_multiplier(self.is_grappling()) * self.warfare()))
 
     def defense(self):
-        return self.defense_bonus() + self.weapon().damage_multiplier(self.is_grappling()) * self.warfare()
+        return self.defense_bonus() + int(math.trunc(self.weapon().damage_multiplier(self.is_grappling()) * self.warfare()))
 
     def magic_penalty(self, rawMagic=True):
         return self.weapon().castingPenalty + self.shirt().castingPenalty + self.lower_clothing().castingPenalty + self.underwear().castingPenalty
@@ -3130,6 +3142,8 @@ def magic(personName):
 
 def grapple(personName):
     return universal.stat.get_character(personName).grapple()
+
+
 
 def resilience(personName):
     return universal.stat.get_character(personName).resilience()

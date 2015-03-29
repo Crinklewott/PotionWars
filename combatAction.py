@@ -216,30 +216,30 @@ class AttackAction(CombatAction):
                     attackEffect[1], attackEffect[2]) 
         else:
             attacker = self.attacker
-            dam = self.compute_damage(attacker.warfare(), attacker.warfare() + attacker.attack() - defender.warfare() + defender.defense())
-            defender.receives_damage(dam)
+            dam = compute_damage(attacker.warfare(), attacker.warfare() + attacker.attack() - (defender.warfare() + defender.defense())) 
+            defender.receives_damage(dam) 
             damageString = ' '.join([attacker.printedName, 'hits', defender.printedName, 'for', str(dam), 'damage!'])
             resultString = '\n'.join([resultString, damageString]) if resultString != '' else damageString
             if defender.current_health() <= 0:
                 resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
             return (resultString, [dam], self)
 
-    MINIMUM_NEGATIVE_DAMAGE = -5
-    DIVISION_CONSTANT = 10
-    MAX_BONUS = 5
-    def compute_damage(self, attWarfare, warfareDiff):
-        """
-        Given the attacker's warfare, and the difference between the attacker's attack and defender's defense, computes the damage administered by the attacker.
-        """
-        assert self.MINIMUM_NEGATIVE_DAMAGE < 0 < self.MAX_BONUS, "MINIMUM NEGATIVE DAMAGE: %d not negative or MAX_BONUS: %d not positive." % (self.MINIMUM_NEGATIVE_DAMAGE, self.MAX_BONUS)
-        assert self.DIVISION_CONSTANT != 0, "DIVISION_CONSTANT cannot be zero."
-        if self.MINIMUM_NEGATIVE_DAMAGE <= warfareDiff <= self.MAX_BONUS:
-            return attWarfare + int(math.trunc(warfareDiff / self.DIVISION_CONSTANT * attWarfare))
-        elif warfareDiff < self.MINIMUM_NEGATIVE_DAMAGE:
-            return max(1, self.compute_damage(attWarfare, warfareDiff + 1) - 1)
-        else:
-            return 1 + self.compute_damage(attWarfare, warfareDiff - 1)
 
+MINIMUM_NEGATIVE_DAMAGE = -5
+DIVISION_CONSTANT = 10
+MAX_BONUS = 5
+def compute_damage(attWarfare, warfareDiff):
+    """
+    Given the attacker's warfare, and the difference between the attacker's attack and defender's defense, computes the damage administered by the attacker.
+    """
+    assert MINIMUM_NEGATIVE_DAMAGE < 0 < MAX_BONUS, "MINIMUM NEGATIVE DAMAGE: %d not negative or MAX_BONUS: %d not positive." % (self.MINIMUM_NEGATIVE_DAMAGE, self.MAX_BONUS)
+    assert DIVISION_CONSTANT != 0, "DIVISION_CONSTANT cannot be zero."
+    if MINIMUM_NEGATIVE_DAMAGE <= warfareDiff <= MAX_BONUS:
+        return attWarfare + int(math.trunc(warfareDiff / DIVISION_CONSTANT * attWarfare))
+    elif warfareDiff < MINIMUM_NEGATIVE_DAMAGE:
+        return max(1, compute_damage(attWarfare, warfareDiff + 1) - 1)
+    else:
+        return 1 + compute_damage(attWarfare, warfareDiff - 1)
 
 
 class GrappleAction(CombatAction):
@@ -265,8 +265,8 @@ class GrappleAction(CombatAction):
         """
         Attacker tries to grapple defender. If attacker is already grappling defender, attacks defender. If attacker is already grappling someone else, attempts to break
         that other grapple.
-        Returns a triple of a string, boolean and action: The string contains a printout of the result of the grapple, the boolean is true if the grapple was successful, 
-        and false otherwise, the action is the action performed: this action if the grappling was attempted. Otherwise, if something else had to happen (an attack, a 
+        Returns a triple of a string, a list containing an int and the action: The string contains a printout of the result of the grapple, the number of rounds the characters will be grappling, 
+        the action is the action performed: this action if the grappling was attempted. Otherwise, if something else had to happen (an attack, a 
         different grapple, etc) then it's that action.
         """
         defender = self.defenders[0]
@@ -282,28 +282,22 @@ class GrappleAction(CombatAction):
             self.defenders = [defender.guardian]
             defender.guardian = None
             grappleEffect = self.effect(inCombat, allies, enemies)
-            if grappleEffect[1]:
-                #If the attacker is grappling the defender's guardian, the guardian can no longer protect the defender.
-                defender.guardian = None
+            defender.guardian = None
             return ('\n'.join([resultString, grappleEffect[0]]), grappleEffect[1], grappleEffect[2])
         elif attacker.is_grappling(defender):
             return AttackAction(attacker, defender).effect(True, allies, enemies)
         if not defender.guardian:               
             if defender.is_grappling() and not defender.is_grappling(attacker):
                 return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
-            wa = attacker.weapon()
-            wd = defender.weapon()
-            bonus = compute_bonus(max(0, attacker.grapple() - defender.grapple()))
-            #grappleABonus = wa.grappleAttempt + attacker.grapple() - attacker.attack_penalty()
-            #grappleDBonus = wd.grappleAttemptDefense + max(defender.grapple(), defender.warfare()) // 2 - defender.attack_penalty()
-            success = rand(CHANCE_RANGE + bonus + wa.grappleAttempt)
-            failure = rand(CHANCE_RANGE + wd.grappleAttemptDefense)
-            if failure <= success:
-                defender.break_grapple()
-                attacker.grapple(defender)
-                return(' '.join([attacker.printedName, 'grapples', defender.printedName + '!']), [True], self)
             else:
-                return(' '.join([attacker.printedName, 'fails to grapple', defender.printedName + '!']), [False], self)
+                duration = attacker.grapple() - defender.grapple()
+                if duration < 1:
+                    duration = 0
+                    return (' '.join([attacker.printedName, 'cannot grapple' ,defender.printedName + '!']), [duration], self)
+                else:
+                    defender.break_grapple()
+                    attacker.grapple(defender, duration)
+                    return (' '.join([attacker.printedName, 'grapples', defender.printedName + '!']), [duration], self)
 
 
 class BreakGrappleAction(CombatAction):
@@ -332,18 +326,15 @@ class BreakGrappleAction(CombatAction):
         if defender is None:
             return DefendAction(attacker, attacker).effect(inCombat, allies, enemies)
         if attacker.is_grappling():
-            wa = attacker.weapon()
-            wd = defender.weapon()
-            bonus = compute_bonus(max(0, attacker.grapple() - defender.grapple()))
-            #grappleABonus = wa.grappleAttemptDefense + max(attacker.warfare(), attacker.grapple()) - attacker.attack_penalty()
-            #grappleDBonus = wd.grapple_bonus() // 2 + defender.grapple() - defender.attack_penalty()
-            success = rand(bonus + wa.grapple_bonus())
-            failure = rand(wd.grapple_bonus())
-            if failure <= success:
+            attacker.reduce_grapple_duration(attacker.grapple())
+            defender.reduce_grapple_duration(attacker.grapple())
+            assert attacker.grapple_duration() == defender.grapple_duration(), "%s grapple duration: %d, %s grapple duration: %d" % (attacker.name, attacker.grappleDuration, defender.name, 
+                    defender.grappleDuration)
+            if attacker.grapple_duration():
+                return(' '.join([attacker.printedName, 'loosens', defender.printedName + "'s", "hold on", person.himher(attacker) + '!']), [False], self)
+            else:
                 attacker.break_grapple()
                 return (' '.join([attacker.printedName, 'breaks the grapple with', defender.printedName + '!']), [True], self)
-            else:
-                return(' '.join([attacker.printedName, 'fails to break the grapple with', defender.printedName + '!']), [False], self)
         else:
             return DefendAction(attacker, attacker).effect(inCombat, allies, enemies)
 
@@ -469,54 +460,34 @@ class ThrowAction(CombatAction):
         attacker = self.attacker
         grappler = self.defenders[0]
         defender = self.defenders[1]
-        damRange = (grappler.health() * .1 if grappler.health() * .1 > 1 else 1, grappler.health() * .1 if grappler.health() * .2 > 1 else 1)
-        dam = 0
-        dam1 = 0
+        damage = compute_damage(attacker.warfare() if attacker.warfare() > attacker.grapple() else attacker.grapple(), 0)
         opponents = enemies if self.attacker in allies else allies
         if not grappler in opponents:
             return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
-        if attacker.is_grappling(grappler):
-            wa = attacker.weapon()
-            wd = grappler.weapon()
-            #grappleABonus = wa.grapple_bonus() + attacker.grapple() - attacker.attack_penalty()
-            #grappleGBonus = wg.grapple_bonus() + grappler.grapple() - grappler.attack_penalty()
-            bonus = compute_bonus(max(0, attacker.grapple() - defender.grapple()))
-            success = rand(bonus + wa.grapple_bonus())
-            failure = rand(wd.grapple_bonus())
-            if failure <= success:
-                #betterStat = attacker.warfare() if attacker.warfare() >= attacker.grapple() else attacker.grapple()
-                dam = max(1, int(bonus + damRange[0]))
-                grappler.receives_damage(dam)   
+        elif attacker.is_grappling(grappler):
+            if attacker.grapple_duration() <= attacker.grapple() // 2:
+                grappler.receives_damage(damage)   
                 attacker.break_grapple()
                 if grappler is defender:
-                    resultString = ' '.join([attacker.printedName, 'throws', defender.printedName, 'for', str(dam), 'damage!'])
-                    dam1 = dam
+                    resultString = ' '.join([attacker.printedName, 'throws', defender.printedName, 'for', str(damage), 'damage!'])
                     if grappler.current_health() <= 0:
                         resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
                 else:
                     if not defender in opponents:
                         defender = opponents[randrange(0, len(opponents))]
-                    failure = rand(wd.grapple_bonus())
-                    success = rand(bonus + wa.grapple_bonus())
-                    if failure <= success:
-                        dam1 = max(1, int(math.floor(rand(damRange[1] + attacker.grapple()) + damRange[0] - defender.defense())))
-                        defender.receives_damage(dam1)
-                        resultString = '\n'.join([' '.join([attacker.printedName, 'throws', grappler.printedName, 'for', str(dam), 'damage!']), 
-                            ' '.join([attacker.printedName, 'strikes', defender.printedName, 'for', str(dam), 'damage!'])])
-                        if grappler.current_health() <= 0:
-                            resultString = '\n'.join([resultString, ' '.join([grappler.printedName, 'collapses!'])])
-                        if defender.current_health() <= 0:
-                            resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
-                    else:
-                        resultString = ' '.join([attacker.printedName, 'throws', grappler.printedName, 'at', defender.printedName + ',', 'doing', str(dam), 'damage to', 
-                            grappler.printedName + ',', 'but missing', defender.printedName + '!'])
-                        if grappler.current_health() <= 0:
-                            resultString = '\n'.join([resultString, ' '.join([grappler.printedName, 'collapses!'])])
+                    defender.receives_damage(damage)
+                    resultString = '\n'.join([' '.join([attacker.printedName, 'throws', grappler.printedName, 'for', str(dam), 'damage!']), 
+                        ' '.join([attacker.printedName, 'strikes', defender.printedName, 'for', str(dam), 'damage!'])])
+                    if grappler.current_health() <= 0:
+                        resultString = '\n'.join([resultString, ' '.join([grappler.printedName, 'collapses!'])])
+                    if defender.current_health() <= 0:
+                        resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
             else:
-                resultString = ' '.join([attacker.printedName, 'fails to throw', defender.printedName])
-            return (resultString, [dam, dam1], self)    
+                damage = 0
+                resultString = ' '.join([attacker.printedName, 'cannot yet throw', defender.printedName + "!"])
+            return (resultString, [damage, damage], self)    
         else:
-            return AttackAction(attacker, grappler).effect(inCombat, allies, enemies)
+            return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
 
 class BreakAllysGrappleAction(CombatAction):
     targetType = ALLY
@@ -544,22 +515,17 @@ class BreakAllysGrappleAction(CombatAction):
         attacker = self.attacker
         if (attacker in allies and not defenders[0] in allies) or (attacker in enemies and not defenders[0] in enemies):
             return DefendAction(self.attacker, self.attacker).effect(inCombat, allies, enemies)
-        wa = attacker.weapon()
-        defender = defenders[0].grapplingPartner
+        ally, allysGrappler = defenders[0], defenders[0].grapplingPartner
         if defender is None:
             return DefendAction(attacker, defenders[0]).effect(inCombat, allies, enemies)
         else:
-            wd = defender.weapon()
-            #grappleABonus = wa.grapple_bonus() + attacker.grapple() - attacker.attack_penalty()
-            #grappleDBonus = wd.grapple_bonus() + defender.grapple() - defender.attack_penalty()
-            success = rand(compute_bonus(max(0, attacker.grapple() - defender.grapple())) + wa.grapple_bonus())
-            failure = rand(wd.grapple_bonus())
-            if failure <= success:
-                resultStmt = ' '.join([attacker.printedName, 'breaks', defender.printedName + "'s", '''hold on''', defender.grapplingPartner.printedName + '!'])
-                defender.break_grapple()
-                attacker.grapple(defender)
+            ally.reduce_grapple_duration(attacker.grapple())
+            allysGrappler.reduce_grapple_duration(attacker.grapple())
+            if ally.grapple_duration():
+                resultStmt = ' '.join([attacker.printedName, "loosens", allysGrappler.printedName + "'s", 'hold on', ally.printedName + '!'])
             else:
-                resultStmt = ' '.join([attacker.printedName, "doesn't break", defender.printedName + "'s", 'hold on', defender.grapplingPartner.printedName + '!'])
+                resultStmt = ' '.join([attacker.printedName, 'breaks', allysGrappler.printedName + "'s", '''hold on''', ally.printedName + '!'])
+                defender.break_grapple()
             return (resultStmt, [None], self) 
 
 
