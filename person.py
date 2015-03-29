@@ -475,6 +475,9 @@ class Person(universal.RPGObject):
             adjList = ['spasm', 'bounce', 'shake']
         elif self.musculature == 'muscular':
             adjList = ['quiver', 'bob', 'shiver']
+        else:
+            raise ValueError(' '.join(["Invalid musculature:", self.musculature]))
+        return random.choice(adjList)
 
     def quivering(self):
         if self.musculature == 'soft':
@@ -483,6 +486,7 @@ class Person(universal.RPGObject):
             adjList = ['spasming', 'bouncing', 'shaking']
         elif self.musculature == 'muscular':
             adjList = ['quivering', 'bobbing', 'shivering']
+        return random.choice(adjList)
 
     def is_slim(self):
         return self.bodyType == 'slim'
@@ -518,6 +522,9 @@ class Person(universal.RPGObject):
 
     def hisher(self):
         return hisher(self)
+
+    def HisHer(self):
+        return HisHer(self)
 
     def boygirl(self):
         return boygirl(self)

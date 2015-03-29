@@ -704,6 +704,7 @@ class Edita(pwenemies.Enemy):
                         description, printedName, coins, specialization, order=p.sixth_order, musculature='fit', height='short', bodyType='slim', hairLength='shoulder-length', litany=litany)
             self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
             self.level = 0
+            self.printedName = printedName
 
 
     def had_spanking_reversed_by(self, person, position):
@@ -915,18 +916,19 @@ class Edita(pwenemies.Enemy):
         elif position == positions.standing:
             missPhrases.append(universal.format_text([[T.printedName, 'hooks', hisher(T), 'arm around', B.printedName + "'s", 'neck. Before', heshe(T), 'can get a good hold,', 
             B.printedName, 'jerks backward, and slips out of', T.printedName + "'s", 'grip']]))
-        elif position == position.onTheGround:
+        elif position == positions.onTheGround:
             missPhrases.append(universal.format_text([[Tname, "pivots to the side, sweeping", hisher(T), 'leg at', Bname + "'s", 'feet. But', Bname + "'s", 'own foot lashes out and',
             'catches', hisher(T), 'leg. The two balance precariously. Finally,', Tname, 'steps back, and the two regain their footing.']]))
         return missPhrases[random.randrange(0, len(missPhrases))]
 
-    #def reset_stats(self, episode=None):
-    #    edita = Edita(self.litany, coins=self.coins, printedName=self.printedName)
-    #    edita.set_default_stats()
-    #    edita.equip(itemspotionwars.batteredDagger)
-    #    edita.equip(itemspotionwars.batteredLeatherBreastplate)
-    #    edita.equip(itemspotionwars.holeyTrousers)
-    #    return edita
+    def otk_reversal(self, top, bottom):
+        return self.spanking_reversal_text(bottom, top, positions.overTheKnee)
+
+    def standing_reversal(self, top, bottom):
+        return self.spanking_reversal_text(bottom, top, positions.standing)
+
+    def on_the_ground_reversal(self, top, bottom):
+        return self.spanking_reversal_text(bottom, top, positions.onTheGround)
 
     def set_default_stats(self):
         self.set_all_stats(strength=0, dexterity=1, alertness=0, willpower=3, talent=1, health=3, mana=10)
@@ -954,6 +956,7 @@ class Necia(pwenemies.Enemy):
                         description, printedName, coins, specialization, order=p.second_order, bodyType='average', height='average', musculature='fit', hairLength='short', litany=litany)
             self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
             self.level = 0
+            self.printedName = printedName
 
     def otk_intro(self, top, bottom):
         return universal.format_text([[top.printedName, '''slides under a particularly heavy strike from''', bottom.printedName, '''and extends''', top.hisher(), '''bent leg in front of''',
@@ -1006,7 +1009,7 @@ class Necia(pwenemies.Enemy):
             '''swipe''' if bottom.weapon().weaponType == items.Sword.weaponType else '''thrust''', '''and sweeps''', bottom.printedName + "'s", '''ankles out from under''', bottom.himher() + ".",
             '''With the''', bottom.heroheroine() if self is top else '''Vengador''', '''on''', bottom.hisher(), '''hands and knees,''', top.printedName, '''has no trouble hooking a leg around''',
             bottom.hisher(), '''waist and locking''', bottom.printedName, '''in place. After pulling the''', '''adventurer's''' if self is top else '''invader's''', 
-            bottom.clothing_below_the_waist(), 
+            bottom.clothing_below_the_waist().name, 
             ' '.join(['''tight against''', bottom.hisher(), bottom.bum_adj(), '''bottom,''']) if bottom.clothing_below_the_waist().liftlower() == 'lift' else ' '.join(['''up, over''', 
                 bottom.printedName + "'s", '''hips, and exposing''', bottom.printedName + "'s", bottom.underwear().name + ","]),
             top.printedName, '''begins swatting''', bottom.printedName + "'s", bottom.muscle_adj(), '''bottom with the other, the smacks echoing through the room.''']])
