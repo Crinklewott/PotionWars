@@ -340,7 +340,7 @@ class Person(universal.RPGObject):
         self.emerits = 0
         self.demerits = 0
         #A person who is guarding this person.
-        self.guardian = None
+        self.guardians = []
         #Only used for leveling up
         self.chosenStat = -1
         self.statPoints = 0
@@ -369,6 +369,13 @@ class Person(universal.RPGObject):
         universal.state.add_character(self)
         self.weaknesses = weaknesses if weaknesses else []
         self.grappleDuration = None
+        self.spanker = None
+        self.spankee = None
+        self.position = None
+        self.enduring = False
+        self.struggling = False
+        self.spankingEnded = False
+        self.spankeeAlreadyHumiliated = False
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -721,9 +728,11 @@ class Person(universal.RPGObject):
 
     def __eq__(self, other):
         """
-        A very simple equality that assumes that two characters are the same iff they have the same or they have the same name. Note that this means this will not 
+        A very simple equality that assumes that two characters are the same iff they are the same object or they have the same name. Note that this means this will not 
         work for generic enemies, or rather it would view two different instances of generic enemies as the same person.
         """
+        if other is None:
+            return False
         try:
             return id(self) == id(other) or self.get_id() == other.get_id()
         except AttributeError:
@@ -1264,6 +1273,39 @@ class Person(universal.RPGObject):
             return False
         else:
             return self.grapplingPartner == opponent
+
+    def spank(self, opponent, position):
+        self.spankee = opponent
+        self.position = position
+
+    def end_spanking(self):
+        opponent = self.spanker if self.spanker else self.spankee
+        self.spankee = None
+        self.spanker = None
+        self.position = None
+        opponent.spanker = None
+        opponent.spankee = None
+        opponent.position = None
+
+
+    def spanked_by(self, opponent, position):
+        self.spanker = opponent
+        self.position = position
+
+    def is_spanking(self, opponent=None):
+        if opponent is None:
+            return self.spankee is not None
+        else:
+            return self.spankee == opponent if self.spankee else False
+
+    def is_being_spanked(self, opponent=None):
+        if opponent is None:
+            return self.spanker is not None
+        else:
+            return self.spanker == opponent if self.spanker else False
+
+    def involved_in_spanking(self):
+        return self.is_spanking() or self.is_being_spanked()
 
     def magic_defense(self, rawMagic=False):
         return max(0, self.magic() + self.magic_defense_bonus() + (self.magic_penalty() if rawMagic else 0))
@@ -2154,6 +2196,9 @@ NO_MAGIC = -1
 
 #This is a list of list of tuples. Each list of tuples is all the spells in that particular tier.
 allSpells = [None for i in range(universal.NUM_TIERS)]
+
+def is_spell(action):
+    return action.actionType == Combat.actionType or action.actionType == Stats.actionType or action.actionType == Buff.actionType or action.actionType == Spectral.actionType
 
 def get_spell(name):
     for spellTier in allSpells:

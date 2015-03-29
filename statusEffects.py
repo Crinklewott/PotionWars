@@ -106,20 +106,21 @@ class Humiliated(StatusEffect):
     #The number of smacks that need to be landed to increase the penalty by another point. This can be varied for balancing.
     smacksPerPenaltyPoint = 1
     name = 'Humiliation'
-    def __init__(self, duration, numSmacks):
+    def __init__(self, duration):
         super(Humiliated, self).__init__(Humiliated.name, duration, True)
-        self.penalty = int(numSmacks // Humiliated.smacksPerPenaltyPoint)
+        self.penaltyPerRound = 1
         self.inflictedStat = None
+        self.rounds = 0
 
     def inflict_status(self, person):
-        #stat = max([i for i in range(len(person.primaryStats[:-4]))], key=lambda x : person.primaryStats[x])
-        self.inflictedStat = person.highest_stat()
-        person.decrease_stat(self.inflictedStat, self.penalty)
+        if self.inflictedStat is None:
+            self.inflictedStat = person.highest_stat()
+        person.decrease_stat(self.inflictedStat, self.penaltyPerRound)
+        self.rounds += 1
         return 0
 
-
     def reverse_status(self, person):
-        person.increase_stat(self.inflictedStat, self.penalty)
+        person.increase_stat(self.inflictedStat, self.penaltyPerRound * self.rounds)
         return 0
 
 class Weakened(StatusEffect):
@@ -254,26 +255,26 @@ class LoweredMagicDefense(StatusEffect):
 class DefendStatus(StatusEffect):
     combatOnly = True
     name = 'Defending'
+    BONUS = 2
 
     def __init__(self, duration):
         super(DefendStatus, self).__init__(DefendStatus.name, duration, isNegative=False)
+
     def inflict_status(self, p):
         """
-        When a character is defending, they get a +3 bonus to strength, dexterity, willpower, and talent, to help them defend against enemy attacks.
+        When a character is defending, they get a +BONUS bonus to strength, dexterity, willpower, and talent, to help them defend against enemy attacks.
         Note: This does not apply when a character is defending another character. This only works when a character is defending themselves.
         """
-        p.set_stat(STRENGTH, p.strength() + 2)
-        p.set_stat(DEXTERITY, p.dexterity() + 2)
-        p.set_stat(WILLPOWER, p.willpower() + 2)
-        p.set_stat(TALENT, p.talent() + 2)
-        return
+        p.set_stat(STRENGTH, p.strength() + self.BONUS)
+        p.set_stat(DEXTERITY, p.dexterity() + self.BONUS)
+        p.set_stat(WILLPOWER, p.willpower() + self.BONUS)
+        p.set_stat(TALENT, p.talent() + self.BONUS)
 
     def reverse_status(self, p):
-        p.set_stat(STRENGTH, p.strength() - 2)
-        p.set_stat(DEXTERITY, p.dexterity() - 2)
-        p.set_stat(WILLPOWER, p.willpower() - 2)
-        p.set_stat(TALENT, p.talent() - 2)
-        return
+        p.set_stat(STRENGTH, p.strength() - self.BONUS)
+        p.set_stat(DEXTERITY, p.dexterity() - self.BONUS)
+        p.set_stat(WILLPOWER, p.willpower() - self.BONUS)
+        p.set_stat(TALENT, p.talent() - self.BONUS)
 
 
 class StrikePoor(StatusEffect):
@@ -431,7 +432,7 @@ def get_name(status):
     elif status == FOURTH_ORDER:
         return FourthOrder.name
 
-def build_status(status, duration=0, numSmacks=0, allies=None, enemies=None):
+def build_status(status, duration=0, allies=None, enemies=None):
     """
         A factory function. Given an enum representing a status, returns the associated status. Raises a ValueError if the passed integer does not correspond to a particular
         status. Note: The numSmacks argument should only be used for the Humiliated status, since the severity of that status depends on how many blows the spanker managed
@@ -440,7 +441,7 @@ def build_status(status, duration=0, numSmacks=0, allies=None, enemies=None):
         status can also be the status' name.
     """
     if status == HUMILIATED or status == Humiliated.name:
-        return Humiliated(duration, numSmacks)
+        return Humiliated(duration)
     elif status == WEAKENED or status == Weakened.name:
         return Weakened(duration)
     elif status == MAGIC_DISTORTED or status == MagicDistorted.name:

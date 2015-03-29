@@ -32,6 +32,11 @@ STANDING = 1
 ON_THE_GROUND = 2
 
 def spanking_string(top, bottom, position):
+    """
+    For all spanking string functions:
+    1. top is the character administering the spanking
+    2. bottom is the character receiving the spanking.
+    """
     #Only enemies contain spanking text
     try:
         return top.spanks(bottom, position)
@@ -39,10 +44,23 @@ def spanking_string(top, bottom, position):
         return bottom.spanked_by(top, position)
 
 def reversed_spanking(top, bottom, position):
+    """
+    For all spanking string functions:
+    1. top is the character administering the spanking
+    2. bottom is the character receiving the spanking.
+
+    Note that in the case of a reversal, this means that the intended bottom is passed to this function as top, while the intended top is passed to this function as bottom.
+    """
     try:
-        return bottom.reverses(top, position)
+        return top.reverses(bottom, position)
     except NotImplementedError, AttributeError:
-        return top.reversed_by(bottom, position)
+        return bottom.reversed_by(top, position)
+
+    def continue_spanking(top, bottom, position):
+        try:
+            return top.continue_spanking(bottom, position)
+        except NotImplementedError, AttributeError:
+            return bottom.continue_being_spanked(top, position)
 
 def failed_spanking(top, bottom, position):
     try:

@@ -29,6 +29,7 @@ def name():
     return universal.state.player.name
 
 class Enemy(person.Person):
+    ROUND_INDEX = 1
     def __init__(self, name, gender, defaultLitany, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3, musculature='', 
             bodyType='', height='', hairLength='', hairStyle='', eyeColor='', skinColor='', order=person.zeroth_order, identifier=None, litany=None):
         """
@@ -57,6 +58,12 @@ class Enemy(person.Person):
     def spanked_by(self, top, position):
         return self.spankingFunctions[position][0](top, self)
 
+    def continue_spanking(self, bottom, position):
+        return self.spankingFunctions[position][ROUND_INDEX](self, bottom)
+
+    def continue_being_spanked(self, top, position):
+        return self.spankingFunctions[position][ROUND_INDEX](top, self)
+
     def reverses(self, top, position):
         return self.spankingFunctions[position][-1](top, self)
 
@@ -68,7 +75,6 @@ class Enemy(person.Person):
 
     def blocks(self, top, position):
         return self.spankingFunctions[position][-2](top, self)
-
 
     def otk_intro(self, top, bottom):
         raise NotImplementedError()
