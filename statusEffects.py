@@ -17,7 +17,6 @@ along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 from __future__ import division
 import universal
-from universal import *
 import abc
 
 
@@ -100,7 +99,7 @@ class StatusEffect(universal.RPGObject):
     def _load(dataFile):
         effect = str.strip(dataFile[0])
         duration = int(str.strip(dataFile[1]))
-        return factory(effect)(duration)
+        return build_status(effect)(duration)
 
 class Humiliated(StatusEffect):
     #The number of smacks that need to be landed to increase the penalty by another point. This can be varied for balancing.
@@ -112,10 +111,10 @@ class Humiliated(StatusEffect):
         self.inflictedStat = None
         self.rounds = 0
 
-    def inflict_status(self, person):
+    def inflict_status(self, person, severity=0):
         if self.inflictedStat is None:
             self.inflictedStat = person.highest_stat()
-        person.decrease_stat(self.inflictedStat, self.penaltyPerRound)
+        person.decrease_stat(self.inflictedStat, self.penaltyPerRound + severity)
         self.rounds += 1
         return 0
 
@@ -130,13 +129,13 @@ class Weakened(StatusEffect):
         super(Weakened, self).__init__(Weakened.name, duration, False)
 
     def inflict_status(self, person):
-        person.decrease_stat(STRENGTH, Weakened.penalty)
-        person.decrease_stat(DEXTERITY, Weakened.penalty)
+        person.decrease_stat(universal.STRENGTH, Weakened.penalty)
+        person.decrease_stat(universal.DEXTERITY, Weakened.penalty)
         return 0
 
     def reverse_status(self, person):
-        person.increase_stat(STRENGTH, Weakened.penalty)
-        person.increase_stat(DEXTERITY, Weakened.penalty)
+        person.increase_stat(universal.STRENGTH, Weakened.penalty)
+        person.increase_stat(universal.DEXTERITY, Weakened.penalty)
         return 0
 
 class Shielded(StatusEffect):
@@ -177,13 +176,13 @@ class MagicDistorted(StatusEffect):
         super(MagicDistorted, self).__init__(MagicDistorted.name, duration, False)
 
     def inflict_status(self, person):
-        person.decrease_stat(TALENT, 3)
-        person.decrease_stat(WILLPOWER, 3)
+        person.decrease_stat(universal.TALENT, 3)
+        person.decrease_stat(universal.WILLPOWER, 3)
         return 0
 
     def reverse_status(self, person):
-        person.increase_stat(TALENT, 3)
-        person.increase_stat(WILLPOWER, 3)
+        person.increase_stat(universal.TALENT, 3)
+        person.increase_stat(universal.WILLPOWER, 3)
         return 0
 
 class Charmed(StatusEffect):
@@ -243,7 +242,7 @@ class LoweredDefense(StatusEffect):
 class LoweredMagicDefense(StatusEffect):
     name = 'Lowered Magic Defense'
     def __init__(self, duration, defensePenalty=10):
-        super(LoweredDefense, self).__init__(LoweredDefense.name, duration, False)
+        super(LoweredMagicDefense, self).__init__(LoweredDefense.name, duration, False)
         self.defensePenalty = 10
 
     def inflict_status(self, person):
@@ -265,22 +264,22 @@ class DefendStatus(StatusEffect):
         When a character is defending, they get a +BONUS bonus to strength, dexterity, willpower, and talent, to help them defend against enemy attacks.
         Note: This does not apply when a character is defending another character. This only works when a character is defending themselves.
         """
-        p.set_stat(STRENGTH, p.strength() + self.BONUS)
-        p.set_stat(DEXTERITY, p.dexterity() + self.BONUS)
-        p.set_stat(WILLPOWER, p.willpower() + self.BONUS)
-        p.set_stat(TALENT, p.talent() + self.BONUS)
+        p.set_stat(universal.STRENGTH, p.strength() + self.BONUS)
+        p.set_stat(universal.DEXTERITY, p.dexterity() + self.BONUS)
+        p.set_stat(universal.WILLPOWER, p.willpower() + self.BONUS)
+        p.set_stat(universal.TALENT, p.talent() + self.BONUS)
 
     def reverse_status(self, p):
-        p.set_stat(STRENGTH, p.strength() - self.BONUS)
-        p.set_stat(DEXTERITY, p.dexterity() - self.BONUS)
-        p.set_stat(WILLPOWER, p.willpower() - self.BONUS)
-        p.set_stat(TALENT, p.talent() - self.BONUS)
+        p.set_stat(universal.STRENGTH, p.strength() - self.BONUS)
+        p.set_stat(universal.DEXTERITY, p.dexterity() - self.BONUS)
+        p.set_stat(universal.WILLPOWER, p.willpower() - self.BONUS)
+        p.set_stat(universal.TALENT, p.talent() - self.BONUS)
 
 
 class StrikePoor(StatusEffect):
     name = 'Strike Poor'
     def __init__(self, duration, damagePenalty=10):
-        super(StrikeTrue, self).__init__(DamageBonus.name, duration, False, isNegative=False)
+        super(StrikePoor, self).__init__(StrikePoor.name, duration, False, isNegative=False)
         self.damagePenalty = damagePenalty
 
     def inflict_status(self, person):
@@ -296,7 +295,7 @@ class StrikePoor(StatusEffect):
 class StrikeTrue(StatusEffect): 
     name = 'Strike True'
     def __init__(self, duration, damageBonus=10):
-        super(StrikeTrue, self).__init__(DamageBonus.name, duration, False, isNegative=False)
+        super(StrikeTrue, self).__init__(StrikeTrue.name, duration, False, isNegative=False)
         self.damageBonus = damageBonus
 
     def inflict_status(self, person):
@@ -465,9 +464,9 @@ def build_status(status, duration=0, allies=None, enemies=None):
     elif status == FOURTH_ORDER or status == FourthOrder.name:
         return FourthOrder()
     elif status == STRIKE_TRUE or status == StrikeTrue.name:
-        return StrikeTrue()
+        return StrikeTrue(duration)
     elif status == STRIKE_POOR or status == StrikeTrue.name:
-        return StrikePoor()
+        return StrikePoor(duration)
     else:
         if status == None:
             raise ValueError(' '.join(['None is not a status effect.'])) 

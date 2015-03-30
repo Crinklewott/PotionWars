@@ -31,6 +31,8 @@ OTK = 0
 STANDING = 1
 ON_THE_GROUND = 2
 
+implements = {}
+
 def spanking_string(top, bottom, position):
     """
     For all spanking string functions:
@@ -68,6 +70,12 @@ def failed_spanking(top, bottom, position):
     except NotImplementedError, AttributeError:
         return bottom.blocks(top, position)
 
+def continue_spanking(top, bottom, position):
+    try:
+        return top.continue_spanking(bottom, position)
+    except NotImplementedError, AttributeError:
+        return bottom.continue_being_spanked(top, position)
+
 class Implement(items.Item):
     """
     Spanking implements. Once (if) I've implemented the ability to use an implement in combat, severity will give a bonus to the duration of the Humiliation status.
@@ -75,6 +83,7 @@ class Implement(items.Item):
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, severity=0):
         super(Implement, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense)
         self.severity = severity
+        implements[self.name] = self
 
 
     def display(self):
@@ -97,4 +106,4 @@ class CombatImplement(Implement):
         return True
 
 
-
+hand = CombatImplement('hand', 'Your hand. It stings like the dickens.', severity=0)

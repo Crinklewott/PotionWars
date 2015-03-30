@@ -20,6 +20,7 @@ import universal
 from universal import *
 import items
 import person
+import positions
 import music
 import combatAction
 from combatAction import ALLY, ENEMY
@@ -27,6 +28,7 @@ import pygame
 import titleScreen
 import copy
 import random
+import spanking
 import statusEffects
 import operator
 import music
@@ -211,7 +213,7 @@ def display_combat_status(targeted=None, printAllies=True, printEnemies=True):
     if optional:
         print_command('Optional')
     #print_command(activeAlly.printedName)
-    set_batte_commands()
+    set_battle_commands()
 
 def set_battle_commands():
     commandList = ['(#Enter)Attack', '(C)ast', '(F#) Quick Spell', '(D)efend', '(L)ook']
@@ -287,7 +289,7 @@ def battle_interpreter(keyEvent):
             display_combat_status(printEnemies=False, printAllies=False)
     elif activeAlly.is_spanking():
         if keyEvent.key == K_RETURN:    
-            contineu_spanking()
+            continue_spanking()
         elif keyEvent.key == K_s:
             end_spanking()
     elif activeAlly.is_being_spanked():
@@ -509,30 +511,37 @@ def attack(target):
             set_commands(["(Enter) Acknowledge"])
             set_command_interpreter(combat_acknowledge_interpreter)
 
+chosenImplement = spanking.hand
+
 def continue_spanking():
     assert activeAlly.is_spanking(), "Active Ally: %s isn't spanking!" % activeAlly.name
-    assert activeAlly.is_spanking(activeAlly.grapplingPartner), "Active Ally: %s isn't spanking %s!" % (activeAlly.name, grapplingPartner.name)
+    assert activeAlly.is_spanking(activeAlly.grapplingPartner), "Active Ally: %s isn't spanking %s!" % (activeAlly.name, activeAlly.grapplingPartner.name)
     spankee = activeAlly.spankee
-    chosenActions.append(combatAction.ContinueSpankingAction(activeAlly, [spankee]))
+    #If we're not grappling, then we must be administering a spectral spanking
+    if activeAlly.is_grappling():
+        severity = chosenImplement.severity
+    else:
+        severity = activeAlly.position.severity
+    chosenActions.append(combatAction.ContinueSpankingAction(activeAlly, [spankee], severity))
     next_character()
 
 def end_spanking():
     assert activeAlly.is_spanking(), "Active Ally: %s isn't spanking!" % activeAlly.name
-    assert activeAlly.is_spanking(activeAlly.grapplingPartner), "Active Ally: %s isn't spanking %s!" % (activeAlly.name, grapplingPartner.name)
+    assert activeAlly.is_spanking(activeAlly.grapplingPartner), "Active Ally: %s isn't spanking %s!" % (activeAlly.name, activeAlly.grapplingPartner.name)
     activeAlly.spankee.spankingEnded = True
     activeAlly.end_spanking()
     display_combat_status()
 
 def struggle():
     assert activeAlly.is_being_spanked(), "Active Ally: %s isn't being spanked!" % activeAlly.name
-    assert activeAlly.is_being_spanked(activeAlly.grapplingPartner), "Active Ally: %s isn't being spanked by %s!" % (activeAlly.name, grapplingPartner.name)
+    assert activeAlly.is_being_spanked(activeAlly.grapplingPartner), "Active Ally: %s isn't being spanked by %s!" % (activeAlly.name, activeAlly.grapplingPartner.name)
     spanker = activeAlly.spanker
     chosenActions.append(combatAction.StruggleAction(activeAlly, [spanker]))
     next_character()
 
 def endure():
     assert activeAlly.is_being_spanked(), "Active Ally: %s isn't being spanked!" % activeAlly.name
-    assert activeAlly.is_being_spanked(activeAlly.grapplingPartner), "Active Ally: %s isn't being spanked by %s!" % (activeAlly.name, grapplingPartner.name)
+    assert activeAlly.is_being_spanked(activeAlly.grapplingPartner), "Active Ally: %s isn't being spanked by %s!" % (activeAlly.name, activeAlly.grapplingPartner.name)
     spanker = activeAlly.spanker
     chosenActions.append(combatAction.EndureAction(activeAlly, [spanker]))
     next_character()
@@ -624,7 +633,7 @@ def target_spell():
 
 def spell_target_commands():
     set_commands([' '.join(['(#)', 'Select', str(chosenSpell.numTargets), 
-        targets if chosenSpell.numTargets > 1 else target]), '<==Back', 
+        'targets' if chosenSpell.numTargets > 1 else 'target']), '<==Back', 
         '(Enter) Cast Spell'])
 
 chosenTargets = []
@@ -795,9 +804,13 @@ def throw_interpreter(keyEvent):
         display_combat_status(printAllies=False, printEnemies=False)
     elif keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key)) - 1
-        if 0 <= num and num < len(enemies):
+        if 0 <= num and num < len(enemies) and not enemies[num].is_grappling():
             chosenActions.append(combatAction.ThrowAction(activeAlly, [activeAlly.grapplingPartner, enemies[num]]))
             next_character()
+        elif enemies[num].is_grappling():
+            print_enemies(["Cannot throw your opponent at another grappled opponent. You might hit your ally!"])
+            set_commands(["(Enter) Acknowledge"])
+            set_command_interpreter(combat_acknowledge_interpreter)
 
 def choose_enemy_actions():
     for enemy in enemies:
@@ -830,7 +843,7 @@ def hand_ai(enemy, allActions):
         defenders = [enemy.grapplingPartner]
     else:
         targetList = list(allies if action.targetType == combatAction.ENEMY else enemies)
-        if action.actionType == combatAction.AttackAction.combatType or action.actionType == person.Combat.actionType:
+        if action.actionType == combatAction.AttackAction.actionType or action.actionType == person.Combat.actionType:
             targetList = [target for target in targetList if not target.is_grappling()]
             if not targetList:
                 return hand_ai(enemy, [validAction for validAction in allActions if validAction != action])
@@ -845,6 +858,47 @@ def hand_ai(enemy, allActions):
     else:
         action = action(enemy, defenders)
     return action   
+
+
+def choose_action_class(enemy, weightedActionClasses, warfareActions, grappleActions, magicActions, companions, availableSpells):
+    chosenActionClass = []
+    while chosenActionClass == []:
+        chosenActionClass = weightedActionClasses[random.randrange(0, len(weightedActionClasses))]
+        if chosenActionClass == warfareActions:
+            if enemy.is_grappling():
+                warfareActions.extend([combatAction.BreakGrappleAction for i in range(max(0, enemy.warfare() - enemy.grapple()))]) 
+            else:
+                warfareActions.extend([combatAction.AttackAction for i in range(max(0, enemy.warfare()))])
+            #warfareActions.extend([combatAction.DefendAction for statName in enemy.status_names() if statusEffects.is_negative(enemy.get_status(statName))])
+        elif chosenActionClass == grappleActions:
+            if enemy.is_grappling():
+                if not enemy.grapplingPartner.is_inflicted_with(statusEffects.Humiliated.name):
+                    grappleActions.extend([combatAction.SpankAction for i in range(max(1, enemy.grapple()))])
+                grappleActions.extend([combatAction.AttackAction for i in range(max(1, enemy.warfare()))])
+                grappleActions.extend([combatAction.ThrowAction for i in range(max(1, enemy.grapple()))])
+            else:
+                grappleActions.extend([combatAction.GrappleAction for i in range(max(1, enemy.grapple()))])
+                grappledCompanions = [e for e in companions if e.is_grappling()]
+                for companion in grappledCompanions:
+                    #The idea here that if this character has a much higher grapple than his ally, then not only is this character good for breaking a grapple, but 
+                    #it's likely that his ally has a low grapple, in which case the ally needs all the help he can get.
+                    grappleActions.extend([combatAction.BreakAllysGrappleAction for i in range(max(0, enemy.grapple() - companion.grapple()))])
+            #grappleActions.extend([combatAction.DefendAction for statName in enemy.status_names() if statusEffects.is_negative(enemy.get_status(statName))])
+        elif chosenActionClass == magicActions:
+            for spell in availableSpells:
+                if hasattr(spell, 'statusInflicted'):
+                    inflictedAllies = [ally for ally in allies if not ally.is_inflicted_with(statusEffects.get_name(spell.statusInflicted))]
+                    if inflictedAllies == [] and spell in magicActions:
+                        magicActions.remove(spell)
+                    else:
+                        magicActions.extend([spell for i in range(spell.tier)])
+            if chosenActionClass != []:
+                chosenActionClass = weight_healing(magicActions, companions)
+            if chosenActionClass != []:
+                chosenActionClass = weight_status_buff(enemy, chosenActionClass)
+    #We want to guarantee that the magicActions contain only spells when weighting them for the cane difficulty.
+    chosenActionClass.extend([combatAction.DefendAction for statName in enemy.status_names() if statusEffects.is_negative(enemy.get_status(statName))])
+    return chosenActionClass
 
 def strap_cane_ai(enemy):
     """
@@ -897,136 +951,98 @@ def strap_cane_ai(enemy):
         weightedActionClasses = weight_classes_cane(weightedActionClasses)
     #If an action class doesn't have anything, we certainly don't want to use it!
     weightedActionClasses = [actionClass for actionClass in weightedActionClasses if actionClass]
-    chosenActionClass = []
-    while chosenActionClass == []:
-        chosenActionClass = weightedActionClasses[random.randrange(0, len(weightedActionClasses))]
-        if chosenActionClass == warfareActions:
-            if enemy.is_grappling():
-                warfareActions.extend([combatAction.BreakGrappleAction for i in range(max(0, enemy.warfare() - enemy.grapple()))]) 
-            else:
-                warfareActions.extend([combatAction.AttackAction for i in range(max(0, enemy.warfare()))])
-            #warfareActions.extend([combatAction.DefendAction for statName in enemy.status_names() if statusEffects.is_negative(enemy.get_status(statName))])
-        elif chosenActionClass == grappleActions:
-            if enemy.is_grappling():
-                if not enemy.grapplingPartner.is_inflicted_with(statusEffects.Humiliated.name):
-                    grappleActions.extend([combatAction.SpankAction for i in range(max(1, enemy.grapple()))])
-                grappleActions.extend([combatAction.AttackAction for i in range(max(1, enemy.warfare()))])
-                grappleActions.extend([combatAction.ThrowAction for i in range(max(1, enemy.grapple()))])
-            else:
-                grappleActions.extend([combatAction.GrappleAction for i in range(max(1, enemy.grapple()))])
-                grappledCompanions = [e for e in companions if e.is_grappling()]
-                for companion in grappledCompanions:
-                    #The idea here that if this character has a much higher grapple than his ally, then not only is this character good for breaking a grapple, but 
-                    #it's likely that his ally has a low grapple, in which case the ally needs all the help he can get.
-                    grappleActions.extend([combatAction.BreakAllysGrappleAction for i in range(max(0, enemy.grapple() - companion.grapple()))])
-            #grappleActions.extend([combatAction.DefendAction for statName in enemy.status_names() if statusEffects.is_negative(enemy.get_status(statName))])
-        elif chosenActionClass == magicActions:
-            for spell in availableSpells:
-                if hasattr(spell, 'statusInflicted'):
-                    inflictedAllies = [ally for ally in allies if not ally.is_inflicted_with(statusEffects.get_name(spell.statusInflicted))]
-                    if inflictedAllies == [] and spell in magicActions:
-                        magicActions.remove(spell)
-                    else:
-                        magicActions.extend([spell for i in range(spell.tier)])
-            if chosenActionClass != []:
-                chosenActionClass = weight_healing(magicActions, companions)
-            if chosenActionClass != []:
-                chosenActionClass = weight_status_buff(enemy, chosenActionClass)
-    #We want to guarantee that the magicActions contain only spells when weighting them for the cane difficulty.
-    chosenActionClass.extend([combatAction.DefendAction for statName in enemy.status_names() if statusEffects.is_negative(enemy.get_status(statName))])
-    chosenAction = chosenActionClass[random.randrange(0, len(chosenActionClass))]
     if get_difficulty() == CANE:
-        defenders = []
-        while defenders == []:
-            if chosenActionClass == []:
-                return strap_cane_ai(enemy)
-            chosenAction = chosenActionClass.pop(random.randrange(0, len(chosenActionClass)))
-            assert chosenAction, "Chosen Action is None! ChosenAction class: %s" % str(chosenActionClass)
-            defenders = select_targets(chosenAction, enemy)
-            if not defenders:
-                continue
-            chosenActionClass = [actionClass for actionClass in chosenActionClass if actionClass.actionType != chosenAction.actionType]
-        if chosenAction == combatAction.SpankAction:
-            posDifficulty = [pos.difficulty - pos.maintainability for pos in enemy.positions]
-            posAndDiff = zip(enemy.positions, posDifficulty)
-            minDiff = float("inf")
-            easiestPos = 0
-            for pos, difficulty in posAndDiff:
-                if difficulty < minDiff:
-                    minDiff = difficulty
-                    easiestPos = pos
-            weightedPos = [easiestPos]
-            #list of pairs containing the position and the result, which is a number of smacks. If positive, the spanking worked. If zero it didn't, if negative, it 
-            #got reversed
-            pastPositions = [(effect[0].position, effect[1]) for effect in actionsEndured[defenders[0]] if isinstance(effect[0], combatAction.SpankAction)]
-            for pos, difficulty in posAndDiff:
-                weightedPos.extend([pos for i in range(min(0, enemy.grapple() - difficulty))]) 
-                weightedPos.extend([pos for i in range(len([position for (position, result) in pastPositions if position == pos and result > 0]))])
-            return chosenAction(enemy, defenders, weightedPos[random.randrange(0, len(weightedPos))])
-        try:
-            return chosenAction(enemy, defenders)
-        except TypeError:
-            chosenAction = copy.deepcopy(chosenAction)
-            chosenAction.attacker = enemy
-            chosenAction.defenders = defenders
-            return chosenAction
-    #We may wish to add additional difficulties in the future.
+        return cane_ai(enemy, weightedActionClasses, warfareActions, grappleActions, magicActions, companions, availableSpells)
     elif get_difficulty() == STRAP:
-        defenders = []
-        activeCompanions = [comp for comp in companions if comp.current_health() > 0]
-        activeOpponents = [opp for opp in opponents if opp.current_health() > 0]
-        if chosenAction == combatAction.ThrowAction:
+        return strap_ai(enemy, weightedActionClasses, warfareActions, grappleActions, magicActions, companions, opponents, availableSpells)
+
+def cane_ai(enemy, weightedActionClasses, warfareActions, grappleActions, magicActions, companions, availableSpells):
+    chosenActionClass = choose_action_class(enemy, weightedActionClasses, warfareActions, grappleActions, magicActions, companions, availableSpells)
+    originalChosenActionClass = list(chosenActionClass)
+    chosenAction = chosenActionClass.pop(random.randrange(0, len(chosenActionClass)))
+    defenders = []
+    while defenders == []:
+        if chosenActionClass == []:
+            return cane_ai(enemy, [actionClass for actionClass in weightedActionClasses if actionClass != originalChosenActionClass], warfareActions, grappleActions, magicActions, companions, 
+                    availableSpells)
+        chosenAction = chosenActionClass.pop(random.randrange(0, len(chosenActionClass)))
+        assert chosenAction, "Chosen Action is None! ChosenAction class: %s" % str(chosenActionClass)
+        defenders = select_targets(chosenAction, enemy)
+        if not defenders:
+            chosenActionClass = [actionClass for actionClass in chosenActionClass if actionClass.actionType != chosenAction.actionType]
+    if chosenAction == combatAction.SpankAction:
+        #list of pairs containing the position and the result, which is a number of smacks. If positive, the spanking worked. If zero it didn't, if negative, it 
+        #got reversed
+        weightedPos = []
+        for pos in positions.allPositions:
+            pos = positions.allPositions[pos]
+            weightedPos.extend([pos] * (enemy.grapple() + pos.maintainability + enemy.willpower() + pos.humiliating))
+        pastPositions = [(effect[0].position, effect[1]) for effect in actionsEndured[defenders[0]] if isinstance(effect[0], combatAction.SpankAction)]
+        pastPostiions = [(position, result) for (position, result) in pastPositions if result > 0]
+        for position, duration in pastPositions:
+            weightedPos.extend([position] * duration)
+        return chosenAction(enemy, defenders, weightedPos[random.randrange(0, len(weightedPos))])
+    try:
+        return chosenAction(enemy, defenders)
+    except TypeError:
+        chosenAction = copy.deepcopy(chosenAction)
+        chosenAction.attacker = enemy
+        chosenAction.defenders = defenders
+        return chosenAction
+
+def strap_ai(enemy, weightedActionClasses, warfareActions, grappleActions, magicActions, companions, opponents, availableSpells):
+    defenders = []
+    activeCompanions = [comp for comp in companions if comp.current_health() > 0]
+    activeOpponents = [opp for opp in opponents if opp.current_health() > 0]
+    chosenActionClass = choose_action_class(enemy, weightedActionClasses, warfareActions, grappleActions, magicActions, companions, availableSpells)
+    originalChosenActionClass = list(chosenActionClass)
+    chosenAction = chosenActionClass.pop(random.randrange(0, len(chosenActionClass)))
+    if chosenAction == combatAction.ThrowAction:
+        defenders.append(enemy.grapplingPartner)
+        activeOpponents = [opp for opp in activeOpponents if opp != enemy.grapplingPartner and not opp.is_grappling()]
+        if activeOpponents == []:
             defenders.append(enemy.grapplingPartner)
-            activeOpponents = [opp for opp in activeOpponents if opp != enemy.grapplingPartner]
-            if activeOpponents == []:
-                defenders.append(enemy.grapplingPartner)
-            else:
-                defenders.append(activeOpponents[random.randrange(0, len(activeOpponents))])
-        elif chosenAction == combatAction.DefendAction:
-            if enemy.is_grappling():
-                defenders = [enemy]
-            else:
-                activeCompanions.append(enemy)
-                defendTargets = [comp for comp in activeCompanions if not comp.is_grappling()]
-                for companion in activeCompanions:
-                    defendTargets.extend([companion for statName in companion.status_names() if statusEffects.is_negative(companion.get_status(statName))])
-                    #We want to defend the magic users above all else.
-                    defendTargets.extend([companion for i in range(max(0, companion.magic()) // 3)])
-                    defendTargets.extend([companion for i in range(companion.health() - companion.current_health()) if companion.current_health() <= avg_damage(opponents)])
-                if len(defendTargets) > 0:
-                    defenders.append(defendTargets[random.randrange(0, len(defendTargets))])    
-                else:
-                    defenders.append(enemy)
         else:
-            #The code above for weighting the spells, and spankings, guarantees that this list will not be empty, assuming that the only actions that inflict statuses 
-            #are spells, spankings, and defend.
-            if hasattr(chosenAction, 'statusInflicted'):
-                activeOpponents = [opp for opp in activeOpponents if not opp.is_inflicted_with(statusEffects.get_name(chosenAction.statusInflicted))] 
-            assert(activeOpponents != [])
-            for i in range(chosenAction.numTargets):
-                defenders.append(activeOpponents.pop(random.randrange(0, len(activeOpponents))))
-                if activeOpponents == []:
-                    break
-        if chosenAction == combatAction.SpankAction:
-            posDifficulty = [pos.difficulty for pos in enemy.positions]
-            posAndDiff = zip(enemy.positions, posDifficulty)
-            minDiff = float("inf")
-            easiestPos = 0
-            for pos, difficulty in posAndDiff:
-                if difficulty < minDiff:
-                    minDiff = difficulty
-                    easiestPos = pos
-            weightedPos = [easiestPos]
-            for pos, difficulty in posAndDiff:
-                weightedPos.extend([pos for i in range(min(0, enemy.grapple() - difficulty))]) 
-            return chosenAction(enemy, defenders, weightedPos[random.randrange(0, len(weightedPos))])
-        try:
-            return chosenAction(enemy, defenders)
-        except TypeError:
-            chosenAction = copy.deepcopy(chosenAction)
-            chosenAction.attacker = enemy
-            chosenAction.defenders = defenders
-            return chosenAction
+            defenders.append(activeOpponents[random.randrange(0, len(activeOpponents))])
+    elif chosenAction == combatAction.DefendAction:
+        if enemy.is_grappling():
+            defenders = [enemy]
+        else:
+            activeCompanions.append(enemy)
+            defendTargets = [comp for comp in activeCompanions if not comp.is_grappling()]
+            for companion in activeCompanions:
+                defendTargets.extend([companion for statName in companion.status_names() if statusEffects.is_negative(companion.get_status(statName))])
+                #We want to defend the magic users above all else.
+                defendTargets.extend([companion for i in range(max(0, companion.magic()) // 3)])
+                defendTargets.extend([companion for i in range(companion.health() - companion.current_health()) if companion.current_health() <= avg_damage(opponents)])
+            if len(defendTargets) > 0:
+                defenders.append(defendTargets[random.randrange(0, len(defendTargets))])    
+            else:
+                defenders.append(enemy)
+    else:
+        if chosenAction.actionType == combatAction.AttackAction.actionType or chosenAction.actionType == person.Combat.actionType:
+            activeOpponents = [opp for opp in activeOpponents if not opp.is_grappling()] 
+            if not activeOpponents:
+               return strap_ai(enemy, [actionClass for actionClass in weightedActionClasses if actionClass != originalChosenActionClass], warfareActions, grappleActions, magicActions, companions, 
+                       opponents, availableSpells)
+        #The code above for weighting the spells, and spankings, guarantees that this list will not be empty, assuming that the only actions that inflict statuses 
+        #are spells, spankings, and defend.
+        if hasattr(chosenAction, 'statusInflicted'):
+            activeOpponents = [opp for opp in activeOpponents if not opp.is_inflicted_with(statusEffects.get_name(chosenAction.statusInflicted))] 
+        assert(activeOpponents != [])
+        for i in range(chosenAction.numTargets):
+            defenders.append(activeOpponents.pop(random.randrange(0, len(activeOpponents))))
+            if activeOpponents == []:
+                break
+    if chosenAction == combatAction.SpankAction:
+        return chosenAction(enemy, defenders, positions.allPositions.values()[random.randrange(0, len(positions.allPositions))])
+    try:
+        return chosenAction(enemy, defenders)
+    except TypeError:
+        chosenAction = copy.deepcopy(chosenAction)
+        chosenAction.attacker = enemy
+        chosenAction.defenders = defenders
+        return chosenAction
 
 def weight_classes_cane(actionClasses):
     """
@@ -1100,8 +1116,8 @@ def select_targets(chosenAction, enemy):
             targets = [t for t in targets if not chosenActions_have_target_action(chosenAction, t)]
     except AttributeError:
         pass
-    if targets == []:
-        return []
+    if not targets:
+        return targets
     isCombat = isinstance(chosenAction, person.Combat) or isinstance(chosenAction, combatAction.AttackAction) or isinstance(chosenAction, combatAction.ThrowAction)
     isStatus = isinstance(chosenAction, person.Status)
     isHealing = isinstance(chosenAction, person.Buff)
@@ -1129,7 +1145,7 @@ def select_targets(chosenAction, enemy):
     elif chosenAction == combatAction.GrappleAction:
         targets = [target for target in targets if not target.is_grappling()]
         for target in targets:
-            maxGrappleDuration = max([effect[0] for (action, effect) in actionsEndured[target] if action == combatAction.grappleAction])
+            maxGrappleDuration = max([effect[0] for (action, effect) in actionsEndured[target] if action == combatAction.GrappleAction])
             targets.extend([target for i in range(maxGrappleDuration)])
     elif chosenAction == combatAction.BreakGrappleAction:
         return [enemy.grapplingPartner]
@@ -1143,7 +1159,6 @@ def select_targets(chosenAction, enemy):
             targets = [target for target in targets if not target.is_grappling()]
             if not targets:
                 return targets
-            #TODO: Here
         avgdam = avg_damage(targets, chosenAction)
         #we'll be modifying the original targets list
         for target in list(targets):
@@ -1339,7 +1354,7 @@ def start_round(chosenActions):
     spankActions = sorted([action for action in chosenActions if action.attacker.weapon().weaponType == items.Knife.weaponType and action.actionType == combatAction.SpankAction.actionType],
             key=actions_sort_key, reverse=True)
     grappleTypes = [combatAction.GrappleAction.actionType, combatAction.BreakAllysGrappleAction.actionType]
-    grappleActions = sorted([action for action in chosenAction if action.actionType in grappleTypes])
+    grappleActions = sorted([action for action in chosenActions if action.actionType in grappleTypes])
     tiers = defendActions + alreadyGrappling + spellActions + spearAttacks + swordAttacks + knifeAttacks + spankActions + grappleActions
     #TODO: Need to grab all the other actions, not in any of the above
     allOtherActions = [action for action in chosenActions if action not in tiers]
@@ -1400,8 +1415,8 @@ def decrement_grappling():
         if ally.is_grappling():
             ally.reduce_grapple_duration(1)
             ally.grapplingPartner.reduce_grapple_duration(1)
-            assert ally.grapple_duration() == enemy.grapple_duration(), "Ally: %s ; grapple duration: %d, Enemy: %s ; grapple duration: %d" % (ally.name, ally.grapple_duration(),
-                    enemy.name, enemy.grapple_duration())
+            assert ally.grapple_duration() == ally.grapplingPartner.grapple_duration(), "Ally: %s ; grapple duration: %d, Enemy: %s ; grapple duration: %d" % (ally.name, ally.grapple_duration(),
+                    ally.grapplingPartner.name, ally.grapplingPartner.grapple_duration())
             if not ally.grapple_duration():
                 grapplingPartner = ally.grapplingPartner
                 ally.break_grapple()
@@ -1413,6 +1428,19 @@ def decrement_grappling():
                     actionResults.append((spankee.printedName, "breaks free of", spanker.printedName + "'s", "punishing grip!", False))
                 else:
                     actionResults.append((' '.join([ally.printedName, "and", grapplingPartner.printedName, "break apart!"]), False))
+        #If this happens, it means someone is administering a spectral spanking.
+        elif ally.involved_in_spanking():
+            assert ally.spanker or ally.spankee, "Ally: %s is being spanked, but doesn't have a spanker!" % ally.name
+            spanker = ally if ally.spankee else ally.spanker
+            spankee = ally if ally.spanker else ally.spankee
+            assert spanker != spankee, "Somehow, spanker: %s is spanking themselves!" % spanker.printedName
+            spanker.reduce_grapple_duration(1)
+            spankee.reduce_grapple_duration(1)
+            assert spanker.grapple_duration() == spankee.grapple_duration(), "Spanker: %s ; grapple duration: %d, Spankee: %s ; grapple duration: %d" % (spanker.name, spanker.grapple_duration(),
+                    spankee.name, spankee.grapple_duration())
+            if not spanker.grapple_duration():
+                spanker.end_spanking()
+                actionResults.append((spanker.position.end_statement(spankee), False))
 
 resultIndex = 0
 COMBAT_DELAY = 1000

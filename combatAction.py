@@ -229,7 +229,7 @@ def compute_damage(attWarfare, warfareDiff):
     """
     Given the attacker's warfare, and the difference between the attacker's attack and defender's defense, computes the damage administered by the attacker.
     """
-    assert MINIMUM_NEGATIVE_DAMAGE < 0 < MAX_BONUS, "MINIMUM NEGATIVE DAMAGE: %d not negative or MAX_BONUS: %d not positive." % (self.MINIMUM_NEGATIVE_DAMAGE, self.MAX_BONUS)
+    assert MINIMUM_NEGATIVE_DAMAGE < 0 < MAX_BONUS, "MINIMUM NEGATIVE DAMAGE: %d not negative or MAX_BONUS: %d not positive." % (MINIMUM_NEGATIVE_DAMAGE, MAX_BONUS)
     assert DIVISION_CONSTANT != 0, "DIVISION_CONSTANT cannot be zero."
     if MINIMUM_NEGATIVE_DAMAGE <= warfareDiff <= MAX_BONUS:
         return attWarfare + int(math.trunc(warfareDiff / DIVISION_CONSTANT * attWarfare))
@@ -247,6 +247,7 @@ class GrappleAction(CombatAction):
     primaryStat = universal.STRENGTH
     secondaryStat = universal.DEXTERITY
     actionType = 'GrappleAction'
+    GRAPPLE_DURATION_DIVISOR = 2
     def __init__(self, attacker, defenders, enemyInitiated=False):
         super(GrappleAction, self).__init__(attacker, defenders, GRAPPLE, GrappleAction.secondaryStat)
         self.targetType = ENEMY
@@ -287,7 +288,7 @@ class GrappleAction(CombatAction):
             if defender.is_grappling() and not defender.is_grappling(attacker):
                 return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
             else:
-                duration = attacker.grapple() - defender.grapple()
+                duration = compute_damage(attacker.grapple(), attacker.grapple() - defender.grapple()) // self.GRAPPLE_DURATION_DIVISOR
                 if duration < 1:
                     duration = 0
                     return (' '.join([attacker.printedName, 'cannot grapple' ,defender.printedName + '!']), [duration], self)
@@ -404,7 +405,7 @@ class SpankAction(CombatAction):
             spanker, spankee = attacker, defender
             spankerGrapple, spankeeGrapple = spanker.grapple(), spankee.grapple()
             spankerWillpower, spankeeWillpower = spanker.willpower(), spankee.willpower()
-            resultStringFunction = spanking_string
+            resultStringFunction = spanking.spanking_string
             durationMultiplier = 1
             if random.randrange(100) < self.REVERSAL_CHANCE:
                 spankee, spanker = spanker, spankee
@@ -412,12 +413,12 @@ class SpankAction(CombatAction):
                 #Reversals suck. They use whichever combination of grapples and willpowers that most benefits the new spanker, and hurts the new spankee! 
                 spankerGrapple, spankeeGrapple = max(spanker.grapple(), spankee.grapple()), min(spanker.grapple(), spankee.grapple())
                 spankerWillpower, spankeeWillpower = max(spanker.willpower(), spankee.willpower()), min(spanker.willpower(), spankee.willpower())
-                resultStringFunction = reversed_spanking
-            spanker.spank(spankee)
-            spankee.spanked_by(spanker)
+                resultStringFunction = spanking.reversed_spanking
+            spanker.begin_spanking(spankee)
+            spankee.begin_spanked_by(spanker)
             resultString = resultStringFunction(spanker, spankee)
-            grappleBonus = int(math.trunc(self.position.maintainability / DIVISOR) * spankerGrapple)
-            durationBonus = int(math.trunc(self.position.humiliating / DIVISOR) * spankerGrapple)
+            grappleBonus = int(math.trunc(self.position.maintainability / self.DIVISOR) * spankerGrapple)
+            durationBonus = int(math.trunc(self.position.humiliating / self.DIVISOR) * spankerGrapple)
             spankee.grappleDuration = spanker.grappleDuration = durationMultiplier * max(self.MIN_SPANKING_DURATION, spankerGrapple - spankeeGrapple) + grappleBonus
             duration = max(self.MIN_HUMILIATED_DURATION, spankerWillpower - spankeeWillpower) + durationBonus
             if not spankee.is_inflicted_with(statusEffects.Humiliated.name):
@@ -425,7 +426,7 @@ class SpankAction(CombatAction):
                 spanker.spankeeAlreadyHumiliated = False
             else:
                 spanker.spankeeAlreadyHumiliated = True
-            return (resultString, [grappleDuration], self)
+            return (resultString, [spanker.grappleDuration], self)
         else:
             if attacker.grapple() > defender.grapple():
                 return GrappleAction(attacker, defender).effect(inCombat, allies, enemies)
@@ -442,24 +443,39 @@ class ContinueSpankingAction(CombatAction):
     actionType = 'continue spanking'
     def __init__(self, attacker, defenders, position, severity=0):
         super(ContinueSpankingAction, self).__init__(attacker, defenders, GRAPPLE, SpankAction.secondaryStat)
+        self.severity = severity
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
         Returns a triple: The result string, a list containing a single bool indicating whether or not successfully decremented the stat point, and this action
         """
+        attacker = self.attacker
         defender = self.defenders[0]
         humiliatedStatus = defender.get_status(statusEffects.Humiliated.name)
         #Counteracts the decrement in duration of the humiliated status at the end of the round. We want the effective duration of humiliated to only go down after the spanking.
         humiliatedStatus.duration += 1
         if not attacker.is_spanking():
             return DefendAction(attacker, [attacker]).effect(inCombat, allies, enemies) 
-        if defender.enduring or attacker.spankeeAlreadyHumiliated:
-            defender.enduring = False
+        if attacker.spankeeAlreadyHumiliated:
             decrementedStat = False
+            defender.enduring = False
+        elif defender.enduring:
+            severity = self.severity - 1
+            if severity:
+                humiliatedStatus.inflict_status(defender, severity)
+                decrementedStat = True
+            else:
+                defender.enduring = False
+                decrementedStat = False
         else:
             humiliatedStatus.inflict_status(defender)
             decrementedStat = True
-        return (spanking.continue_spanking(self.attacker, defender, self.attacker.position), [decrementedStat], self)
+        #If the attacker isn't grappling, then it must be the case that he/she is administering a spectral spanking
+        if not attacker.is_spanking():
+            resultString = attacker.position.round_statement(defender)
+        else:
+            spanking.continue_spanking(self.attacker, defender, self.attacker.position)
+        return (resultString, [decrementedStat], self)
 
 
 class StruggleAction(CombatAction):
@@ -470,7 +486,7 @@ class StruggleAction(CombatAction):
     primaryStat = universal.STRENGTH
     secondaryStat = universal.WILLPOWER
     actionType = 'struggle'
-    def __init__(self, attacker, defenders, position, severity=0):
+    def __init__(self, attacker, defenders):
         super(StruggleAction, self).__init__(attacker, defenders, GRAPPLE, SpankAction.secondaryStat)
 
     def effect(self, inCombat=True, allies=None, enemies=None):
@@ -478,12 +494,13 @@ class StruggleAction(CombatAction):
         Returns a triple: The result string, a list containing nothing, and this action
         """
         defender = self.defenders[0]
+        attacker = self.attacker
         if not attacker.is_being_spanked():
             return DefendAction(attacker, [attacker]).effect(inCombat, allies, enemies)
         attacker.reduce_grapple_duration(attacker.grapple() // 2)
         defender.reduce_grapple_duration(attacker.grapple() // 2)
         assert attacker.grapple_duration() == attacker.grapplingPartner.grapple_duration(), "Attacker: %s Duration: %d ; Defender: %s ; Grappler: %s ; Duration : %d" % (attacker.name, 
-                attacker.grapple_duration(), defender.name, grappler.name, grappler.grapple_duration())
+                attacker.grapple_duration(), attacker.grapplingPartner.name, defender.name, defender.grapple_duration())
         return (' '.join([attacker.printedName, "struggles against", defender.printedName + "'s", "iron grip!"]), [None], self)
 
 class EndureAction(CombatAction):
@@ -494,17 +511,18 @@ class EndureAction(CombatAction):
     primaryStat = universal.STRENGTH
     secondaryStat = universal.WILLPOWER
     actionType = 'struggle'
-    def __init__(self, attacker, defenders, position, severity=0):
+    def __init__(self, attacker, defenders):
         super(EndureAction, self).__init__(attacker, defenders, GRAPPLE, SpankAction.secondaryStat)
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
         Returns a triple: The result string, a list containing nothing, and this action
         """
+        attacker = self.attacker
         if not attacker.is_being_spanked():
             return DefendAction(attacker, [attacker]).effect(inCombat, allies, enemies)
         attacker.enduring = True
-        return (' '.join([attacker.printedName, "endures", defender.printedName + "'s", "stinging blows!"]), [None], self)
+        return (' '.join([attacker.printedName, "endures", self.defenders[0].printedName + "'s", "stinging blows!"]), [None], self)
 
 
 class ThrowAction(CombatAction):
@@ -544,8 +562,8 @@ class ThrowAction(CombatAction):
                     if not defender in opponents:
                         defender = opponents[randrange(0, len(opponents))]
                     defender.receives_damage(damage)
-                    resultString = '\n'.join([' '.join([attacker.printedName, 'throws', grappler.printedName, 'for', str(dam), 'damage!']), 
-                        ' '.join([attacker.printedName, 'strikes', defender.printedName, 'for', str(dam), 'damage!'])])
+                    resultString = '\n'.join([' '.join([attacker.printedName, 'throws', grappler.printedName, 'for', str(damage), 'damage!']), 
+                        ' '.join([attacker.printedName, 'strikes', defender.printedName, 'for', str(damage), 'damage!'])])
                     if grappler.current_health() <= 0:
                         resultString = '\n'.join([resultString, ' '.join([grappler.printedName, 'collapses!'])])
                     if defender.current_health() <= 0:
@@ -584,7 +602,7 @@ class BreakAllysGrappleAction(CombatAction):
         if (attacker in allies and not defenders[0] in allies) or (attacker in enemies and not defenders[0] in enemies):
             return DefendAction(self.attacker, self.attacker).effect(inCombat, allies, enemies)
         ally, allysGrappler = defenders[0], defenders[0].grapplingPartner
-        if defender is None:
+        if allysGrappler is None:
             return DefendAction(attacker, defenders[0]).effect(inCombat, allies, enemies)
         else:
             ally.reduce_grapple_duration(attacker.grapple() // GRAPPLE_DIVISOR)
@@ -593,7 +611,7 @@ class BreakAllysGrappleAction(CombatAction):
                 resultStmt = ' '.join([attacker.printedName, "loosens", allysGrappler.printedName + "'s", 'hold on', ally.printedName + '!'])
             else:
                 resultStmt = ' '.join([attacker.printedName, 'breaks', allysGrappler.printedName + "'s", '''hold on''', ally.printedName + '!'])
-                defender.break_grapple()
+                allysGrappler.break_grapple()
             return (resultStmt, [None], self) 
 
 

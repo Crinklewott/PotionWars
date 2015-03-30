@@ -16,13 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
-import person as p
-from person import BASIC, ADVANCED, EXPERT
 import combatAction
 from combatAction import GRAPPLER_ONLY, ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY, ONLY_WHEN_GRAPPLED, UNAFFECTED, NOT_WHEN_GRAPPLED, WARRIORS_GRAPPLERS, SPELL_SLINGERS, ALL, ALLY, ENEMY
-import statusEffects
-import spanking
+import math
+import person as p
+from person import BASIC, ADVANCED, EXPERT
 import random
+import spanking
+import statusEffects
 import universal
 from universal import *
 #---------------------------------------------------------------Tier 0----------------------------------------------------------------------
@@ -38,22 +39,19 @@ class Firebolt(p.Combat):
         super(Firebolt, self).__init__(attacker, defenders)
         self.name = 'Firebolt'
         self.description = 'Flings a small bolt of fire at a single opponent.' 
-        self.effectFormula = 'DAMAGE: 2 -> 2 * magic bonus'
+        self.effectFormula = 'DAMAGE: magic + bonus(magic - enemy.magic)'
         self.numTargets = 1
-        self.tier = Firebolt.tier
         self.minDamage = 2 
-        self.magicMultiplier = 2
+        self.magicMultiplier = 1
         self.cost = Firebolt.cost
-        self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.expertise = BASIC
 
     def effect_statement(self, defender, dam):
             self.effectStatements = [[self.attacker.printedName, 'casts Firebolt on', defender.printedName, 'for', str(dam), 'damage!']]
-            #self.effectStatements = [[self.attacker.name, '\'s fist bursts into flame.', He_She(self.attacker), 'snaps', his_her(self.attacker), 'fist forward. The flame flies off of', his_her(self.attacker), 'fist and strikes', defender.name, 'in the chest.']]
             return super(Firebolt, self).effect_statement(defender)
 
     def immune_statement(self, defender):
-        return [defender.printedName, 'smirks as the flames dance harmlessly across', his_her(defender), 'body.']
+        return [defender.printedName, 'smirks as the flames dance harmlessly across', defender.hisher(), 'body.']
 
         
 
@@ -68,23 +66,24 @@ class Icebolt(p.Combat):
         super(Icebolt, self).__init__(attacker, defenders)
         self.name = 'Icebolt'
         self.description = 'Flings a small icicle at a single opponent.' 
-        self.effectFormula = 'DAMAGE: 3 -> 3 * magic bonus'
+        self.effectFormula = 'DAMAGE: magic + bonus(1.2 * magic - enemy.magic)'
         self.numTargets = 1
         self.tier = Icebolt.tier
         self.minDamage = 3 
         self.cost = Icebolt.cost
-        self.magicMultiplier = 3
+        self.magicMultiplier = 1.2
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.expertise = ADVANCED
     
     
     def effect_statement(self, defender, dam):
         self.effectStatements = [[self.attacker.printedName, 'casts Icebolt', defender.printedName, 'for', str(dam), 'damage!']]
-        #self.effectStatements = [[self.attacker.name, '\'s fist becomes coated in frost.', He_She(self.attacker), 'snaps', his_her(self.attacker), 'fist forward. An icicle erupts from', his_her(self.attacker), 'fist and strikes', defender.name, 'in the chest.']]
+        #self.effectStatements = [[self.attacker.name, '\'s fist becomes coated in frost.', He_She(self.attacker), 'snaps', hisher(self.attacker), 'fist forward. An icicle erupts from', hisher(self.attacker), 'fist and strikes', defender.name, 'in the chest.']]
         return super(Icebolt, self).effect_statement(defender)
 
     def immune_statement(self, defender):
-        immuneStatement = [defender.printedName, 'smirks as the icicle shatters harmlessly against', his_her(defender), 'body.']
+        immuneStatement = [defender.printedName, 'smirks as the icicle shatters harmlessly against', defender.hisher(), 'body.']
+
 
 class Magicbolt(p.Combat):
     targetType = ENEMY
@@ -97,11 +96,11 @@ class Magicbolt(p.Combat):
         super(Magicbolt, self).__init__(attacker, defenders)
         self.name = 'Magicbolt'
         self.description = 'Flings a small bolt of raw magic at a single opponent.' 
-        self.effectFormula = 'DAMAGE: 4 -> 4 * magic bonus'
+        self.effectFormula = 'DAMAGE: magic + bonus(1.4 * magic - enemy.magic)'
         self.numTargets = 1
         self.tier = Magicbolt.tier
         self.minDamage = 4
-        self.magicMultiplier = 4
+        self.magicMultiplier = 1.4
         self.rawMagic = True
         self.cost = Magicbolt.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
@@ -110,11 +109,10 @@ class Magicbolt(p.Combat):
 
     def effect_statement(self, defender, dam):
         self.effectStatements = [[self.attacker.printedName, 'casts Magicbolt on', defender.printedName, 'for', str(dam), 'damage!']]
-        #self.effectStatements = [[self.attacker.name, 'draws', his_her(self.attacker), 'hand back, then snaps it forward, palm up.', 'A bolt of raw magic erupts from', his_her(self.attacker), 'palm and strikes', defender.name, 'in the chest.']]
         return super(Magicbolt, self).effect_statement(defender)
 
     def immune_statement(self, defender):
-        return [defender.printedName, 'smirks as the magic dissipates harmlessly against', his_her(defender), 'body.']
+        return [defender.printedName, 'smirks as the magic dissipates harmlessly against', defender.hisher(), 'body.']
 
 #Note these are "empty" actions for use in displaying and learning spells. When actually casting spells in combat, a new object should be created with the attacker and 
 #defender(s) specified.
@@ -135,14 +133,14 @@ class Weaken(p.Status):
         super(Weaken, self).__init__(attacker, defenders)
         self.name = 'Weaken'
         self.description = 'Wraps your enemy in a field that interferes with the implicit magic responsible for lending strength to their muscles, making them physically weaker and slower.'
-        self.effectFormula = 'EFFECT: -1 penalty to Dexterity and Strength\nSUCCESS CHANCE (%): 50 | 15 * resilience bonus | 98\n DURATION: 3 | 2*magic bonus'
+        self.effectFormula = 'EFFECT: -1 penalty to Dexterity and Strength\nDURATION: max(2, resilience - enemy.resilience)'
         self.numTargets = 1
         self.rawMagic = True
         self.tier = Weaken.tier
         self.statusInflicted = statusEffects.WEAKENED
         self.effectClass = combatAction.WARRIORS_GRAPPLERS
         self.cost = Weaken.cost
-        self.resilienceMultiplier = 15
+        self.resilienceMultiplier = 1
         self.expertise = ADVANCED
         self.minDuration = 3
         self.magicMultiplier = 1
@@ -152,8 +150,8 @@ class Weaken(p.Status):
 
     def effect_statement(self, defender):
         attacker = self.attacker
-        #self.effectStatements = [[attacker.name, 'points', his_her(attacker), 'finger at,' defender.name, '. A beam of red light flies from', attacker.name, '\'s fignertip and strikes', defender.name, '. The beam disperses into a cocoon of light that then fuses with', defender.name, '\'s skin.']]
-        #self.effectStatements = [[attacker.name, 'points', his_her(attacker), 'finger at', defender.name, '. A beam of red light flies from', attacker.name, '\'s fignertip and strikes', defender.name, '. The beam disperses into a cocoon of light that then fuses with', defender.name, '\'s skin.']]
+        #self.effectStatements = [[attacker.name, 'points', hisher(attacker), 'finger at,' defender.name, '. A beam of red light flies from', attacker.name, '\'s fignertip and strikes', defender.name, '. The beam disperses into a cocoon of light that then fuses with', defender.name, '\'s skin.']]
+        #self.effectStatements = [[attacker.name, 'points', hisher(attacker), 'finger at', defender.name, '. A beam of red light flies from', attacker.name, '\'s fignertip and strikes', defender.name, '. The beam disperses into a cocoon of light that then fuses with', defender.name, '\'s skin.']]
         self.effectStatements = [[attacker.printedName, 'casts Weaken on', defender.printedName + '!']]
         return super(Weaken, self).effect_statement(defender)
 
@@ -254,10 +252,7 @@ class WeakCharm(p.CharmMagic):
         A = attacker.printedName
         D = defender.printedName
         self.effectStatements = [[A, 'casts Weak Charm on', D + "!"]]
-        """
-        self.effectStatements = [[A, 'grabs', D, '\'s chin, and forces', him_her(defender), 'to look in', his_her(attacker), 'eyes.', His-Her(attacker), 'eyes swirl through a hypnotic whirl of colors.']]
-        """
-        return super(Weaken, self).effect_statement(defender)
+        return super(WeakCharm, self).effect_statement(defender)
 
     def immune_statement(self, defender):
         A = self.attacker.printedName
@@ -333,7 +328,7 @@ class Fortify(p.Healing):
         C = caster.printedName
         D = defender.printedName
         self.effectStatements = [[C, 'casts', self.name, 'on', D + '!\n']]
-        #self.effectStatements = [[C, 'takes a deep breath.', He_She(caster), 'breathes out, and sweeps', his_her(caster), 'hands towards', D, '.']]
+        #self.effectStatements = [[C, 'takes a deep breath.', He_She(caster), 'breathes out, and sweeps', hisher(caster), 'hands towards', D, '.']]
         return super(Fortify, self).effect_statement(defender)
 
 
@@ -365,7 +360,7 @@ class SuperFortify(p.Healing):
         C = caster.printedName
         D = defender.printedName
         self.effectStatements = [[C, 'casts', self.name, 'on', D + '!']]
-        #self.effectStatements = [[C, 'takes a deep breath.', He_She(caster), 'breathes out, and sweeps', his_her(caster), 'hands towards', D, '.']]
+        #self.effectStatements = [[C, 'takes a deep breath.', He_She(caster), 'breathes out, and sweeps', hisher(caster), 'hands towards', D, '.']]
         return super(SuperFortify, self).effect_statement(defender)
 
 heal = Heal(None, None)
@@ -454,7 +449,7 @@ class SpectralPush(p.Spectral):
         attacker = self.attacker
         D = defender.printedName
         self.effectStatements = [[A, 'casts Spectral Push on', D, 'for', str(dam), 'damage!']]
-        #self.effectStatements = [['With a primal screen,', A, 'arches', his_her(attacker), 'back, then snaps forward,', his_her(attacker), 'hands snap out in front of', him_her(attacker), '. A battering ram of pure magic erupts from', A, '\'s body and slams into', D, '.']]
+        #self.effectStatements = [['With a primal screen,', A, 'arches', hisher(attacker), 'back, then snaps forward,', hisher(attacker), 'hands snap out in front of', him_her(attacker), '. A battering ram of pure magic erupts from', A, '\'s body and slams into', D, '.']]
         return super(SpectralPush, self).effect_statement(defender)
 
     def success_statement(self, defender):
@@ -506,7 +501,7 @@ class SpectralPull(p.Spectral):
         super(SpectralPull, self).effect(inCombat)
         attacker  = self.attacker
         defenders = self.defenders
-        opponents = enemies if attacker in allies else opponents
+        opponents = enemies if attacker in allies else allies
         currentDefenders = list(defenders)
         effects = []
         for defender in defenders:
@@ -594,9 +589,9 @@ class SpectralShove(p.Spectral):
         attacker = self.attacker
         if not attacker.is_grappling():
             attacker.increase_stat(universal.MANA, self.cost)
-            return DefendAction(attacker, attacker)
+            return combatAction.DefendAction(attacker, attacker)
         defenders = self.defenders
-        opponents = enemies if attacker in allies else opponents
+        opponents = enemies if attacker in allies else allies
         currentDefenders = list(defenders)
         for defender in defenders:
             if not defender in opponents:
@@ -684,7 +679,7 @@ class Lightningbolt(p.Combat):
         return super(Lightningbolt, self).effect_statement(defender)
 
     def immune_statement(self, defender):
-        return [defender.printedName, 'stands calmly while the lightning dances harmlessly across', his_her(defender), 'body.']
+        return [defender.printedName, 'stands calmly while the lightning dances harmlessly across', defender.hisher(), 'body.']
 
 
 
@@ -716,7 +711,7 @@ class Thunderbolt(p.Combat):
         return super(Thunderbolt, self).effect_statement(defender)
 
     def immune_statement(self, defender):
-        return [defender.printedName, 'stands calmly while the lightning dances harmlessly across', his_her(defender), 'body.']
+        return [defender.printedName, 'stands calmly while the lightning dances harmlessly across', defender.hisher(), 'body.']
 
 
 class Magicstrike(p.Combat):
@@ -746,7 +741,7 @@ class Magicstrike(p.Combat):
         return super(Magicstrike, self).effect_statement(defender)
 
     def immune_statement(self, defender):
-        return [defender.printedName, 'stands calmly while the magical energy disperses harmlessly across', his_her(defender), 'body.']
+        return [defender.printedName, 'stands calmly while the magical energy disperses harmlessly across', defender.hisher(), 'body.']
 
 lightningBolt = Lightningbolt(None, None) 
 thunderBolt = Thunderbolt(None, None) 
@@ -787,7 +782,7 @@ class MassWeaken(p.Status):
         attacker = self.attacker
         self.effectStatements = ([[attacker.printedName, 'casts Mass Weaken on', defender.printedName + "!"]])
         """
-        self.effectStatements = ([[attacker.name, 'points', his_her(attacker), 'finger at', defender.name, '. A beam of red light flies from ', attacker.name, 
+        self.effectStatements = ([[attacker.name, 'points', hisher(attacker), 'finger at', defender.name, '. A beam of red light flies from ', attacker.name, 
             '\'s fignertip and strikes', defender.name, '. The beam disperses into a cocoon of light that then fuses with', defender.name, '\'s skin.']])
         """
         return super(MassWeaken, self).effect_statement(defender)
@@ -884,7 +879,7 @@ class Charm(p.CharmMagic):
         A = attacker.printedName
         D = defender.printedName
         self.effectStatements = [[A, 'casts Charm on', D + "!"]]
-        #self.effectStatements = [[A, 'grabs', D, '\'s chin, and forces', him_her(defender), 'to look in', his_her(attacker), 'eyes.', His-Her(attacker), 'eyes swirl through a hypnotic whirl of colors.']]
+        #self.effectStatements = [[A, 'grabs', D, '\'s chin, and forces', him_her(defender), 'to look in', hisher(attacker), 'eyes.', His-Her(attacker), 'eyes swirl through a hypnotic whirl of colors.']]
         return super(Charm, self).effect_statement(defender)
 
     def immune_statement(self, defender):
@@ -1017,14 +1012,12 @@ class SuperShield(p.Buff):
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(SuperShield, self).effect(inCombat)
-        recipient = self.defender[0]
+        recipient = self.defenders[0]
         caster = self.attacker
         resultStatement = []
         if caster != recipient:
             #The iron penalty applies only if we're currently in combat.
             duration = self.magicMultiplier * (caster.magic_attack(inCombat) + recipient.iron_modifier(self.rawMagic, inCombat))
-            if duration < minDuration:
-                duration = minDuration
         else:
             #Because the buff spell is being cast on the caster, the magic never actually leaves the person's body, so it isn't affected by the caster's iron.
             duration = self.magicMultiplier * caster.magic_attack(False)
@@ -1032,11 +1025,13 @@ class SuperShield(p.Buff):
         recipient.inflict_status(statusEffects.build_status(statusEffects.MAGIC_SHIELDED, duration))
         resultStatement.extend(self.effect_statement(recipient))
         resultStatement.append('\n')
-        resultStatement.extend(self.success_statement(defender))
+        resultStatement.extend(self.success_statement(recipient))
         return resultStatement
 
     def success_statement(self, defender):
         return [defender.printedName, 'is protected!']
+
+
 shield = Shield(None, None) 
 magicShield = MagicShield(None, None) 
 superShield = SuperShield(None, None)
@@ -1052,17 +1047,17 @@ class SpectralStrapping(p.SpectralSpanking):
     numTargets = 1
     tier = p.SpectralSpanking.tier
     statusInflicted = statusEffects.HUMILIATED
-    cost = 4
+    cost = 30
     def __init__(self, attacker, defenders):
         super(SpectralStrapping, self).__init__(attacker, defenders)
         self.name = 'Spectral Strapping'
         self.cost = SpectralStrapping.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.description = 'Conjures a \'hand\' and \'strap\' made of raw magic. The hand grabs the target and lifts them into the air. The strap lands a number of swats on the target\'s backside. Once the spanking is done, the hand lifts the target up, and throws them into the ground.'
-        self.effectFormula = 'HUMILIATION DURATION: 2 | 2* resilience bonus + ' + str(spanking.LEATHER_STRAP_SEVERITY) + '\nDAMAGE: 2 | magic bonus\nSuccess (%): 37 | 19 * magic bonus | 96'
+        self.effectFormula = 'SPANKING DURATION: talent + bonus(1.2 * talent - enemy.talent)\nHUMILIATION DURATION: 1.4 * resilience - enemy.resilience\nDAMAGE: 1.2 * talent'
         self.numTargets = 1
-        self.magicMultiplier = 1
-        self.resilienceMultiplier = 2
+        self.magicMultiplier = 1.2
+        self.resilienceMultiplier = 1.4
         self.targetType = combatAction.ENEMY
         self.effectClass = combatAction.ALL
         self.statusInflicted = statusEffects.HUMILIATED
@@ -1074,7 +1069,6 @@ class SpectralStrapping(p.SpectralSpanking):
         self.maxProbability = 96
         self.minDamage = 2
         
-
     def effect(self, inCombat=True, allies=None, enemies=None, severity=spanking.LEATHER_STRAP_SEVERITY):
         return super(SpectralStrapping, self).effect(inCombat, allies, enemies, severity)
 
@@ -1098,10 +1092,20 @@ class SpectralStrapping(p.SpectralSpanking):
         D = defender.printedName
         return [A, 'lifts', p.hisher(attacker), 'into the air, and the spectral hand lifts', D, 'off the ground.', D, 'struggles desperately.', A, 'draws back', p.hisher(attacker), 
                 'right hand, and then snaps it forward. In perfect sync, the strap draws back, and then cracks against', defender.clad_bottom(), '.', D, 
-                'yelps as a fiery sting spreads through', p.hisher(defender), 'bottom. The spectral strap proceeds to give', D, 'a solid strapping, making', D, 
-                '\'s bottom bounce vigorously, and eliciting several howls of pain from', 
-                D, '.\nEventually, the strap fades.', A, 'raises', p.hisher(attacker), 
-                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', p.himher(defender), 'into the ground.'] 
+                'yelps as a fiery sting spreads through', p.hisher(defender), 'bottom.'] 
+
+    def end_statement(self, defender):
+        attacker = self.attacker
+        A = attacker.printedName
+        D = defender.printedName
+        return ' '.join(['\nEventually, the strap fades.', A, 'raises', p.hisher(attacker), 
+                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', p.himher(defender), 'into the ground.'])
+    
+    def round_statement(self, defender):     
+        attacker = self.attacker
+        return ' '.join(["The spectral strap snaps repeatedly against", defender.printedName + "'s", defender.quivering() + ",", "rapidly reddening bottom.", defender.HeShe(), 
+            "kicks and flails,", defender.hisher(), "face an even brighter red than", defender.hisher(), defender.muscle_adj(), "bottom."])
+
         
 class SpectralCaning(p.SpectralSpanking):
     targetType = ENEMY
@@ -1111,20 +1115,20 @@ class SpectralCaning(p.SpectralSpanking):
     tier = p.SpectralSpanking.tier
     statusInflicted = statusEffects.HUMILIATED
     effectClass = combatAction.ALL
-    cost = 10
+    cost = 40
     def __init__(self, attacker, defenders):
         super(SpectralCaning, self).__init__(attacker, defenders)
         self.name = 'Spectral Caning'
         self.cost = SpectralCaning.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.description = 'Conjures a \'hand\' and \'cane\' made of raw magic. The hand grabs the target and lifts them into the air. The cane lands a number of swats on the target\'s backside. Once the caning is done, the hand lifts the target up, and throws them into the ground.'
-        self.effectFormula = 'HUMILIATION DURATION: 2 | 2* resilience bonus) + ' + str(spanking.CANE_SEVERITY) + '\nDAMAGE: 2 | 2 * magic bonus\nSUCCESS (%): 40 | 20 * magic bonus | 97'
+        self.effectFormula = 'SPANKING DURATION: talent + bonus(1.4 * talent - enemy.talent)\nHUMILIATION DURATION: 1.6 * resilience - enemy.resilience\nDAMAGE: 1.2 * talent'
         self.numTargets = 1
-        self.magicMultiplier = 2
+        self.magicMultiplier = 1.4
         self.smackMultiplier = 5
         self.tier = SpectralCaning.tier
         self.expertise = EXPERT
-        self.resilienceMultiplier = 2
+        self.resilienceMultiplier = 1.6
         self.targetType = combatAction.ENEMY
         self.effectClass = combatAction.ALL
         self.statusInflicted = statusEffects.HUMILIATED
@@ -1158,10 +1162,20 @@ class SpectralCaning(p.SpectralSpanking):
         D = defender.printedName
         return [A, 'lifts', p.hisher(attacker), 'into the air, and the spectral hand lifts', D, 'off the ground.', D, 'struggles desperately.', A, 'draws back', p.hisher(attacker), 
                 'right hand, and then snaps it forward. In perfect sync, the cane draws back, and then cracks against', defender.clad_bottom(), '.', D, 
-                'howls as a thin, deep sting burns through', p.hisher(defender), 'bottom. The spectral cane proceeds to give', D, 'a hard caning, making', D, 
-                '\'s bottom bounce vigorously, and reducing', 
-                D, 'to tears.\nEventually, the strap fades.', A, 'raises', p.hisher(attacker), 
-                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', p.himher(defender), 'into the ground.'] 
+                'howls as a thin, deep sting burns through', p.hisher(defender), 'bottom.'] 
+
+    def end_statement(self, defender):
+        attacker = self.attacker
+        A = attacker.printedName
+        D = defender.printedName
+        return ' '.join(['\nEventually, the cane fades.', A, 'raises', p.hisher(attacker), 
+                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', p.himher(defender), 'into the ground.']) 
+
+    def round_statement(self, defender):
+        attacker = self.attacker
+        return ' '.join([attacker.printedName, 'flicks', attacker.hisher(), 'wrist. In response, the cane whizzes through the air and snaps against', defender.printedName + "'s", 
+            defender.bum_adj(), "bottom.", defender.printedName, "shrieks as a long, thin welt forms across", defender.hisher(), defender.muscle_adj(), "cheeks."])
+
         
 spectralSpanking = p.SpectralSpanking(None, None) 
 spectralStrapping = SpectralStrapping(None, None) 

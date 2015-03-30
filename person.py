@@ -79,7 +79,7 @@ DURATION = 1
 
 def remove_character(person):
     if person.name in universal.state.characters:
-        universal.state.characters.remove(person)
+        del universal.state.characters[person]
 
 universal.state.player = universal.state.player
 
@@ -91,27 +91,6 @@ def set_PC(playerCharacter):
 
 class InvalidEquipmentError(Exception):
     pass
-
-def stat_name(stat):
-    if stat == universal.WARFARE:
-        return 'warfare'    
-    elif stat == universal.MAGIC:
-        return 'magic'
-    elif stat == universal.RESILIENCE:
-        return 'resilience()'
-    elif stat == universal.GRAPPLE:
-        return 'grapple'
-    elif stat == universal.SPEED:
-        return 'speed'
-    elif stat == universal.HEALTH:
-        return 'health'
-    elif stat == universal.MANA:
-        return 'mana'
-    elif stat == universal.CURRENT_HEALTH:
-        return 'current health'
-    elif stat == universal.CURRENT_MANA:
-        return 'current mana'
-
 
 WEAPON = 0
 SHIRT = 1
@@ -250,7 +229,10 @@ def display_person(person):
     if person is None:
         return ' '
     else:
-        return ''.join([person.printedName, '(', str(person.grappleDuration), ')'])
+        if person.involved_in_spanking():
+            return ''.join([person.printedName, ' S(', str(person.grappleDuration), ')'])
+        else:
+            return ''.join([person.printedName, '(', str(person.grappleDuration), ')'])
 
 BODY_TYPES = ['slim', 'average', 'voluptuous', 'heavyset']
 
@@ -554,9 +536,6 @@ class Person(universal.RPGObject):
     def is_average_or_shorter(self):
         return HEIGHTS.index(self.height) <= HEIGHTS.index('average')
 
-    def is_short(self):
-        return HEIGHTS.index(self.height) <= HEIGHTS.index('short')
-
     def is_tall_or_shorter(self):
         return HEIGHTS.index(self.height) <= HEIGHTS.index('tall')
 
@@ -565,9 +544,6 @@ class Person(universal.RPGObject):
 
     def is_short(self):
         return self.height == 'short'
-
-    def is_average(self):
-        return self.height == 'average'
 
     def is_tall(self):
         return self.height == 'tall'
@@ -789,7 +765,7 @@ class Person(universal.RPGObject):
         self.ignoredSpells = ignoredSpells
 
     def set_ignored_spells(self, ignoredSpells):
-        self.set_ignored_spells = ignoredSpells
+        self.ignoredSpells = ignoredSpells
 
     def _set_spell_points(self, spellPoints):
         """
@@ -1008,10 +984,6 @@ class Person(universal.RPGObject):
         else:
             self.increase_stat(universal.CURRENT_MANA, num)
 
-    def reset(self):
-        self.set_state(self.origSelf)
-        return self
-
     def reset_stats(self, episode=None, primaryStats=None):
         if primaryStats is None:
             self.default_stats()
@@ -1052,10 +1024,14 @@ class Person(universal.RPGObject):
         """
         if person is not None:
             assert duration, "Person: %s is not None, but duration is." % person.printedName
+            if self.involved_in_spanking():
+                self.position.end_statement()
+                self.end_spanking()
             self.grapplingPartner = person
             person.grapplingPartner = self
             self.grappleDuration = duration
             person.grappleDuration = duration
+            #If we're involved in a spanking, then it's a spectral spanking.
         else:
             value = 2 * self.strength() + self.dexterity()
             for equipment in self.equipmentList:
@@ -1117,7 +1093,6 @@ class Person(universal.RPGObject):
 
     def increase_primary_stat(self, stat, increment=1):
         self.primaryStats[stat] += increment
-        self.recompute_stats()
 
     def equipment(self, slot):
         return self.equipmentList[slot]
@@ -1274,7 +1249,7 @@ class Person(universal.RPGObject):
         else:
             return self.grapplingPartner == opponent
 
-    def spank(self, opponent, position):
+    def begin_spanking(self, opponent, position):
         self.spankee = opponent
         self.position = position
 
@@ -1288,7 +1263,7 @@ class Person(universal.RPGObject):
         opponent.position = None
 
 
-    def spanked_by(self, opponent, position):
+    def begin_spanked_by(self, opponent, position):
         self.spanker = opponent
         self.position = position
 
@@ -1854,11 +1829,6 @@ class PlayerCharacter(Person):
     def had_spanking_reversed_by(self, person):
         person.reversed_spanking_of(self)
            
-    def add_mark(self, mark):
-        super(PlayerCharacter, self).add_mark(mark)
-        self.numSpankings += 1
-
-
     @staticmethod
     def _load(dataList):
         raise NotImplementedError()
@@ -2150,7 +2120,7 @@ class Party(universal.RPGObject):
                 + memberName, str(member.current_health()) + '/' + str(member.health()), str(member.current_mana()) + '/' + str(member.mana())])
                 for (n, member, memberName) in zip([i for i in range(1, len(self.members)+1)], self.members, memberNames)]
             if grappling:
-                partyTxt = ['\t'.join([memTxt, display_person(mem.grapplingPartner)]) for (memTxt, mem) in zip(partyTxt, self.members)]
+                partyTxt = ['\t'.join([memberTxt, display_person(mem.grapplingPartner)]) for (memberTxt, mem) in zip(partyTxt, self.members)]
             return '\n\t'.join(partyTxt)
         else:
             return '\t'.join([target(n, arrow(n, allyIndex), targetedIndices) + '. ' + '\n'
@@ -2159,7 +2129,7 @@ class Party(universal.RPGObject):
 
 
     def display(self):
-        return display_party(self)
+        return self.display_party()
 
 
     def avg_speed(self):
@@ -2198,7 +2168,7 @@ NO_MAGIC = -1
 allSpells = [None for i in range(universal.NUM_TIERS)]
 
 def is_spell(action):
-    return action.actionType == Combat.actionType or action.actionType == Stats.actionType or action.actionType == Buff.actionType or action.actionType == Spectral.actionType
+    return action.actionType == Combat.actionType or action.actionType == Status.actionType or action.actionType == Buff.actionType or action.actionType == Spectral.actionType
 
 def get_spell(name):
     for spellTier in allSpells:
@@ -2258,7 +2228,7 @@ def print_spell_type(spellType):
     elif spellType == SPECTRAL:
         return 'Spectral'
     else:
-        raise ValueError(' '.join(str(spellType), 'is not a spell type.'))
+        raise ValueError(' '.join([str(spellType), 'is not a spell type.']))
 
 BASIC = 0
 ADVANCED = 1
@@ -2434,7 +2404,7 @@ class Combat(Spell):
     grappleStatus = None
     effectClass = None
     actionType = 'combat'
-    def __init__(self, attacker, defenders, secondaryStat=None):
+    def __init__(self, attacker, defenders, damage_function, secondaryStat=None):
         super(Combat, self).__init__(attacker, defenders, secondaryStat)
         self.minDamage = None
         #Deprecated. Do not use.
@@ -2464,19 +2434,25 @@ class Combat(Spell):
                     currentDefenders.append(defender)
             damage = 0
             if not defender.ignores_spell(self):
-                try:
-                    damage = random.randint(self.minDamage, self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic)))
-                except ValueError:
-                    damage = self.minDamage
+                damage = self.damage_function(defender, inCombat)
             defender.receives_damage(damage)
             effects.append(damage)
             if damage == 0:
-                effectString.append(self.immune_string())
+                effectString.append(self.immune_string(defender))
             else:
                 effectString.append(self.effect_statement(defender, damage))
                 if defender.current_health() <= 0:
                     effectString[-1] = '\n'.join([' '.join(effectString[-1]), ' '.join([defender.printedName, 'collapses!'])])
         return (universal.format_text(effectString), effects, self)
+
+    def effect_statement(self, defender, damage):
+        return ' '.join([self.attacker.printedName, 'casts', self.name + '!\n\n', defender.printedName, 'takes', str(damage) + '!'])
+
+    def immune_string(self, defender):
+        return  ' '.join([defender.printedName, 'is immune to', self.name])
+
+    def damage_function(self, defender, inCombat):
+        return combatAction.compute_damage(self.attacker.magic_attack(inCombat), int(math.trunc(self.magicMultiplier * self.attacker.magic_attack(inCombat) - defender.magic_defense(self.rawMagic))))
 
 class Status(Spell):
     targetType = ENEMY
@@ -2486,6 +2462,7 @@ class Status(Spell):
     primaryStat = universal.WILLPOWER
     secondaryStat = universal.TALENT
     actionType = 'status'
+    RESILIENCE_DIVISOR = 5
     def __init__(self, attacker, defenders):
         super(Status, self).__init__(attacker, defenders, Status.secondaryStat)
         self.statusInflicted = None
@@ -2494,7 +2471,7 @@ class Status(Spell):
         self.magicMultiplier = None
         self.minProbability = None
         self.maxProbability = None
-        self.willpowerMultiplier = None
+        self.resilienceMultiplier = None
         self.successStatement = []
         self.failureStatement = []
         self.spellType = STATUS #Deprecated. Do not use.
@@ -2514,7 +2491,6 @@ class Status(Spell):
         effects = []
         opponents = enemies if attacker in allies else allies
         currentDefenders = list(defenders)
-        successProbability = 0
         for defender in defenders:
             if not defender in opponents:
                 availableOpponents = [opp for opp in opponents if opp not in currentDefenders]
@@ -2523,36 +2499,29 @@ class Status(Spell):
                 else:
                     defender = availableOpponents[random.randrange(0, len(availableOpponents))]
                     currentDefenders.append(defender)
-            successProbability = self.resilienceMultiplier * (attacker.resilience() - attacker.magic_penalty() - defender.resilience())
             assert attacker.resilience() is not None, 'attacker has no resilience()'
             assert attacker.magic_penalty() is not None, 'attacker has no magic penalty'
             assert defender.resilience() is not None, 'defender has no resilience()'
             assert defender.magic_defense(self.rawMagic) is not None, 'defender has no magic defense'
-            duration = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
+            duration = self.duration_function(defender)
             resultString.append(self.effect_statement(defender))
             if defender.ignores_spell(self):
                 resultString.append(self.immune_statement(defender))
             else:
-                if successProbability < self.minProbability:
-                    successProbability = self.minProbability
-                elif successProbability > self.maxProbability:
-                    successProbability = self.maxProbability
-                assert successProbability is not None, 'no successProbability, likely because you forgot to set maxProbability.'
                 if duration < self.minDuration:
                     duration = self.minDuration
                 assert duration is not None, 'no min duration.'
-                success = random.randint(1, 100)
                 if defender.ignores_spell(self):
                     resultString.append(self.immune_statement(defender))
                     effects.append(False)
-                elif success <= successProbability:
+                else:
                     resultString.append(self.success_statement(defender))
                     defender.inflict_status(statusEffects.build_status(self.statusInflicted, duration))
                     effects.append(True)
-                else:
-                    resultString.append(self.failure_statement(defender))
-                    effects.append(False)
         return (universal.format_text(resultString, False), effects, self)
+
+    def duration_function(self, defender):
+        return max(self.minDuration, self.resilienceMultiplier * self.attacker.resilience() - defender.resilience())
 
     @abc.abstractmethod
     def failure_statement(self, defender):
@@ -2604,25 +2573,11 @@ class CharmMagic(Status):
             if defender.ignores_spell(self):
                 resultString.append(self.immune_statement(defender))
             else:
-                if successProbability < self.minProbability:
-                    successProbability = self.minProbability
-                elif successProbability > self.maxProbability:
-                    successProbability = self.maxProbability
-                if duration < minDuration:
-                    duration = minDuration
-                success = random.randint(1, 100)
-                if person.ignores_spell(self):
-                    resultString.append(self.immune_statement(defender))
-                    effects.append(False)
-                elif success <= successProbability:
-                    resultString.append(self.effect_statement(defender))
-                    resultString.append('\n')
-                    resultString.append(self.success_statement(defender))
-                    defender.inflict_status(statusEffects.build_status(self.statusInflicted, duration, originalList, newList))
-                    effects.append(True)
-                else:
-                    resultString.append(self.failure_statement(defender))
-                    effects.append(False)
+                resultString.append(self.effect_statement(defender))
+                resultString.append('\n')
+                resultString.append(self.success_statement(defender))
+                defender.inflict_status(statusEffects.build_status(self.statusInflicted, duration, originalList, newList))
+                effects.append(True)
         return (universal.format_text(resultString, False), effects, self)
 
 
@@ -2668,8 +2623,8 @@ class Buff(Spell):
             if caster != recipient:
                 #The iron penalty applies only if we're currently in combat.
                 duration = self.magicMultiplier * (caster.magic_attack(inCombat) + recipient.iron_modifier(self.rawMagic, inCombat))
-                if duration < minDuration:
-                    duration = minDuration
+                if duration < self.minDuration:
+                    duration = self.minDuration
             else:
                 #Because the buff spell is being cast on the caster, the magic never actually leaves the person's body, so it isn't affected by the caster's iron.
                 duration = self.magicMultiplier * caster.magic_attack(False)
@@ -2680,7 +2635,7 @@ class Buff(Spell):
             resultStatement.append(self.success_statement(recipient))
             effects.append(True)
         if not inCombat:
-            return (universal.format_text(resultStatement, False), effect, self, didSomething)
+            return (universal.format_text(resultStatement, False), effects, self, didSomething)
         else:
             return (universal.format_text(resultStatement, False), effects, self)
 
@@ -2700,7 +2655,7 @@ class Healing(Buff):
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         #We don't want to invoke the effect function of Buff.
-        super(Buff, self).effect(inCombat, allies, enemies)
+        super(Healing, self).effect(inCombat, allies, enemies)
         recipients = self.defenders
         caster = self.attacker
         resultStatement = []
@@ -2774,7 +2729,7 @@ class SpectralSpanking(Spectral):
     tier = 0
     numTargets = 1
     statusInflicted = statusEffects.HUMILIATED
-    cost = 2
+    cost = 10
     secondaryStat = universal.WILLPOWER
     smackMultiplier = 5
 
@@ -2784,10 +2739,10 @@ class SpectralSpanking(Spectral):
         self.cost = SpectralSpanking.cost
         self.grappleStatus = combatAction.GRAPPLER_ONLY
         self.description = 'Conjures \'hands\' of raw magic. One hand grabs the target and lifts them into the air. The other lands a number of swats on the target\'s backside. Once the spanking is done, the first hand lifts the target up, and throws them into the ground. The spanking leaves your opponent distracted and humiliated, giving them a -1 penalty to all stats.'
-        self.effectFormula = 'DURATION: 2 | 2 * resilience bonus\nDAMAGE: 1 | magic bonus,\nSuccess (%): 36 | 18 * magic bonus | 95'
+        self.effectFormula = 'SPANKING DURATION: talent + bonus(talent - enemy.talent)\nHUMILIATION DURATION: 1.2 * resilience - enemy.resilience\nDAMAGE: talent'
         self.numTargets = 1
         self.magicMultiplier = 1
-        self.resilienceMultiplier = 2
+        self.resilienceMultiplier = 1.2
         self.targetType = combatAction.ENEMY
         self.effectClass = combatAction.ALL
         self.statusInflicted = statusEffects.HUMILIATED
@@ -2801,6 +2756,7 @@ class SpectralSpanking(Spectral):
         self.minDamage = 1
         self.minDuration = 2
         self.smackMultiplier = SpectralSpanking.smackMultiplier
+        self.damage = 0 
 
 
     def effect(self, inCombat=True, allies=None, enemies=None, severity=0):
@@ -2811,7 +2767,7 @@ class SpectralSpanking(Spectral):
         3. This action.
         """
         super(SpectralSpanking, self).effect(inCombat, allies, enemies)
-        opponents = enemies if self.attacker in allies else opponents
+        opponents = enemies if self.attacker in allies else allies
         currentDefenders = list(self.defenders)
         for defender in self.defenders:
             if not defender in opponents:
@@ -2823,45 +2779,35 @@ class SpectralSpanking(Spectral):
                     currentDefenders.append(defender)
         defender = self.defenders[0]
         attacker = self.attacker
-        damage = self.magicMultiplier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-        if damage < self.minDamage:
-            damage = self.minDamage
-        duration = self.resilienceMultiplier * (attacker.resilience() - defender.resilience() - defender.iron_modifier(self.rawMagic) + severity)
-        if duration < self.minDuration:
-            duration = self.minDuration
         resultStatement = []
         effects = []
-        effectString = self.effect_statement(defender)
-        #resultStatement.append(self.effect_statement(defender))
         if defender.ignores_spell(self):
             resultStatement.append(self.immune_statement(defender))
             effects.append((0, 0))
         else:
-            successProbability = self.probModifier * (attacker.magic_attack() - defender.magic_defense(self.rawMagic))
-            if successProbability < self.minProbability:
-                successProbability = self.minProbability
-            if successProbability > self.maxProbability:
-                successProbability = self.maxProbability
-            success = random.randint(1, 100)
-            if success <= successProbability:
-                #Yeah, I know I'm abusing the shit out of import. Suck it.
-                from combatAction import compute_bonus
-                bonus = compute_bonus(attacker.magic() - defender.magic())
-                numSmacks = self.smackMultiplier * bonus
-                defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration=duration, numSmacks=numSmacks))
-                defender.receives_damage(damage)
-                resultStatement.append(self.success_statement(defender))
-                effects.append(damage)
-                effectString = effectString + [universal.format_line(self.success_statement(defender)), universal.format_line(['\n\n' + self.attacker.printedName, 'does', str(damage), 'damage to', 
-                    defender.printedName + "!"])]
-                if defender.current_health() <= 0:
-                    resultStatement = [effectString  + ['\n' + defender.printedName + ' collapses!']]
-                else:
-                    resultStatement = [effectString]
+            self.damage = self.magicMultiplier * attacker.magic_attack(inCombat)
+            humiliationDuration = self.resilienceMultiplier * attacker.resilience() - defender.resilience()
+            spankingDuration = combatAction.compute_damage(attacker.magic_attack(), self.magicMultiplier * attacker.magic_attack(inCombat) - defender.magic_defense(self.rawMagic))
+            attacker.begin_spanking(defender, self)
+            attacker.grappleDuration = spankingDuration
+            defender.begin_spanked_by(attacker, self)
+            effects = []
+            effectString = self.effect_statement(defender)
+            if not defender.is_inflicted_with(statusEffects.Humiliated.name):
+                defender.inflict_status(statusEffects.build_status(statusEffects.Humiliated.name, humiliationDuration))
+                attacker.spankeeAlreadyHumiliated = False
             else:
-                effects.append((0, 0))
-                resultStatement = [self.failure_statement(defender)]
+                attacker.spankeeAlreadyHumiliated = True
+            resultStatement.append(self.success_statement(defender))
+            effects.append(self.damage)
+            effectString = effectString + [universal.format_line(self.success_statement(defender))]
         return (universal.format_text(resultStatement, False), effects, self)
+
+    def round_statement(self, defender):
+        attacker = self.attacker
+        defender = defender
+        return universal.format_text([[attacker.printedName, "swishes", attacker.hisher(), "hand through the hair. The giant, ghostly hand swishes in sync with", attacker.printedName + "'s",
+            "hand, and cracks repeatedly against", defender.printedName + "'s", defender.quivering(), "bottom.", defender.printedName, "yelps and kicks with every heavy blow."]])
 
     def effect_statement(self, defender):
         attacker = self.attacker
@@ -2892,9 +2838,16 @@ class SpectralSpanking(Spectral):
         return [A, 'lifts', hisher(attacker), 'hand into the air, and the spectral hand lifts', D, 'off the ground.', D, 'struggles desperately.', A, 'draws back', 
                 hisher(attacker), 
                 'right hand, and then snaps it forward. In perfect sync, the right spectral hand draws back, and then cracks against', defender.clad_bottom(), '.', D, 
-                'yelps as a fiery sting spreads through', hisher(defender), 'bottom. The spectral hand proceeds to give', D, 'a solid spanking, making', D, 
-                '\'s bottom bounce vigorously.\nEventually, the right hand fades.', A, 'raises', hisher(attacker), 
-                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', himher(defender), 'into the ground.'] 
+                'yelps as a fiery sting spreads through', hisher(defender), 'bottom.'] 
+
+    def end_statement(self, defender):
+        attacker = self.attacker
+        A = attacker.printedName
+        D = defender.printedName
+        defender.receives_damage(self.damage)
+        return ' '.join(['The right hand fades.', A, 'raises', hisher(attacker), 
+                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', himher(defender), 'into the ground.\n\n',
+                D, 'receives', self.damage + "!"]) 
 
 #---------------------------------------Gender-specific functions---------------------------
 def choose_string(person, male, female):
@@ -2978,17 +2931,6 @@ def manwoman(person=None):
     return choose_string(person, 'man', 'woman')
 
 def ManWoman(person=None):
-    if person is None:
-        person = universal.state.player
-    return choose_string(person, 'Man', 'Woman')
-
-
-def menwomen(person=None):
-    if person is None:
-        person = universal.state.player
-    return choose_string(person, 'men', 'women')
-
-def MenWomen(person=None):
     if person is None:
         person = universal.state.player
     return choose_string(person, 'Man', 'Woman')
@@ -3086,11 +3028,6 @@ def isare(person=None):
         person = universal.state.player
     return choose_string(person, 'is', 'are')
 
-def UnderwearPanties(person=None):
-    if person is None:
-        person = universal.state.player
-    return choose_string(person, 'Underwear', 'Panties')
-
 def pigcow(person=None):
     if person is None:
         person = universal.state.player
@@ -3114,7 +3051,6 @@ def menwomen(person=None):
     if person is None:
         person = universal.state.player
     return choose_string(person, 'men', 'women')
-
 
 def MenWomen(person=None):
     if person is None:
@@ -3177,22 +3113,19 @@ def quivering(personName):
 
 
 def speed(personName):
-    return universal.stat.get_character(personName).speed()
+    return universal.state.get_character(personName).speed()
 
 def warfare(personName):
-    return universal.stat.get_character(personName).warfare()
+    return universal.state.get_character(personName).warfare()
 
 def magic(personName):
-    return universal.stat.get_character(personName).magic()
+    return universal.state.get_character(personName).magic()
 
 def grapple(personName):
-    return universal.stat.get_character(personName).grapple()
-
-
+    return universal.state.get_character(personName).grapple()
 
 def resilience(personName):
-    return universal.stat.get_character(personName).resilience()
-
+    return universal.state.get_character(personName).resilience()
 
 def height_based_msg(person, shortMsg, avgMsg, tallMsg, hugeMsg):
     return universal.msg_selector(person.height, {HEIGHTS[0]:shortMsg, HEIGHTS[1]:avgMsg, HEIGHTS[2]:tallMsg, HEIGHTS[3]:hugeMsg})
