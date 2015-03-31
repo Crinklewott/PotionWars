@@ -429,11 +429,19 @@ def print_action(action):
     elif isinstance(action, combatAction.BreakGrappleAction):
         return ' '.join([attacker, 'will attempt to stop grappling', defenders + '.'])
     elif isinstance(action, combatAction.SpankAction):
-        return ' '.join([attacker, 'will attempt to spank', defenders, '.'])
+        return ' '.join([attacker, 'will start spanking', defenders, '.'])
     elif isinstance(action, combatAction.BreakAllysGrappleAction):
         return ' '.join([attacker, 'will break', defenders + "'s", 'grapple.'])
     elif isinstance(action, person.Spell):
         return ' '.join([attacker, 'will cast', action.name, 'on', defenders + '.'])
+    elif isinstance(action, combatAction.ContinueSpankingAction):
+        return ' '.join([attacker, 'will continue to spank', defenders + '.'])
+    elif isinstance(action, combatAction.StruggleAction):
+        return ' '.join([attacker, 'will struggle against the spanking.'])
+    elif isinstance(action, combatAction.EndureAction):
+        return ' '.join([attacker, 'will endure the spanking.'])
+    else:
+        raise ValueError(["Action:", action.name, "has no confirmation message."])
 
 PRIMARY_POINTS = 2
 SECONDARY_POINTS = 1
@@ -687,7 +695,7 @@ def target_spell_interpreter(keyEvent):
         elif keyEvent.key in NUMBER_KEYS:
             num = int(pygame.key.name(keyEvent.key)) - 1
             if 0 <= num and num < len(targets) and not targets[num] in chosenTargets:
-                if chosenSpell.spellType == person.Combat.spellType and targets[num].is_grappling():
+                if chosenSpell.actionType == person.Combat.actionType and targets[num].is_grappling():
                     print_enemies("You cannot target grappled enemies with a combat spell. You might hit your ally!")
                     set_commands(['(Enter) Acknowledge'])
                     set_command_interpreter(combat_acknowledge_spell_interpreter)
@@ -821,7 +829,30 @@ def select_action(enemy):
         enemy.spankingEnded = False
         return combatAction.DefendAction(enemy, [enemy])
     allActions = [combatAction.AttackAction]#, combatAction.DefendAction]
-    if enemy.is_grappling():
+    if enemy.is_spanking():
+        #Note: This is a weakness in the AI. An enemy is forced to always administer a spanking, regardless of what's going on. This can make for an easy way of delaying an enemy: Just endure
+        #their spanking while your allies take care of the others. However, it may be a wash, simply because this also neutralizes your character, and usually you'll be outnumbered.
+        #If the enemy does not have a grappling partner, then she is spanking someone with a spectral spell, which is stored in the position.
+        spankee = enemy.grapplingPartner if enemy.grapplingPartner else enemy.position.defenders[0]
+        return combatAction.ContinueSpankingAction(enemy, [enemy])
+    elif get_difficulty == HAND and enemy.is_being_spanked():
+        spanker = enemy.grapplingPartner if enemy.grapplingPartner else enemy.position.attacker
+        if random.randrange(2):
+            #If the enemy does not have a grappling partner, then she is being spanked by a spectral spell.
+            return combatAction.EndureAction(enemy, [spanker])
+        else:
+            return combatAction.StruggleAction(enemy, [spanker])
+    elif enemy.is_being_spanked():
+        spanker = enemy.grapplingPartner if enemy.grapplingPartner else enemy.position.attacker
+        if get_difficulty() == CANE and enemy.grappleDuration == 1:
+            return combatAction.EndureAction(enemy, [spanker])
+        elif get_difficulty() == CANE and enemy.grappleDuration <= enemy.grapple() // combatAction.GRAPPLE_DIVISOR:
+            return combatAction.StruggleAction(enemy, [spanker])
+        else:
+            bestStat = enemy.highest_stat()
+            allActions = [combatAction.StruggleAction] * enemy.grapple() +  [combatAction.EndureAction] * bestStat
+            return allActions[random.randrange(len(allActions))](enemy, [spanker])
+    elif enemy.is_grappling():
         allActions.extend([combatAction.SpankAction, combatAction.ThrowAction, combatAction.BreakGrappleAction])
         allActions.extend([spell.__class__ for spell in enemy.flattened_spell_list() if spell.grappleStatus != combatAction.NOT_WHEN_GRAPPLED and 
             spell.cost <= enemy.current_mana()])
@@ -858,7 +889,6 @@ def hand_ai(enemy, allActions):
     else:
         action = action(enemy, defenders)
     return action   
-
 
 def choose_action_class(enemy, weightedActionClasses, warfareActions, grappleActions, magicActions, companions, availableSpells):
     chosenActionClass = []
@@ -1340,7 +1370,7 @@ def start_round(chosenActions):
     #primary stat of their action.
     defendActions = [action for action in chosenActions if isinstance(action, combatAction.DefendAction)]
     #Next, we grab all characters who are grappling
-    alreadyGrappling = sorted([action for action in chosenActions if action.attacker.is_grappling()], key=actions_sort_key, reversed=True)
+    alreadyGrappling = sorted([action for action in chosenActions if action.attacker.is_grappling()], key=actions_sort_key, reverse=True)
     #Then, all characters casting spells (spells don't have a range limit, so they can be let off really fast)
     spellActions = sorted([action for action in chosenActions if person.is_spell(action)])
     #Then all characters attacking with spears
@@ -1425,9 +1455,9 @@ def decrement_grappling():
                     spanker = ally if ally.is_spanking() else grapplingPartner
                     assert spanker != spankee, "Somehow, spanker: %s is spanking themselves!" % spanker.printedName
                     ally.end_spanking()
-                    actionResults.append((spankee.printedName, "breaks free of", spanker.printedName + "'s", "punishing grip!", False))
+                    actionResults.append((' '.join([spankee.printedName, "breaks free of", spanker.printedName + "'s", "punishing grip!"]), False))
                 else:
-                    actionResults.append((' '.join([ally.printedName, "and", grapplingPartner.printedName, "break apart!"]), False))
+                    actionResults.append(((' '.join([ally.printedName, "and", grapplingPartner.printedName, "break apart!"]), False)))
         #If this happens, it means someone is administering a spectral spanking.
         elif ally.involved_in_spanking():
             assert ally.spanker or ally.spankee, "Ally: %s is being spanked, but doesn't have a spanker!" % ally.name
@@ -1465,7 +1495,7 @@ def print_round_results():
             if universal.state.instant_combat:
                 universal.say(result + '\n')
             else:
-                if actionResult[3]:
+                if actionResult[1]:
                     universal.say_delay(result + "\n", overwritePrevious=True)
                 else:
                     universal.say_delay(result + "\n", overwritePrevious=False)
@@ -1475,7 +1505,7 @@ def print_round_results():
                         delaySplit = delay // 5
                         pygame.time.delay(delaySplit)
         resultIndex += 1
-        if actionResult[3] and not universal.state.instant_combat:
+        if actionResult[1] and not universal.state.instant_combat:
         #If the action is a spanking, then we need to give the player plenty of time to enjoy it. 
             acknowledge(print_round_results, ())
             #print_round_results()

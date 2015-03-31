@@ -229,8 +229,10 @@ def display_person(person):
     if person is None:
         return ' '
     else:
-        if person.involved_in_spanking():
-            return ''.join([person.printedName, ' S(', str(person.grappleDuration), ')'])
+        if person.is_being_spanked():
+            return ''.join([person.printedName, ' T(', str(person.grappleDuration), ')'])
+        elif person.is_spanking():
+            return ''.join([person.printedName, ' B(', str(person.grappleDuration), ')'])
         else:
             return ''.join([person.printedName, '(', str(person.grappleDuration), ')'])
 
@@ -1333,6 +1335,9 @@ class Person(universal.RPGObject):
         for statusName in expiredStatuses:
             self.reverse_status(statusName)
 
+    def increment_status_duration(self, name, amount=1):
+        self.statusDict[name][DURATION] += amount
+
     def get_status(self, statusName):
         return self.statusDict[statusName][STATUS_OBJ]
 
@@ -2271,7 +2276,6 @@ class Spell(combatAction.CombatAction):
         #A list of strings that represents a single statement for when a particular enemy is immune to a spell.
         self.immuneStatement = []
         self.rawMagic = False
-        self.tier = None
         self.magicMultiplier = None
         self.castableOutsideCombat = False
         self.primaryStat = Spell.primaryStat
@@ -2404,7 +2408,7 @@ class Combat(Spell):
     grappleStatus = None
     effectClass = None
     actionType = 'combat'
-    def __init__(self, attacker, defenders, damage_function, secondaryStat=None):
+    def __init__(self, attacker, defenders, secondaryStat=None):
         super(Combat, self).__init__(attacker, defenders, secondaryStat)
         self.minDamage = None
         #Deprecated. Do not use.
@@ -2417,6 +2421,9 @@ class Combat(Spell):
         super(Combat, self).effect(inCombat, allies, enemies)
         if not inCombat:
             return (['You can\'t cast', self.name, 'outside of combat.'], [], self)
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         defenders = self.defenders
         attacker = self.attacker
         damage = 0
@@ -2424,7 +2431,12 @@ class Combat(Spell):
         effects = []
         opponents = enemies if attacker in allies else allies
         currentDefenders = list(defenders)
+        opponentsCopy = [opponent for opponent in opponents if opponent not in defenders]
         for defender in defenders:
+            while defender.is_grappling() and not attacker.is_grappling(defender) and opponentsCopy:
+                defender = opponentsCopy.pop(random.randrange(len(opponentsCopy)))
+            if not opponentsCopy and defender.is_grappling() and not attacker.is_grappling(defender):
+                continue
             if not defender in opponents:
                 availableOpponents = [opp for opp in opponents if opp not in currentDefenders]
                 if availableOpponents == []:
@@ -2444,9 +2456,6 @@ class Combat(Spell):
                 if defender.current_health() <= 0:
                     effectString[-1] = '\n'.join([' '.join(effectString[-1]), ' '.join([defender.printedName, 'collapses!'])])
         return (universal.format_text(effectString), effects, self)
-
-    def effect_statement(self, defender, damage):
-        return ' '.join([self.attacker.printedName, 'casts', self.name + '!\n\n', defender.printedName, 'takes', str(damage) + '!'])
 
     def immune_string(self, defender):
         return  ' '.join([defender.printedName, 'is immune to', self.name])
@@ -2485,6 +2494,9 @@ class Status(Spell):
         super(Status, self).effect(inCombat, allies, enemies)
         if not inCombat:
             return ['You can\'t cast', self.name, 'outside of combat.']
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         defenders = self.defenders
         attacker = self.attacker
         resultString = []
@@ -2546,6 +2558,9 @@ class CharmMagic(Status):
         super(CharmMagic, self).effect(inCombat, allies, enemies)
         if not inCombat:
             return ['You can\'t cast', self.name, 'outside of combat.']
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         if self.attacker in allies:
             #If the attacker is an ally (meaning in the party) then they're trying to charm an enemy.
             originalList = enemies
@@ -2605,6 +2620,9 @@ class Buff(Spell):
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(Buff, self).effect(inCombat, allies, enemies)
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         recipients = self.defenders
         caster = self.attacker
         resultStatement = []
@@ -2643,7 +2661,7 @@ class Buff(Spell):
         """
             Use this method to gain access to a string that indicates that the spell succeeded.
         """
-        return
+        return ''
 
 class Healing(Buff):
     def __init__(self, attacker, defenders, secondaryStat=None):
@@ -2656,6 +2674,9 @@ class Healing(Buff):
     def effect(self, inCombat=True, allies=None, enemies=None):
         #We don't want to invoke the effect function of Buff.
         super(Healing, self).effect(inCombat, allies, enemies)
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         recipients = self.defenders
         caster = self.attacker
         resultStatement = []
@@ -2696,6 +2717,7 @@ class Healing(Buff):
         else:
             return (universal.format_text(resultStatement, False), effects, self, didSomething)
 
+
 class Resurrection(Healing):
     def __init__(self, attacker, defenders, secondaryStat=None):
         super(Resurrection, self).__init__(attacker, defenders, secondaryStat)
@@ -2704,6 +2726,9 @@ class Resurrection(Healing):
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         raise NotImplementedError("Need to implement the effect for resurrection spells!")
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
 
 class Spectral(Spell):
     targetType = None
@@ -2767,6 +2792,9 @@ class SpectralSpanking(Spectral):
         3. This action.
         """
         super(SpectralSpanking, self).effect(inCombat, allies, enemies)
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         opponents = enemies if self.attacker in allies else allies
         currentDefenders = list(self.defenders)
         for defender in self.defenders:
@@ -2785,6 +2813,13 @@ class SpectralSpanking(Spectral):
             resultStatement.append(self.immune_statement(defender))
             effects.append((0, 0))
         else:
+            opponents = enemies if attacker in allies else allies
+            if (defender.is_grappling() and not attacker.is_grappling(defender)) or defender.involved_in_spanking():
+                opponentsCopy = list(opponents)
+                opponentsCopy.remove(defender)
+                newTarget = opponentsCopy.pop(random.randrange(len(opponentsCopy)))
+                while (defender.is_grappling() and not attacker.is_grappling(defender)) or defender.involved_in_spanking():
+                    newTarget = opponentsCopy.pop(random.randrange(len(opponentsCopy)))
             self.damage = self.magicMultiplier * attacker.magic_attack(inCombat)
             humiliationDuration = self.resilienceMultiplier * attacker.resilience() - defender.resilience()
             spankingDuration = combatAction.compute_damage(attacker.magic_attack(), self.magicMultiplier * attacker.magic_attack(inCombat) - defender.magic_defense(self.rawMagic))

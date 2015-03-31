@@ -35,6 +35,7 @@ class Firebolt(p.Combat):
     numTargets = 1
     tier = 0
     cost = 3
+
     def __init__(self, attacker, defenders):
         super(Firebolt, self).__init__(attacker, defenders)
         self.name = 'Firebolt'
@@ -47,8 +48,8 @@ class Firebolt(p.Combat):
         self.expertise = BASIC
 
     def effect_statement(self, defender, dam):
-            self.effectStatements = [[self.attacker.printedName, 'casts Firebolt on', defender.printedName, 'for', str(dam), 'damage!']]
-            return super(Firebolt, self).effect_statement(defender)
+        self.effectStatements = [[self.attacker.printedName, 'casts Firebolt on', defender.printedName, 'for', str(dam), 'damage!']]
+        return super(Firebolt, self).effect_statement(defender)
 
     def immune_statement(self, defender):
         return [defender.printedName, 'smirks as the flames dance harmlessly across', defender.hisher(), 'body.']
@@ -406,6 +407,9 @@ class SpectralPush(p.Spectral):
         3. This action
         """
         super(SpectralPush, self).effect(inCombat)
+        spankingEffect = self.is_spanking()
+        if spankingEffect:
+            return spankingEffect
         attacker = self.attacker
         if not attacker.is_grappling():
             attacker.increase_stat(universal.MANA, self.cost)
@@ -499,6 +503,9 @@ class SpectralPull(p.Spectral):
         3. This action
         """
         super(SpectralPull, self).effect(inCombat)
+        spankingEffect = self.is_spanking()
+        if spankingEffect:
+            return spankingEffect
         attacker  = self.attacker
         defenders = self.defenders
         opponents = enemies if attacker in allies else allies
@@ -586,6 +593,9 @@ class SpectralShove(p.Spectral):
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(SpectralShove, self).effect(inCombat)
+        spankingEffect = self.is_spanking()
+        if spankingEffect:
+            return spankingEffect
         attacker = self.attacker
         if not attacker.is_grappling():
             attacker.increase_stat(universal.MANA, self.cost)
@@ -1012,6 +1022,9 @@ class SuperShield(p.Buff):
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(SuperShield, self).effect(inCombat)
+        spankingEffect = self.is_spanking()
+        if spankingEffect:
+            return spankingEffect
         recipient = self.defenders[0]
         caster = self.attacker
         resultStatement = []

@@ -55,26 +55,26 @@ def reversed_spanking(top, bottom, position):
     """
     try:
         return top.reverses(bottom, position)
-    except NotImplementedError, AttributeError:
+    except (NotImplementedError, AttributeError):
+        if bottom == universal.state.player:
+            raise
         return bottom.reversed_by(top, position)
-
-    def continue_spanking(top, bottom, position):
-        try:
-            return top.continue_spanking(bottom, position)
-        except NotImplementedError, AttributeError:
-            return bottom.continue_being_spanked(top, position)
-
-def failed_spanking(top, bottom, position):
-    try:
-        return top.failed(bottom, position)
-    except NotImplementedError, AttributeError:
-        return bottom.blocks(top, position)
 
 def continue_spanking(top, bottom, position):
     try:
         return top.continue_spanking(bottom, position)
-    except NotImplementedError, AttributeError:
+    except (NotImplementedError, AttributeError):
+        if bottom == universal.state.player:
+            raise
         return bottom.continue_being_spanked(top, position)
+
+def failed_spanking(top, bottom, position):
+    try:
+        return top.failed(bottom, position)
+    except (NotImplementedError, AttributeError):
+        if bottom == universal.state.player:
+            raise
+        return bottom.blocks(top, position)
 
 class Implement(items.Item):
     """
