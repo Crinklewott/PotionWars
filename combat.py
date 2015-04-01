@@ -728,9 +728,13 @@ def defend_interpreter(keyEvent):
         display_combat_status(printAllies=False, printEnemies=False)
     elif keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key)) - 1
-        if 0 <= num and num < len(allies):
+        if 0 <= num and num < len(allies) and not ally.is_grappling():
             chosenActions.append(combatAction.DefendAction(activeAlly, allies[num]))
             next_character()
+        elif ally.is_grappling():
+            print_enemies(["Cannot defend a grappled ally!"])
+            set_commands(["(Enter) Acknowledge"])
+            set_command_interpreter(combat_acknowledge_interpreter)
 
 possibleTargets = []
 def break_grapple():
@@ -850,7 +854,7 @@ def select_action(enemy):
             return combatAction.StruggleAction(enemy, [spanker])
         else:
             bestStat = enemy.highest_stat()
-            allActions = [combatAction.StruggleAction] * enemy.grapple() +  [combatAction.EndureAction] * bestStat
+            allActions = [combatAction.StruggleAction] * (enemy.grapple() + 1) +  [combatAction.EndureAction] * (bestStat + 1)
             return allActions[random.randrange(len(allActions))](enemy, [spanker])
     elif enemy.is_grappling():
         allActions.extend([combatAction.SpankAction, combatAction.ThrowAction, combatAction.BreakGrappleAction])
@@ -1370,26 +1374,29 @@ def start_round(chosenActions):
     #primary stat of their action.
     defendActions = [action for action in chosenActions if isinstance(action, combatAction.DefendAction)]
     #Next, we grab all characters who are grappling
-    alreadyGrappling = sorted([action for action in chosenActions if action.attacker.is_grappling()], key=actions_sort_key, reverse=True)
+    alreadyGrappling = sorted([action for action in chosenActions if action.attacker.is_grappling() and not action in defendActions], key=actions_sort_key, reverse=True)
     #Then, all characters casting spells (spells don't have a range limit, so they can be let off really fast)
+    chosenActions = [action for action in chosenActions if not action in alreadyGrappling and not action in defendActions]
     spellActions = sorted([action for action in chosenActions if person.is_spell(action)])
     #Then all characters attacking with spears
     spearAttacks = sorted([action for action in chosenActions if action.attacker.weapon().weaponType == items.Spear.weaponType and action.actionType == combatAction.AttackAction.actionType],
             key=actions_sort_key, reverse=True)
     #Then all characters attacking with swords
-    swordAttacks = sorted([action for action in chosenActions if action.attacker.weapon().weaponType == items.Sword.weaponType and action.actionType == combatAction.AttackAction.actionType],
-            key=actions_sort_key, reverse=True)
+    swordAttacks = sorted([action for action in chosenActions if action.attacker.weapon().weaponType == items.Sword.weaponType and 
+        action.actionType == combatAction.AttackAction.actionType], key=actions_sort_key, reverse=True)
     knifeAttacks = sorted([action for action in chosenActions if action.attacker.weapon().weaponType == items.Knife.weaponType and action.actionType == combatAction.AttackAction.actionType],
             key=actions_sort_key, reverse=True)
     spankActions = sorted([action for action in chosenActions if action.attacker.weapon().weaponType == items.Knife.weaponType and action.actionType == combatAction.SpankAction.actionType],
             key=actions_sort_key, reverse=True)
     grappleTypes = [combatAction.GrappleAction.actionType, combatAction.BreakAllysGrappleAction.actionType]
-    grappleActions = sorted([action for action in chosenActions if action.actionType in grappleTypes])
+    grappleActions = sorted([action for action in chosenActions if action.actionType in grappleTypes], key=actions_sort_key, reverse=True)
     tiers = defendActions + alreadyGrappling + spellActions + spearAttacks + swordAttacks + knifeAttacks + spankActions + grappleActions
     #TODO: Need to grab all the other actions, not in any of the above
     allOtherActions = [action for action in chosenActions if action not in tiers]
     #We push all the defend actions to the beginning, so that every defending character is guaranteed to defend at the beginning.
     chosenActions = tiers + sorted(allOtherActions, key=actions_sort_key, reverse=True) 
+    #If there are any duplicates, i.e. the above lists are not disjoint, this will fail.
+    assert len(chosenActions) == len(set(chosenActions)), "There is a duplicated action:%s" % str(chosenActions) 
     for index in range(len(chosenActions)):
         action = chosenActions[index]
         if action is None:

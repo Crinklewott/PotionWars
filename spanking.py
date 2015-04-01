@@ -19,7 +19,6 @@ along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 import items
 import random
 import universal
-import person
 import positions
 
 LEATHER_STRAP_SEVERITY = 4

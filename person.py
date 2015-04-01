@@ -28,6 +28,7 @@ import operator
 import random
 import statusEffects
 import universal
+import spanking
 from universal import *
 
 checkWillpower = True
@@ -226,6 +227,14 @@ def order_name(order):
 
 
 def display_person(person):
+    if person.grapplingPartner:
+        person = person.grapplingPartner
+    elif person.spanker:
+        person = person.spanker
+    elif person.spankee:
+        person = person.spankee
+    else:
+        person = None
     if person is None:
         return ' '
     else:
@@ -360,6 +369,7 @@ class Person(universal.RPGObject):
         self.struggling = False
         self.spankingEnded = False
         self.spankeeAlreadyHumiliated = False
+        self.implement = spanking.hand
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -454,30 +464,32 @@ class Person(universal.RPGObject):
 
     def bum_adj(self):
         if self.bodyType == 'slim':
-            adjList = ['small', 'petite', 'heart-shaped']
+            adjList = ['small', 'petite', 'heart-shaped', 'lithe', 'svelt', 'combact', 'narrow', 'willowy']
         elif self.bodyType == 'average':
-            adjList = ['plump', 'round', 'curved']
+            adjList = ['plump', 'round', 'curved', 'rotund']
         elif self.bodyType == 'voluptuous':
-            adjList = ['ample', 'curvaceous', 'large']
+            adjList = ['ample', 'curvaceous', 'large', 'shapely', 'curvy']
         elif self.bodyType == 'heavyset':
-            adjList = ['fleshy', 'wide', 'expansive']
+            adjList = ['fleshy', 'wide', 'expansive', 'corpulent', 'sizeable', 'generous']
         return random.choice(adjList)
 
     def quiver(self):
         if self.musculature == 'soft':
-            adjList = ['ripple', 'jump', 'flatten']
+            adjList = ['ripple', 'jump', 'flatten', 'vibrate', 'tremble']
         elif self.musculature == 'fit':
-            adjList = ['spasm', 'bounce', 'shake']
+            adjList = ['spasm', 'bounce', 'shake', 'bob', 'oscillate', 'quaver']
         elif self.musculature == 'muscular':
-            adjList = ['quiver', 'bob', 'shiver']
+            adjList = ['quiver', 'bob', 'shiver', 'shift']
+        return random.choice(adjList)
 
     def quivering(self):
         if self.musculature == 'soft':
-            adjList = ['rippling', 'jumping']
+            adjList = ['rippling', 'jumping', 'flattening', 'vibrating', 'trembling']
         elif self.musculature == 'fit':
-            adjList = ['spasming', 'bouncing', 'shaking']
+            adjList = ['spasming', 'bouncing', 'shaking', 'bobbing', 'oscillating', 'quavering']
         elif self.musculature == 'muscular':
-            adjList = ['quivering', 'bobbing', 'shivering']
+            adjList = ['quivering', 'bobbing', 'shivering', 'shifting']
+        return random.choice(adjList)
 
     def is_slim(self):
         return self.bodyType == 'slim'
@@ -490,11 +502,11 @@ class Person(universal.RPGObject):
 
     def muscle_adj(self):
         if self.musculature == 'soft':
-            adjList = ['jiggly', 'wobbly', 'pillowy']
+            adjList = ['jiggly', 'wobbly', 'pillowy', 'cushioned']
         elif self.musculature == 'fit':
-            adjList = ['firm', 'toned', 'bouncy']
+            adjList = ['firm', 'toned', 'bouncy', 'well-developed', 'well-defined', 'tight']
         elif self.musculature == 'muscular':
-            adjList = ['hard', 'solid', 'muscular']
+            adjList = ['hard', 'solid', 'muscular', 'dense', 'sinewy', 'brawny']
         return random.choice(adjList)
 
     def is_fit(self):
@@ -2125,7 +2137,8 @@ class Party(universal.RPGObject):
                 + memberName, str(member.current_health()) + '/' + str(member.health()), str(member.current_mana()) + '/' + str(member.mana())])
                 for (n, member, memberName) in zip([i for i in range(1, len(self.members)+1)], self.members, memberNames)]
             if grappling:
-                partyTxt = ['\t'.join([memberTxt, display_person(mem.grapplingPartner)]) for (memberTxt, mem) in zip(partyTxt, self.members)]
+                grappled = None
+                partyTxt = ['\t'.join([memberTxt, display_person(mem)]) for (memberTxt, mem) in zip(partyTxt, self.members)]
             return '\n\t'.join(partyTxt)
         else:
             return '\t'.join([target(n, arrow(n, allyIndex), targetedIndices) + '. ' + '\n'
@@ -2435,6 +2448,8 @@ class Combat(Spell):
         for defender in defenders:
             while defender.is_grappling() and not attacker.is_grappling(defender) and opponentsCopy:
                 defender = opponentsCopy.pop(random.randrange(len(opponentsCopy)))
+            if defender.guardians:
+                defender = defender.guardians.pop()
             if not opponentsCopy and defender.is_grappling() and not attacker.is_grappling(defender):
                 continue
             if not defender in opponents:
@@ -2757,6 +2772,7 @@ class SpectralSpanking(Spectral):
     cost = 10
     secondaryStat = universal.WILLPOWER
     smackMultiplier = 5
+    severity = 0
 
     def __init__(self, attacker, defenders):
         super(SpectralSpanking, self).__init__(attacker, defenders)
@@ -2784,7 +2800,7 @@ class SpectralSpanking(Spectral):
         self.damage = 0 
 
 
-    def effect(self, inCombat=True, allies=None, enemies=None, severity=0):
+    def effect(self, inCombat=True, allies=None, enemies=None):
         """
         Returns a triple:
         1. A string describing what happened
@@ -2824,10 +2840,10 @@ class SpectralSpanking(Spectral):
             humiliationDuration = self.resilienceMultiplier * attacker.resilience() - defender.resilience()
             spankingDuration = combatAction.compute_damage(attacker.magic_attack(), self.magicMultiplier * attacker.magic_attack(inCombat) - defender.magic_defense(self.rawMagic))
             attacker.begin_spanking(defender, self)
-            attacker.grappleDuration = spankingDuration
+            attacker.grappleDuration = defender.grappleDuration = spankingDuration
             defender.begin_spanked_by(attacker, self)
             effects = []
-            effectString = self.effect_statement(defender)
+            resultStatement.append(self.effect_statement(defender))
             if not defender.is_inflicted_with(statusEffects.Humiliated.name):
                 defender.inflict_status(statusEffects.build_status(statusEffects.Humiliated.name, humiliationDuration))
                 attacker.spankeeAlreadyHumiliated = False
@@ -2835,14 +2851,13 @@ class SpectralSpanking(Spectral):
                 attacker.spankeeAlreadyHumiliated = True
             resultStatement.append(self.success_statement(defender))
             effects.append(self.damage)
-            effectString = effectString + [universal.format_line(self.success_statement(defender))]
         return (universal.format_text(resultStatement, False), effects, self)
 
     def round_statement(self, defender):
         attacker = self.attacker
         defender = defender
-        return universal.format_text([[attacker.printedName, "swishes", attacker.hisher(), "hand through the hair. The giant, ghostly hand swishes in sync with", attacker.printedName + "'s",
-            "hand, and cracks repeatedly against", defender.printedName + "'s", defender.quivering(), "bottom.", defender.printedName, "yelps and kicks with every heavy blow."]])
+        return universal.format_text([[attacker.printedName, "swishes", attacker.hisher(), "hand back and forth through the air. The giant, ghostly hand arcs in sync with", 
+                "the motion, cracking repeatedly against", defender.printedName + "'s", defender.quivering(), "bottom.", defender.printedName, "yelps and kicks with every heavy blow."]])
 
     def effect_statement(self, defender):
         attacker = self.attacker
@@ -2851,7 +2866,7 @@ class SpectralSpanking(Spectral):
         self.effectStatements = [[A, 'holds up', hisher(attacker), 'hands. Giant ghostly shapes that vaguely resemble hands form above', himher(attacker), '.', 
             HeShe(attacker), 'throws out', hisher(attacker), 'hands in the direction of', D, '. Noticing this,', D, 
             'backs up rapidly and tries to find a way to avoid the spectral hands. Then,', A, 
-            '\'s left hand snaps down and closes into a fist. The left ghostly hand snaps down and grabs at the back of', D,'\'s', defender.lower_clothing().name]]
+            '\'s left hand snaps down and closes into a fist. The left ghostly hand snaps down and grabs at the back of', D,'\'s', defender.lower_clothing().name + "."]]
         return super(SpectralSpanking, self).effect_statement(defender) 
     
     def immune_statement(self, defender):

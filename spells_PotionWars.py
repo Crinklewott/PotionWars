@@ -48,7 +48,7 @@ class Firebolt(p.Combat):
         self.expertise = BASIC
 
     def effect_statement(self, defender, dam):
-        self.effectStatements = [[self.attacker.printedName, 'casts Firebolt on', defender.printedName, 'for', str(dam), 'damage!']]
+        self.effectStatements = [[self.attacker.printedName, 'casts Firebolt at', defender.printedName, 'for', str(dam), 'damage!']]
         return super(Firebolt, self).effect_statement(defender)
 
     def immune_statement(self, defender):
@@ -78,7 +78,7 @@ class Icebolt(p.Combat):
     
     
     def effect_statement(self, defender, dam):
-        self.effectStatements = [[self.attacker.printedName, 'casts Icebolt', defender.printedName, 'for', str(dam), 'damage!']]
+        self.effectStatements = [[self.attacker.printedName, 'casts Icebolt at', defender.printedName, 'for', str(dam), 'damage!']]
         #self.effectStatements = [[self.attacker.name, '\'s fist becomes coated in frost.', He_She(self.attacker), 'snaps', hisher(self.attacker), 'fist forward. An icicle erupts from', hisher(self.attacker), 'fist and strikes', defender.name, 'in the chest.']]
         return super(Icebolt, self).effect_statement(defender)
 
@@ -109,7 +109,7 @@ class Magicbolt(p.Combat):
 
 
     def effect_statement(self, defender, dam):
-        self.effectStatements = [[self.attacker.printedName, 'casts Magicbolt on', defender.printedName, 'for', str(dam), 'damage!']]
+        self.effectStatements = [[self.attacker.printedName, 'casts Magicbolt at', defender.printedName, 'for', str(dam), 'damage!']]
         return super(Magicbolt, self).effect_statement(defender)
 
     def immune_statement(self, defender):
@@ -1061,6 +1061,7 @@ class SpectralStrapping(p.SpectralSpanking):
     tier = p.SpectralSpanking.tier
     statusInflicted = statusEffects.HUMILIATED
     cost = 30
+    severity = spanking.LEATHER_STRAP_SEVERITY
     def __init__(self, attacker, defenders):
         super(SpectralStrapping, self).__init__(attacker, defenders)
         self.name = 'Spectral Strapping'
@@ -1082,8 +1083,8 @@ class SpectralStrapping(p.SpectralSpanking):
         self.maxProbability = 96
         self.minDamage = 2
         
-    def effect(self, inCombat=True, allies=None, enemies=None, severity=spanking.LEATHER_STRAP_SEVERITY):
-        return super(SpectralStrapping, self).effect(inCombat, allies, enemies, severity)
+    def effect(self, inCombat=True, allies=None, enemies=None):
+        return super(SpectralStrapping, self).effect(inCombat, allies, enemies)
 
     def effect_statement(self, defender):
         attacker = self.attacker
@@ -1129,6 +1130,7 @@ class SpectralCaning(p.SpectralSpanking):
     statusInflicted = statusEffects.HUMILIATED
     effectClass = combatAction.ALL
     cost = 40
+    severity = spanking.CANE_SEVERITY
     def __init__(self, attacker, defenders):
         super(SpectralCaning, self).__init__(attacker, defenders)
         self.name = 'Spectral Caning'
@@ -1152,8 +1154,8 @@ class SpectralCaning(p.SpectralSpanking):
         self.minDamage = 2
 
 
-    def effect(self, inCombat=True, allies=None, enemies=None, severity=spanking.CANE_SEVERITY):
-        return super(SpectralCaning, self).effect(inCombat, allies, enemies, severity)
+    def effect(self, inCombat=True, allies=None, enemies=None):
+        return super(SpectralCaning, self).effect(inCombat, allies, enemies)
 
     def effect_statement(self, defender):
         attacker = self.attacker

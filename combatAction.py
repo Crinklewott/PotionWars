@@ -504,7 +504,7 @@ class ContinueSpankingAction(CombatAction):
             humiliatedStatus.inflict_status(defender)
             decrementedStat = True
         #If the attacker isn't grappling, then it must be the case that he/she is administering a spectral spanking, in which position contains the spectral spanking spell object
-        if not attacker.is_spanking():
+        if not attacker.is_grappling():
             resultString = attacker.position.round_statement(defender)
         else:
             resultString = spanking.continue_spanking(self.attacker, defender, self.attacker.position)
@@ -533,7 +533,7 @@ class StruggleAction(CombatAction):
             return DefendAction(attacker, [attacker]).effect(inCombat, allies, enemies)
         attacker.reduce_grapple_duration(attacker.grapple() // 2)
         defender.reduce_grapple_duration(attacker.grapple() // 2)
-        assert attacker.grapple_duration() == attacker.grapplingPartner.grapple_duration(), "Attacker: %s Duration: %d ; Defender: %s ; Grappler: %s ; Duration : %d" % (attacker.name, 
+        assert attacker.grapple_duration() == attacker.spanker.grapple_duration(), "Attacker: %s Duration: %d ; Defender: %s ; Grappler: %s ; Duration : %d" % (attacker.name, 
                 attacker.grapple_duration(), attacker.grapplingPartner.name, defender.name, defender.grapple_duration())
         return (' '.join([attacker.printedName, "struggles against", defender.printedName + "'s", "iron grip!"]), [None], self)
 
