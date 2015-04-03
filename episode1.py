@@ -6147,6 +6147,7 @@ def e0_6_1_caning_revenge_interpreter(keyEvent):
         else:
             add_keyword('spectral_spanked_Taironans')
             increment_spankings_given()
+            universal.state.player.increaseSpellPoints[universal.SPECTRAL_MAGIC - universal.CURRENT_MANA] += 1
             universal.state.player.uses_mana(p.SpectralSpanking.cost)
             universal.say(format_text([[name(), '''holds up''', hisher(), '''hands a second time. Power flows through''', hisher(), '''body, making''', hisher(),
                 '''skin tingle, and''', hisher(), '''heart pound. Then, the power bursts from''', hisher(), '''fingertips and coalesces into a pair of evanescent''',
