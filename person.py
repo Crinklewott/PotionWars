@@ -440,9 +440,16 @@ class Person(universal.RPGObject):
 
     def risque(self):
         risqueLevel = sum(equipment.risque for equipment in self.equipmentList if not isinstance(equipment, items.Weapon))
+        print([equipment.risque for equipment in self.equipmentList if not isinstance(equipment, items.Weapon)])
+        #For some stupid fucking reason the goddamn baring=True isn't holding for the fucking empty lower armor, and I have no fucking idea why. So we're going to insert a stupid fucking
+        #hack that makes fucking sure the fucking baring of fucking emptyLowerArmor is fucking TRUE!
+        print(risqueLevel)
+        if not items.emptyLowerArmor.baring:
+            items.emptyLowerArmor.baring = True
         #If the lower clothing isn't baring, then we can't see the underwear, so its risque level doesn't matter.
         if not self.lower_clothing().baring:
             risqueLevel -= self.underwear().risque
+        return risqueLevel
 
     def _set_weapon(self, weapon):
         self.equipmentList[WEAPON] = weapon

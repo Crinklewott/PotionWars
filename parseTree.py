@@ -510,7 +510,7 @@ class InlineCommand(ParseTree):
             #Note: Since the first argument is code, the first argument is a list of lines of code, whose list contains a single line of code.
                 check = translatedChildren[0][0]
                 translatedChildren = translatedChildren[1:]
-            translatedChildren = [check] + ["' '.join(" + child + ")" for child in translatedChildren]
+            translatedChildren = [check] + ["''.join(" + child + ")" for child in translatedChildren]
             return ''.join([code, ', '.join(child for child in translatedChildren if child.strip()), ')' * numParens])
         else:
             return code

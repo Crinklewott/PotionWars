@@ -51,8 +51,7 @@ import textCommandsMusic
 from textCommandsMusic import add_keyword, remove_keyword
 
 def spanked_episode_1():
-    return one_in_keywords(['Ildri_spanked_you_unjustly', 'spanked_by_Airell', 'spanked_by_Cosima', 'Maria_spanked_you', 'spectral_caned', 'met_Mai', 
-        'spanked_by_Necia'])
+    return one_in_keywords(['Ildri_spanked_you_unjustly', 'spanked_by_Airell', 'spanked_by_Cosima', 'Maria_spanked_you', 'spectral_caned', 'met_Mai', 'spanked_by_Necia'])
 
 def name():
     return universal.state.player.name

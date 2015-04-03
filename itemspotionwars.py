@@ -44,6 +44,9 @@ tunic = items.Shirt('tunic', 'A fairly common, loose fitting tunic. A bit worn, 
 
 raggedTunic = items.Shirt('ragged tunic', 'A ragged, borderline useless tunic.', price=1, risque=1)
 
+powderBlueTunic = items.Shirt('powder blue shirt', "A soft, powder blue dress spun from fine cotton without any trim.", price=25)
+flowerPrintTunic = items.Shirt('yellow shirt', "A small yellow shirt made for preteen boys, and spun from fine cotton.", price=25)
+
 """
 qualityTunic = items.Shirt('quality tunic', 'A heavy tunic made from high quality leathers. The tunic also has the smallest hint of magic about it, providing ' +
 'a little bit of protection from enemy blows.', attackDefense=2, price=10)
@@ -74,6 +77,8 @@ shortShorts = items.Shorts('short shorts', "A pair of skintight shorts that bare
 
 holeyTrousers = items.Pants('holey trousers', 'A pair of ragged, borderline unwearable trousers. There is a massive hole in the left knee, the right leg stops in a frayed mess just pass the knee, and the waist is held up with a threadbare rope.', tightness=items.LOOSE)
 
+flowerPrintTrousers = items.Pants('yellow trousers', "A small pair of dark yellow pants made for preteen boys, and spun from fine cotton.", price=25, tightness=items.LOOSE)
+powderBlueTrousers = items.Pants('powder blue trousers', "A pair of soft, powder blue trousers spun from fine cotton without any trim.", price=25, tightness=items.LOOSE)
 blueShorts = items.Shorts('blue shorts', 'A pair of blue shorts cut in a style similar to what young boys wear in the middle and upper classes.', price=10, tightness=items.LOOSE)
 
 #---------------------------------------items.Skirts------------------------------------
@@ -129,6 +134,9 @@ fullPlate = items.FullArmor('full plate', "A full suit of plate mail, that compl
 #------------------------Dresses---------------------------------------
 wornDress = items.Dress('worn dress', "An old, ragged wool dress.", tightness=items.LOOSE)
 blueDress = items.Dress('blue dress', "A soft blue cotton dress without any trim. This type of dress is worn by Younger Sisters of the Healer Persuasion in the Mother's Church.", tightness=items.LOOSE)
+
+powderBlueDress = items.Dress('powder blue dress', "A soft, powder blue dress spun from fine cotton without any trim.", price=50, tightness=items.LOOSE)
+flowerPrintDress = items.Dress('flower print dress', "A small, flower print yellow dress made for preteen girls, and spun from fine cotton.", price=50, tightness=items.LOOSE)
 
 blackDress = items.Dress('black dress', "A long, slinky black dress that extends from the bottom of your neck to your ankles, but hugs your form in all the right places. A " +
 "slit runs up the side of the dress to allow for front-saddle riding.", price=20, risque=2, tightness=items.TIGHT)
@@ -214,6 +222,7 @@ whiteRibbon = items.Item('White Ribbon', 'A simple, yet elegant white silk ribbo
 #----------------------------------Pajamas-----------------------------------------
 oldShirt = items.PajamaTop('old shirt', 'An old, but comfortable t-shirt, just perfect for sleeping in.', 0)
 comfyShorts = items.PajamaBottom('comfy shorts', 'A pair of soft, comfy short shorts just perfect for sleeping in.', 0)
+
 
 largeShirt = items.FullPajamas('large shirt', 'A comfortable shirt that reaches about halfway down your thighs. Great for sleeping in.', 3)
 
