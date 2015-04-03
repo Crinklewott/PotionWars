@@ -182,7 +182,7 @@ class DistortMagic(p.Status):
         super(DistortMagic, self).__init__(attacker, defenders)
         self.name = 'Distort Magic'
         self.description = 'Wraps your enemy in a field that interferes with their ability to cast and protect against spells.'
-        self.effectFormula = 'EFFECT: -1 penalty to Talent and Willpower\nSUCCESS CHANCE (%): 50 | 15 * resilience bonus | 95\n DURATION: 3 | 2 * magic bonus'
+        self.effectFormula = 'EFFECT: -1 penalty to Talent and Willpower\n DURATION: max(0, resilience - enemy.resilience)'
         self.numTargets = 1
         self.rawMagic = True
         self.tier = DistortMagic.tier

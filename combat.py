@@ -816,11 +816,11 @@ def throw_interpreter(keyEvent):
         display_combat_status(printAllies=False, printEnemies=False)
     elif keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key)) - 1
-        if 0 <= num and num < len(enemies) and not enemies[num].is_grappling():
+        if 0 <= num and num < len(enemies) and (not enemies[num].is_grappling() or enemies[num].is_grappling(activeAlly)):
             chosenActions.append(combatAction.ThrowAction(activeAlly, [activeAlly.grapplingPartner, enemies[num]]))
             next_character()
-        elif enemies[num].is_grappling():
-            print_enemies(["Cannot throw your opponent at another grappled opponent. You might hit your ally!"])
+        elif enemies[num].is_grappling() and not enemies[num].is_grappling(activeAlly):
+            print_enemies("Cannot throw your opponent at another grappled opponent. You might hit your ally!")
             set_commands(["(Enter) Acknowledge"])
             set_command_interpreter(combat_acknowledge_interpreter)
 
@@ -838,7 +838,7 @@ def select_action(enemy):
         #their spanking while your allies take care of the others. However, it may be a wash, simply because this also neutralizes your character, and usually you'll be outnumbered.
         #If the enemy does not have a grappling partner, then she is spanking someone with a spectral spell, which is stored in the position.
         spankee = enemy.grapplingPartner if enemy.grapplingPartner else enemy.position.defenders[0]
-        return combatAction.ContinueSpankingAction(enemy, [enemy])
+        return combatAction.ContinueSpankingAction(enemy, [enemy], enemy.position)
     elif get_difficulty == HAND and enemy.is_being_spanked():
         spanker = enemy.grapplingPartner if enemy.grapplingPartner else enemy.position.attacker
         if random.randrange(2):
@@ -1179,7 +1179,10 @@ def select_targets(chosenAction, enemy):
     elif chosenAction == combatAction.GrappleAction:
         targets = [target for target in targets if not target.is_grappling()]
         for target in targets:
-            maxGrappleDuration = max([effect[0] for (action, effect) in actionsEndured[target] if action == combatAction.GrappleAction])
+            try:
+                maxGrappleDuration = max([effect[0] for (action, effect) in actionsEndured[target] if action == combatAction.GrappleAction])
+            except ValueError:
+                maxGrappleDuration = 0
             targets.extend([target for i in range(maxGrappleDuration)])
     elif chosenAction == combatAction.BreakGrappleAction:
         return [enemy.grapplingPartner]
@@ -1476,8 +1479,8 @@ def decrement_grappling():
             assert spanker.grapple_duration() == spankee.grapple_duration(), "Spanker: %s ; grapple duration: %d, Spankee: %s ; grapple duration: %d" % (spanker.name, spanker.grapple_duration(),
                     spankee.name, spankee.grapple_duration())
             if not spanker.grapple_duration():
-                spanker.end_spanking()
                 actionResults.append((spanker.position.end_statement(spankee), False))
+                spanker.end_spanking()
 
 resultIndex = 0
 COMBAT_DELAY = 1000
@@ -1671,7 +1674,7 @@ def improve_characters(victorious, afterCombatEvent=None):
             manaGain = 0
             while int(math.floor(stat * specialtyModifier)) <= statPoints:
                 if i == universal.HEALTH:
-                    gain += int(math.ceil(stat * .25)) + statPoints - stat
+                    gain += int(math.ceil(stat * .05)) + statPoints - stat
                     ally.improve_stat(i, gain)
                     ally.increaseStatPoints[i] = 0
                 else:

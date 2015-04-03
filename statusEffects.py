@@ -125,24 +125,33 @@ class Humiliated(StatusEffect):
 class Weakened(StatusEffect):
     name = 'Weakness'
     penalty = 1
-    def __init__(self, duration):
+    def __init__(self, duration, penalty=None):
         super(Weakened, self).__init__(Weakened.name, duration, False)
+        self.penalty = penalty
+        if penalty is None:
+            self.penalty = Weakened.penalty
+        else:
+            self.penalty = penalty
 
     def inflict_status(self, person):
-        person.decrease_stat(universal.STRENGTH, Weakened.penalty)
-        person.decrease_stat(universal.DEXTERITY, Weakened.penalty)
+        person.decrease_stat(universal.STRENGTH, self.penalty)
+        person.decrease_stat(universal.DEXTERITY, self.penalty)
         return 0
 
     def reverse_status(self, person):
-        person.increase_stat(universal.STRENGTH, Weakened.penalty)
-        person.increase_stat(universal.DEXTERITY, Weakened.penalty)
+        person.increase_stat(universal.STRENGTH, self.penalty)
+        person.increase_stat(universal.DEXTERITY, self.penalty)
         return 0
 
 class Shielded(StatusEffect):
     name = 'Shield'
-    def __init__(self, duration, defenseBonus=10):
+    defenseBonus = 10
+    def __init__(self, duration, defenseBonus=None):
         super(Shielded, self).__init__(Shielded.name, duration, False, isNegative=False)
-        self.defenseBonus = defenseBonus
+        if defenseBonus is None:
+            self.defenseBonus = Shielded.defenseBonus
+        else:
+            self.defenseBonus = defenseBonus
 
     def inflict_status(self, person):
         assert(self.defenseBonus is not None)
@@ -156,9 +165,13 @@ class Shielded(StatusEffect):
 
 class MagicShielded(StatusEffect):
     name = 'Magic Shield'
-    def __init__(self, duration, defenseBonus=10):
+    defenseBonus = 10
+    def __init__(self, duration, defenseBonus=None):
         super(MagicShielded, self).__init__(MagicShielded.name, duration, False, isNegative=False)
-        self.defenseBonus = defenseBonus
+        if defenseBonus is None:
+            self.defenseBonus = MagicShielded.defenseBonus
+        else:
+            self.defenseBonus = defenseBonus
 
     def inflict_status(self, person):
         assert(self.defenseBonus is not None)
@@ -172,17 +185,22 @@ class MagicShielded(StatusEffect):
 
 class MagicDistorted(StatusEffect):
     name = 'Magic Distorted'
-    def __init__(self, duration, defenseBonus=4):
+    penalty = 1
+    def __init__(self, duration, penalty=None):
         super(MagicDistorted, self).__init__(MagicDistorted.name, duration, False)
+        if penalty is None:
+            self.penalty = MagicDistorted.penalty
+        else:
+            self.penalty = penalty
 
     def inflict_status(self, person):
-        person.decrease_stat(universal.TALENT, 3)
-        person.decrease_stat(universal.WILLPOWER, 3)
+        person.decrease_stat(universal.TALENT, self.penalty)
+        person.decrease_stat(universal.WILLPOWER, self.penalty)
         return 0
 
     def reverse_status(self, person):
-        person.increase_stat(universal.TALENT, 3)
-        person.increase_stat(universal.WILLPOWER, 3)
+        person.increase_stat(universal.TALENT, self.penalty)
+        person.increase_stat(universal.WILLPOWER, self.penalty)
         return 0
 
 class Charmed(StatusEffect):
