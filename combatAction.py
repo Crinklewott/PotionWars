@@ -508,6 +508,7 @@ class ContinueSpankingAction(CombatAction):
             resultString = attacker.position.round_statement(defender)
         else:
             resultString = spanking.continue_spanking(self.attacker, defender, self.attacker.position)
+        assert defender.is_inflicted_with(statusEffects.Humiliated.name), "Somehow, defender: %s is not afflicted with humiliated!" % defender.name
         return (resultString, [decrementedStat], self)
 
 
