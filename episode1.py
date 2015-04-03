@@ -51,8 +51,7 @@ import textCommandsMusic
 from textCommandsMusic import add_keyword, remove_keyword
 
 def spanked_episode_1():
-    return one_in_keywords(['Ildri_spanked_you_unjustly', 'spanked_by_Airell', 'spanked_by_Cosima', 'Maria_spanked_you', 'spectral_caned', 'met_Mai', 
-        'spanked_by_Necia'])
+    return one_in_keywords(['Ildri_spanked_you_unjustly', 'spanked_by_Airell', 'spanked_by_Cosima', 'Maria_spanked_you', 'spectral_caned', 'met_Mai', 'spanked_by_Necia'])
 
 def name():
     return universal.state.player.name
@@ -704,7 +703,6 @@ class Edita(pwenemies.Enemy):
                         description, printedName, coins, specialization, order=p.sixth_order, musculature='fit', height='short', bodyType='slim', hairLength='shoulder-length', litany=litany)
             self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
             self.level = 0
-            self.printedName = printedName
 
 
     def had_spanking_reversed_by(self, person, position):
@@ -916,19 +914,18 @@ class Edita(pwenemies.Enemy):
         elif position == positions.standing:
             missPhrases.append(universal.format_text([[T.printedName, 'hooks', hisher(T), 'arm around', B.printedName + "'s", 'neck. Before', heshe(T), 'can get a good hold,', 
             B.printedName, 'jerks backward, and slips out of', T.printedName + "'s", 'grip']]))
-        elif position == positions.onTheGround:
+        elif position == position.onTheGround:
             missPhrases.append(universal.format_text([[Tname, "pivots to the side, sweeping", hisher(T), 'leg at', Bname + "'s", 'feet. But', Bname + "'s", 'own foot lashes out and',
             'catches', hisher(T), 'leg. The two balance precariously. Finally,', Tname, 'steps back, and the two regain their footing.']]))
         return missPhrases[random.randrange(0, len(missPhrases))]
 
-    def otk_reversal(self, top, bottom):
-        return self.spanking_reversal_text(bottom, top, positions.overTheKnee)
-
-    def standing_reversal(self, top, bottom):
-        return self.spanking_reversal_text(bottom, top, positions.standing)
-
-    def on_the_ground_reversal(self, top, bottom):
-        return self.spanking_reversal_text(bottom, top, positions.onTheGround)
+    #def reset_stats(self, episode=None):
+    #    edita = Edita(self.litany, coins=self.coins, printedName=self.printedName)
+    #    edita.set_default_stats()
+    #    edita.equip(itemspotionwars.batteredDagger)
+    #    edita.equip(itemspotionwars.batteredLeatherBreastplate)
+    #    edita.equip(itemspotionwars.holeyTrousers)
+    #    return edita
 
     def set_default_stats(self):
         self.set_all_stats(strength=0, dexterity=1, alertness=0, willpower=3, talent=1, health=3, mana=10)
@@ -956,7 +953,6 @@ class Necia(pwenemies.Enemy):
                         description, printedName, coins, specialization, order=p.second_order, bodyType='average', height='average', musculature='fit', hairLength='short', litany=litany)
             self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
             self.level = 0
-            self.printedName = printedName
 
     def otk_intro(self, top, bottom):
         return universal.format_text([[top.printedName, '''slides under a particularly heavy strike from''', bottom.printedName, '''and extends''', top.hisher(), '''bent leg in front of''',
@@ -1009,7 +1005,7 @@ class Necia(pwenemies.Enemy):
             '''swipe''' if bottom.weapon().weaponType == items.Sword.weaponType else '''thrust''', '''and sweeps''', bottom.printedName + "'s", '''ankles out from under''', bottom.himher() + ".",
             '''With the''', bottom.heroheroine() if self is top else '''Vengador''', '''on''', bottom.hisher(), '''hands and knees,''', top.printedName, '''has no trouble hooking a leg around''',
             bottom.hisher(), '''waist and locking''', bottom.printedName, '''in place. After pulling the''', '''adventurer's''' if self is top else '''invader's''', 
-            bottom.clothing_below_the_waist().name, 
+            bottom.clothing_below_the_waist(), 
             ' '.join(['''tight against''', bottom.hisher(), bottom.bum_adj(), '''bottom,''']) if bottom.clothing_below_the_waist().liftlower() == 'lift' else ' '.join(['''up, over''', 
                 bottom.printedName + "'s", '''hips, and exposing''', bottom.printedName + "'s", bottom.underwear().name + ","]),
             top.printedName, '''begins swatting''', bottom.printedName + "'s", bottom.muscle_adj(), '''bottom with the other, the smacks echoing through the room.''']])
@@ -5659,10 +5655,10 @@ def e0_6_1():
         universal.say_title('Punished Taironans')
         if 'spectral_caned' in keywords():
             if universal.state.player.knows_spell(p.SpectralSpanking) and not 'spectral_spanked_Taironans' in keywords():
-                universal.say(universal.format_text([[name(), '''glares up at the Taironans, who studiously ignore''', himher() + ".", HisHer(), 
+                universal.say([name(), '''glares up at the Taironans, who studiously ignore''', himher() + ".", HisHer(), 
                     '''bottom still burns like the dickens from that wretched caning. Wonder if Adrian would let''',himher(), 
-                    '''cane the lot of them when this was done?'''],
-                ['''Or,''', heshe(), '''could cast Spectral Spanking now. Why wait until the attack was done?''', HeShe(), 
+                    '''cane the lot of them when this was done?'''], justification=0)
+                universal.say(format_text([['''Or,''', heshe(), '''could cast Spectral Spanking now. Why wait until the attack was done?''', HeShe(), 
                 '''would probably forget anyway.'''],
                 ['''Does''', name(), '''cast spectral spanking on the helpless Taironans?'''],
                 ['\p'],
@@ -5670,7 +5666,6 @@ def e0_6_1():
                     ['''2. No.''']]), justification=0)
                 set_commands(['(#) Select a number.'])
                 set_command_interpreter(e0_6_1_caning_revenge_interpreter)
-                return True
             elif 'spectral_spanked_Taironans' in keywords():
                 backOfGuild = universal.state.get_room('Guild')
                 backOfGuild.display(False)

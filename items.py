@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
+from __future__ import division
 import universal
 from universal import *
 import abc
@@ -217,7 +218,7 @@ class Armor(Item):
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6, risque=0):
         super(Armor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment)
         self.armorType = 'armor'
-        self.risque = 0
+        self.risque = risque
 
     @staticmethod
     def add_data(data, saveData):
@@ -238,7 +239,7 @@ class Armor(Item):
         return "lift"
 
     def lowerlift(self):
-        return "lower"
+        return self.lowerlift()
 
     def liftslowers(self):
         return self.liftlower() + "s"
@@ -259,7 +260,7 @@ class Armor(Item):
             _, risque, rest = armorData.split("Armor Data:")
         except ValueError:
             _, risque = armorData.split("Armor Data:")
-        armor.risque = int(risque.strip())
+        #armor.risque = int(risque.strip())
         if rest and "Lower Only:" in rest:
             LowerArmor.load(rest, armor)
 
@@ -348,7 +349,7 @@ class LowerArmor(Armor):
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6, risque=0,
             baring=False):
         super(LowerArmor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
-        self.baring = False
+        self.baring = baring
 
     @staticmethod
     def add_data(data, saveData):
@@ -435,7 +436,7 @@ class Skirt(LowerArmor):
 class Underwear(Armor):
     armorType = 'underwear'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, baring=False, armorType='underwear',
-            enchantments=None, maxEnchantment=9, risque=0):
+            enchantments=None, maxEnchantment=9, risque=3):
         super(Underwear, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
         self.baring = baring
         self.armorType = armorType
@@ -543,20 +544,19 @@ class Weapon(Item):
         """
         return self.attack_bonus(grappling)
 
-    def damage(self, grappling):
-        if self.minDamage == self.maxDamage:
-            return self.minDamage + (self.grappleBonus if grappling else self.armslengthBonus) + self.genericBonus
-        else:
-            return random.randrange(self.minDamage, self.maxDamage) + (self.grappleBonus if grappling else self.armslengthBonus) + self.genericBonus
+    def damage_multiplier(self, grappling):
+        return ((self.grappleBonus if grappling else self.armslengthBonus) + self.genericBonus) / 10
 
 
+PENALTY = -2
+BONUS = 2
 class Knife(Weapon):
     """
     Knives are exceptionally dangerous in close quarters, but all but useless if a 
     combatant is forced to keep their distance.
     """
     weaponType = 'knife'
-    def __init__(self, name, description, price=0, minDamage=1, maxDamage=5, grappleAttempt=1, grappleAttemptDefense=-1, grappleBonus=1, armslengthBonus=-1, genericBonus=0,
+    def __init__(self, name, description, price=0, minDamage=1, maxDamage=5, grappleAttempt=BONUS, grappleAttemptDefense=PENALTY, grappleBonus=BONUS, armslengthBonus=PENALTY, genericBonus=0,
             enchantments=None, maxEnchantment=4):
         super(Knife, self).__init__(name, description, price, minDamage, maxDamage, grappleAttempt, grappleAttemptDefense, grappleBonus, armslengthBonus, genericBonus,
                 enchantments, maxEnchantment)
@@ -590,8 +590,8 @@ class Spear(Weapon):
     """
     weaponType = 'spear'
     def __init__(self, name, description, price=0, minDamage=1, maxDamage=5, 
-            grappleAttempt=-1, grappleAttemptDefense=1, grappleBonus=-1,
-            armslengthBonus=1, genericBonus=0, enchantments=None, maxEnchantment=4):
+            grappleAttempt=PENALTY, grappleAttemptDefense=BONUS, grappleBonus=PENALTY,
+            armslengthBonus=BONUS, genericBonus=0, enchantments=None, maxEnchantment=4):
         super(Spear, self).__init__(name, description, price, minDamage, maxDamage, 
                 grappleAttempt, grappleAttemptDefense, grappleBonus,
                 armslengthBonus, genericBonus, enchantments=enchantments, maxEnchantment=maxEnchantment)
@@ -760,9 +760,10 @@ def bottom_without_lower_clothing(person):
         return person.underwear().name + "-clad bottom"
 
 emptyItem = Item('empty', 'empty', maxEnchantment=0)
-emptyWeapon = Weapon('bare hands', "I'll crush you with my bare hands! Or my magic. Whatever.", 0, 1, 1, -3, 2, -2, 0, maxEnchantment=0)
+emptyWeapon = Weapon('bare hands', "I'll crush you with my bare hands! Or my magic. Whatever.", 0, 0, 0, PENALTY, PENALTY, PENALTY, PENALTY, maxEnchantment=0)
 emptyUpperArmor = UpperArmor('shirtless', "Going for the sexy shirtless barbarian look eh? Remember, the key is to be flexing ALL THE TIME. Unless you're a woman, in which case the key is to have a two-dimensional waist and boobs so big they'd force you to walk on your hands and knees if you were a real-life person constrained by real-life physics. Fortunately, you are not.", maxEnchantment=0, risque=3) 
 emptyLowerArmor = LowerArmor('pantsless', "Real Men(TM) know that balls of steel are the only defense a man needs. Real Women(TM) know that running around pantsless is the best way to sell magazines. And books. And video games. And, well, anything really.", maxEnchantment=0, baring=True, risque=3)
+assert emptyLowerArmor.baring
 emptyUnderwear = Underwear('bare bottom', "Your tush. A truly glorious specimen. Go ahead and give it a slap. You know you want to.", baring=True, armorType='bare',
         maxEnchantment=0, risque=999)
 
