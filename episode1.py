@@ -5540,16 +5540,15 @@ def help_Morey(allies, enemies, won):
         '''was pretty fierce."'''],
         ['''The man curses. "That's where I'm heading then. Did Adrian give you any orders?"'''],
         ['''"He told me to get down to the armory, and see if I can keep them from stealing any of our equipment," says''', name() + "."],
-        ['''"Any more of our equipment would be more accurate," says Moray. "Well, get to it, time's a wasting. Now, if you'll excuse me."'''],
+        ['''"Any more of our equipment would be more accurate," says Morey. "Well, get to it, time's a wasting. Now, if you'll excuse me."'''],
         ['''"Wait," says''', name(), '''quickly. "Can you give me any pointers?"'''],
         ['''Morey narrows one eye. "Well, your enemy's choice of weapon can give you a clue of their skills. If your opponent is wielding a spear, they're probably''',
             '''not very good at grappling, and prefer to keep their distance. Successfully grappling them can be a good way of shutting them down. By the same token''',
             '''if your enemy's using a dagger of some kind, they're keen on getting close to you. Keeping your distance can be invaluable when dealing with such''',
             '''enemies."'''],
         [name(), '''rolls''', hisher(), '''eyes. "Yes, yes, I already knew that. Anything useful?"'''],
-        ['''"Well, I don't know what you know and don't know," says Morey testily. "I guess, one other thing is that your natural magic responds to threats in kind.''',
-            '''You fight an opponent who is exceptionally strong, and you'll grow stronger. Fight an opponent who is very agile, and dextrous, and you'll grow''',
-            '''more-"'''],
+        ['''"Well, I don't know what you know and don't know," says Morey testily. "I guess, one other thing is that your natural magic develops based on your actions.''',
+            '''You attack an enemy directly, and you're going to get more dexterous, quicker on your feet. Do a lot of grappling and you'll grow stronger--''']
         ['''"Nevermind," says''', name(), '''waving''', hisher(), '''hand. "Get on out to the main room. I'll get down to the armory."'''],
         ['''"Right, then." The warrior nods, and runs out the door, weapons at the ready.''']])
     universal.say(moreyText, justification=0)

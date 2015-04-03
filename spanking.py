@@ -19,7 +19,6 @@ along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 import items
 import random
 import universal
-import person
 import positions
 
 LEATHER_STRAP_SEVERITY = 4
@@ -31,7 +30,14 @@ OTK = 0
 STANDING = 1
 ON_THE_GROUND = 2
 
+implements = {}
+
 def spanking_string(top, bottom, position):
+    """
+    For all spanking string functions:
+    1. top is the character administering the spanking
+    2. bottom is the character receiving the spanking.
+    """
     #Only enemies contain spanking text
     try:
         return top.spanks(bottom, position)
@@ -39,15 +45,34 @@ def spanking_string(top, bottom, position):
         return bottom.spanked_by(top, position)
 
 def reversed_spanking(top, bottom, position):
+    """
+    For all spanking string functions:
+    1. top is the character administering the spanking
+    2. bottom is the character receiving the spanking.
+
+    Note that in the case of a reversal, this means that the intended bottom is passed to this function as top, while the intended top is passed to this function as bottom.
+    """
     try:
-        return bottom.reverses(top, position)
-    except NotImplementedError, AttributeError:
-        return top.reversed_by(bottom, position)
+        return top.reverses(bottom, position)
+    except (NotImplementedError, AttributeError):
+        if bottom == universal.state.player:
+            raise
+        return bottom.reversed_by(top, position)
+
+def continue_spanking(top, bottom, position):
+    try:
+        return top.continue_spanking(bottom, position)
+    except (NotImplementedError, AttributeError):
+        if bottom == universal.state.player:
+            raise
+        return bottom.continue_being_spanked(top, position)
 
 def failed_spanking(top, bottom, position):
     try:
         return top.failed(bottom, position)
-    except NotImplementedError, AttributeError:
+    except (NotImplementedError, AttributeError):
+        if bottom == universal.state.player:
+            raise
         return bottom.blocks(top, position)
 
 class Implement(items.Item):
@@ -57,6 +82,7 @@ class Implement(items.Item):
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, severity=0):
         super(Implement, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense)
         self.severity = severity
+        implements[self.name] = self
 
 
     def display(self):
@@ -79,4 +105,4 @@ class CombatImplement(Implement):
         return True
 
 
-
+hand = CombatImplement('hand', 'Your hand. It stings like the dickens.', severity=0)

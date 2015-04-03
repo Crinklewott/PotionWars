@@ -369,6 +369,7 @@ class Person(universal.RPGObject):
         self.struggling = False
         self.spankingEnded = False
         self.spankeeAlreadyHumiliated = False
+        self.implement = spanking.hand
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -543,6 +544,9 @@ class Person(universal.RPGObject):
 
     def heroheroine(self):
         return heroheroine(self)
+
+    def HeroHeroine(self):
+        return HeroHeroine(self)
 
     def himselfherself(self):
         return himselfherself(self)
@@ -2903,7 +2907,7 @@ class SpectralSpanking(Spectral):
         defender.receives_damage(self.damage)
         return ' '.join(['The right hand fades.', A, 'raises', hisher(attacker), 
                 'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', himher(defender), 'into the ground.\n\n',
-                D, 'receives', self.damage + "!"]) 
+                D, 'receives', str(self.damage) + "damage!"]) 
 
 #---------------------------------------Gender-specific functions---------------------------
 def choose_string(person, male, female):

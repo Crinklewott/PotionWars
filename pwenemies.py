@@ -29,6 +29,7 @@ def name():
     return universal.state.player.name
 
 class Enemy(person.Person):
+    ROUND_INDEX = 1
     def __init__(self, name, gender, defaultLitany, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3, musculature='', 
             bodyType='', height='', hairLength='', hairStyle='', eyeColor='', skinColor='', order=person.zeroth_order, identifier=None, litany=None):
         """
@@ -57,6 +58,12 @@ class Enemy(person.Person):
     def spanked_by(self, top, position):
         return self.spankingFunctions[position][0](top, self)
 
+    def continue_spanking(self, bottom, position):
+        return self.spankingFunctions[position][self.ROUND_INDEX](self, bottom)
+
+    def continue_being_spanked(self, top, position):
+        return self.spankingFunctions[position][self.ROUND_INDEX](top, self)
+
     def reverses(self, top, position):
         return self.spankingFunctions[position][-1](top, self)
 
@@ -68,7 +75,6 @@ class Enemy(person.Person):
 
     def blocks(self, top, position):
         return self.spankingFunctions[position][-2](top, self)
-
 
     def otk_intro(self, top, bottom):
         raise NotImplementedError()
@@ -148,7 +154,7 @@ class VengadorWarrior(Enemy):
         self.equip(copy.copy(itemspotionwars.warspear))
         self.description = universal.format_line(['''A tall, broad-shouldered''', person.manwoman(self) + ".", person.HeShe(self), '''is wielding a''', self.weapon().name, 
         '''and is wearing''', self.shirt().name, '''and''', self.lower_clothing().name + "."])
-        self.set_all_stats(strength=1, dexterity=2, willpower=0, talent=0, health=12, mana=0, alertness=1)
+        self.set_all_stats(strength=1, dexterity=2, willpower=0, talent=0, health=20, mana=0, alertness=1)
 
     def otk_intro(self, top, bottom):
         if self is top:
@@ -232,7 +238,7 @@ class VengadorWarrior(Enemy):
             return universal.format_text([['''The Vengador Warrior continues''', bottom.hisher(), '''struggle to escape''', top.printedName + "'s", '''grip, but''', bottom.hisher(), '''head is''',
                 '''securely stuck between the''', top.heroheroine() + "'s", top.muscle_adj(), '''thighs. If anything,''', bottom.hisher(), '''struggles only spur''', top.printedName, 
                 '''on to harder''',
-                '''and harder smacks, making''', bottom.hisher(), bottom.muscle_adj(), '''bottom bounce.''']])
+                '''and harder smacks, making the Vengador Warrior's''', bottom.muscle_adj(), '''bottom bounce.''']])
 
     def on_the_ground_round(self, top, bottom):
         if self is top:
@@ -244,11 +250,12 @@ class VengadorWarrior(Enemy):
                 '''poised to change the situation.''', top.printedName, '''concentrates on the Vengador's thighs and sit spots, eliciting both wails and pleas from''', top.hisher(), '''victim.''']])
 
     def otk_reversal(self, top, bottom):
-        return universal.format_text([[self.otk_intro(top, bottom)], ['''However, while''', top.printedName, '''continues to redden''', bottom.printedName + "'s" '''behind,''', bottom.printedName, 
-            '''musters all''', bottom.hisher(), '''lower-body strength into a grab-and-twist with''', bottom.printedName + "'s", '''thighs and hips, twisting both the Taironans around and''',
+        return universal.format_text([[self.otk_intro(top, bottom)], ['''However, while''', top.printedName, '''continues to redden''', bottom.printedName + "'s", '''behind,''', bottom.printedName, 
+            '''musters all''', bottom.hisher(), '''lower-body strength into a grab-and-twist with''', bottom.hisher(), '''thighs and hips, twisting both Taironans around and''',
             '''onto the floor. The surprised''', '''warrior''' if self is top else top.heroheroine(), '''is slow to respond, and is still lying on''', top.hisher(), 
-            '''stomach when a now-crouching''', bottom.printedName, '''grabs the waistband''',
-            '''of''', top.hisher(), '''trousers and yanks the helpless warrior onto''', bottom.hisher(), '''lap.''', bottom.printedName, '''begins pelting the warrior's squirming bottom with''',
+            '''stomach when a now-crouching''', bottom.printedName, '''grabs the''', '''waistband''' if bottom.lower_clothing().armorType == items.Pants.armorType else '''back''',
+            '''of''', top.hisher(), top.lower_clothing().name, '''and yanks the helpless warrior onto''', bottom.hisher(), '''lap.''', bottom.printedName, 
+            '''begins pelting the other's squirming bottom with''',
             '''a vengeance.''', top.printedName, '''has no hope of freeing''', top.himselfherself(), '''and finds''', top.himselfherself(), '''primarily preoccupied with trying to keep''', 
             top.hisher(), top.lower_clothing().name, top.lower_clothing().updown() + "."]])
 
@@ -258,7 +265,7 @@ class VengadorWarrior(Enemy):
             '''pulls''', bottom.himselfherself(), '''to''', bottom.hisher(), '''full height and wastes no time in grasping''', top.printedName, '''and shoving''', top.hisher(), '''head between''',
             bottom.hisher(), '''legs.''', bottom.printedName, ' '.join(['''spies the waistband of''', top.printedName + "'s", top.underwear().name, ' '.join(['''peeking out from above''', 
                 top.hisher(), top.lower_clothing().name]) if top.wearing_lower_clothing() else '', '''and clutches it tightly.''']) if top.wearing_underwear() else 
-            ' '.join(['''grabs the back of''', top.printedName + "'s", top.lower_clothing.name + "."])],
+            ' '.join(['''grabs the back of''', top.printedName + "'s", top.lower_clothing().name + "."]),
                     ['''Then,''', bottom.printedName, '''lifts''', top.printedName + "'s", '''bottom up by to hip level.''', top.printedName, '''curses and kicks, but that doesn't stop''',
                         bottom.printedName, '''from putting''', top.printedName, '''in the same vulnerable position in which''', top.heshe(), '''had tried to place''', bottom.printedName + ".",
                         '''With''', top.hisher(), '''head locked tightly between''', bottom.printedName + "'s", '''calves, the warrior can do little more than wriggle''', top.hisher(), 
@@ -353,7 +360,7 @@ class VengadorSpellslinger(Enemy):
     def __init__(self, gender, level=0, identifier=None):
         super(VengadorSpellslinger, self).__init__('Vengador', gender, None, specialization=universal.COMBAT_MAGIC, bodyType='voluptuous', height='short', musculature='soft', identifier=identifier)
         self.level = level
-        self.set_all_stats(strength=0, dexterity=1, willpower=2, talent=2, health=6, mana=10, alertness=0)
+        self.set_all_stats(strength=0, dexterity=1, willpower=2, talent=2, health=12, mana=10, alertness=0)
         if gender == person.FEMALE:
             self.equip(copy.copy(itemspotionwars.wornDress))
         else:
@@ -377,10 +384,18 @@ class VengadorSpellslinger(Enemy):
             '''before''', bottom.heshe(), '''even understands what's happening.''']])
 
     def otk_round(self, top, bottom):
-        return universal.format_text([[top.printedName, '''manages to keep''', top.hisher(), '''position, but several of''', top.hisher(), '''blows are deflected by''', bottom.printedName + "'s",
-            '''flailing hand. But then,''', top.printedName, '''catches and secures the hand and pins it to the small of the''', bottom.heroheroine() + "'s", '''back. Now with even more control,''', 
-            top.printedName, '''makes''', bottom.printedName, '''pay for''', bottom.hisher(), '''struggles by delivering a series of swats to the lower curve of''', bottom.hisher(), 
-            '''plump globes, prompting ineffectual kicking and threats of vengeance.''']])
+        if self.firstRound:
+            self.firstRound = False
+            return universal.format_text([[top.printedName, '''manages to keep''', top.hisher(), '''position, but several of''', top.hisher(), '''blows are deflected by''', bottom.printedName + "'s",
+                '''flailing hand.''', top.printedName, '''catches and secures the hand and pins it to the small of the''', (bottom.heroheroine() if self is top else '''vengador''') + "'s", 
+                '''back.''',  
+                top.printedName, '''then proceeds to make''', bottom.printedName, '''pay for''', bottom.hisher(), '''struggles with a series of swats to the lower curve of''', bottom.hisher(), 
+                '''plump''', bottom.bum_adj(), '''globes, prompting ineffectual kicking and threats of vengeance.''']])
+        else:
+            return universal.format_text([[top.printedName + "'s", top.implement.name, '''sweeps through the air and cracks violently against''', bottom.printedName + "'s", bottom.quivering(),
+                '''right cheek.''', bottom.printedName, '''yelps and kicks, but''', top.printedName + "'s", '''firm hold on''', bottom.hisher(), '''wrist keeps''', bottom.himher(), 
+                '''securely pinned. Then,''', top.printedName + "'s", top.implement.name, '''smacks''', bottom.printedName + "'s", bottom.muscle_adj(), '''left cheek, then right, then left again.''',
+                '''Each blow makes''', bottom.printedName, '''yelp a little louder, and kick a little harder.''']])
 
     def otk_failure(self, top, bottom):
         if self is top:
@@ -413,10 +428,12 @@ class VengadorSpellslinger(Enemy):
                 '''struggling''', top.heroheroine(), '''across''', bottom.hisher(), '''own knee. Then, the slinger begins returning the spanks to''', top.printedName + "'s", '''wriggling bottom.''']])
 
     def standing_intro(self, top, bottom):
-        return universal.format_text([[bottom.printedName + "'s", '''opponent fakes an attack with''', top.hisher(), '''staff, then quickly grabs''', top.printedName + "'s", '''shoulders,''',
-            '''and forces''', bottom.himher(), '''onto''', bottom.hisher(), '''hands and knees.''', top.printedName, '''straddles''', bottom.printedName + "'s", '''waist, and tightens''', 
-            top.hisher(), '''legs around''', bottom.printedName + "'s", '''torso. Then,''', top.heshe(), '''bends over and begins swatting''', bottom.printedName + "'s", '''behind.''',
-            bottom.printedName, '''swipes''', bottom.hisher(), '''hands to either side, but is unable to grab anything''', ' '.join(['''but the slinger's''', top.clothing_below_the_waist().name,])
+        return universal.format_text([[top.printedName, '''fakes an attack with''', top.hisher(), top.weapon().name + ",", '''then grabs''', bottom.printedName + "'s", '''shoulders.''',
+            top.HeShe(),
+            '''forces''', bottom.himher(), '''onto''', bottom.hisher(), '''hands and knees.''', top.printedName, '''then straddles''', bottom.printedName + "'s", '''waist, and tightens''', 
+            top.hisher(), '''legs around''', bottom.printedName + "'s", '''torso. Then,''', top.heshe(), '''bends over and begins swatting''', bottom.printedName + "'s", bottom.bum_adj(), 
+            '''behind.''',
+            bottom.printedName, '''swipes''', bottom.hisher(), '''hands to either side, but is unable to grab anything''', ' '.join(['''but the slinger's''', top.clothing_below_the_waist().name])
             if self is top else '''of use''', '''as''', bottom.hisher(), '''ass is set ablaze.''']])
 
     def standing_round(self, top, bottom):
@@ -444,7 +461,7 @@ class VengadorSpellslinger(Enemy):
                 self.firstRound = False
                 return universal.format_text([[bottom.printedName, '''continues to struggle against''', top.printedName + "'s", 
                     '''relentless spanking but only manages to claw the unforgiving floor.''',
-                    '''Smirking,''', top.printed, '''pulls up the slinger's''', bottom.lower_clothing().armorType, '''to reveal a shapely bare bottom.''', top.HeShe(), 
+                    '''Smirking,''', top.printedName, '''pulls up the slinger's''', bottom.lower_clothing().armorType, '''to reveal a shapely bare bottom.''', top.HeShe(), 
                     '''delivers six full-bodied smacks to each of the slinger's''',  bottom.bum_adj(), '''cheeks before moving on to''', bottom.hisher(), '''sit spots, the Vengador helplessly''',
                     '''howling all the while.''']])
             else:
@@ -488,7 +505,7 @@ class VengadorSpellslinger(Enemy):
                 '''thighs, the Vengador assaults''', bottom.hisher(), bottom.bum_adj(), '''bottom with full-armed swats as''', bottom.printedName, '''ineffectually squirms and squeals.''']])
         else:
             return universal.format_text([[top.printedName, '''feigns casting a spell, causing''', bottom.printedName, '''to rush''', top.himher(), '''in an attempt to stop it.''', top.printedName,
-                '''is expecting this, however, and just before the slinger is upon''', top.himher() + ",", '''the''', top.heroheroine(), '''shoves''', top.printedName + "'s", '''chest with both''',
+                '''is expecting this, however, and just before the slinger is upon''', top.himher() + ",", '''the''', top.heroheroine(), '''shoves''', bottom.printedName + "'s", '''chest with both''',
                 '''hands, knocking''', bottom.himher(), '''flat on''', bottom.hisher(), '''back. The adventurer then grabs the feet of the surprised spellcaster and lifts them straight up,''',
                 '''perpendicular to''', bottom.hisher(), '''torso.'''],
                 ['''The Vengador's robe slides down to the small of''', bottom.hisher(), '''back, exposing a shapely pair of coffee-colored legs and a full, bare bottom. Locking''', top.hisher(), 
@@ -497,13 +514,16 @@ class VengadorSpellslinger(Enemy):
 
     def on_the_ground_round(self, top, bottom):
         if self is top:
-            return universal.format_text([[bottom.printedName, '''tries to sit up in an effort to grab''', top.printedName + ".", '''Alas,''', bottom.heshe() + "'s", '''unable to get into a''',
-                '''full sitting position, and the slinger pushes''', bottom.himher(), '''back down with''', top.hisher(), '''foot, never breaking''', top.hisher(), '''tight grip on the''',
-                bottom.heroheroine() + "'s", '''legs. If anything, the slinger grips''', bottom.printedName + "'s", '''thighs even tighter as''', top.heshe(), '''pushes''', top.hisher(), 
-                '''foot snugly underneath the''', bottom.heroheroine() + "'s", '''chin. Immobile,''', bottom.printedName, '''is helpless to prevent a renewed barrage of swats to''', bottom.hisher(),
+            return universal.format_text([[bottom.printedName, '''lunges up and grabs for''', top.printedName + ",", '''but the slinger pushes''', bottom.himher(), '''back down with''', 
+                top.hisher(), '''foot, never breaking''', top.hisher(), '''tight grip on the''',
+                bottom.heroheroine + "'s", '''legs. The slinger grips''', bottom.printedName + "'s", '''thighs even tighter, and''', bottom.printedName, 
+                '''is helpless to prevent a renewed barrage of swats to''', bottom.hisher(),
                 '''stinging cheeks.''']]) 
         else:
-            raise NotImplementedError()
+            return universal.format_text([[bottom.printedName, '''lunges up and grabs for''', top.printedName + ",", '''But''', top.printedName, '''pushes''', bottom.himher(), '''back down with''', 
+                top.hisher(), '''foot.''', top.printedName, 
+                '''grips''', bottom.printedName + "'s", '''thighs even tighter, and''', bottom.printedName, '''is helpless to prevent a renewed barrage of swats to''', bottom.hisher(),
+                '''stinging cheeks.''']]) 
 
     def on_the_ground_failure(self, top, bottom):
         if self is top:
@@ -580,7 +600,7 @@ class VengadorScout(Enemy):
         self.equip(copy.copy(itemspotionwars.dagger))
         self.description = format_line(['''A short, thin Taironan''', person.manwoman(self), '''dresssed in a''', self.shirt().name + "," ''' and''', 
             self.lower_clothing().name + ".", person.HeShe(self), '''carries a''', self.weapon().name + "."])
-        self.set_all_stats(strength=3, dexterity=1, willpower=2, talent=1, health=9, mana=7, alertness=2)
+        self.set_all_stats(strength=3, dexterity=1, willpower=2, talent=1, health=18, mana=7, alertness=4)
         self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
         self.learn_spell(spells_PotionWars.heal)
         self.learn_spell(spells_PotionWars.weaken)
@@ -599,16 +619,16 @@ class VengadorScout(Enemy):
         if self.firstRound:
             self.firstRound = False
             return universal.format_text([[bottom.printedName, '''kicks and squirms under the punishing hand of''', top.printedName + ".", '''Flinging one of''', bottom.hisher(), 
-            '''hands around behind''', bottom.himher(), + ",", '''the''', bottom.heroheroine() if self is top else "scout", '''manages to slap''', bottom.hisher(), 
+            '''hands around behind''', bottom.himher() + ",", '''the''', bottom.heroheroine() if self is top else "scout", '''manages to slap''', bottom.hisher(), 
             '''accoster across the face. The''', '''scout''' if self is top else bottom.heroheroine(), '''retaliates by twisting''',
             bottom.printedName + "'s", '''arm around and pinning it to the small of''', bottom.hisher(), '''back. Free to spank unhindered,''', top.printedName, '''thoroughly heats''', 
             bottom.printedName + "'s", 
-            '''exposed bottom.''' if bottom.clothing_below_the_waist().is_baring() else ' '.join(['''through''',  bottom.hisher(), bottom.clothing_below_the_waist().tightness, 
+            '''exposed bottom.''' if bottom.clothing_below_the_waist().baring else ' '.join(['''through''',  bottom.hisher(), bottom.clothing_below_the_waist().tightness, 
             bottom.clothing_below_the_waist().armorType + "."])]])
         else:
             return universal.format_text([[bottom.printedName, '''kicks and squirms under the punishing hand of''', top.printedName + ".", '''Every attempt to wrench''', bottom.hisher(), 
                 '''wrist free ends in failure, and a particularly vicious stream of slaps as''', top.printedName, '''thoroughly heats''', bottom.printedName + "'s", 
-            '''exposed bottom.''' if bottom.clothing_below_the_waist().is_baring() else ' '.join(['''through''',  bottom.hisher(), bottom.clothing_below_the_waist().tightness, 
+            '''exposed bottom.''' if bottom.clothing_below_the_waist().baring else ' '.join(['''through''',  bottom.hisher(), bottom.clothing_below_the_waist().tightness, 
             bottom.clothing_below_the_waist().armorType + "."])]])
 
     def otk_failure(self, top, bottom):
@@ -651,12 +671,12 @@ class VengadorScout(Enemy):
                             '''up  and over the small of''', bottom.hisher(), '''back,''']), '''fully exposing''', bottom.printedName + "'s", 
                         '''bare bottom.''' if bottom.clothing_below_the_waist().armorType == items.Underwear.armorType else bottom.underwear().name + "."],
                         [bottom.printedName, '''squeals and kicks as''', top.printedName, '''begins gleefully slapping''', bottom.hisher(), 
-                            '''bare cheeks''' if not bottom.wearing_lower_clothing() or bottom.underwear().is_baring() else ' '.join(['''cheeks over the thin cloth of''', bottom.hisher(), 
+                            '''bare cheeks''' if not bottom.wearing_lower_clothing() or bottom.underwear().baring else ' '.join(['''cheeks over the thin cloth of''', bottom.hisher(), 
                                 bottom.underwear().name])]])
             else:
                 return universal.format_text([[bottom.printedName, '''squeals, curses and kicks as''', top.printedName, '''continues energetically smacking''', bottom.printedName + "'s", 
                     bottom.bum_adj(), '''bottom,''', bottom.hisher(), '''lowered''' if not bottom.wearing_lower_clothing() else '', bottom.underwear().name, '''doing'''
-                    '''absolutely''' if bottom.underwear().is_baring() or not bottom.wearing_lower_clothing() else '''almost''', '''nothing to protect''', bottom.hisher(),
+                    '''absolutely''' if bottom.underwear().baring or not bottom.wearing_lower_clothing() else '''almost''', '''nothing to protect''', bottom.hisher(),
                     bottom.quivering(), '''cheeks.''']])
         else:
             return universal.format_text([[bottom.printedName, '''curses violently as''', top.printedName, '''continues thrashing''', bottom.hisher(), '''vulnerable bottom.''', 
@@ -670,7 +690,7 @@ class VengadorScout(Enemy):
                         '''up  and over the small of''', bottom.hisher(), '''back,''']), '''fully exposing''', bottom.printedName + "'s", 
                     '''bare bottom.''' if bottom.clothing_below_the_waist().armorType == items.Underwear.armorType else bottom.underwear().name + "."],
                     [bottom.printedName, '''squeals and kicks as''', top.printedName, '''begins gleefully slapping''', bottom.hisher(), 
-                        '''bare cheeks''' if not bottom.wearing_lower_clothing() or bottom.underwear().is_baring() else ' '.join(['''cheeks over the thin cloth of''', bottom.hisher(), 
+                        '''bare cheeks''' if not bottom.wearing_lower_clothing() or bottom.underwear().baring else ' '.join(['''cheeks over the thin cloth of''', bottom.hisher(), 
                             bottom.underwear().name])]])
 
     def standing_failure(self, top, bottom):

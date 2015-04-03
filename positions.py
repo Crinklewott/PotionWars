@@ -33,9 +33,9 @@ class Position(universal.RPGObject):
     """
     Defines the spanking positions
     """
-    def __init__(self, name, difficulty, maintainability, description):
+    def __init__(self, name, humiliating, maintainability, description):
         self.name = name
-        self.difficulty = difficulty
+        self.humiliating = humiliating
         self.maintainability = maintainability
         #We're going to eliminate the reversability stat. So we do that by setting it to 0 so we don't have to affect the reversability calculations at all.
         self.reversability = 0
@@ -43,7 +43,7 @@ class Position(universal.RPGObject):
         allPositions[self.name] = self
 
     def display(self):
-        return '\n'.join([self.description, 'difficulty: ' + rating(self.difficulty), 'maintainability: ' + rating(self.maintainability)])
+        return '\n'.join([self.description, 'humiliating: ' + rating(self.humiliating), 'maintainability: ' + rating(self.maintainability)])
 
     def __eq__(self, other):
         return self.name == other.name
@@ -55,9 +55,9 @@ class Position(universal.RPGObject):
     def _load(data):
         raise NotImplementedError("Shouldn't be loading positions. These are constant.")
 
-overTheKnee = Position('over the knee', 1, 1, "Positions in this class involve the spanker turning the spankee over her knee. This is the position to which all other positions are compared. It is relatively easy to pull off successfully, and the spanker can maintain the position for a fair amount of time.")
+overTheKnee = Position('over the knee', 2, 0, "Positions in this class involve the spanker turning the spankee over her knee. This position is very humiliating, but difficult to maintain.")
 
-standing = Position('standing', 0, 0, "The spanker remains standing when administering the spanking. Positions in this class include: grabbing the spankee's arm, underarm, and over the shoulder, amongst others. These positions are relatively easy to get into, but they're very hard to maintain. Useful against enemies with a relatively high grapple.")
+standing = Position('standing', 1, 1, "The spanker remains standing when administering the spanking. Positions in this class include: grabbing the spankee's arm, underarm, and over the shoulder, amongst others. These positions are are balanced. They're both moderately humiliating and moderately easy to maintain..")
 
-onTheGround = Position('on the ground', 2, 2, "Positions in this class involve the spankee being on the ground. Such positions include but are not limited to, diaper, reverse riding, and waist between legs. These positions are relatively difficult to get into, but are relatively easy to maintain. These can be devastating against enemies with a relatively low grapple.")
+onTheGround = Position('on the ground', 0, 2, "Positions in this class involve the spankee being on the ground. Such positions include but are not limited to, diaper, reverse riding, and waist between legs. These positions are not very humiliating, but they are very easy to maintain. These can be devastating against enemies with a relatively low grapple.")
 

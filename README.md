@@ -2,11 +2,12 @@ PotionWars
 ==========
 
 The source code, and associated images for the text-based role playing game Pandemonium Cycle: The Potion Wars. Be warned this game has erotic content, and is very NSFW. The development blog can be 
-found at spankingrpgs.blogspot.com. There you can read monthly blog posts by me about the game's development, and download a binary for either Ubuntu or Windows 7.
+found at spankingrpgs.com. There you can read monthly blog posts by me about the game's development, and download a binary for either Ubuntu or Windows 7.
 
 Thank you for downloading the source-code for Pandemonium Cycle: The Potion Wars. I hope you enjoy it!
 
-----------------------------------------------Looking at the code-----------------------------------------------------------------------------
+-------------------------Looking at the code-------------
+
 The bulk of the source code is the result of about six months of crazy coding by a single individual (me). As such, it's more than a little bit messy. PotionWars.py is the main driver, episode1.py contains
 the text of the first episode, and sp_rpg_engine.py contains the read-eval-print loop. Those are probably the best files to look at if you want to start tinkinger with the source code I've tried to make 
 the filenames and
@@ -42,7 +43,8 @@ into the other module. Therefore, any modifications to the variable in Module 1 
 was breaking so badly, before I learned about this "feature."
 
 
----------------------------------------------Running the code-------------------------------------------------------------------------
+---------------Running the code--------------
+
 If you would like to run my game directly using the Python source, you need two things:
 
 1. Python 2.7 - 32 bit
@@ -59,6 +61,7 @@ I will need to decrypt it in order to use it, and to decrypt I'll need to have t
 
 
 ------------------------------------------------Game-----------------------------------------------------------------
+
 The game's interface is (hopefully!) pretty self-explanatory. There are only a few things I would like to point out. For more details see the included manual (manual/potionwars.pdf).
 
 The game screen is split into two parts. The top two-thirds is the game world. This is where you will see text describing your character's actions, your location, and
@@ -69,19 +72,10 @@ trigger Command. So, while in town, you will see the command (G)o. Pressing "G" 
 middle: Co(M)mand. This is likely because there is another command that already uses the first letter of that word. In this case, you need to press "M" to trigger Command, 
 not "C."
 
-Finally, when in the dungeon mode, you move the player using the arrow keys. The up key moves forward, the down key moves back, and the left and right keys turn you
+When in the dungeon mode, you move the player using the arrow keys. The up key moves forward, the down key moves back, and the left and right keys turn you
 ninety degrees. The walls are split into squares. Some of the squares will have a second square inside them. These are doors, which you can go through by pressing "up,",
 just like you were walking forward. You may also see colored squares. These indicate special events. The different colors mean different things, which I'll let you figure out
 on your own. 
-
-Your character increases in strength in a rather unusual way. The level up system is inspired by Final Fantasy Legend II: rather than gaining experience and
-leveling up, your character's stats have a chance of going up based on the actions you perform. So if your character attacks a lot, there's a good chance they'll
-gain a point in strength. If your character casts lots of spells, there's a good chance their talent will go up.
-Furthermore, the rate of growth is dependent on your enemies. More powerful enemies increase the chances of a stat increase, less powerful decrease the chances. So don't
-waste time grinding, the game is balanced so that grinding is unnecessary.
-
-When you are defeated, you will be given the option of trying again. If you see "Optional" just above the command window in battle mode. This means that if you press "N" you
-won't get a game over. Rather, you will see a different post-battle scene, and the game will continue. 
 
 There are two styles of combat: armslength and grapple. When fighting at armslength, spears get bonuses, and daggers get penalties. Grappling gives daggers bonuses and
 spears penalties. Swords suffer neither bonuses nor penalties, regardless of the fighting style. The primary benefit of grappling is that it forces most multi-target
@@ -96,8 +90,7 @@ also makes it harder for their allies to help them.
 
 If you choose to (Q)uick Save, the game will be automatically saved in the file "quick.sav."
 
-
-If you have any comments or criticims about the story or writing, please either comment on my blog at spankingrpgs.blogspot.com, or send an e-mail to 
+If you have any comments or criticims about the story or writing, please either comment on my blog at spankingrpgs.com, or send an e-mail to 
 sprpgs+PWStory@gmail.com.
 
 Any bug reports, post on my blog, or send me an e-mail at sprpgs+PWBugs@gmail.com

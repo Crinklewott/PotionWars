@@ -75,6 +75,7 @@ class CombatAction(universal.RPGObject):
     grappleStatus = None
     effectClass = None
     numTargets = None
+    actionType = 'Combat'
     def __init__(self, attacker, defenders, primaryStat, secondaryStat):
         if type(defenders) != list:
             defenders = [defenders]
@@ -117,6 +118,12 @@ class CombatAction(universal.RPGObject):
             character attempts to grapple an enemy, but that enemy successfully grapples your character first, then your character will default to attacking).
         """
         return
+
+    def being_spanked(self):
+        if self.attacker.involved_in_spanking():
+            return ('', [None], CombatAction(self.attacker, self.defenders, self.primaryStat, self.secondaryStat))
+        else:
+            return None
 
     def _save(self):
         raise NotImplementedError()
@@ -174,6 +181,7 @@ def compute_bonus(difference):
         bonus += int(math.floor(remainder * multiplier))
     return bonus
 
+
 class AttackAction(CombatAction):
     targetType = ENEMY
     grappleStatus = GRAPPLER_ONLY
@@ -196,50 +204,56 @@ class AttackAction(CombatAction):
         """
         Returns a triple: A string indicating what happened, the damage inflicted by the action, and this action.
         """
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         defender = self.defenders[0]
         attacker = self.attacker
+        opponents = enemies if attacker in allies else allies
+        if defender.is_grappling() and not attacker.is_grappling(defender):
+            opponents.remove(defender)
+            if opponents:
+                return AttackAction(attacker, [opponentsCopy[random.randrange(len(opponentsCopy))]]).effect(inCombat, allies, enemies)
+            else:
+                return DefendAction(attacker, [attacker]).effect(inCombat, allies, enemies)
         opponents = enemies if self.attacker in allies else allies
         if not defender in opponents:
             return AttackAction(attacker, opponents[randrange(0, len(opponents))]).effect(inCombat, allies, enemies)
         resultString = ''
-        try:
-            if defender.guardian.current_health() == 0:
-                defender.guardian = None
-        except AttributeError:
-            pass
-        if defender.guardian:
-            self.defenders[0] = defender.guardian
+        defender.guardians = [guardian for guardian in defender.guardians if guardian.current_health() > 0]
+        if defender.guardians:
+            #If the defender is being guarded, then we use the first guardians instead of the current defender. 
+            guardian = defender.guardians.pop()
+            self.defenders = [guardian]
             attackEffect = self.effect(inCombat, allies, enemies)
-            defender.guardian = None
-            return ('\n'.join([' '.join([defender.guardian.printedName, 'defends', defender.printedName, 'from', attacker.printedName + '!']), attackEffect[0]]), 
+            return ('\n'.join([' '.join([guardian.printedName, 'defends', defender.printedName, 'from', attacker.printedName + '!']), attackEffect[0]]), 
                     attackEffect[1], attackEffect[2]) 
-        if not defender.guardian:
+        else:
             attacker = self.attacker
-            wa = attacker.weapon()
-            wd = defender.weapon()
-            attackBonus = wa.attack_bonus(attacker.is_grappling())
-            defendBonus = wd.parry_bonus(defender.is_grappling())
-            warfareDifference = max(0, attacker.warfare() - defender.warfare())
-            bonus = compute_bonus(warfareDifference)
-            #attackBonus += attacker.warfare()
-            #defendBonus += defender.warfare() // 2
-            #assert attacker.attack_penalty() >= 0, '%s attack penalty: %s' % (attacker.name, attacker.attack_penalty())
-            #attackBonus += attacker.attack_penalty()
-            #defendBonus += defender.attack_penalty()
-            success = rand(bonus + attackBonus) 
-            failure = rand(defendBonus)
-            if failure <= success:
-                #damageBonus = attacker.warfare() + wa.attack_bonus(attacker.is_grappling()) - defender.defense()
-                dam = max(1, wa.damage(attacker.is_grappling()) + bonus - defender.defense())
-                defender.receives_damage(dam)
-                damageString = ' '.join([attacker.printedName, 'hits', defender.printedName, 'for', str(dam), 'damage!'])
-            else:
-                dam = 0
-                damageString = ' '.join([attacker.printedName, 'misses', defender.printedName + '!'])
+            dam = compute_damage(attacker.warfare(), attacker.warfare() + attacker.attack() - (defender.warfare() + defender.defense())) 
+            defender.receives_damage(dam) 
+            damageString = ' '.join([attacker.printedName, 'hits', defender.printedName, 'for', str(dam), 'damage!'])
             resultString = '\n'.join([resultString, damageString]) if resultString != '' else damageString
             if defender.current_health() <= 0:
                 resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
             return (resultString, [dam], self)
+
+
+MINIMUM_NEGATIVE_DAMAGE = -5
+DIVISION_CONSTANT = 10
+MAX_BONUS = 5
+def compute_damage(attWarfare, warfareDiff):
+    """
+    Given the attacker's warfare, and the difference between the attacker's attack and defender's defense, computes the damage administered by the attacker.
+    """
+    assert MINIMUM_NEGATIVE_DAMAGE < 0 < MAX_BONUS, "MINIMUM NEGATIVE DAMAGE: %d not negative or MAX_BONUS: %d not positive." % (MINIMUM_NEGATIVE_DAMAGE, MAX_BONUS)
+    assert DIVISION_CONSTANT != 0, "DIVISION_CONSTANT cannot be zero."
+    if MINIMUM_NEGATIVE_DAMAGE <= warfareDiff <= MAX_BONUS:
+        return attWarfare + int(math.trunc(warfareDiff / DIVISION_CONSTANT * attWarfare))
+    elif warfareDiff < MINIMUM_NEGATIVE_DAMAGE:
+        return max(1, compute_damage(attWarfare, warfareDiff + 1) - 1)
+    else:
+        return 1 + compute_damage(attWarfare, warfareDiff - 1)
 
 
 class GrappleAction(CombatAction):
@@ -250,6 +264,7 @@ class GrappleAction(CombatAction):
     primaryStat = universal.STRENGTH
     secondaryStat = universal.DEXTERITY
     actionType = 'GrappleAction'
+    GRAPPLE_DURATION_DIVISOR = 2
     def __init__(self, attacker, defenders, enemyInitiated=False):
         super(GrappleAction, self).__init__(attacker, defenders, GRAPPLE, GrappleAction.secondaryStat)
         self.targetType = ENEMY
@@ -265,46 +280,45 @@ class GrappleAction(CombatAction):
         """
         Attacker tries to grapple defender. If attacker is already grappling defender, attacks defender. If attacker is already grappling someone else, attempts to break
         that other grapple.
-        Returns a triple of a string, boolean and action: The string contains a printout of the result of the grapple, the boolean is true if the grapple was successful, 
-        and false otherwise, the action is the action performed: this action if the grappling was attempted. Otherwise, if something else had to happen (an attack, a 
+        Returns a triple of a string, a list containing an int and the action: The string contains a printout of the result of the grapple, the number of rounds the characters will be grappling, 
+        the action is the action performed: this action if the grappling was attempted. Otherwise, if something else had to happen (an attack, a 
         different grapple, etc) then it's that action.
         """
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         defender = self.defenders[0]
         opponents = enemies if self.attacker in allies else allies
         attacker = self.attacker
         if not defender in opponents:
             return AttackAction(attacker, opponents[randrange(0, len(opponents))]).effect(inCombat, allies, enemies)
         resultString = ''
+        defender.guardians = [guardian for guardian in defender.guardians if guardian.current_health() > 0]
         if attacker.is_grappling() and not attacker.is_grappling(defender):
             return BreakGrappleAction(attacker, attacker.grapplingPartner).effect(inCombat, allies, enemies)
-        elif defender.guardian is not None and not defender.is_grappling(attacker):
-            resultString = ' '.join([defender.guardian.printedName, 'defended', defender.printedName, 'from', attacker.printedName + '!'])
-            self.defenders = [defender.guardian]
-            defender.guardian = None
+        elif defender.guardians and not defender.is_grappling(attacker):
+            guardian = defender.guardians.pop()
+            resultString = ' '.join([guardian.printedName, 'defends', defender.printedName, 'from', attacker.printedName + '!'])
+            self.defenders = [guardian]
             grappleEffect = self.effect(inCombat, allies, enemies)
-            if grappleEffect[1]:
-                #If the attacker is grappling the defender's guardian, the guardian can no longer protect the defender.
-                defender.guardian = None
             return ('\n'.join([resultString, grappleEffect[0]]), grappleEffect[1], grappleEffect[2])
         elif attacker.is_grappling(defender):
             return AttackAction(attacker, defender).effect(True, allies, enemies)
-        if not defender.guardian:               
+        if not defender.guardians:               
             if defender.is_grappling() and not defender.is_grappling(attacker):
                 return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
-            wa = attacker.weapon()
-            wd = defender.weapon()
-            bonus = compute_bonus(max(0, attacker.grapple() - defender.grapple()))
-            #grappleABonus = wa.grappleAttempt + attacker.grapple() - attacker.attack_penalty()
-            #grappleDBonus = wd.grappleAttemptDefense + max(defender.grapple(), defender.warfare()) // 2 - defender.attack_penalty()
-            success = rand(CHANCE_RANGE + bonus + wa.grappleAttempt)
-            failure = rand(CHANCE_RANGE + wd.grappleAttemptDefense)
-            if failure <= success:
-                defender.break_grapple()
-                attacker.grapple(defender)
-                return(' '.join([attacker.printedName, 'grapples', defender.printedName + '!']), [True], self)
             else:
-                return(' '.join([attacker.printedName, 'fails to grapple', defender.printedName + '!']), [False], self)
+                duration = compute_damage(attacker.grapple(), attacker.grapple() - defender.grapple()) // self.GRAPPLE_DURATION_DIVISOR
+                if duration < 1:
+                    duration = 0
+                    return (' '.join([attacker.printedName, 'cannot grapple' ,defender.printedName + '!']), [duration], self)
+                else:
+                    defender.break_grapple()
+                    attacker.grapple(defender, duration)
+                    return (' '.join([attacker.printedName, 'grapples', defender.printedName + '!']), [duration], self)
 
+
+GRAPPLE_DIVISOR = 2
 
 class BreakGrappleAction(CombatAction):
     targetType = ENEMY
@@ -327,23 +341,23 @@ class BreakGrappleAction(CombatAction):
         Returns a triple: The string indicating the result, true if the break succeeded false otherwise, and itself if the break grapple occured. Otherwise, if the 
         grapple had already been broken, this function returns the result of the attacker defending.
         """
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         attacker = self.attacker
         defender = attacker.grapplingPartner
         if defender is None:
             return DefendAction(attacker, attacker).effect(inCombat, allies, enemies)
         if attacker.is_grappling():
-            wa = attacker.weapon()
-            wd = defender.weapon()
-            bonus = compute_bonus(max(0, attacker.grapple() - defender.grapple()))
-            #grappleABonus = wa.grappleAttemptDefense + max(attacker.warfare(), attacker.grapple()) - attacker.attack_penalty()
-            #grappleDBonus = wd.grapple_bonus() // 2 + defender.grapple() - defender.attack_penalty()
-            success = rand(bonus + wa.grapple_bonus())
-            failure = rand(wd.grapple_bonus())
-            if failure <= success:
+            attacker.reduce_grapple_duration(attacker.grapple() // GRAPPLE_DIVISOR)
+            defender.reduce_grapple_duration(attacker.grapple() // GRAPPLE_DIVISOR)
+            assert attacker.grapple_duration() == defender.grapple_duration(), "%s grapple duration: %d, %s grapple duration: %d" % (attacker.name, attacker.grappleDuration, defender.name, 
+                    defender.grappleDuration)
+            if attacker.grapple_duration():
+                return(' '.join([attacker.printedName, 'loosens', defender.printedName + "'s", "hold on", person.himher(attacker) + '!']), [False], self)
+            else:
                 attacker.break_grapple()
                 return (' '.join([attacker.printedName, 'breaks the grapple with', defender.printedName + '!']), [True], self)
-            else:
-                return(' '.join([attacker.printedName, 'fails to break the grapple with', defender.printedName + '!']), [False], self)
         else:
             return DefendAction(attacker, attacker).effect(inCombat, allies, enemies)
 
@@ -363,6 +377,9 @@ class RunAction(CombatAction):
         self.actionType = 'run'
 
     def effect(self, inCombat=True, allies=None, enemies=None):
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         avgEnemyStealth = 0
         minEnemyStealth = 9000
         attacker = self.attacker
@@ -379,14 +396,17 @@ class RunAction(CombatAction):
             return(' '.join(['The party has failed to flee.']), [False], self)
             
 class SpankAction(CombatAction):
-    #TODO: Rework with the new spanking mechanic described on my blog.
     targetType = ENEMY
     grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
     effectClass = ALL
     numTargets = 1
     primaryStat = universal.STRENGTH
-    secondaryStat = universal.DEXTERITY
+    secondaryStat = universal.WILLPOWER
     actionType = 'spank'
+    REVERSAL_CHANCE = 20
+    MIN_SPANKING_DURATION = 2
+    MIN_HUMILIATED_DURATION = 2
+    DIVISOR = 10
     def __init__(self, attacker, defenders, position, severity=0):
         super(SpankAction, self).__init__(attacker, defenders, GRAPPLE, SpankAction.secondaryStat)
         self.targetType = ENEMY
@@ -399,50 +419,144 @@ class SpankAction(CombatAction):
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
-            Returns a triple: The result of the spanking, a positive number if the spanking was successful, a negative number if the spanking was reversed, and 0 if the 
-            spanking failed, and the actual action performed.
+            Returns a triple: The result of the spanking, the duration if the spanking was successful, the negative duration if the spanking was reversed, and the actual action performed.
         """
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         attacker = self.attacker
         defender = self.defenders[0]
         position = self.position
         opponents = enemies if self.attacker in allies else allies
         if not defender in opponents:
-            return AttackAction(attacker, opponents[randrange(0, len(opponents))]).effect(inCombat, allies, enemies)
+            return DefendAction(attacker, opponents[randrange(0, len(opponents))]).effect(inCombat, allies, enemies)
         if attacker.is_grappling(defender):
-            wa = attacker.weapon()
-            wd = defender.weapon()
-            #spankABonus = wa.grapple_bonus() + attacker.grapple() - attacker.attack_penalty()
-            #spankDBonus = wd.grapple_bonus() + defender.grapple() - defender.attack_penalty()
-            success = rand(compute_bonus(max(0, attacker.grapple() - defender.grapple())) + wa.grapple_bonus())
-            failure = rand(wd.grapple_bonus() + self.position.difficulty)
-            humiliated = False
-            successFlag =  0
-            if failure <= success:
-                if not defender.is_inflicted_with(statusEffects.Humiliated.name):
-                    duration = max(MIN_DURATION, DURATION_MULTIPLIER * rand(compute_bonus(max(0, attacker.resilience() - defender.resilience()))) + self.severity)
-                    #This is just a placeholder, until we can implement the multi-round spankings.
-                    numSmacks = rand(self.position.maintainability)
-                    defender.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration, numSmacks))
-                resultString = spanking.spanking_string(attacker, defender, position)
-                successFlag = 1
+            spanker, spankee = attacker, defender
+            spankerGrapple, spankeeGrapple = spanker.grapple(), spankee.grapple()
+            spankerWillpower, spankeeWillpower = spanker.willpower(), spankee.willpower()
+            resultStringFunction = spanking.spanking_string
+            durationMultiplier = 1
+            if random.randrange(100) < self.REVERSAL_CHANCE:
+                spankee, spanker = spanker, spankee
+                durationMultiplier = -1
+                #Reversals suck. They use whichever combination of grapples and willpowers that most benefits the new spanker, and hurts the new spankee! 
+                spankerGrapple, spankeeGrapple = max(spanker.grapple(), spankee.grapple()), min(spanker.grapple(), spankee.grapple())
+                spankerWillpower, spankeeWillpower = max(spanker.willpower(), spankee.willpower()), min(spanker.willpower(), spankee.willpower())
+                resultStringFunction = spanking.reversed_spanking
+            spanker.begin_spanking(spankee, self.position)
+            spankee.begin_spanked_by(spanker, self.position)
+            resultString = resultStringFunction(spanker, spankee, self.position)
+            grappleBonus = int(math.trunc(self.position.maintainability / self.DIVISOR) * spankerGrapple)
+            durationBonus = int(math.trunc(self.position.humiliating / self.DIVISOR) * spankerGrapple)
+            spankingDuration =  durationMultiplier * max(self.MIN_SPANKING_DURATION, spankerGrapple - spankeeGrapple) + grappleBonus
+            spankee.grappleDuration = spanker.grappleDuration = spankingDuration if spankingDuration > 0 else -spankingDuration
+            assert spankee.grappleDuration
+            assert spanker.grappleDuration
+            duration = max(self.MIN_HUMILIATED_DURATION, spankerWillpower - spankeeWillpower) + durationBonus
+            if not spankee.is_inflicted_with(statusEffects.Humiliated.name):
+                spankee.inflict_status(statusEffects.build_status(statusEffects.Humiliated.name, duration))
+                spanker.spankeeAlreadyHumiliated = False
             else:
-                success = rand(compute_bonus(max(0, defender.grapple() - attacker.grapple())) + wd.grapple_bonus())
-                failure = rand(wa.grapple_bonus())
-                if failure <= success:
-                    if not attacker.is_inflicted_with(statusEffects.Humiliated.name):
-                        duration = max(MIN_DURATION, DURATION_MULTIPLIER * rand(compute_bonus(max(0, defender.resilience() - attacker.resilience()))) + self.severity)
-                        numSmacks = rand(self.position.maintainability)
-                        attacker.inflict_status(statusEffects.build_status(statusEffects.HUMILIATED, duration, numSmacks))
-                    #This will also need to be reworked to use the enemy's spanking strings.
-                    resultString = spanking.reversed_spanking(attacker, defender, position)
-                    successFlag = -1
-                else:
-                    #This will also need to be reworked to use the enemy's spanking strings.
-                    resultString = spanking.failed_spanking(attacker, defender, position)
-                    successFlag = 0
-            return (resultString, [successFlag], self)
+                spanker.spankeeAlreadyHumiliated = True
+            return (resultString, [spankingDuration], self)
         else:
-            return GrappleAction(attacker, defender).effect(inCombat, allies, enemies)
+            if attacker.grapple() > defender.grapple():
+                return GrappleAction(attacker, defender).effect(inCombat, allies, enemies)
+            else:
+                return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
+
+class ContinueSpankingAction(CombatAction):
+    targetType = ALLY
+    grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
+    effectClass = ALL
+    numTargets = 1
+    primaryStat = universal.STRENGTH
+    secondaryStat = universal.WILLPOWER
+    actionType = 'continue spanking'
+    def __init__(self, attacker, defenders, position, severity=0):
+        super(ContinueSpankingAction, self).__init__(attacker, defenders, GRAPPLE, SpankAction.secondaryStat)
+        self.severity = severity
+
+    def effect(self, inCombat=True, allies=None, enemies=None):
+        """
+        Returns a triple: The result string, a list containing a single bool indicating whether or not successfully decremented the stat point, and this action
+        """
+        spankingEffect = self.being_spanked()
+        attacker = self.attacker
+        defender = self.defenders[0]
+        #Counteracts the decrement in duration of the humiliated status at the end of the round. We want the effective duration of humiliated to only go down after the spanking.
+        defender.increment_status_duration(statusEffects.Humiliated.name)
+        humiliatedStatus = defender.get_status(statusEffects.Humiliated.name)
+        if not attacker.is_spanking():
+            return DefendAction(attacker, [attacker]).effect(inCombat, allies, enemies) 
+        if attacker.spankeeAlreadyHumiliated:
+            decrementedStat = False
+            defender.enduring = False
+        elif defender.enduring:
+            severity = self.severity - 1
+            if severity:
+                humiliatedStatus.inflict_status(defender, severity)
+                decrementedStat = True
+            else:
+                defender.enduring = False
+                decrementedStat = False
+        else:
+            humiliatedStatus.inflict_status(defender)
+            decrementedStat = True
+        #If the attacker isn't grappling, then it must be the case that he/she is administering a spectral spanking, in which position contains the spectral spanking spell object
+        if not attacker.is_grappling():
+            resultString = attacker.position.round_statement(defender)
+        else:
+            resultString = spanking.continue_spanking(self.attacker, defender, self.attacker.position)
+        return (resultString, [decrementedStat], self)
+
+
+class StruggleAction(CombatAction):
+    targetType = ALLY
+    grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
+    effectClass = ALL
+    numTargets = 1
+    primaryStat = universal.STRENGTH
+    secondaryStat = universal.WILLPOWER
+    actionType = 'struggle'
+    def __init__(self, attacker, defenders):
+        super(StruggleAction, self).__init__(attacker, defenders, GRAPPLE, SpankAction.secondaryStat)
+
+    def effect(self, inCombat=True, allies=None, enemies=None):
+        """
+        Returns a triple: The result string, a list containing nothing, and this action
+        """
+        spankingEffect = self.being_spanked()
+        defender = self.defenders[0]
+        attacker = self.attacker
+        if not attacker.is_being_spanked():
+            return DefendAction(attacker, [attacker]).effect(inCombat, allies, enemies)
+        attacker.reduce_grapple_duration(attacker.grapple() // 2)
+        defender.reduce_grapple_duration(attacker.grapple() // 2)
+        assert attacker.grapple_duration() == attacker.spanker.grapple_duration(), "Attacker: %s Duration: %d ; Defender: %s ; Grappler: %s ; Duration : %d" % (attacker.name, 
+                attacker.grapple_duration(), attacker.grapplingPartner.name, defender.name, defender.grapple_duration())
+        return (' '.join([attacker.printedName, "struggles against", defender.printedName + "'s", "iron grip!"]), [None], self)
+
+class EndureAction(CombatAction):
+    targetType = ALLY
+    grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
+    effectClass = ALL
+    numTargets = 1
+    primaryStat = universal.STRENGTH
+    secondaryStat = universal.WILLPOWER
+    actionType = 'struggle'
+    def __init__(self, attacker, defenders):
+        super(EndureAction, self).__init__(attacker, defenders, GRAPPLE, SpankAction.secondaryStat)
+
+    def effect(self, inCombat=True, allies=None, enemies=None):
+        """
+        Returns a triple: The result string, a list containing nothing, and this action
+        """
+        attacker = self.attacker
+        if not attacker.is_being_spanked():
+            return DefendAction(attacker, [attacker]).effect(inCombat, allies, enemies)
+        attacker.enduring = True
+        return (' '.join([attacker.printedName, "endures", self.defenders[0].printedName + "'s", "stinging blows!"]), [None], self)
 
 
 class ThrowAction(CombatAction):
@@ -463,60 +577,50 @@ class ThrowAction(CombatAction):
         self.actionType = 'throw'
 
     def effect(self, inCombat=True, allies=None, enemies=None):
-        """
-        The damage done (to both enemies) is between 3% and 10% of the grappled character's health.
-        """
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         attacker = self.attacker
         grappler = self.defenders[0]
         defender = self.defenders[1]
-        damRange = (grappler.health() * .1 if grappler.health() * .1 > 1 else 1, grappler.health() * .1 if grappler.health() * .2 > 1 else 1)
-        dam = 0
-        dam1 = 0
+        opponents = enemies if attacker in allies else allies
+        if defender.is_grappling() and not attacker.is_grappling(defender):
+            opponentsCopy = list(opponents)
+            opponentsCopy.remove(defender)
+            #This should always hold true, because if worst comes to worst, the defender can just be the grappler.
+            assert len(opponentsCopy) >= 1
+            newTarget = opponentsCopy[random.randrange(len(opponentsCopy))]
+            while newTarget.is_grappling() and not attacker.is_grappling(newTarget):
+                newTarget = opponentsCopy.pop(random.randrange(len(opponentsCopy)))
+            defender = newTarget
+        damage = compute_damage(attacker.warfare() if attacker.warfare() > attacker.grapple() else attacker.grapple(), 0)
         opponents = enemies if self.attacker in allies else allies
         if not grappler in opponents:
             return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
-        if attacker.is_grappling(grappler):
-            wa = attacker.weapon()
-            wd = grappler.weapon()
-            #grappleABonus = wa.grapple_bonus() + attacker.grapple() - attacker.attack_penalty()
-            #grappleGBonus = wg.grapple_bonus() + grappler.grapple() - grappler.attack_penalty()
-            bonus = compute_bonus(max(0, attacker.grapple() - defender.grapple()))
-            success = rand(bonus + wa.grapple_bonus())
-            failure = rand(wd.grapple_bonus())
-            if failure <= success:
-                #betterStat = attacker.warfare() if attacker.warfare() >= attacker.grapple() else attacker.grapple()
-                dam = max(1, int(bonus + damRange[0]))
-                grappler.receives_damage(dam)   
+        elif attacker.is_grappling(grappler):
+            if attacker.grapple_duration() <= attacker.grapple() // 2:
+                grappler.receives_damage(damage)   
                 attacker.break_grapple()
                 if grappler is defender:
-                    resultString = ' '.join([attacker.printedName, 'throws', defender.printedName, 'for', str(dam), 'damage!'])
-                    dam1 = dam
+                    resultString = ' '.join([attacker.printedName, 'throws', defender.printedName, 'for', str(damage), 'damage!'])
                     if grappler.current_health() <= 0:
                         resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
                 else:
                     if not defender in opponents:
                         defender = opponents[randrange(0, len(opponents))]
-                    failure = rand(wd.grapple_bonus())
-                    success = rand(bonus + wa.grapple_bonus())
-                    if failure <= success:
-                        dam1 = max(1, int(math.floor(rand(damRange[1] + attacker.grapple()) + damRange[0] - defender.defense())))
-                        defender.receives_damage(dam1)
-                        resultString = '\n'.join([' '.join([attacker.printedName, 'throws', grappler.printedName, 'for', str(dam), 'damage!']), 
-                            ' '.join([attacker.printedName, 'strikes', defender.printedName, 'for', str(dam), 'damage!'])])
-                        if grappler.current_health() <= 0:
-                            resultString = '\n'.join([resultString, ' '.join([grappler.printedName, 'collapses!'])])
-                        if defender.current_health() <= 0:
-                            resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
-                    else:
-                        resultString = ' '.join([attacker.printedName, 'throws', grappler.printedName, 'at', defender.printedName + ',', 'doing', str(dam), 'damage to', 
-                            grappler.printedName + ',', 'but missing', defender.printedName + '!'])
-                        if grappler.current_health() <= 0:
-                            resultString = '\n'.join([resultString, ' '.join([grappler.printedName, 'collapses!'])])
+                    defender.receives_damage(damage)
+                    resultString = '\n'.join([' '.join([attacker.printedName, 'throws', grappler.printedName, 'for', str(damage), 'damage!']), 
+                        ' '.join([attacker.printedName, 'strikes', defender.printedName, 'for', str(damage), 'damage!'])])
+                    if grappler.current_health() <= 0:
+                        resultString = '\n'.join([resultString, ' '.join([grappler.printedName, 'collapses!'])])
+                    if defender.current_health() <= 0:
+                        resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
             else:
-                resultString = ' '.join([attacker.printedName, 'fails to throw', defender.printedName])
-            return (resultString, [dam, dam1], self)    
+                damage = 0
+                resultString = ' '.join([attacker.printedName, 'cannot yet throw', defender.printedName + "!"])
+            return (resultString, [damage, damage], self)    
         else:
-            return AttackAction(attacker, grappler).effect(inCombat, allies, enemies)
+            return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
 
 class BreakAllysGrappleAction(CombatAction):
     targetType = ALLY
@@ -540,26 +644,24 @@ class BreakAllysGrappleAction(CombatAction):
         """
         If we try to break our ally's grapple, only to see that the grapple is already broken, then we defend them.
         """
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         defenders = self.defenders
         attacker = self.attacker
         if (attacker in allies and not defenders[0] in allies) or (attacker in enemies and not defenders[0] in enemies):
             return DefendAction(self.attacker, self.attacker).effect(inCombat, allies, enemies)
-        wa = attacker.weapon()
-        defender = defenders[0].grapplingPartner
-        if defender is None:
+        ally, allysGrappler = defenders[0], defenders[0].grapplingPartner
+        if allysGrappler is None:
             return DefendAction(attacker, defenders[0]).effect(inCombat, allies, enemies)
         else:
-            wd = defender.weapon()
-            #grappleABonus = wa.grapple_bonus() + attacker.grapple() - attacker.attack_penalty()
-            #grappleDBonus = wd.grapple_bonus() + defender.grapple() - defender.attack_penalty()
-            success = rand(compute_bonus(max(0, attacker.grapple() - defender.grapple())) + wa.grapple_bonus())
-            failure = rand(wd.grapple_bonus())
-            if failure <= success:
-                resultStmt = ' '.join([attacker.printedName, 'breaks', defender.printedName + "'s", '''hold on''', defender.grapplingPartner.printedName + '!'])
-                defender.break_grapple()
-                attacker.grapple(defender)
+            ally.reduce_grapple_duration(attacker.grapple() // GRAPPLE_DIVISOR)
+            allysGrappler.reduce_grapple_duration(attacker.grapple() // GRAPPLE_DIVISOR)
+            if ally.grapple_duration():
+                resultStmt = ' '.join([attacker.printedName, "loosens", allysGrappler.printedName + "'s", 'hold on', ally.printedName + '!'])
             else:
-                resultStmt = ' '.join([attacker.printedName, "doesn't break", defender.printedName + "'s", 'hold on', defender.grapplingPartner.printedName + '!'])
+                resultStmt = ' '.join([attacker.printedName, 'breaks', allysGrappler.printedName + "'s", '''hold on''', ally.printedName + '!'])
+                allysGrappler.break_grapple()
             return (resultStmt, [None], self) 
 
 
@@ -568,8 +670,8 @@ class DefendAction(CombatAction):
     grappleStatus = NOT_WHEN_GRAPPLED
     effectClass = SPELL_SLINGERS
     numTargets = 1
-    primaryStat = universal.WILLPOWER
-    secondaryStat = universal.DEXTERITY
+    primaryStat = universal.ALERTNESS
+    secondaryStat = universal.WILLPOWER
     actionType = 'defend'
     def __init__(self, attacker, defenders):
         super(DefendAction, self).__init__(attacker, defenders, RESILIENCE, DefendAction.secondaryStat)
@@ -585,6 +687,9 @@ class DefendAction(CombatAction):
         Returns a triple: The result, [None], this action.
         The reason this returns a triple rather than a double, is so that we don't have to do anything special with the defend action in the combat code.
         """
+        spankingEffect = self.being_spanked()
+        if spankingEffect:
+            return spankingEffect
         attacker = self.attacker
         defender = self.defenders[0]
         if attacker == defender:
@@ -594,6 +699,7 @@ class DefendAction(CombatAction):
             companions = allies if attacker in allies else enemies
             if defender not in companions:
                 return DefendAction(attacker, attacker).effect(inCombat, allies, enemies)
-            defender.guardian = attacker
+            defender.guardians.append(attacker)
             return (' '.join([attacker.printedName, 'defends', defender.printedName + '!']), [None], self)
+
 
