@@ -362,6 +362,7 @@ class Person(universal.RPGObject):
         universal.state.add_character(self)
         self.weaknesses = weaknesses if weaknesses else []
         self.grappleDuration = None
+        self.originalGrappleDuration = None
         self.spanker = None
         self.spankee = None
         self.position = None
@@ -1273,12 +1274,15 @@ class Person(universal.RPGObject):
         else:
             return self.grapplingPartner == opponent
 
-    def begin_spanking(self, opponent, position):
+    def begin_spanking(self, opponent, position, duration):
         self.spankee = opponent
         self.position = position
+        self.grappleDuration, self.originalGrappleDuration = duration, self.grappleDuration
 
     def end_spanking(self):
         opponent = self.spanker if self.spanker else self.spankee
+        if self.originalGrappleDuration:
+            self.grappleDuration = opponent.grappleDuration = self.originalGrappleDuration
         self.spankee = None
         self.spanker = None
         self.position = None
@@ -1287,9 +1291,10 @@ class Person(universal.RPGObject):
         opponent.position = None
 
 
-    def begin_spanked_by(self, opponent, position):
+    def begin_spanked_by(self, opponent, position, duration):
         self.spanker = opponent
         self.position = position
+        self.grappleDuration, self.originalGrappleDuration = duration, self.grappleDuration
 
     def is_spanking(self, opponent=None):
         if opponent is None:
@@ -1350,6 +1355,9 @@ class Person(universal.RPGObject):
     def decrement_statuses(self, amount=1):
         expiredStatuses = []
         for statusName in self.statusDict.keys():
+            #We don't decrement humiliation while a character is being spanked.
+            if statusName == statusEffects.Humiliated.name and self.is_being_spanked():
+                continue
             self.statusDict[statusName][STATUS_OBJ].every_round(self)
             self.statusDict[statusName][DURATION] -= amount
             if self.statusDict[statusName][DURATION] <= 0:
@@ -1358,6 +1366,7 @@ class Person(universal.RPGObject):
             self.reverse_status(statusName)
 
     def increment_status_duration(self, name, amount=1):
+        assert name in self.statusDict, "Trying to modify a status that isn't here! Person: %s Status: %s Person's statuses: %s" % (self.name, name, str(self.statusDict))
         self.statusDict[name][DURATION] += amount
 
     def get_status(self, statusName):
@@ -2411,7 +2420,6 @@ class Spell(combatAction.CombatAction):
         elif self.is_expert():
             return self
 
-
 def available_spells_in_tier(tier, person):
         spellList = get_spells()[tier]
         unrolledSpellList = [s for spellTuple in spellList for s in spellTuple]
@@ -2428,7 +2436,6 @@ SPECTRAL = 3
 
 class Combat(Spell):
     targetType = ENEMY
-    grappleStatus = None
     effectClass = None
     actionType = 'combat'
     def __init__(self, attacker, defenders, secondaryStat=None):
@@ -2486,11 +2493,14 @@ class Combat(Spell):
         return  ' '.join([defender.printedName, 'is immune to', self.name])
 
     def damage_function(self, defender, inCombat):
-        return combatAction.compute_damage(self.attacker.magic_attack(inCombat), int(math.trunc(self.magicMultiplier * self.attacker.magic_attack(inCombat) - defender.magic_defense(self.rawMagic))))
+        print(self.attacker.magic_attack(inCombat))
+        print(self.magicMultiplier * self.attacker.magic_attack(inCombat))
+        print(defender.magic_defense(inCombat))
+        return combatAction.compute_damage(self.attacker.magic_attack(inCombat), 
+                int(math.trunc(self.magicMultiplier * self.attacker.magic_attack(inCombat) - defender.magic_defense(self.rawMagic))))
 
 class Status(Spell):
     targetType = ENEMY
-    grappleStatus = None
     effectClass = None
     statusInflicted = None
     primaryStat = universal.WILLPOWER
@@ -2577,7 +2587,6 @@ class Status(Spell):
 
 class CharmMagic(Status):
     targetType = ENEMY
-    grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
     effectClass = ALL
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(CharmMagic, self).effect(inCombat, allies, enemies)
@@ -2623,7 +2632,6 @@ class CharmMagic(Status):
 
 class Buff(Spell):
     targetType = ALLY
-    grappleStatus = None
     effectClass = None
     statusInflicted = None
     actionType = 'buff'
@@ -2757,7 +2765,6 @@ class Resurrection(Healing):
 
 class Spectral(Spell):
     targetType = None
-    grappleStatus = None
     effectClass = None
     actionType = 'spectral'
     """
@@ -2773,7 +2780,7 @@ class Spectral(Spell):
 
 
 class SpectralSpanking(Spectral):
-    targetType = ENEMY
+    targetType = combatAction.ENEMY
     grappleStatus = GRAPPLER_ONLY
     effectClass = ALL
     tier = 0
@@ -2788,8 +2795,8 @@ class SpectralSpanking(Spectral):
         super(SpectralSpanking, self).__init__(attacker, defenders)
         self.name = 'Spectral Spanking'
         self.cost = SpectralSpanking.cost
-        self.grappleStatus = combatAction.GRAPPLER_ONLY
-        self.description = 'Conjures \'hands\' of raw magic. One hand grabs the target and lifts them into the air. The other lands a number of swats on the target\'s backside. Once the spanking is done, the first hand lifts the target up, and throws them into the ground. The spanking leaves your opponent distracted and humiliated, giving them a -1 penalty to all stats.'
+        self.grappleStatus = SpectralSpanking.grappleStatus
+        self.description = 'Conjures \'hands\' of raw magic. One hand grabs the target and lifts them into the air. The other lands a number of swats on the target\'s backside. Once the spanking is done, the first hand lifts the target up, and throws them into the ground. The spanking leaves your opponent distracted and humiliated, penalty to all their stats, equal to the number of rounds the spanking was administered. However, for every round that the spanking continues, the caster uses one mana.'
         self.effectFormula = 'SPANKING DURATION: talent + bonus(talent - enemy.talent)\nHUMILIATION DURATION: 1.2 * resilience - enemy.resilience\nDAMAGE: talent'
         self.numTargets = 1
         self.magicMultiplier = 1
@@ -2847,27 +2854,44 @@ class SpectralSpanking(Spectral):
                 while (defender.is_grappling() and not attacker.is_grappling(defender)) or defender.involved_in_spanking():
                     newTarget = opponentsCopy.pop(random.randrange(len(opponentsCopy)))
             self.damage = self.magicMultiplier * attacker.magic_attack(inCombat)
-            humiliationDuration = self.resilienceMultiplier * attacker.resilience() - defender.resilience()
-            spankingDuration = combatAction.compute_damage(attacker.magic_attack(), self.magicMultiplier * attacker.magic_attack(inCombat) - defender.magic_defense(self.rawMagic))
-            attacker.begin_spanking(defender, self)
-            attacker.grappleDuration = defender.grappleDuration = spankingDuration
-            defender.begin_spanked_by(attacker, self)
+            humiliationDuration = int(math.trunc(self.resilienceMultiplier * attacker.resilience() - defender.resilience()))
+            if humiliationDuration < self.minDuration:
+                humiliationDuration = self.minDuration
+            spankingDuration = combatAction.compute_damage(attacker.magic_attack(), self.magicMultiplier * attacker.magic_attack(inCombat) - 
+                    defender.magic_defense(self.rawMagic))
+            if spankingDuration < self.minDuration:
+                spankingDuration = self.minDuration
+            attacker.begin_spanking(defender, self, spankingDuration)
+            defender.begin_spanked_by(attacker, self, spankingDuration)
             effects = []
             resultStatement.append(self.effect_statement(defender))
             if not defender.is_inflicted_with(statusEffects.Humiliated.name):
                 defender.inflict_status(statusEffects.build_status(statusEffects.Humiliated.name, humiliationDuration))
+                print(defender.name)
+                print(defender.statusDict)
                 attacker.spankeeAlreadyHumiliated = False
             else:
                 attacker.spankeeAlreadyHumiliated = True
             resultStatement.append(self.success_statement(defender))
             effects.append(self.damage)
+            assert spankingDuration > 1
         return (universal.format_text(resultStatement, False), effects, self)
 
     def round_statement(self, defender):
         attacker = self.attacker
         defender = defender
-        return universal.format_text([[attacker.printedName, "swishes", attacker.hisher(), "hand back and forth through the air. The giant, ghostly hand arcs in sync with", 
-                "the motion, cracking repeatedly against", defender.printedName + "'s", defender.quivering(), "bottom.", defender.printedName, "yelps and kicks with every heavy blow."]])
+        resultStatement = universal.format_text([[attacker.printedName, "swishes", attacker.hisher(), 
+            "hand back and forth through the air. The giant, ghostly hand arcs in sync with", 
+                "the motion, cracking repeatedly against", defender.printedName + "'s", defender.quivering(), "bottom.", defender.printedName, 
+                "yelps and kicks with every heavy blow."]])
+        if attacker.current_mana():
+            attacker.decrease_stat(universal.CURRENT_MANA, 1)
+            return resultStatement
+        else:
+            attacker.end_spanking()
+            attacker.grappleDuration = 0
+            defender.grappleDuration = 0
+            return '\n\n'.join([resultStatement, self.end_statement()])
 
     def effect_statement(self, defender):
         attacker = self.attacker
@@ -2907,7 +2931,7 @@ class SpectralSpanking(Spectral):
         defender.receives_damage(self.damage)
         return ' '.join(['The right hand fades.', A, 'raises', hisher(attacker), 
                 'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', himher(defender), 'into the ground.\n\n',
-                D, 'receives', str(self.damage) + "damage!"]) 
+                D, 'receives', str(self.damage) + " damage!"]) 
 
 #---------------------------------------Gender-specific functions---------------------------
 def choose_string(person, male, female):

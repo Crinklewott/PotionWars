@@ -728,7 +728,7 @@ def defend_interpreter(keyEvent):
         display_combat_status(printAllies=False, printEnemies=False)
     elif keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key)) - 1
-        if 0 <= num and num < len(allies) and not ally.is_grappling():
+        if 0 <= num and num < len(allies) and not allies[num].is_grappling():
             chosenActions.append(combatAction.DefendAction(activeAlly, allies[num]))
             next_character()
         elif ally.is_grappling():
@@ -829,16 +829,16 @@ def choose_enemy_actions():
         chosenActions.append(select_action(enemy))
 
 def select_action(enemy):
-    if enemy.spankingEnded:
-        enemy.spankingEnded = False
-        return combatAction.DefendAction(enemy, [enemy])
+    #if enemy.spankingEnded:
+    #    enemy.spankingEnded = False
+    #    return combatAction.DefendAction(enemy, [enemy])
     allActions = [combatAction.AttackAction]#, combatAction.DefendAction]
     if enemy.is_spanking():
         #Note: This is a weakness in the AI. An enemy is forced to always administer a spanking, regardless of what's going on. This can make for an easy way of delaying an enemy: Just endure
         #their spanking while your allies take care of the others. However, it may be a wash, simply because this also neutralizes your character, and usually you'll be outnumbered.
         #If the enemy does not have a grappling partner, then she is spanking someone with a spectral spell, which is stored in the position.
         spankee = enemy.grapplingPartner if enemy.grapplingPartner else enemy.position.defenders[0]
-        return combatAction.ContinueSpankingAction(enemy, [enemy], enemy.position)
+        return combatAction.ContinueSpankingAction(enemy, [spankee], enemy.position)
     elif get_difficulty == HAND and enemy.is_being_spanked():
         spanker = enemy.grapplingPartner if enemy.grapplingPartner else enemy.position.attacker
         if random.randrange(2):
@@ -900,16 +900,22 @@ def choose_action_class(enemy, weightedActionClasses, warfareActions, grappleAct
         chosenActionClass = weightedActionClasses[random.randrange(0, len(weightedActionClasses))]
         if chosenActionClass == warfareActions:
             if enemy.is_grappling():
-                warfareActions.extend([combatAction.BreakGrappleAction for i in range(max(0, enemy.warfare() - enemy.grapple()))]) 
+                warfareActions.extend([combatAction.BreakGrappleAction for i in range(max(0, (enemy.warfare() - enemy.grapple())))]) 
+                warfareActions.extend([combatAction.AttackAction for i in range(max(0, (enemy.warfare() - enemy.grapple())))]) 
             else:
                 warfareActions.extend([combatAction.AttackAction for i in range(max(0, enemy.warfare()))])
-            #warfareActions.extend([combatAction.DefendAction for statName in enemy.status_names() if statusEffects.is_negative(enemy.get_status(statName))])
         elif chosenActionClass == grappleActions:
             if enemy.is_grappling():
                 if not enemy.grapplingPartner.is_inflicted_with(statusEffects.Humiliated.name):
                     grappleActions.extend([combatAction.SpankAction for i in range(max(1, enemy.grapple()))])
                 grappleActions.extend([combatAction.AttackAction for i in range(max(1, enemy.warfare()))])
-                grappleActions.extend([combatAction.ThrowAction for i in range(max(1, enemy.grapple()))])
+                if enemy.grapple() <= enemy.grappleDuration // 2:
+                    grappleActions.extend([combatAction.ThrowAction for i in range(max(1, enemy.grapple()))])
+                else:
+                    try:
+                        grappleActions.remove(combatAction.ThrowAction)
+                    except KeyError:
+                        pass
             else:
                 grappleActions.extend([combatAction.GrappleAction for i in range(max(1, enemy.grapple()))])
                 grappledCompanions = [e for e in companions if e.is_grappling()]
@@ -917,13 +923,21 @@ def choose_action_class(enemy, weightedActionClasses, warfareActions, grappleAct
                     #The idea here that if this character has a much higher grapple than his ally, then not only is this character good for breaking a grapple, but 
                     #it's likely that his ally has a low grapple, in which case the ally needs all the help he can get.
                     grappleActions.extend([combatAction.BreakAllysGrappleAction for i in range(max(0, enemy.grapple() - companion.grapple()))])
-            #grappleActions.extend([combatAction.DefendAction for statName in enemy.status_names() if statusEffects.is_negative(enemy.get_status(statName))])
         elif chosenActionClass == magicActions:
-            for spell in availableSpells:
-                if hasattr(spell, 'statusInflicted'):
-                    inflictedAllies = [ally for ally in allies if not ally.is_inflicted_with(statusEffects.get_name(spell.statusInflicted))]
-                    if inflictedAllies == [] and spell in magicActions:
-                        magicActions.remove(spell)
+            possibleSpells = list(magicActions)
+            for spell in possibleSpells:
+                try:
+                    spell.statusInflicted
+                except AttributeError:
+                    pass
+                else:
+                    possibleTargets = [ally for ally in allies if not ally.is_inflicted_with(statusEffects.get_name(spell.statusInflicted))]
+                    print(possibleTargets)
+                    if possibleTargets == []: #and spell in magicActions:
+                        try:
+                            magicActions.remove(spell)
+                        except ValueError:
+                            pass
                     else:
                         magicActions.extend([spell for i in range(spell.tier)])
             if chosenActionClass != []:
@@ -993,29 +1007,18 @@ def strap_cane_ai(enemy):
 def cane_ai(enemy, weightedActionClasses, warfareActions, grappleActions, magicActions, companions, availableSpells):
     chosenActionClass = choose_action_class(enemy, weightedActionClasses, warfareActions, grappleActions, magicActions, companions, availableSpells)
     originalChosenActionClass = list(chosenActionClass)
-    chosenAction = chosenActionClass.pop(random.randrange(0, len(chosenActionClass)))
+    assert originalChosenActionClass
     defenders = []
     while defenders == []:
-        if chosenActionClass == []:
-            return cane_ai(enemy, [actionClass for actionClass in weightedActionClasses if actionClass != originalChosenActionClass], warfareActions, grappleActions, magicActions, companions, 
-                    availableSpells)
-        chosenAction = chosenActionClass.pop(random.randrange(0, len(chosenActionClass)))
+        try:
+            chosenAction = chosenActionClass.pop(random.randrange(len(chosenActionClass)))
+        except IndexError:
+                weightedActionClasses = [actionClass for actionClass in weightedActionClasses if actionClass != originalChosenActionClass]
+                chosenActionClass = weightedActionClasses.pop(random.randrange(len(weightedActionClasses)))
         assert chosenAction, "Chosen Action is None! ChosenAction class: %s" % str(chosenActionClass)
         defenders = select_targets(chosenAction, enemy)
-        if not defenders:
-            chosenActionClass = [actionClass for actionClass in chosenActionClass if actionClass.actionType != chosenAction.actionType]
     if chosenAction == combatAction.SpankAction:
-        #list of pairs containing the position and the result, which is a number of smacks. If positive, the spanking worked. If zero it didn't, if negative, it 
-        #got reversed
-        weightedPos = []
-        for pos in positions.allPositions:
-            pos = positions.allPositions[pos]
-            weightedPos.extend([pos] * (enemy.grapple() + pos.maintainability + enemy.willpower() + pos.humiliating))
-        pastPositions = [(effect[0].position, effect[1]) for effect in actionsEndured[defenders[0]] if isinstance(effect[0], combatAction.SpankAction)]
-        pastPostiions = [(position, result) for (position, result) in pastPositions if result > 0]
-        for position, duration in pastPositions:
-            weightedPos.extend([position] * duration)
-        return chosenAction(enemy, defenders, weightedPos[random.randrange(0, len(weightedPos))])
+        return chosenAction(enemy, defenders, random.choice(list(positions.allPositions.values())))
     try:
         return chosenAction(enemy, defenders)
     except TypeError:
@@ -1459,14 +1462,14 @@ def decrement_grappling():
                     ally.grapplingPartner.name, ally.grapplingPartner.grapple_duration())
             if not ally.grapple_duration():
                 grapplingPartner = ally.grapplingPartner
-                ally.break_grapple()
                 if ally.involved_in_spanking():
                     spankee = ally if ally.is_being_spanked() else grapplingPartner
                     spanker = ally if ally.is_spanking() else grapplingPartner
                     assert spanker != spankee, "Somehow, spanker: %s is spanking themselves!" % spanker.printedName
-                    ally.end_spanking()
+                    spanker.end_spanking()
                     actionResults.append((' '.join([spankee.printedName, "breaks free of", spanker.printedName + "'s", "punishing grip!"]), False))
                 else:
+                    ally.break_grapple()
                     actionResults.append(((' '.join([ally.printedName, "and", grapplingPartner.printedName, "break apart!"]), False)))
         #If this happens, it means someone is administering a spectral spanking.
         elif ally.involved_in_spanking():
@@ -1476,8 +1479,8 @@ def decrement_grappling():
             assert spanker != spankee, "Somehow, spanker: %s is spanking themselves!" % spanker.printedName
             spanker.reduce_grapple_duration(1)
             spankee.reduce_grapple_duration(1)
-            assert spanker.grapple_duration() == spankee.grapple_duration(), "Spanker: %s ; grapple duration: %d, Spankee: %s ; grapple duration: %d" % (spanker.name, spanker.grapple_duration(),
-                    spankee.name, spankee.grapple_duration())
+            assert spanker.grapple_duration() == spankee.grapple_duration(), "Spanker: %s ; grapple duration: %d, Spankee: %s ; grapple duration: %d" % (spanker.name, 
+                    spanker.grapple_duration(), spankee.name, spankee.grapple_duration())
             if not spanker.grapple_duration():
                 actionResults.append((spanker.position.end_statement(spankee), False))
                 spanker.end_spanking()
@@ -1651,6 +1654,7 @@ def specialization_bonus(ally, i):
     return bonus
 
 HIGH_STAT_PENALTY = .1
+HEALTH_MULTIPLIER = .05
 def improve_characters(victorious, afterCombatEvent=None):
     """
     Takes as argument the function that should be invoked after leveling up is complete.
@@ -1674,7 +1678,7 @@ def improve_characters(victorious, afterCombatEvent=None):
             manaGain = 0
             while int(math.floor(stat * specialtyModifier)) <= statPoints:
                 if i == universal.HEALTH:
-                    gain += int(math.ceil(stat * .05)) + statPoints - stat
+                    gain += int(math.ceil(stat * HEALTH_MULTIPLIER))
                     ally.improve_stat(i, gain)
                     ally.increaseStatPoints[i] = 0
                 else:
@@ -1691,7 +1695,8 @@ def improve_characters(victorious, afterCombatEvent=None):
             if manaGain:
                 universal.say(format_line([ally.name, 'has gained', str(manaGain), 'Mana.\n']))
         for i in range(len(ally.increaseSpellPoints)): 
-            #Note: This is much MUCH simpler than what we will actually allow. This simply checks if the player has 5 spell points, and then has the player learn the advanced spell if the player doesn't already know it.
+            #Note: This is much MUCH simpler than what we will actually allow. This simply checks if the player has 5 spell points, and then has the player learn the advanced spell if the player 
+            #doesn't already know it.
             #This is only a stop-gap measure. The actual learning spell mechanic will be much more complicated, but I don't want to implement that until I've built a proper GUI.
             if ally.increaseSpellPoints[i] >= (ally.tier*universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS) and not ally.knows_spell(person.allSpells[0][i][1]):
                 learn_spell(ally, i+universal.COMBAT_MAGIC)

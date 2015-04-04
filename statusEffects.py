@@ -109,14 +109,19 @@ class Humiliated(StatusEffect):
         super(Humiliated, self).__init__(Humiliated.name, duration, True)
         self.penaltyPerRound = 1
         self.inflictedStat = None
-        self.rounds = 0
+        self.rounds = 1
 
-    def inflict_status(self, person, severity=0):
-        if self.inflictedStat is None:
-            self.inflictedStat = person.highest_stat()
+    def increase_status(self, person, severity=0):
         person.decrease_stat(self.inflictedStat, self.penaltyPerRound + severity)
         self.rounds += 1
         return 0
+
+    def inflict_status(self, person):
+        if person.is_inflicted_with(self.name):
+            return
+        if self.inflictedStat is None:
+            self.inflictedStat = person.highest_stat()
+        person.decrease_stat(self.inflictedStat, self.penaltyPerRound * self.rounds)
 
     def reverse_status(self, person):
         person.increase_stat(self.inflictedStat, self.penaltyPerRound * self.rounds)
@@ -134,8 +139,12 @@ class Weakened(StatusEffect):
             self.penalty = penalty
 
     def inflict_status(self, person):
+        if person.is_inflicted_with(self.name):
+            return
+        print(person.primaryStats)
         person.decrease_stat(universal.STRENGTH, self.penalty)
         person.decrease_stat(universal.DEXTERITY, self.penalty)
+        print(person.primaryStats)
         return 0
 
     def reverse_status(self, person):
@@ -154,6 +163,8 @@ class Shielded(StatusEffect):
             self.defenseBonus = defenseBonus
 
     def inflict_status(self, person):
+        if person.is_inflicted_with(self.name):
+            return
         assert(self.defenseBonus is not None)
         return self.defenseBonus
 
@@ -174,6 +185,8 @@ class MagicShielded(StatusEffect):
             self.defenseBonus = defenseBonus
 
     def inflict_status(self, person):
+        if person.is_inflicted_with(self.name):
+            return
         assert(self.defenseBonus is not None)
         return self.defenseBonus
 
@@ -194,8 +207,12 @@ class MagicDistorted(StatusEffect):
             self.penalty = penalty
 
     def inflict_status(self, person):
+        if person.is_inflicted_with(self.name):
+            return
+        print(person.primaryStats)
         person.decrease_stat(universal.TALENT, self.penalty)
         person.decrease_stat(universal.WILLPOWER, self.penalty)
+        print(person.primaryStats)
         return 0
 
     def reverse_status(self, person):
@@ -216,6 +233,8 @@ class Charmed(StatusEffect):
         Note: Charmed is rather unique, because it doesn't affect the character. Rather, it moves the character between the ally and enemy lists. Therefore, in order
         to activate the effect of charm, the combat engine needs to call inflict_charm and pass it the ally and enemy lists.
         """
+        if person.is_inflicted_with(self.name):
+            return
         self.inflict_charm(person, self.allies, self.enemies)
         return 0
 
@@ -277,15 +296,17 @@ class DefendStatus(StatusEffect):
     def __init__(self, duration):
         super(DefendStatus, self).__init__(DefendStatus.name, duration, isNegative=False)
 
-    def inflict_status(self, p):
+    def inflict_status(self, person):
         """
         When a character is defending, they get a +BONUS bonus to strength, dexterity, willpower, and talent, to help them defend against enemy attacks.
         Note: This does not apply when a character is defending another character. This only works when a character is defending themselves.
         """
-        p.set_stat(universal.STRENGTH, p.strength() + self.BONUS)
-        p.set_stat(universal.DEXTERITY, p.dexterity() + self.BONUS)
-        p.set_stat(universal.WILLPOWER, p.willpower() + self.BONUS)
-        p.set_stat(universal.TALENT, p.talent() + self.BONUS)
+        if person.is_inflicted_with(self.name):
+            return
+        person.set_stat(universal.STRENGTH, person.strength() + self.BONUS)
+        person.set_stat(universal.DEXTERITY, person.dexterity() + self.BONUS)
+        person.set_stat(universal.WILLPOWER, person.willpower() + self.BONUS)
+        person.set_stat(universal.TALENT, person.talent() + self.BONUS)
 
     def reverse_status(self, p):
         p.set_stat(universal.STRENGTH, p.strength() - self.BONUS)

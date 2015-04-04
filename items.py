@@ -458,7 +458,7 @@ class Underwear(Armor):
 
 
 class Thong(Underwear):
-    armorType = Underwear.armorType
+    armorType = 'thong'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, armorType='underwear', enchantments=None, maxEnchantment=9,
             risque=5):
         super(Thong, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, True, armorType, enchantments, maxEnchantment,

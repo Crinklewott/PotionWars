@@ -201,8 +201,9 @@ class VengadorWarrior(Enemy):
             spankingText = universal.format_text([['''Suddenly, the Vengador Warrior unleashes a desperate attack at''', bottom.printedName + "'s", '''head.''', bottom.printedName, 
             '''dodges the spear thrust. The warrior snaps the spear down, and sweeps''', bottom.printedName + "'s", '''legs out from underneath''', bottom.himher() + ",", '''and''', bottom.printedName,
             '''lands hard on''', bottom.hisher(), '''face. Before''', bottom.printedName, '''can get back up, the Vengador Warrior sits down on the middle of''', bottom.printedName + "'s", 
-            '''back and begins drumming''', bottom.printedName + "'s", '''bottom with both hands. Facedown, and with''', bottom.hisher(), '''arms pinned uselessly between the Warrior's legs, and''',
-            bottom.hisher(), '''own torso,''', bottom.printedName, '''can do nothing but wait for a chance to escape, while''', bottom.heshe(), '''drums''', bottom.hisher(), '''toes onto the floor''',
+            '''back and begins drumming''', bottom.printedName + "'s", '''bottom with both hands. Facedown, and with''', bottom.hisher(), '''arms pinned uselessly between the Warrior's legs and''',
+            bottom.hisher(), '''own torso,''', bottom.printedName, '''can do nothing but wait for a chance to escape, while''', bottom.heshe(), '''drums''', bottom.hisher(), 
+            '''toes against the floor''',
             '''in pain and humiliation.''']])
         else: 
             spankingText = universal.format_text([['''Suddenly,''', top.printedName, '''lunges forward in a seemingly desperate attack aimed at''', bottom.printedName + "'s", '''head. The warrior''',
@@ -265,7 +266,7 @@ class VengadorWarrior(Enemy):
             '''pulls''', bottom.himselfherself(), '''to''', bottom.hisher(), '''full height and wastes no time in grasping''', top.printedName, '''and shoving''', top.hisher(), '''head between''',
             bottom.hisher(), '''legs.''', bottom.printedName, ' '.join(['''spies the waistband of''', top.printedName + "'s", top.underwear().name, ' '.join(['''peeking out from above''', 
                 top.hisher(), top.lower_clothing().name]) if top.wearing_lower_clothing() else '', '''and clutches it tightly.''']) if top.wearing_underwear() else 
-            ' '.join(['''grabs the back of''', top.printedName + "'s", top.lower_clothing().name + "."]),
+            ' '.join(['''grabs the back of''', top.printedName + "'s", top.lower_clothing().name + "."])],
                     ['''Then,''', bottom.printedName, '''lifts''', top.printedName + "'s", '''bottom up by to hip level.''', top.printedName, '''curses and kicks, but that doesn't stop''',
                         bottom.printedName, '''from putting''', top.printedName, '''in the same vulnerable position in which''', top.heshe(), '''had tried to place''', bottom.printedName + ".",
                         '''With''', top.hisher(), '''head locked tightly between''', bottom.printedName + "'s", '''calves, the warrior can do little more than wriggle''', top.hisher(), 
@@ -360,7 +361,7 @@ class VengadorSpellslinger(Enemy):
     def __init__(self, gender, level=0, identifier=None):
         super(VengadorSpellslinger, self).__init__('Vengador', gender, None, specialization=universal.COMBAT_MAGIC, bodyType='voluptuous', height='short', musculature='soft', identifier=identifier)
         self.level = level
-        self.set_all_stats(strength=0, dexterity=1, willpower=2, talent=2, health=12, mana=10, alertness=0)
+        self.set_all_stats(strength=0, dexterity=1, willpower=2, talent=2, health=16, mana=10, alertness=0)
         if gender == person.FEMALE:
             self.equip(copy.copy(itemspotionwars.wornDress))
         else:
@@ -663,7 +664,7 @@ class VengadorScout(Enemy):
                 return universal.format_text([[bottom.printedName, '''curses''', bottom.himselfherself(), '''for letting the Vengador Scout get the upper hand on''', bottom.himher() + ".", 
                     '''Though''', bottom.heshe(), '''remains on''', bottom.hisher(), '''feet, it matters little, as''', bottom.hisher(), '''back is arched sufficiently to present an attractively''',
                     bottom.bum_adj(), '''target for the scout. The spanker, meanwhile cackles maliciously, clearly enjoying the thorough reddening''', top.heshe(), '''is giving''', 
-                    bottom.printedName + "'s", bottom.muscle_adj(), '''bottom.''', '''Then,''', top.HeShe(), '''grabs the''', bottom.clothing_below_the_waist().waistband_hem(), '''of''', 
+                    bottom.printedName + "'s", bottom.muscle_adj(), '''bottom.''', top.printedName, '''grabs the''', bottom.clothing_below_the_waist().waistband_hem(), '''of''', 
                     bottom.printedName + "'s", bottom.clothing_below_the_waist().tightness, bottom.clothing_below_the_waist().name + ".", bottom.printedName, '''shrieks in protest, but that''',
                     '''doesn't stop''', top.printedName, '''from''', ' ' .join(['''pushing''', bottom.printedName + "'s", bottom.clothing_below_the_waist().name, '''to the tops of''', 
                         bottom.hisher(), '''thighs,''']) if bottom.clothing_below_the_waist().liftlower() == "lower" else ' '.join([
@@ -682,7 +683,7 @@ class VengadorScout(Enemy):
             return universal.format_text([[bottom.printedName, '''curses violently as''', top.printedName, '''continues thrashing''', bottom.hisher(), '''vulnerable bottom.''', 
                 '''Though''', bottom.heshe(), '''remains on''', bottom.hisher(), '''feet, it matters little, as''', bottom.hisher(), '''back is arched sufficiently to present an attractively''',
                 bottom.bum_adj(), '''target for the''', '''scout.''' if self is top else top.heroheroine() + ".", 
-                '''Then,''', top.HeShe(), '''grabs the''', bottom.clothing_below_the_waist().waistband_hem(), '''of''', 
+                top.printedName, '''grabs the''', bottom.clothing_below_the_waist().waistband_hem(), '''of''', 
                 bottom.printedName + "'s", bottom.clothing_below_the_waist().tightness, bottom.clothing_below_the_waist().name + ".", bottom.printedName, '''shrieks in protest, but that''',
                 '''doesn't stop''', top.printedName, '''from''', ' ' .join(['''pushing''', bottom.printedName + "'s", bottom.clothing_below_the_waist().name, '''to the tops of''', 
                     bottom.hisher(), '''thighs,''']) if bottom.clothing_below_the_waist().liftlower() == "lower" else ' '.join([
@@ -720,7 +721,7 @@ class VengadorScout(Enemy):
 
     def on_the_ground_round(self, top, bottom):
         return universal.format_text([[bottom.printedName, '''tugs vainly at''', top.printedName + "'s", '''hand, kicks''', bottom.hisher(), '''legs, and bucks''', bottom.hisher(), '''hips.''',
-            '''None if it accomplishes much of anything except annoying''', top.printedName + ",", '''who makes''', top.hisher(), '''annoyance clear with a bevy hard slaps to''', 
+            '''None of it accomplishes much of anything except annoying''', top.printedName + ",", '''who makes''', top.hisher(), '''annoyance clear with a bevy hard slaps to''', 
             bottom.clad_bottom() + ",", '''making''', bottom.printedName, '''kick and buck all the more frantically.''']])
 
 

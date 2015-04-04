@@ -674,16 +674,21 @@ class Dungeon(townmode.Room):
         Dungeon.add_data(str(self.direction), saveData)
         Dungeon.add_data(str(self.coordinates), saveData)
         Dungeon.add_data('\n'.join([str(visited) for visited in self.visitedSquares]), saveData)
+        Dungeon.add_data('\n'.join([str(visible) for visible in self.visibleSquares]), saveData)
         return '\n'.join(saveData)
 
     @staticmethod
     def load(loadData, room):
         data = loadData.split("Dungeon Data:")
         try:
-            _, direction, coordinates, visited = data
+            _, direction, coordinates, visited, visible = data
         except ValueError:
-            _, direction, coordinates = data
-            visited = ''
+            try:
+                _, direction, coordinates, visited = data
+            except ValueError:
+                _, direction, coordinates = data
+                visited = ''
+            visible = ''
         room.direction = int(direction.strip())
         coordinates = coordinates.replace('(', '').replace(')', '')
         coordinates = coordinates.split(',')
@@ -692,8 +697,16 @@ class Dungeon(townmode.Room):
             visited = [coordinate.strip() for coordinate in visited.split('\n') if coordinate.strip()]
         except ValueError:
             visited = []
+        try:
+            visible = [coordinate.strip() for coordinate in visible.split('\n') if coordinate.strip()]
+        except ValueError:
+            visible = []
+        room.visitedSquares = set()
         room.visitedSquares = {tuple(int(s) for s in t[1:-1].split(',')) for t in visited}
         room.visitedSquares.add(room.coordinates)
+        room.visibleSquares = set()
+        room.visibleSquares = {tuple(int(s) for s in t[1:-1].split(',')) for t in visible}
+        room.visibleSquares.add(room.coordinates)
         room.drawnSquares = set()
 
     def exit_dungeon(self):
@@ -964,7 +977,10 @@ def select_character_interpreter(keyEvent):
         dungeon_mode()
     elif keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
-        per = party.members[num-1]
+        try:
+            per = party.members[num-1]
+        except IndexError:
+            return
         clear_screen()
         per.character_sheet(dungeon_mode)
 

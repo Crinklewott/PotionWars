@@ -1005,7 +1005,7 @@ class Necia(pwenemies.Enemy):
             '''swipe''' if bottom.weapon().weaponType == items.Sword.weaponType else '''thrust''', '''and sweeps''', bottom.printedName + "'s", '''ankles out from under''', bottom.himher() + ".",
             '''With the''', bottom.heroheroine() if self is top else '''Vengador''', '''on''', bottom.hisher(), '''hands and knees,''', top.printedName, '''has no trouble hooking a leg around''',
             bottom.hisher(), '''waist and locking''', bottom.printedName, '''in place. After pulling the''', '''adventurer's''' if self is top else '''invader's''', 
-            bottom.clothing_below_the_waist(), 
+            bottom.clothing_below_the_waist().name, 
             ' '.join(['''tight against''', bottom.hisher(), bottom.bum_adj(), '''bottom,''']) if bottom.clothing_below_the_waist().liftlower() == 'lift' else ' '.join(['''up, over''', 
                 bottom.printedName + "'s", '''hips, and exposing''', bottom.printedName + "'s", bottom.underwear().name + ","]),
             top.printedName, '''begins swatting''', bottom.printedName + "'s", bottom.muscle_adj(), '''bottom with the other, the smacks echoing through the room.''']])
@@ -1034,9 +1034,9 @@ class Necia(pwenemies.Enemy):
 
     def set_default_stats(self):
         if universal.DEBUG:
-            self.set_all_stats(strength=3, dexterity=3, talent=2, alertness=3, willpower=1, health=45, mana=20)
+            self.set_all_stats(strength=4, dexterity=4, talent=4, alertness=4, willpower=4, health=30, mana=20)
         else:
-            self.set_all_stats(strength=3, dexterity=4, talent=2, alertness=4, willpower=2, health=45, mana=20)
+            self.set_all_stats(strength=4, dexterity=4, talent=4, alertness=4, willpower=4, health=30, mana=20)
 
 necia = Necia(None, None, description=universal.format_line(['''An athletic, hard-bodied, dagger-wielding woman of average height. There is a tremendous amount of''',
 '''tension in her stance.''']), printedName="Warslinger's Companion")
@@ -4071,12 +4071,13 @@ def start_scene_2_episode_1(loading=False):
         '''Adrian has a sword in his hand before the door finishes slamming open. Cries of''',
         '''surprise fill the room, followed by the''',
             '''clatter of drawn weapons, knocked over tables, and flung chairs.'''],
-        ['''For a moment, there is tense silence. Then, one of the masked warriors, a man, steps forward. "We are the Vengadores. We fight''',
-        '''to free Taironans from the scourge of the Avaricumites and their potions."'''],
+        ['''For a moment, there is tense silence. Then, one of the masked warriors, a man, steps forward. "We are the Vengadores. For years, you've harried us like rabid hounds,''',
+        '''while your masters grow fat off our blood and tears.''',
+        '''Well, we've had enough. No longer will we stand by and let you terrorize us. Today, we stand up, and take back what's ours!"'''],
         '''"I'm sure your mother's very proud," says Adrian in a tight voice. "Now get out of my guild."''',
-        '''The Vengador points at Adrian. Sparks dance across his fingertips. "We are here for your arms and armor. Surrender them peacefully, and no one will be hurt."''',
+        '''The Vengador points at Adrian. Sparks dance across his fingertips. "We are here for your arms and armor. Surrender them, or we'll tear this guild apart."''',
         '''"No," says Adrian.''',
-        '''A bolt of fire erupts from his fingertip and arcs towards Adrian, who throws his own hand up. Just before the firebolt strikes, his hand flares with blue light. When the light fades, the firebolt is gone.''',
+        '''A bolt of fire erupts from the Vengador's fingertip and arcs towards Adrian, who throws his own hand up. Just before the firebolt strikes, his hand flares with blue light. When the light fades, the firebolt is gone.''',
         ['''The Vengadores scatter through the room, engaging the heavily outnumbered''',
         '''adventurers.''',
             '''The only swordswoman in the group locks eyes with''', universal.state.player.name + ".", '''She twists around a charging adventurer,''',
@@ -4462,6 +4463,7 @@ def ep1_spank_paloma(keyEvent):
             acknowledge(dungeonmode.dungeon_mode, ())
         elif num == 2:
             increment_spankings_given()
+            textCommandsMusic.add_keyword('ep1WillSpankPaloma')
             universal.say(format_text([['''Paloma's lips twist. "Not sure if I should be pleased to hear that or not. On the one hand, adding another layer of welts was''',
                 '''not something I was looking forward to. On the other, I'd rather just get it over with."'''],
                 ['''"Look, I just think spanking you when you're already sore is a bit excessive," says''', name() + "."],
@@ -5548,7 +5550,7 @@ def help_Morey(allies, enemies, won):
             '''enemies."'''],
         [name(), '''rolls''', hisher(), '''eyes. "Yes, yes, I already knew that. Anything useful?"'''],
         ['''"Well, I don't know what you know and don't know," says Morey testily. "I guess, one other thing is that your natural magic develops based on your actions.''',
-            '''You attack an enemy directly, and you're going to get more dexterous, quicker on your feet. Do a lot of grappling and you'll grow stronger--''']
+            '''You attack an enemy directly, and you're going to get more dexterous, quicker on your feet. Do a lot of grappling and you'll grow stronger--'''],
         ['''"Nevermind," says''', name(), '''waving''', hisher(), '''hand. "Get on out to the main room. I'll get down to the armory."'''],
         ['''"Right, then." The warrior nods, and runs out the door, weapons at the ready.''']])
     universal.say(moreyText, justification=0)
@@ -5563,7 +5565,9 @@ def e1_7_3():
         #'''is a full length mirror hanging on the northern wall.''', name(), '''has never seen such a massive, expensive luxury.''']]))
     else: 
         universal.say_title('Combat Room')
-        universal.say(universal.format_text([['''Directly to the west, in the center of the large room is a brutal melee. Six insurgents surround a whirling, slender''',
+        universal.say(universal.format_text([[name(), '''enters a large, open space. Blunted weapons of all shapes and sizes line the south wall. To''', names(), '''astonishment, there''',
+        '''is a full length mirror hanging on the northern wall.''', name(), '''has never seen such a massive, expensive luxury.'''], 
+        ['''Directly to the west, in the center of the large room is a brutal melee. Six insurgents surround a whirling, slender''',
         '''pale-skinned man with jet black hair. He is holding a rapier in one hand, and a dueling dagger in the other. He runs one insurgent through, blocks another's attack''',
         '''with his dagger, and ducks under a third's spear thrust. A fourth, however, manages to club the warrior across the face with the the butt of his spear.''']]))
         event = True
@@ -5665,6 +5669,7 @@ def e0_6_1():
                     ['''2. No.''']]), justification=0)
                 set_commands(['(#) Select a number.'])
                 set_command_interpreter(e0_6_1_caning_revenge_interpreter)
+                return True
             elif 'spectral_spanked_Taironans' in keywords():
                 backOfGuild = universal.state.get_room('Guild')
                 backOfGuild.display(False)
@@ -5963,6 +5968,7 @@ def e0_6_1_dodge_or_submit_interpeter(keyEvent):
                 if not 'helped_Paloma' in keywords() and not 'failed_to_help_Paloma' in keywords():
                     add_keyword('Airell_before_Paloma')
         e0_6_1()
+
 def e0_6_1_attack_mage_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key))
@@ -6056,6 +6062,7 @@ def e0_6_1_interpreter(keyEvent):
             increment_spankings_taken()
             add_keyword('spectral_caned')
             universal.state.player.uses_mana(spells_PotionWars.DistortMagic.cost)
+            universal.state.player.increaseSpellPoints[universal.STATUS_MAGIC - universal.COMBAT_MAGIC] += 1
             universal.say(universal.format_text([[name(), '''holds up''', hisher(), '''hands, and focuses. A blanket of chaotic, seizure-inducing colors erupt from''', hisher(), 
             '''outstretched hands, and blanket the spectral constructs. For a moment, the hands wobble, and everyone lets out a cheer. Then, the chaotic colors fly away''',
             '''from the hands, and condense into a large sphere. The sphere begins spinning, ever faster and faster. Then the sphere explodes, and the colors fly''',
@@ -6146,7 +6153,7 @@ def e0_6_1_caning_revenge_interpreter(keyEvent):
         else:
             add_keyword('spectral_spanked_Taironans')
             increment_spankings_given()
-            universal.state.player.increaseSpellPoints[universal.SPECTRAL_MAGIC - universal.CURRENT_MANA] += 1
+            universal.state.player.increaseSpellPoints[universal.SPECTRAL_MAGIC - universal.COMBAT_MAGIC] += 1
             universal.state.player.uses_mana(p.SpectralSpanking.cost)
             universal.say(format_text([[name(), '''holds up''', hisher(), '''hands a second time. Power flows through''', hisher(), '''body, making''', hisher(),
                 '''skin tingle, and''', hisher(), '''heart pound. Then, the power bursts from''', hisher(), '''fingertips and coalesces into a pair of evanescent''',
@@ -6773,7 +6780,7 @@ def e0_3_5():
         backOfGuild.coordinates = (backOfGuild.coordinates[0], backOfGuild.coordinates[1], backOfGuild.coordinates[2] - 1)
         universal.acknowledge(dungeonmode.dungeon_mode, ())
         event = True
-    return True
+    return event
 
 def e0_5_5():
     backOfGuild = universal.state.get_room('Guild')

@@ -24,6 +24,7 @@ import abc
 import random
 import person
 import math
+import positions
 from random import randrange
 
 GRAPPLER_ONLY = 0
@@ -141,7 +142,7 @@ class CombatAction(universal.RPGObject):
         elif self.grappleStatus == NOT_WHEN_GRAPPLED:
             return '\n'.join(['No.'])
         else:
-            raise ValueError(' '.join(['' if self.grappleStatus is None else str(self.grappleStatus), 'is not a valid grapple status.']))
+            raise ValueError(' '.join(['' if self.grappleStatus is None else str(self.grappleStatus), 'is not a valid grapple status. CombatAction:', str(self.grappleStatus)]))
 
     def target_type_string(self):
         if self.targetType == ALLY:
@@ -248,6 +249,7 @@ def compute_damage(attWarfare, warfareDiff):
     """
     assert MINIMUM_NEGATIVE_DAMAGE < 0 < MAX_BONUS, "MINIMUM NEGATIVE DAMAGE: %d not negative or MAX_BONUS: %d not positive." % (MINIMUM_NEGATIVE_DAMAGE, MAX_BONUS)
     assert DIVISION_CONSTANT != 0, "DIVISION_CONSTANT cannot be zero."
+    #return max(1, attWarfare + warfareDiff)
     if MINIMUM_NEGATIVE_DAMAGE <= warfareDiff <= MAX_BONUS:
         return attWarfare + int(math.trunc(warfareDiff / DIVISION_CONSTANT * attWarfare))
     elif warfareDiff < MINIMUM_NEGATIVE_DAMAGE:
@@ -264,7 +266,7 @@ class GrappleAction(CombatAction):
     primaryStat = universal.STRENGTH
     secondaryStat = universal.DEXTERITY
     actionType = 'GrappleAction'
-    GRAPPLE_DURATION_DIVISOR = 2
+    GRAPPLE_DURATION_DIVISOR = 1
     def __init__(self, attacker, defenders, enemyInitiated=False):
         super(GrappleAction, self).__init__(attacker, defenders, GRAPPLE, GrappleAction.secondaryStat)
         self.targetType = ENEMY
@@ -433,7 +435,7 @@ class SpankAction(CombatAction):
         if attacker.is_grappling(defender):
             spanker, spankee = attacker, defender
             spankerGrapple, spankeeGrapple = spanker.grapple(), spankee.grapple()
-            spankerWillpower, spankeeWillpower = spanker.willpower(), spankee.willpower()
+            spankerResilience, spankeeResilience = spanker.resilience(), spankee.resilience()
             resultStringFunction = spanking.spanking_string
             durationMultiplier = 1
             if random.randrange(100) < self.REVERSAL_CHANCE:
@@ -441,18 +443,17 @@ class SpankAction(CombatAction):
                 durationMultiplier = -1
                 #Reversals suck. They use whichever combination of grapples and willpowers that most benefits the new spanker, and hurts the new spankee! 
                 spankerGrapple, spankeeGrapple = max(spanker.grapple(), spankee.grapple()), min(spanker.grapple(), spankee.grapple())
-                spankerWillpower, spankeeWillpower = max(spanker.willpower(), spankee.willpower()), min(spanker.willpower(), spankee.willpower())
+                spankerResilience, spankeeResilience = max(spanker.resilience(), spankee.resilience()), min(spanker.resilience(), spankee.resilience())
                 resultStringFunction = spanking.reversed_spanking
-            spanker.begin_spanking(spankee, self.position)
-            spankee.begin_spanked_by(spanker, self.position)
             resultString = resultStringFunction(spanker, spankee, self.position)
-            grappleBonus = int(math.trunc(self.position.maintainability / self.DIVISOR) * spankerGrapple)
-            durationBonus = int(math.trunc(self.position.humiliating / self.DIVISOR) * spankerGrapple)
+            grappleBonus = int(math.trunc(self.position.maintainability / self.DIVISOR * spankerGrapple))
+            durationBonus = int(math.trunc(self.position.humiliating / self.DIVISOR * spankerGrapple))
             spankingDuration =  durationMultiplier * max(self.MIN_SPANKING_DURATION, spankerGrapple - spankeeGrapple) + grappleBonus
-            spankee.grappleDuration = spanker.grappleDuration = spankingDuration if spankingDuration > 0 else -spankingDuration
+            spanker.begin_spanking(spankee, self.position, spankingDuration if spankingDuration >0 else -spankingDuration)
+            spankee.begin_spanked_by(spanker, self.position, spanker.grappleDuration)
             assert spankee.grappleDuration
             assert spanker.grappleDuration
-            duration = max(self.MIN_HUMILIATED_DURATION, spankerWillpower - spankeeWillpower) + durationBonus
+            duration = max(self.MIN_HUMILIATED_DURATION, spankerResilience - spankeeResilience) + durationBonus
             if not spankee.is_inflicted_with(statusEffects.Humiliated.name):
                 spankee.inflict_status(statusEffects.build_status(statusEffects.Humiliated.name, duration))
                 spanker.spankeeAlreadyHumiliated = False
@@ -484,8 +485,9 @@ class ContinueSpankingAction(CombatAction):
         spankingEffect = self.being_spanked()
         attacker = self.attacker
         defender = self.defenders[0]
-        #Counteracts the decrement in duration of the humiliated status at the end of the round. We want the effective duration of humiliated to only go down after the spanking.
-        defender.increment_status_duration(statusEffects.Humiliated.name)
+        #Counteracts the decrement in duration of the humiliated status at the end of the round. We want the effective duration of humiliated to only go down after the 
+        #spanking.
+        #defender.increment_status_duration(statusEffects.Humiliated.name)
         humiliatedStatus = defender.get_status(statusEffects.Humiliated.name)
         if not attacker.is_spanking():
             return DefendAction(attacker, [attacker]).effect(inCombat, allies, enemies) 
@@ -495,19 +497,19 @@ class ContinueSpankingAction(CombatAction):
         elif defender.enduring:
             severity = self.severity - 1
             if severity:
-                humiliatedStatus.inflict_status(defender, severity)
+                humiliatedStatus.increase_status(defender, severity)
                 decrementedStat = True
             else:
                 defender.enduring = False
                 decrementedStat = False
         else:
-            humiliatedStatus.inflict_status(defender)
+            humiliatedStatus.increase_status(defender)
             decrementedStat = True
-        #If the attacker isn't grappling, then it must be the case that he/she is administering a spectral spanking, in which position contains the spectral spanking spell object
-        if not attacker.is_grappling():
-            resultString = attacker.position.round_statement(defender)
-        else:
+        #If our "position" is not in the map of all spanking positions, then our position is actually a spell.
+        if attacker.position.name in positions.allPositions:
             resultString = spanking.continue_spanking(self.attacker, defender, self.attacker.position)
+        else:
+            resultString = attacker.position.round_statement(defender)
         assert defender.is_inflicted_with(statusEffects.Humiliated.name), "Somehow, defender: %s is not afflicted with humiliated!" % defender.name
         return (resultString, [decrementedStat], self)
 
