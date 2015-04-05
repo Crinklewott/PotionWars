@@ -24,7 +24,7 @@ import textrect
 import sys
 from pygame.locals import *
 
-def town_mode(sayDescription=True):
+def town_mode(sayDescription=True, playMusic=True):
     """
     Goes into town mode (i.e. displays the commands for town-mode, and says the description of the current location, if sayDescription is True. Otherwise, it doesn't
     say the description.
@@ -36,7 +36,8 @@ def town_mode(sayDescription=True):
         universal.say_replace(room.get_description())
     universal.set_commands(['(P)arty', '(G)o', '(S)ave', '(Q)uick Save', '(T)alk', '(L)oad', '(Esc)Quit', 't(I)tle Screen'])
     universal.set_command_interpreter(town_mode_interpreter)
-    music.play_music(room.bgMusic)
+    if playMusic:
+        music.play_music(room.bgMusic)
 
 def rest_mode(bedroomIn=None, sayDescription=True):
     if bedroomIn is None:
@@ -226,8 +227,8 @@ class Room(universal.RPGObject):
             pass
 
 
-    def mode(self, sayDescription=True):
-        return town_mode(sayDescription)
+    def mode(self, sayDescription=True, playMusic=True):
+        return town_mode(sayDescription, playMusic)
 
     def add_characters(self, characters):
         for character in characters:
@@ -895,41 +896,48 @@ def select_destination_interpreter(keyEvent):
         if currentRoom.adjacent is not None and 0 < num and num <= len(currentRoom.adjacent):
             go(currentRoom.adjacent[num-1])
 
-def go(room, party=None, sayDescription=True):
+def go(room, party=None, sayDescription=True, playMusic=True):
     try:
         universal.state.location.leaving()    
     except TypeError:
         try:
             canLeave = universal.state.location.leaving(room)
-        except TypeError, e:
+        except TypeError:
             pass
         else:
             if not canLeave:
                 return
     except AttributeError:       
+        print("Had an attribute error. In other words, there is no leaving function.")
         pass
     try:
-        if room.before_arrival():
-            perform_go(room, party, sayDescription)
+        canGo = room.before_arrival()
     except (TypeError, AttributeError):
-        perform_go(room, party, sayDescription)
-    assert universal.state.location == room
+        print("Had a type or attribute error, i.e. before_arrival doesn't exist.")
+        canGo = True
+    if canGo:
+        perform_go(room, party, sayDescription, playMusic)
+        assert universal.state.location == room, "Location and current room don't line up. Location: %s Room: %s" % (universal.state.location.name, room.name)
 
-def perform_go(room, party=None, sayDescription=True):
-    if party is None:
-        party = person.get_party()
-    if universal.state.location is not None:
-        universal.state.location.remove_characters(party)
-    room.add_characters(party)
-    set_current_room(room)
+def perform_go(room, party=None, sayDescription=True, playMusic=True):
+    update_location(room, party)
     if universal.state.location.after_arrival is None:
-        universal.state.location.mode(sayDescription)
+        universal.state.location.mode(sayDescription, playMusic)
     else:
         try:
             universal.state.location.after_arrival(room)
         except TypeError:
             universal.state.location.after_arrival()
         #universal.state.location.mode()
+
+def update_location(room, party=None):
+    if party is None:
+        party = person.get_party()
+    if universal.state.location is not None:
+        universal.state.location.remove_characters(party)
+    room.add_characters(party)
+    set_current_room(room)
+
 
 def talk(previousModeIn):
     party = person.get_party()

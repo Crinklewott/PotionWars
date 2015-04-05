@@ -418,6 +418,7 @@ class SpankAction(CombatAction):
         self.actionType = 'spank'
         self.position = position
         self.severity = severity
+        self.minDuration = 2
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
@@ -449,7 +450,9 @@ class SpankAction(CombatAction):
             grappleBonus = int(math.trunc(self.position.maintainability / self.DIVISOR * spankerGrapple))
             durationBonus = int(math.trunc(self.position.humiliating / self.DIVISOR * spankerGrapple))
             spankingDuration =  durationMultiplier * max(self.MIN_SPANKING_DURATION, spankerGrapple - spankeeGrapple) + grappleBonus
-            spanker.begin_spanking(spankee, self.position, spankingDuration if spankingDuration >0 else -spankingDuration)
+            if spankingDuration < self.minDuration:
+                spankingDuration = self.minDuration
+            spanker.begin_spanking(spankee, self.position, spankingDuration if spankingDuration > 0 else -spankingDuration)
             spankee.begin_spanked_by(spanker, self.position, spanker.grappleDuration)
             assert spankee.grappleDuration
             assert spanker.grappleDuration

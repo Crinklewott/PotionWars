@@ -279,6 +279,7 @@ class Person(universal.RPGObject):
 
         Note: I've removed the orders. Sixth order is no longer necessary since I've eliminated random encounters, and that was the primary motivation for orders. Without the need for
         fully healing before the boss, orders just provide unnecessary complexity.
+        NOTE: defaultLitany doesn't actually do anything. Including it was a terrible, terrible mistake.
     """
     def __init__(self, name, gender, defaultLitany, litany, description="", printedName=None, 
             coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle='', marks=None,
@@ -319,7 +320,7 @@ class Person(universal.RPGObject):
         self.positions = []
         self.combatType = None
         self.litany = litany
-        self.defaultLitany = defaultLitany
+        self.defaultLitany = None
         self.coins = coins
         self.specialization = specialization
         self.order = zeroth_order
@@ -890,7 +891,7 @@ class Person(universal.RPGObject):
                 universal.say(format_text([[self.name, '''can't go without pajama bottoms. After all,''', heshe(self), '''needs something to cover''', hisher(self), 
                 '''bottom for when''', heshe(self), '''wants to leave''', hisher(self), '''room, but doesn't want to get dressed.''']]), justification=0)
             else:
-                universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(self), '''equips''', equipment.name + ",", '''then''', 
+                universal.say(format_text([[self.name, '''realizes with a spike of embarrassment that if''', heshe(self), '''equips''', equipment.name + ",", '''then''', 
                     heshe(self), '''will be naked from the waist down.''', HeShe(self), '''decides not to equip''', equipment.name + "."]]), justification=0)
             acknowledge(Person.character_sheet, self)
             raise items.NakedError()
@@ -913,8 +914,8 @@ class Person(universal.RPGObject):
                     universal.say(format_text([[self.name, '''can't go without pajama bottoms. After all,''', heshe(self), '''needs something to cover''', hisher(self), 
                     '''bottom for when''', heshe(self), '''wants to leave''', hisher(self), '''room, but doesn't want to get dressed.''']]), justification=0)
                 else:
-                    universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(self), '''equips''', equipment.name + ",", '''then''', 
-                        heshe(self), '''will be naked from the waist down.''', HeShe(self), '''decides not to equip''', equipment.name + "."]]), justification=0)
+                    universal.say(format_text([[self.name, '''realizes with a spike of embarassment that if''', heshe(self), '''removes''', equipment.name + ",", '''then''', 
+                        heshe(self), '''will be naked from the waist down.''', HeShe(self), '''decides not to removes''', equipment.name + "."]]), justification=0)
                 acknowledge(Person.character_sheet, self)
                 raise items.NakedError()
 
@@ -1513,8 +1514,9 @@ class Person(universal.RPGObject):
             _, name, gender, description, statuses, rawName, spellNames, inventory, equipmentList, stats, tier, specialization, ignoredSpells, combatType, litany, defaultLitany, coins, specialization, \
                     order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, hairStyle, marks,  = \
                     data.split("Person Data:")
+        if name == 'Lucilla' or name == 'Anastacia' or name == 'Carlita': 
+            name = 'Edita'
         person.name = name.strip()
-        if name == 'Lucilla' or name == 'Anastacia' or name == 'Carlita': name = 'Edita'
         person.description = description.strip()
         person.gender = int(gender.strip())
         person.specialization = int(specialization.strip())
@@ -1572,8 +1574,11 @@ class Person(universal.RPGObject):
             person.ignoredSpells = [get_spell(spellName.strip()) for spellName in ignoredSpells]
         if combatType.strip() != "None":
             person.combatType = int(combatType.strip())
-        if litany.strip() != "None":
+        if litany.strip() == "None":
+            person.litany = None
+        else:
             person.litany = int(litany.strip())
+        person.defaultLitany = None
         try:
             person.coins = int(coins.strip())
         except ValueError:
@@ -1631,7 +1636,7 @@ class Person(universal.RPGObject):
         global currentPerson
         currentPerson = self
         say_title(self.name)
-        universal.say('\n'.join(['Order: ' + order_name(self.order), 'Status: ' + self.display_statusDict(), 'Defense: ' + str(self.defense()), 
+        universal.say('\n'.join(['Matrons: ' + str(self.coins), 'Order: ' + order_name(self.order), 'Status: ' + self.display_statusDict(), 'Defense: ' + str(self.defense()), 
             'Magic Defense: ' + str(self.magic_defense(False)),
             #'Exp to Next Level: ' + str(self.level * XP_INCREASE_PER_LEVEL - self.experience),
             self.display_stats(), '\t']))

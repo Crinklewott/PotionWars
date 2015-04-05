@@ -365,8 +365,9 @@ class Node(AbstractNode):
             ancestor.data.extend([''.join([TAB*2, 'universal.state.player.litany = conversation.allNodes[', str(self.nodeNum), ']']),
                                   ''.join([TAB*2, 'conversation.converse_with(universal.state.player, townmode.town_mode)'])])
         else:
-            ancestor.data.append(''.join([TAB, data[2].lower(), ' = ', "universal.state.get_character('''",  data[2], ".person''')"]))
-            ancestor.data.append(''.join([TAB, data[2].lower(), '.litany = conversation.allNodes[', str(self.nodeNum), ']']))
+            ancestor.data.append(TAB + 'if not loading:')
+            ancestor.data.append(''.join([TAB*2, data[2].lower(), ' = ', "universal.state.get_character('''",  data[2], ".person''')"]))
+            ancestor.data.append(''.join([TAB*2, data[2].lower(), '.litany = conversation.allNodes[', str(self.nodeNum), ']']))
 
 
     

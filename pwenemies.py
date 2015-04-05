@@ -208,7 +208,7 @@ class VengadorWarrior(Enemy):
         else: 
             spankingText = universal.format_text([['''Suddenly,''', top.printedName, '''lunges forward in a seemingly desperate attack aimed at''', bottom.printedName + "'s", '''head. The warrior''',
                 '''dodges the''', top.weapon().weaponType, '''strike, only to discover the attack was feint, when''', top.printedName, '''suddenly shifts''', top.hisher(), '''weight, and knocks''', 
-                bottom.hisher(), '''legs knocked out from under''', bottom.himher() + ".", '''As the Vengador Warrior hits the ground facefirst,''', top.printedName, '''sits down on the middle of''',
+                bottom.hisher(), '''legs out from under''', bottom.himher() + ".", '''As the Vengador Warrior hits the ground facefirst,''', top.printedName, '''sits down on the middle of''',
                 '''the''',
                  '''warrior's back and begins to drum''', bottom.hisher(), '''bottom with both hands. Facedown, and with''', bottom.hisher(), '''arms pinned uselessly between''', top.printedName + 
                  "'s", '''legs and''', bottom.hisher(), '''own sides, the Vengador can do nothing but wait for a chance to escape, and drum''', bottom.hisher(), 
@@ -261,7 +261,7 @@ class VengadorWarrior(Enemy):
             top.hisher(), top.lower_clothing().name, top.lower_clothing().updown() + "."]])
 
     def standing_reversal(self, top, bottom):
-        return universal.format_text([[self.standing_intro(top, bottom)], ['''Then,''', bottom.heroheroine() + "'s", '''strong hands grip''', top.printedName, '''firmly around the ankles.''',
+        return universal.format_text([[self.standing_intro(top, bottom)], ['''Then,''', bottom.printedName + "'s", '''strong hands grip''', top.printedName, '''firmly around the ankles.''',
             bottom.printedName, '''pulls''', bottom.hisher(), '''hands forward, forcing''', top.printedName, '''to topple backward, and land on''', top.hisher(), '''behind.''', bottom.printedName,
             '''pulls''', bottom.himselfherself(), '''to''', bottom.hisher(), '''full height and wastes no time in grasping''', top.printedName, '''and shoving''', top.hisher(), '''head between''',
             bottom.hisher(), '''legs.''', bottom.printedName, ' '.join(['''spies the waistband of''', top.printedName + "'s", top.underwear().name, ' '.join(['''peeking out from above''', 

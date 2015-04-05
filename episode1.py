@@ -228,6 +228,8 @@ avaricumSquare.add_adjacent(craftmansCorridor)
 
 wesleyAndAnnesArmorShop = Room("Wesley and Anne's Smithy", "", 
         bgMusic=textCommandsMusic.PETER, bgMusicName="textCommandsMusic.PETER") 
+
+
 def update_armor_shop_description():
     wesleyAndAnnesArmorShop.description = universal.format_line(['''The shop consists of a single small room. A counter runs the length of the far wall. The shop consists of a single small room. A counter runs the length of the far wall. Hanging on the left wall are a variety of small metal things: nails, buckles, hinges, locks, horseshoes. The right side contains a few samples of larger tools: a large sickle, and a shovel. What really catches''', universal.state.player.name + "'s", '''attention is a 'suit' of chanmail hanging on the wall above the counter.''', universal.format_line(['''The armor is a two piece affair. The top looks like to be barely big enough to cover (for a sufficiently loose definition of 'cover')''', universal.state.player.name + "'s", '''breasts, while the bottom is a thong. A thong made out of chainmail.''' if universal.state.player.is_female() else '''The armor is a single, small thong, which is made out of chainmail.'''])])
 def armor_shop_after_arrival():
@@ -554,7 +556,7 @@ def ildri_or_adrian():
     return ildri if universal.state.player.is_female() else adrian
                
 def guild_bedroom_before_arrival():
-    if not 'boarding_with_Adrian' in keywords():
+    if 'boarding_with_Adrian' not in keywords():
         universal.say(universal.format_text[[name(), '''isn't currently living in the Guild.''']])
         return False
     return True
@@ -632,6 +634,7 @@ class Maria(p.Person):
 
 maria_greeting_1_1 = Node(26) 
 maria = Maria(None, maria_greeting_1_1.index) 
+maria.litany = maria_greeting_1_1.index
 offStage.add_character(maria)
 #---------------------------------------Elise---------------------------------------------------
 class Elise(p.Person):
@@ -651,6 +654,7 @@ def elise_default_quip_function():
 elise_default.quip_function = elise_default_quip_function
 elise_greeting_1_1 = Node(69)
 elise = Elise(elise_default.index, elise_greeting_1_1.index)
+elise.litany = elise_greeting_1_1.index
 offStage.add_character(elise)
 
 class Carrie(p.Person):
@@ -1097,7 +1101,7 @@ def guard_greeting_1_1_quip():
     music.play_music(textCommandsMusic.GUARDS)
 
 southGuard.litany = too_busy.index
-southGuard.defaultLitany = too_busy.index
+#southGuard.defaultLitany = too_busy.index
 
 guard_greeting_1_1.quip_function = guard_greeting_1_1_quip
 guard_1_1_1 = Node(3)
@@ -3507,12 +3511,20 @@ def display_text_start_next_scene(delayTime):
 
 def start_scene_1_episode_1(loading=False):
     universal.state.set_init_scene(init_episode_1_scene_1)
+    guild = universal.state.get_room(adventurersGuild)
     assert(universal.state.player)
     edge = universal.state.get_room(edgeOfAvaricum)
     if not loading:
         townmode.set_current_room(townmode.offStage)
         townmode.go(edge)
         universal.state.player.take_item(itemspotionwars.woodenSpoon)
+    try:
+        kitchen = universal.state.get_room("Kitchen")
+    except KeyError:
+        pass
+    else:
+        if kitchen in guild.adjacent:
+            guild.remove_adjacent(kitchen)
     tailors = universal.state.get_room(theresesTailors)
     carol = universal.state.get_character('Carol.person')
     enterLeft(carol, tailors)
@@ -3531,7 +3543,6 @@ def start_scene_1_episode_1(loading=False):
     elise = universal.state.get_character('Elise.person')
     enterLeft(elise, stateShrine)
     elise.litany = elise_greeting_1_1.index
-    guild = universal.state.get_room(adventurersGuild)
     adrian = universal.state.get_character('Adrian.person')
     enterLeft(adrian, guild)
     adrian.litany = adrian_1_initial_greeting.index
@@ -4103,6 +4114,14 @@ def start_scene_2_episode_1(loading=False):
     adventurersGuild = universal.state.get_room("Adventurer's Guild")
     edita = universal.state.get_character('Edita.person')
     adventurersGuild.add_character(edita)
+    try:
+        kitchen = universal.state.get_room("Kitchen")
+    except KeyError:
+        pass
+    else:
+        if kitchen in adventurersGuild.adjacent:
+            adventurersGuild.remove_adjacent(kitchen)
+
     def after_fighting_edita(allies, enemies, won):
         edita = universal.state.get_character('Edita.person')
         edita.restores()
@@ -4404,6 +4423,8 @@ def ribbon_punished_interpreter(keyEvent):
     except ValueError:
         return
     else:
+        if num not in responseMap:
+            return
         if num == 1:
             say(format_text([['''"Oh, that's good," says Paloma. She hurries over and gets the ribbon. She concentrates on it for a moment, and it begins to glow with''',
             '''a soft, golden''',
@@ -8462,6 +8483,13 @@ def end_scene_2_episode_1():
 
 def start_scene_3_episode_1(loading=False):
     adventurersGuild = universal.state.get_room("Adventurer's Guild")
+    try:
+        kitchen = universal.state.get_room("Kitchen")
+    except KeyError:
+        pass
+    else:
+        if kitchen in adventurersGuild.adjacent:
+            adventurersGuild.remove_adjacent(kitchen)
     backOfGuild = universal.state.get_room('Guild')
     infirmary = universal.state.get_room('Infirmary')
     if not loading:
@@ -8550,7 +8578,7 @@ def scene_3_guild():
                 universal.say(universal.format_text([['''As if summoned, Mai, the elven stealth master, slips up and joins the other two. She smiles sheepishly at Cosima. "Hi."'''],
                     ['''"Speaking of really screwing up," says Cosima sharply. "Where in the Mother's name were you?"'''],
                     ['''"Hiding," mutters Mai, scuffing her foot against the stone.'''],
-                    ['''"You know hiding's only half of what you were supposed to do, right?" says Cosima. "You were also supposed to ambush the''',
+                    ['''"You know hiding's only half of what you were supposed to do, right?" says Cosima. "You were also supposed to ambush that''',
                         '''cursed slinger."'''],
                     ['''"I'm sorry, but he was rather scary," says Mai pitifully. "I mean, he was making you look like an amateur."'''],
                     ['''"Which is why we were supposed to fight him together," snaps Cosima. She winces and clutches at her head. "You wretched,''',
@@ -8884,7 +8912,6 @@ def adrian_recap_interpreter(keyEvent):
         else:
             universal.say(universal.format_text([['''\n\nAdrian nods. "Alright. Sounds like you did pretty well, and your story lines up with what the instructors told me. So''',
                 '''why don't you go help Ildri, before she starts waving that spatula of hers around."''']]), justification=0)
-        ep_1_leave_guild()
     elif num == 2:
         universal.say(universal.format_text([[name(), '''tells Adrian about''', hisher(), '''escapades during the attack, leaving nothing out'''  +
         (universal.format_line([''' except for''', hisher(), '''attempts to join the Vengadores. No telling what Adrian would do if he found out about that.''']) 
@@ -8899,7 +8926,7 @@ def adrian_recap_interpreter(keyEvent):
             ['''"Thank you, sir," says''', name() + "."],
             ['''"Just being honest. Now, why don't you go and help Ildri, before she charges in here with murder in her eyes," says Adrian, smiling.''']]),
         justification=0)
-        ep_1_leave_guild()
+    ep_1_leave_guild()
 
 def ep_1_leave_guild():
     if 'caned_by_Adrian' in keywords():

@@ -914,7 +914,7 @@ def choose_action_class(enemy, weightedActionClasses, warfareActions, grappleAct
                 else:
                     try:
                         grappleActions.remove(combatAction.ThrowAction)
-                    except KeyError:
+                    except ValueError:
                         pass
             else:
                 grappleActions.extend([combatAction.GrappleAction for i in range(max(1, enemy.grapple()))])
@@ -962,7 +962,7 @@ def strap_cane_ai(enemy):
         if get_difficulty() == STRAP or (get_difficulty() == CANE and enemy.weapon().weaponType == items.Sword.weaponType):
             warfareActions.append(combatAction.BreakGrappleAction)
             #If half an enemy's grapple is less than the amount of grapple left, then she can't throw her enemy, so she doesn't even bother.
-            if enemy.grapple() // 2 < enemy.grappleDuration():
+            if enemy.grapple() // 2 < enemy.grappleDuration:
                 grappleActions = [combatAction.AttackAction]#, combatAction.DefendAction]
             else:
                 grappleActions = [combatAction.ThrowAction, combatAction.AttackAction]#, combatAction.DefendAction]

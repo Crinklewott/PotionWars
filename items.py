@@ -239,7 +239,11 @@ class Armor(Item):
         return "lift"
 
     def lowerlift(self):
-        return self.lowerlift()
+        return "lift"
+
+    def restore_lowerlift(self):
+        return "lower"
+
 
     def liftslowers(self):
         return self.liftlower() + "s"
@@ -511,7 +515,6 @@ class Weapon(Item):
     def display(self):
         displayString = super(Weapon, self).display()
         return '\n'.join([displayString, 
-            'Damage:  ' + str(self.minDamage + self.genericBonus) + ' -> ' + str(self.maxDamage + self.genericBonus), 
             'grapple attempt: ' + str(self.grappleAttempt + self.genericBonus), 
             'grapple attempt defense: ' + str(self.grappleAttemptDefense + self.genericBonus), 
             'grapple bonus: ' + str(self.grappleBonus + self.genericBonus), 

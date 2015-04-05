@@ -31,7 +31,7 @@ import os
 import math
 import ast
 
-DEBUG = True
+DEBUG = False
 SAVE_DELIMITE = '%%%'
 
 
@@ -704,10 +704,19 @@ def acknowledge(function, *args):
     global postAcknowledgeArgs
     postAcknowledgeFunction = function
     postAcknowledgeArgs = args
+    print(args)
+    print(function)
+    print(postAcknowledgeFunction)
+    print(postAcknowledgeArgs)
     set_command_interpreter(acknowledge_interpreter)
     set_commands(['(Enter) to continue.'])
 
 def acknowledge_interpreter(keyEvent):
+    print("Acknowledging.")
+    print("Function:")
+    print(postAcknowledgeFunction)
+    print("Args:")
+    print(postAcknowledgeArgs)
     if keyEvent.key == K_RETURN:
         if postAcknowledgeArgs == ((),):
             postAcknowledgeFunction()
@@ -1009,42 +1018,39 @@ class State(object):
             _, player, characters, rooms, bedroom, party, location, itemList, difficulty = fileData.split('State Data:')
             clearedSquares = ''
         person.PlayerCharacter.load(player, self.player)   
-        characters = [charData.strip() for charData in characters.split("Character:") if charData.strip()]
-        for charData in characters:
-           name, _, charData = charData.partition('\n')
-           if name.strip().lower() == 'lucilla' or name.strip().lower() == 'anastacia':
-               name = "Carlita"
-           try:
-               person.Person.load(charData, self.characters[name.strip() + '.person'])
-           except KeyError:
-               try:
-                   person.Person.load(charData, self.characters[name.strip() + '.playerCharacter'])
-               except KeyError:
-                   pass
         rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
         for roomData in rooms:
            name, _, roomData = roomData.partition('\n')
            try:
                townmode.Room.load(roomData, self.rooms[name])
            except KeyError, e:
-               townmode.Room.load(roomData, self._backwards_compatibility_room_names(name, e))
+               if name == "Wesley and Anne's Weapons and Armor":
+                   name = "Wesley and Anne's Smithy"
+                   townmode.Room.load(roomData, self.rooms[name])
+                   self.rooms[name].name = "Wesley and Anne's Smithy"
+               else:
+                   townmode.Room.load(roomData, self._backwards_compatibility_room_names(name, e))
         if bedroom.strip() != "None":
             self.bedroom = self.rooms[bedroom.strip()] 
         party = party.strip().split('\n')
         party = [name.strip() for name in party if name.strip()]
         self.party = person.Party([self.player if memberName == self.player.get_id() else self.characters[memberName] for memberName in party])
-        self.location = self.rooms[location.strip()]
+        try:
+            self.location = self.rooms[location.strip()]
+        except KeyError:
+            if location.strip() == "Wesley and Anne's Weapons and Armor":
+                self.location = self.rooms["Wesley and Anne's Smithy"]
+                self.location.name = "Wesley and Anne's Smithy"
+            else:
+                raise
         itemList = [itemName.strip() for itemName in itemList.split("Item:") if itemName.strip()]
         hasQualityDagger = False
         for itemData in itemList:
             name, _, itemData = itemData.partition('\n')
             try:
-                items.Item.load(itemData, self.items[name])
+                items.Item.load(itemData, self.items[name.strip()])
             except KeyError:
-                if name == 'loincloth of stealth':
-                    name = 'loincloth of speed'
-                    items.Item.load(itemData, self.items[name])
-                    self.items[name].name = 'loincloth of speed'
+                self._backwards_compatibility_items(name.strip())
         try:
             self.difficulty = int(difficulty.strip())
         except ValueError:
@@ -1057,8 +1063,33 @@ class State(object):
         if self.player.currentEpisode:
             currentEpisode = episode.allEpisodes[self.player.currentEpisode]
             currentEpisode.init()
+            characters = [charData.strip() for charData in characters.split("Character:") if charData.strip()]
+            for charData in characters:
+               name, _, charData = charData.partition('\n')
+               if name.strip().lower() == 'lucilla.person' or name.strip().lower() == 'anastacia.person':
+                   name = "Carlita.person"
+               try:
+                   person.Person.load(charData, self.characters[name.strip()])
+               except KeyError:
+                   try:
+                       person.Person.load(charData, self.characters[name.strip() + '.playerCharacter'])
+                   except KeyError:
+                       pass
             currentScene = currentEpisode.scenes[currentEpisode.currentSceneIndex]
             currentScene.startScene(True)
+        else:
+            characters = [charData.strip() for charData in characters.split("Character:") if charData.strip()]
+            for charData in characters:
+               name, _, charData = charData.partition('\n')
+               if name.strip().lower() == 'lucilla' or name.strip().lower() == 'anastacia':
+                   name = "Carlita"
+               try:
+                   person.Person.load(charData, self.characters[name.strip() + '.person'])
+               except KeyError:
+                   try:
+                       person.Person.load(charData, self.characters[name.strip() + '.playerCharacter'])
+                   except KeyError:
+                       pass
 
     def _backwards_compatibility_items(self, item):
         #NOTE: This function needs to be eliminated before using this code for other games. This exists solely for reasons of backwards compatibility for Potion Wars.
@@ -1086,7 +1117,10 @@ class State(object):
                 self.player.take_item(itemspotionwars.attackGem)
             say_immediate(format_text([["Due to changes to the weapon system, the quality dagger no longer exists. Instead, you will receive an enhancement gem (if you haven't received one already for having the leather cuirass) that Peter at Wesley and Anne's",
             "Smithy can forge into your weapon, and Carol at Therese's Tailors can forge into your clothing."]]))
-            if all(map(lambda x : x not in self.player.inventory, [itemspotionwars.familyDagger, itemspotionwars.familySword, itemspotionwars.familySpear])):
+            noFamilyWeapon = False
+            hasFamilyWeapon = [x in self.player.inventory + self.player.equipmentList for x in [itemspotionwars.familyDagger, itemspotionwars.familySword, 
+                itemspotionwars.familySpear]]
+            if not any(hasFamilyWeapon):
                 say_immediate(format_text([['''It appears that you got rid of your starting weapon in favor of the quality dagger. Since the family weapons are rather unique, you'll now be given the option of selecting a new family weapon, just like at''',
                     '''the''','''beginning''', '''of the game. Please make your choice:'''], ['''1. Family Dagger'''], ['''2. Family Sword'''], ['''3. Family Spear''']]))
                 choiceMade = False
@@ -1106,7 +1140,7 @@ class State(object):
                                 choiceMade = True
                                 break
             else:
-                universal.say_immediate("Hit Enter to continue loading your game.")
+                say_immediate("Hit Enter to continue loading your game.")
                 if not itemspotionwars.attackGem in self.player.inventory:
                     self.player.take_item(itemspotionwars.attackGem)
                 acknowledged = False
@@ -1183,6 +1217,8 @@ class State(object):
         except KeyError:
             if itemName == "loincloth of stealth":
                 return self.items["loincloth of speed"]
+            else:
+                raise
 
     def remove_item(self, item):
         try:
@@ -1253,13 +1289,13 @@ class State(object):
             return self.characters[character.get_id()]
         except AttributeError:
             try:
-                return self.characters[character]
+                return self.characters[character.strip()]
             except KeyError:
                 try:
-                    return self.characters[''.join([character, '.playerCharacter'])]
+                    return self.characters[''.join([character.strip(), '.playerCharacter'])]
                 except KeyError:
                     try:
-                        return self.characters[''.join([character, '.person'])]
+                        return self.characters[''.join([character.strip(), '.person'])]
                     except KeyError, e:
                         return self._backwards_compatibility_person_names(character, e)
 
@@ -1267,7 +1303,7 @@ class State(object):
         try:
             characterName = character.get_id()
         except AttributeError:
-            characterName = character
+            characterName = character.strip()
         if characterName == "Lucilla.person": 
             try:
                 character =  self.get_character("Edita.person")
