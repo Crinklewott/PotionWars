@@ -291,7 +291,7 @@ def battle_interpreter(keyEvent):
         if keyEvent.key == K_RETURN:    
             continue_spanking()
         elif keyEvent.key == K_s:
-            end_spanking()
+            terminate_spanking()
     elif activeAlly.is_being_spanked():
         if keyEvent.key == K_RETURN:
             struggle()
@@ -537,7 +537,7 @@ def end_spanking():
     assert activeAlly.is_spanking(), "Active Ally: %s isn't spanking!" % activeAlly.name
     assert activeAlly.is_spanking(activeAlly.grapplingPartner), "Active Ally: %s isn't spanking %s!" % (activeAlly.name, activeAlly.grapplingPartner.name)
     activeAlly.spankee.spankingEnded = True
-    activeAlly.end_spanking()
+    activeAlly.terminate_spanking()
     display_combat_status()
 
 def struggle():
@@ -1466,7 +1466,7 @@ def decrement_grappling():
                     spankee = ally if ally.is_being_spanked() else grapplingPartner
                     spanker = ally if ally.is_spanking() else grapplingPartner
                     assert spanker != spankee, "Somehow, spanker: %s is spanking themselves!" % spanker.printedName
-                    spanker.end_spanking()
+                    spanker.terminate_spanking()
                     actionResults.append((' '.join([spankee.printedName, "breaks free of", spanker.printedName + "'s", "punishing grip!"]), False))
                 else:
                     ally.break_grapple()
@@ -1483,7 +1483,7 @@ def decrement_grappling():
                     spanker.grapple_duration(), spankee.name, spankee.grapple_duration())
             if not spanker.grapple_duration():
                 actionResults.append((spanker.position.end_statement(spankee), False))
-                spanker.end_spanking()
+                spanker.terminate_spanking()
 
 resultIndex = 0
 COMBAT_DELAY = 1000

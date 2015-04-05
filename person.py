@@ -1052,7 +1052,7 @@ class Person(universal.RPGObject):
             assert duration, "Person: %s is not None, but duration is." % person.printedName
             if self.involved_in_spanking():
                 self.position.end_statement()
-                self.end_spanking()
+                self.terminate_spanking()
             self.grapplingPartner = person
             person.grapplingPartner = self
             self.grappleDuration = duration
@@ -1280,7 +1280,7 @@ class Person(universal.RPGObject):
         self.position = position
         self.grappleDuration, self.originalGrappleDuration = duration, self.grappleDuration
 
-    def end_spanking(self):
+    def terminate_spanking(self):
         opponent = self.spanker if self.spanker else self.spankee
         if self.originalGrappleDuration:
             self.grappleDuration = opponent.grappleDuration = self.originalGrappleDuration
@@ -2893,7 +2893,7 @@ class SpectralSpanking(Spectral):
             attacker.decrease_stat(universal.CURRENT_MANA, 1)
             return resultStatement
         else:
-            attacker.end_spanking()
+            attacker.terminate_spanking()
             attacker.grappleDuration = 0
             defender.grappleDuration = 0
             return '\n\n'.join([resultStatement, self.end_statement()])
