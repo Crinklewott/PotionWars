@@ -151,8 +151,6 @@ class Item(universal.RPGObject):
     def is_equippable(self):
         return False
 
-    def __eq__(self, item):
-        return self.name == item.name 
     def __ne__(self, item):
         return self.name != item.name
 
@@ -350,6 +348,7 @@ class Robe(Dress):
         self.armorType = 'robe'
 
 class LowerArmor(Armor):
+    armorType = "Lower Armor"
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6, risque=0,
             baring=False):
         super(LowerArmor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
@@ -801,9 +800,6 @@ def pajama_bottom(personName):
 def weapon_name(personName):
     return universal.state.get_character(personName).weapon().name
 
-def underwear_name(personName):
-    return universal.state.get_character(personName).underwear().name
-
 def lower_clothing_name(personName):
     return universal.state.get_character(personName).lower_clothing().name
 
@@ -823,8 +819,11 @@ def clad_pajama_bottom(personName):
     return universal.state.get_character(personName).clad_bottom(pajama=True)
 
 def is_lower_clothing(item):
-    return (item.armorType == Pants.armorType or item.armorType == Skirt.armorType or items.armorType == Shorts.armorType or items.armorType == Dress.armorType or 
-        items.armorType == LowerArmor.armorType or items.armorType == FullArmor.armorType or item.armorType == Underwear.armorType)
+    try:
+        return (item.armorType == Pants.armorType or item.armorType == Skirt.armorType or item.armorType == Shorts.armorType or item.armorType == Dress.armorType or 
+            item.armorType == LowerArmor.armorType or item.armorType == FullArmor.armorType or item.armorType == Underwear.armorType)
+    except AttributeError:
+        return False
 
 def waistband_hem(lowerClothing):
     return lowerClothing.waistband_hem()
@@ -868,7 +867,7 @@ def is_loose(clothing):
         return False
 
 def loose_msg(person, looseMsg, tightMsg):
-    return universal.msg_selector(clothing.tightness == LOOSE, {True:looseMsg, False:tightMsg})
+    return universal.msg_selector(person.lower_clothing().tightness == LOOSE, {True:looseMsg, False:tightMsg})
 
 def wearing_trousers(person, wearingTrousers, notWearingTrousers='', noLowerClothing=''):
     if person.lower_clothing() == emptyLowerArmor:
