@@ -62,7 +62,7 @@ I will need to decrypt it in order to use it, and to decrypt I'll need to have t
 
 ------------------------------------------------Game-----------------------------------------------------------------
 
-The game's interface is (hopefully!) pretty self-explanatory. There are only a few things I would like to point out. For more details see the included manual (manual/potionwars.pdf).
+The game's interface is (hopefully!) pretty self-explanatory. There are only a few things I would like to point out. For more details see the included manual (manual/potionwars.pdf). Note: The manual is currently a bit out of date with respect to combat. I'll update it when I get some time.
 
 The game screen is split into two parts. The top two-thirds is the game world. This is where you will see text describing your character's actions, your location, and
 your interactions with other characters.
