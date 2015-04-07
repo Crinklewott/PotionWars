@@ -32,7 +32,7 @@ import math
 import ast
 
 DEBUG = False
-SAVE_DELIMITE = '%%%'
+SAVE_DELIMITER = '%%%'
 
 
 STAT_GROWTH_RATE_MULTIPLIER = 10

@@ -45,7 +45,7 @@ tunic = items.Shirt('tunic', 'A fairly common, loose fitting tunic. A bit worn, 
 raggedTunic = items.Shirt('ragged tunic', 'A ragged, borderline useless tunic.', price=1, risque=1)
 
 powderBlueTunic = items.Shirt('powder blue shirt', "A soft, powder blue dress spun from fine cotton without any trim.", price=25)
-flowerPrintTunic = items.Shirt('yellow shirt', "A small yellow shirt made for preteen boys, and spun from fine cotton.", price=25)
+flowerPrintShirt = items.Shirt('yellow shirt', "A small yellow shirt made for preteen boys, and spun from fine cotton.", price=25)
 
 """
 qualityTunic = items.Shirt('quality tunic', 'A heavy tunic made from high quality leathers. The tunic also has the smallest hint of magic about it, providing ' +

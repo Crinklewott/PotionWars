@@ -6266,7 +6266,7 @@ def e0_8_7():
                 ['''"Oh?" says the woman. "That would explain why I don't recognize you. Do you have a ribbon from Paloma, our resident healer?"''']]), justification=0)
             if 'get_ribbon' in keywords():
                 universal.say(universal.format_text([['''\n\n"Oh, right,''', '''Ildri''' if 'Ildri_spanked_you_unjustly' in keywords() else '''Morey''', 
-                    '''told me about that," says''', name() + ".", '''"He said I should get one from Paloma."'''],
+                    '''told me about that," says''', name() + ".", '''"She said I should get one from Paloma."'''],
                     ['''"And have you?" presses the woman.''']]))
                 universal.say('\p')
                 universal.say(universal.format_text([['''1. "Well, no. Not exactly."'''], 
@@ -8582,13 +8582,16 @@ def scene_3_guild():
                         '''cursed slinger."'''],
                     ['''"I'm sorry, but he was rather scary," says Mai pitifully. "I mean, he was making you look like an amateur."'''],
                     ['''"Which is why we were supposed to fight him together," snaps Cosima. She winces and clutches at her head. "You wretched,''',
-                        '''cowardly, underclad tart. We're going upstairs now. As soon as we do, you will tell Adrian that you hid, and didn't lift a finger to help me. Understand?"\n\n''']]), justification=0)
+                        '''cowardly, underclad tart. We're going upstairs now. As soon as we do, you will tell Adrian that you hid, and didn't lift a finger to help me. Understand?"\n\n''']]), 
+                    justification=0)
                 if 'necia_ambush' in keywords():
-                    universal.say(universal.format_text([['''"But, but I helped''', name() + ',"', '''says the elf, a touch frantically.'''],
-                        ['''"Only after that Vengador kicked my ass," says''', name(), '''angrily.'''],
-                        ['''"I still helped you," says Mai. "If it weren't for me, your bum would be on fire, right now."'''],
-                        ['''"My bum is on fire!" cries''', name() + ",", '''throwing''', hisher(), '''hands in the air. "Because of you!"'''],
-                        ['''"Enough," says Cosima sharply. "Perhaps Adrian will moderate your''',
+                    universal.say(universal.format_text([['''"Now wait a minute," says''', name() + '.', '''"Mai wasn't being cowardly. She saved my butt from that girl!"'''],
+                        ['''Cosima's scowl darkens. "Yes. Yes she did. However, she was supposed to help me fight the Warslinger. She didn't. Instead, she cowered in the shadows, and didn't''',
+                            '''come out until he was long gone. Mother's love, the girl didn't even bother trying to help you until you'd gotten your butt kicked!"'''],
+                        ['''"I wanted to see how''', name(), '''fights," says Mai. "Felt it would be a good test--"'''],
+                        ['''"That still doesn't excuse you from not helping me," snaps Cosima.'''],
+                        ['''Mai shrinks away from Cosima's biting words. "I'm sorry."'''],
+                        ['''Cosima sighs, and massages her forehead. "Perhaps Adrian will moderate your''',
                             '''punishment, but you still have to tell him what happened. You better believe I will, and you know how he feels about lies of omission."\n\n''']]), justification=0)
                 universal.say(universal.format_text([['''"Yes ma'am," says Mai quietly, picking at her fingernails.'''],
                     ['''"Good." ''']]),justification=0)
