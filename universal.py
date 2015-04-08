@@ -31,7 +31,7 @@ import os
 import math
 import ast
 
-DEBUG = False
+DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 
@@ -704,19 +704,10 @@ def acknowledge(function, *args):
     global postAcknowledgeArgs
     postAcknowledgeFunction = function
     postAcknowledgeArgs = args
-    print(args)
-    print(function)
-    print(postAcknowledgeFunction)
-    print(postAcknowledgeArgs)
     set_command_interpreter(acknowledge_interpreter)
     set_commands(['(Enter) to continue.'])
 
 def acknowledge_interpreter(keyEvent):
-    print("Acknowledging.")
-    print("Function:")
-    print(postAcknowledgeFunction)
-    print("Args:")
-    print(postAcknowledgeArgs)
     if keyEvent.key == K_RETURN:
         if postAcknowledgeArgs == ((),):
             postAcknowledgeFunction()

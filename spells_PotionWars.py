@@ -135,7 +135,7 @@ class Weaken(p.Status):
         super(Weaken, self).__init__(attacker, defenders)
         self.name = 'Weaken'
         self.description = 'Wraps your enemy in a field that interferes with the implicit magic responsible for lending strength to their muscles, making them physically weaker and slower.'
-        self.effectFormula = 'EFFECT: -1 penalty to Dexterity and Strength\nDURATION: max(2, resilience - enemy.resilience)'
+        self.effectFormula = 'EFFECT: -2 penalty to Dexterity and Strength\nDURATION: max(2, resilience - enemy.resilience)'
         self.numTargets = 1
         self.grappleStatus = Weaken.grappleStatus
         self.rawMagic = True
@@ -183,7 +183,7 @@ class DistortMagic(p.Status):
         super(DistortMagic, self).__init__(attacker, defenders)
         self.name = 'Distort Magic'
         self.description = 'Wraps your enemy in a field that interferes with their ability to cast and protect against spells.'
-        self.effectFormula = 'EFFECT: -1 penalty to Talent and Willpower\n DURATION: max(0, resilience - enemy.resilience)'
+        self.effectFormula = 'EFFECT: -2 penalty to Talent and Willpower\n DURATION: max(0, resilience - enemy.resilience)'
         self.numTargets = 1
         self.grappleStatus = DistortMagic.grappleStatus
         self.rawMagic = True

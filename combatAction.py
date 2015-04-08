@@ -454,14 +454,12 @@ class SpankAction(CombatAction):
                 spankingDuration = self.minDuration
             spanker.begin_spanking(spankee, self.position, spankingDuration if spankingDuration > 0 else -spankingDuration)
             spankee.begin_spanked_by(spanker, self.position, spanker.grappleDuration)
-            assert spankee.grappleDuration
-            assert spanker.grappleDuration
             duration = max(self.MIN_HUMILIATED_DURATION, spankerResilience - spankeeResilience) + durationBonus
-            if not spankee.is_inflicted_with(statusEffects.Humiliated.name):
+            if spankee.is_inflicted_with(statusEffects.Humiliated.name):
+                spanker.spankeeAlreadyHumiliated = True
+            else:
                 spankee.inflict_status(statusEffects.build_status(statusEffects.Humiliated.name, duration))
                 spanker.spankeeAlreadyHumiliated = False
-            else:
-                spanker.spankeeAlreadyHumiliated = True
             return (resultString, [spankingDuration], self)
         else:
             if attacker.grapple() > defender.grapple():

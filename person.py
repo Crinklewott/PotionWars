@@ -442,10 +442,8 @@ class Person(universal.RPGObject):
 
     def risque(self):
         risqueLevel = sum(equipment.risque for equipment in self.equipmentList if not isinstance(equipment, items.Weapon))
-        print([equipment.risque for equipment in self.equipmentList if not isinstance(equipment, items.Weapon)])
         #For some stupid fucking reason the goddamn baring=True isn't holding for the fucking empty lower armor, and I have no fucking idea why. So we're going to insert a stupid fucking
         #hack that makes fucking sure the fucking baring of fucking emptyLowerArmor is fucking TRUE!
-        print(risqueLevel)
         if not items.emptyLowerArmor.baring:
             items.emptyLowerArmor.baring = True
         #If the lower clothing isn't baring, then we can't see the underwear, so its risque level doesn't matter.
@@ -1291,7 +1289,6 @@ class Person(universal.RPGObject):
         opponent.spankee = None
         opponent.position = None
 
-
     def begin_spanked_by(self, opponent, position, duration):
         self.spanker = opponent
         self.position = position
@@ -1300,14 +1297,18 @@ class Person(universal.RPGObject):
     def is_spanking(self, opponent=None):
         if opponent is None:
             return self.spankee is not None
+        elif self.spankee:
+            return self.spankee == opponent
         else:
-            return self.spankee == opponent if self.spankee else False
+            return False
 
     def is_being_spanked(self, opponent=None):
         if opponent is None:
             return self.spanker is not None
+        elif self.spanker:
+            return self.spanker == opponent
         else:
-            return self.spanker == opponent if self.spanker else False
+            return False
 
     def involved_in_spanking(self):
         return self.is_spanking() or self.is_being_spanked()
@@ -1333,6 +1334,7 @@ class Person(universal.RPGObject):
         return self.weapon().magicDefense + self.shirt().magicDefense + self.lower_clothing().magicDefense + self.underwear().magicDefense + defenseBonus
 
     def inflict_status(self, status, originalList=None, newList=None):
+        assert not self.is_inflicted_with(status.name)
         if originalList is not None and newList is not None:
             status.inflict_status(self, originalList, newList)
         else:
@@ -1506,6 +1508,7 @@ class Person(universal.RPGObject):
     def load(data, person):
         #Note: First entry in the list is the empty string.
         data = data.strip()
+        person.spanker = person.spankee = person.grappleDuration = person.originalGrappleDuration = None
         try:
             _, name, gender, description, statuses, rawName, spellNames, inventory, equipmentList, stats, tier, specialization, ignoredSpells, combatType, litany, defaultLitany, coins, specialization, \
                     order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, hairStyle, marks, increaseStatPoints, increaseSpellPoints = \
@@ -2499,8 +2502,7 @@ class Combat(Spell):
 
     def damage_function(self, defender, inCombat):
         print(self.attacker.magic_attack(inCombat))
-        print(self.magicMultiplier * self.attacker.magic_attack(inCombat))
-        print(defender.magic_defense(inCombat))
+        print(defender.magic_defense(self.rawMagic))
         return combatAction.compute_damage(self.attacker.magic_attack(inCombat), 
                 int(math.trunc(self.magicMultiplier * self.attacker.magic_attack(inCombat) - defender.magic_defense(self.rawMagic))))
 
@@ -2743,12 +2745,17 @@ class Healing(Buff):
                     healedHealth = 1
                 recipient.increase_stat(universal.CURRENT_HEALTH, healedHealth)
                 didSomething = True
+            elif self.fortify and recipient.current_health() >= recipient.health():
+                didSomething = False
             else:
                 didSomething = didSomething or recipient.current_health() < recipient.health()
                 if healedHealth < 0:
                     healedHealth = 1
                 healedHealth = recipient.heals(healedHealth)
-            resultStatement.append(self.effect_statement(recipient) + [caster.printedName, 'heals', recipient.printedName, 'for', str(healedHealth), 'health!'])
+            if didSomething:
+                resultStatement.append(self.effect_statement(recipient) + [caster.printedName, 'heals', recipient.printedName, 'for', str(healedHealth), 'health!'])
+            else:
+                resultStatement.append(self.effect_statement(recipient) + [caster.printedName, 'cannot heal', recipient.printedName, 'any further!'])
             effects.append(True)
         if inCombat:
             return (universal.format_text(resultStatement, False), effects, self)
@@ -2872,14 +2879,13 @@ class SpectralSpanking(Spectral):
             resultStatement.append(self.effect_statement(defender))
             if not defender.is_inflicted_with(statusEffects.Humiliated.name):
                 defender.inflict_status(statusEffects.build_status(statusEffects.Humiliated.name, humiliationDuration))
-                print(defender.name)
-                print(defender.statusDict)
                 attacker.spankeeAlreadyHumiliated = False
             else:
                 attacker.spankeeAlreadyHumiliated = True
             resultStatement.append(self.success_statement(defender))
             effects.append(self.damage)
             assert spankingDuration > 1
+        assert attacker.grappleDuration and defender.grappleDuration
         return (universal.format_text(resultStatement, False), effects, self)
 
     def round_statement(self, defender):
@@ -2894,8 +2900,8 @@ class SpectralSpanking(Spectral):
             return resultStatement
         else:
             attacker.terminate_spanking()
-            attacker.grappleDuration = 0
-            defender.grappleDuration = 0
+            assert not attacker.involved_in_spanking()
+            assert not defender.involved_in_spanking()
             return '\n\n'.join([resultStatement, self.end_statement()])
 
     def effect_statement(self, defender):

@@ -279,7 +279,7 @@ class VengadorWarrior(Enemy):
             bottom.hisher(), '''swats on one cheek, leaving''', top.printedName, '''writhing under the relentless punishment.''']])
 
     def default_stats(self):
-        self.set_all_stats(strength=1, dexterity=3, willpower=0, talent=0, health=15, mana=0, alertness=1)
+        self.set_all_stats(strength=1, dexterity=2, willpower=0, talent=0, health=20, mana=0, alertness=1)
 
     def otk_failure(self, top, bottom):
         return universal.format_text([[top.printedName, '''rushes''', bottom.printedName, '''in a burst of speed, swinging the butt of''', top.hisher(), '''weapon at''', bottom.printedName + "'s",
@@ -375,7 +375,7 @@ class VengadorSpellslinger(Enemy):
         self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
 
     def default_stats(self):
-        self.set_all_stats(strength=0, dexterity=1, willpower=2, talent=4, health=8, mana=10, alertness=0)
+        self.set_all_stats(strength=0, dexterity=1, willpower=2, talent=2, health=16, mana=10, alertness=0)
 
     def otk_intro(self, top, bottom):
         return  universal.format_text([[top.printedName, '''dodges''', bottom.printedName + "'s", '''attack and grabs''', bottom.himher(), '''by the shoulders.''', top.HeShe(), 

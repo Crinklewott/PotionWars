@@ -129,7 +129,7 @@ class Humiliated(StatusEffect):
 
 class Weakened(StatusEffect):
     name = 'Weakness'
-    penalty = 1
+    penalty = 2
     def __init__(self, duration, penalty=None):
         super(Weakened, self).__init__(Weakened.name, duration, False)
         self.penalty = penalty
@@ -198,7 +198,7 @@ class MagicShielded(StatusEffect):
 
 class MagicDistorted(StatusEffect):
     name = 'Magic Distorted'
-    penalty = 1
+    penalty = 2
     def __init__(self, duration, penalty=None):
         super(MagicDistorted, self).__init__(MagicDistorted.name, duration, False)
         if penalty is None:
