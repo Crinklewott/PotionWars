@@ -444,7 +444,8 @@ class VengadorSpellslinger(Enemy):
                 '''fingers firmly tangled in the folds of the slinger's robe.''']]) 
             if bottom.wearing_pants_or_shorts() or bottom.is_pantsless():
                 spankingText = universal.format_text([[spankingText], ['''Smirking,''', top.printedName, '''yanks on''', bottom.printedName + "'s", 
-                    bottom.clothing_below_the_waist().name, '''giving''' if self.firstRound else '''deepening''', bottom.printedName + "'s", '''wedgie.'''], ['''Then,''', top.printedName, 
+                    bottom.clothing_below_the_waist().name, ' '.join(['''giving''', bottom.printedName, "a wedgie."]) if self.firstRound else ' '.join(['''deepening''', bottom.printedName + "'s", 
+                        '''wedgie.'''])], ['''Then,''', top.printedName, 
                         '''delivers six full-bodied smacks to each''','''of the''', bottom.heroheroine() + "'s", bottom.bum_adj(), '''cheeks,''', bottom.printedName, 
                             '''helplessly howling all the''', '''while.''']])
                 self.firstRound = False
@@ -541,11 +542,16 @@ class VengadorSpellslinger(Enemy):
             return universal.format_text([[self.on_the_ground_intro(top, bottom)], [top.printedName, '''is in such a hurry to punish''', bottom.printedName, '''that''', top.heshe(), 
             '''fails to completely secure''', top.hisher(), '''victim's legs.''', bottom.printedName, '''is quick to notice this oversight and swings''', bottom.himselfherself(), '''legs back''',
             '''over''', bottom.hisher(), '''own head, throwing''', bottom.himselfherself(), '''into a roll. As''', bottom.heshe(), '''comes up from''', bottom.hisher(), '''roll, the''', 
-            bottom.heroheroine(), '''sweeps the surprised Vengador's legs out from under''', top.himher(), '''and knocks''', top.himher(), '''flat on''', bottom.hisher(), '''back.''', 
+            bottom.heroheroine(), '''sweeps the surprised Vengador's legs out from under''', top.himher(), '''and knocks''', top.himher(), '''flat on''', top.hisher(), '''back.''', 
             '''With a wicked grin,''', bottom.printedName, '''lifts the helpless slinger's legs up with one hand, and as soon as gravity bunches''', top.hisher(), top.lower_clothing().armorType, 
             '''around''', top.hisher(), '''waist,''', bottom.printedName + "'s", '''hand cracks against the Vengador's tightly pantied bottom with an avenging fury.''']])
         else:
-            raise NotImplementedError()
+            return universal.format_text([[self.on_the_ground_intro(top, bottom)], [top.printedName, '''is in such a hurry to punish''', bottom.printedName, '''that''', top.heshe(), 
+            '''fails to completely secure''', top.hisher(), '''victim's legs.''', bottom.printedName, '''is quick to notice this oversight and swings''', bottom.himselfherself(), '''legs back''',
+            '''over''', bottom.hisher(), '''own head, throwing''', bottom.himselfherself(), '''into a roll. As''', bottom.heshe(), '''comes up from''', bottom.hisher(), '''roll, the slinger''', 
+            '''sweeps the surprised''', top.heroheroine() + "'s", '''legs out from under''', top.himher(), '''and knocks''', top.himher(), '''flat on''', top.hisher(), '''back.''', 
+            '''With a wicked grin,''', bottom.printedName, '''lifts the helpless adventurer's legs up with one hand, and cracks the other against''', top.printedName + "'s", top.bum_adj(),
+            '''bottom with an avenging fury.''']])
 
     def post_combat_spanking(self):
         insurgentText = format_text([['''The Vengador leans against a nearby wall, breathing heavily.''', person.HeShe(self), '''tries to stumble away from''', name() + ",",

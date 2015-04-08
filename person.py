@@ -1335,7 +1335,7 @@ class Person(universal.RPGObject):
         return self.weapon().magicDefense + self.shirt().magicDefense + self.lower_clothing().magicDefense + self.underwear().magicDefense + defenseBonus
 
     def inflict_status(self, status, originalList=None, newList=None):
-        assert not self.is_inflicted_with(status.name)
+        assert not self.is_inflicted_with(status.name), "Attempted to reinflict status: %s" % status.name
         if originalList is not None and newList is not None:
             status.inflict_status(self, originalList, newList)
         else:
@@ -2297,7 +2297,6 @@ class Spell(combatAction.CombatAction):
     """
     Fields from CombatAction:
     grappleStatus = combatAction.GRAPPLER_ONLY
-    statusInflicted = None
     effectClass = ALL
     grappleStatus = GRAPPLER_ONLY
     targetType = ALLY
@@ -2510,14 +2509,12 @@ class Combat(Spell):
 class Status(Spell):
     targetType = ENEMY
     effectClass = None
-    statusInflicted = None
     primaryStat = universal.WILLPOWER
     secondaryStat = universal.TALENT
     actionType = 'status'
     RESILIENCE_DIVISOR = 5
     def __init__(self, attacker, defenders):
         super(Status, self).__init__(attacker, defenders, Status.secondaryStat)
-        self.statusInflicted = None
         #This way, if we forget to set these values, we'll get an exception.
         self.minDuration = None
         self.magicMultiplier = None
@@ -2570,9 +2567,12 @@ class Status(Spell):
                     resultString.append(self.immune_statement(defender))
                     effects.append(False)
                 else:
-                    resultString.append(self.success_statement(defender))
-                    defender.inflict_status(statusEffects.build_status(self.statusInflicted, duration))
-                    effects.append(True)
+                    if defender.is_inflicted_with(statusEffects.get_name(self.statusInflicted)):
+                        resultString.append(' '.join([defend.printedName, "is already inflicted with", self.statusInflicted.name + "!"]))
+                    else:
+                        resultString.append(self.success_statement(defender))
+                        defender.inflict_status(statusEffects.build_status(self.statusInflicted, duration))
+                        effects.append(True)
         return (universal.format_text(resultString, False), effects, self)
 
     def duration_function(self, defender):
@@ -2641,7 +2641,6 @@ class CharmMagic(Status):
 class Buff(Spell):
     targetType = ALLY
     effectClass = None
-    statusInflicted = None
     actionType = 'buff'
     primaryStat = universal.WILLPOWER
     secondaryStat = universal.TALENT
@@ -2652,12 +2651,12 @@ class Buff(Spell):
         self.effectClass = None
         self.spellType  = BUFF #Deprecated. Do not use.
         self.spellSchool = universal.BUFF_MAGIC
-        self.statusInflicted = None
         self.minDuration = None
         self.actionType = 'buff'
         self.castableOutsideCombat = True
         self.primaryStat = Buff.primaryStat
         self.secondaryStat = Buff.secondaryStat
+        self.statusInflicted = None
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(Buff, self).effect(inCombat, allies, enemies)
@@ -2712,6 +2711,7 @@ class Healing(Buff):
         self.fortify = False
         self.fortifyCap = None
         self.magicMultiplier = 1
+        self.statusInflicted = None
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         #We don't want to invoke the effect function of Buff.

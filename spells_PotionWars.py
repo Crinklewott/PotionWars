@@ -289,8 +289,8 @@ class Heal(p.Healing):
         self.cost = Heal.cost
         self.name = 'Heal'
         self.description = 'Converts mana into health, and infuses the recipient with it.'
-        self.effectFormula = 'HEALS: magic | target\'s health - target\'s current health'
-        self.magicMultiplier = 1
+        self.effectFormula = 'HEALS: between 1.2 * magic and target\'s health - target\'s current health'
+        self.magicMultiplier = 1.2
         self.rawMagic = True
         self.tier = Heal.tier
         self.expertise = BASIC
@@ -318,8 +318,8 @@ class Fortify(p.Healing):
         self.grappleStatus = Fortify.grappleStatus
         self.fortifyCap = 40
         self.tier = Fortify.tier
-        self.description = 'Converts mana into health, and infuses the recipient with it. Note that this spell can heal a character past their maximum health. However, it has no effect if the character\'s current health is already above its maximum. Unfortunately, because of the extra energy needed to infuse a character with extra health, this spell does not heal as many hit points as Heal. It caps out at 40'
-        self.effectFormula = 'HEALS: magic | 40'
+        self.description = 'Converts mana into health, and infuses the recipient with it. Note that this spell can heal a character past their maximum health. However, it has no effect if the character\'s current health is already above its maximum. Unfortunately, because of the extra energy needed to infuse a character with extra health, this spell does not heal as many hit points as Heal. It caps out at 40.'
+        self.effectFormula = 'HEALS: between magic and 40'
         self.magicMultiplier = 1
         self.rawMagic = True
         self.expertise = ADVANCED
@@ -1121,7 +1121,7 @@ class SpectralStrapping(p.SpectralSpanking):
         resultStatement = ' '.join(["The spectral strap snaps repeatedly against", defender.printedName + "'s", defender.quivering() + ",", "rapidly reddening bottom.", defender.HeShe(), 
             "kicks and flails,", defender.hisher(), "face an even brighter red than", defender.hisher(), defender.muscle_adj(), "bottom."])
         if attacker.current_mana():
-            attacker.decrement_stat(universal.CURRENT_MANA, 2)
+            attacker.decrease_stat(universal.CURRENT_MANA, 2)
             return resultStatement
         else:
             return '\n\n'.join([resultStatement, self.end_statement()])
@@ -1198,7 +1198,7 @@ class SpectralCaning(p.SpectralSpanking):
             defender.printedName + "'s", 
             defender.bum_adj(), "bottom.", defender.printedName, "shrieks as a long, thin welt forms across", defender.hisher(), defender.muscle_adj(), "cheeks."])
         if attacker.current_mana():
-            attacker.decrement_stat(universal.CURRENT_MANA, 3)
+            attacker.decrease_stat(universal.CURRENT_MANA, 3)
             return resultStatement
         else:
             return '\n\n'.join([resultStatement, self.end_statement()])

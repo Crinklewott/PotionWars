@@ -3512,6 +3512,10 @@ def display_text_start_next_scene(delayTime):
 def start_scene_1_episode_1(loading=False):
     universal.state.set_init_scene(init_episode_1_scene_1)
     guild = universal.state.get_room(adventurersGuild)
+    try:
+        universal.state.get_room("Sofia's Clinic").adjacent = []
+    except KeyError:
+        pass
     assert(universal.state.player)
     edge = universal.state.get_room(edgeOfAvaricum)
     if not loading:
@@ -4072,6 +4076,10 @@ def start_scene_2_episode_1(loading=False):
     universal.state.set_init_scene(init_episode_1_scene_2)
     edita = universal.state.get_character('Edita.person')
     edita.litany = spankEdita.index
+    try:
+        universal.state.get_room("Sofia's Clinic").adjacent = []
+    except KeyError:
+        pass
     if not loading:
         music.play_music(textCommandsMusic.INTENSE, 500)
     if not loading:
@@ -4423,8 +4431,6 @@ def ribbon_punished_interpreter(keyEvent):
     except ValueError:
         return
     else:
-        if num not in responseMap:
-            return
         if num == 1:
             say(format_text([['''"Oh, that's good," says Paloma. She hurries over and gets the ribbon. She concentrates on it for a moment, and it begins to glow with''',
             '''a soft, golden''',
@@ -4435,6 +4441,8 @@ def ribbon_punished_interpreter(keyEvent):
             universal.state.player.restores()
             remove_keyword('get_ribbon')
             acknowledge(dungeonmode.dungeon_mode, ())
+            return
+        if num not in responseMap:
             return
         if responseMap[num] == 'switched_by_Airell':
             say(format_text([['''Paloma winces. "Oh. And Airell switches hard too."'''],
@@ -4575,11 +4583,12 @@ def ep1_paloma_otk_hand(keyEvent):
                 ['''3. Spank her with the spoon.''']]), justification=0)
             set_command_interpreter(ep1_paloma_otk_hand_lift)
 
-def ep1_paloma_otk_hand_slipper(keyEvent):
-    try:
-        num = int(universal.key_name(keyEvent))
-    except ValueError:
-        return
+def ep1_paloma_otk_hand_slipper(keyEvent, num=None):
+    if not num:
+        try:
+            num = int(universal.key_name(keyEvent))
+        except ValueError:
+            return
     if num == 1:
         ep1_paloma_spanking_end()
     elif num == 2:
@@ -4716,12 +4725,11 @@ def ep1_paloma_otk_hand_slipper_belt(keyEvent):
             ['''"I know," says''', name() + ",", '''gently rubbing Paloma's bottom. "I know."''']]), justification=0)
         ep1_paloma_spanking_end()
     elif num == 3:
-        keyEvent.key = K_2
         universal.say(format_text([[name(), '''sets the belt down. "I suppose you're right. The belt is a little excessive."'''],
             ['''Paloma breaths a sigh of relief.'''],
             ['''"That doesn't mean you're getting off easy, however," says''', name(), '''sternly. "Your dress is still coming up."'''],
             ['''Paloma whimpers a little, but nods. "OK."''']]), justification=0)
-        ep1_paloma_otk_hand_slipper(keyEvent)
+        ep1_paloma_otk_hand_slipper(keyEvent, 2)
         
 
 
@@ -8484,6 +8492,11 @@ def end_scene_2_episode_1():
 def start_scene_3_episode_1(loading=False):
     adventurersGuild = universal.state.get_room("Adventurer's Guild")
     try:
+        universal.state.get_room("Sofia's Clinic").remove_adjacent(universal.state.get_room("Slums"))
+    except KeyError:
+        print("Key Error")
+        pass
+    try:
         kitchen = universal.state.get_room("Kitchen")
     except KeyError:
         pass
@@ -8505,18 +8518,15 @@ def start_scene_3_episode_1(loading=False):
     adrian.defaultLitany = adrian_end_episode_1
     adrian.litany = adrian_end_episode_1.index
     elise = universal.state.get_character('Elise.person')
-    elise.defaultLitany = elise_end_episode_1
     elise.litany = elise_end_episode_1.index
-    #maria.defaultLitany = maria_end_episode_1
-    #maria.litany = maria_end_episode_1.index
     maria = universal.state.get_character('Maria.person')
-    maria.defaultLitany = ep1_maria_home
     maria.litany = ep1_maria_home.index
     peter = universal.state.get_character('Peter.person')
-    peter.defaultLitany = peter_end_episode_1
     peter.litany = peter_end_episode_1.index
     edita = universal.state.get_character('Edita.person')
+    square = universal.state.get_room("Avaricum Square")
     if not loading:
+        exitLeft(maria, square)
         exitLeft(edita, adventurersGuild)
     mariasHome = universal.state.get_room("Maria's Home")
     if not 'Elise_shows_you_around' in keywords() and not loading:
@@ -11895,9 +11905,10 @@ def maria_no_problems_function(node):
                 ep1_maria_dont_live.comment = '''"Yeah. But we'll see a lot of each other, still right? What with you working for Adrian, and all."'''
     else:
             quip = universal.format_text([quip, ['''"They're a cute couple," says Maria.'''],
-                [name(), '''shrugs.'''], '"' + ep1_maria_live_question()])
+                [name(), '''shrugs.'''], '"' + ep1_maria_live_question(node)])
     node.children = [ep1_maria_live, ep1_maria_dont_live]
     return quip
+
 def maria_no_problems_qf(node):
         quip = universal.format_text([['''"Hey,''', name() + ",", '''says Maria, smiling broadly. She glances at''', names(), '''companions: Carrie, gnawing anxiously on a strand''',
             '''of hair, Elise anxiously twisting her skirts while Roland keeps a firm grip on her arms, and Roland's grim expression. "I see you three had fun."'''],
@@ -11964,7 +11975,7 @@ def maria_no_problems_qf(node):
                 ep1_maria_dont_live.comment = '''"Yeah. But we'll see a lot of each other, still right? What with you working for Adrian, and all."'''
         else:
             quip = universal.format_text([quip, ['''"They're a cute couple," says Maria.'''],
-                [name(), '''shrugs.'''], '"' + ep1_maria_live_question()])
+                [name(), '''shrugs.'''], '"' + ep1_maria_live_question(maria_no_problems)])
         maria_no_problems.quip = quip
 
 maria_no_problems = Node(325)
@@ -12178,21 +12189,26 @@ ep1_maria_temper_forgive.comment = universal.format_line(['''"I'm sorry, too. I 
 '''uncomfortable with the guard's questions."'''])
 def ep1_maria_temper_forgive_qf():
     ep1_maria_temper_forgive.quip = universal.format_text([['''Maria smiles, and gives''', name(), '''a hug. "I know, it's not right. But there's not really anything we can do''',
-        '''about it.''', ep1_maria_live_question()]])
+        '''about it.''', ep1_maria_live_question(ep1_maria_temper_forgive)]])
 ep1_maria_temper_forgive.quip_function = ep1_maria_temper_forgive_qf
 ep1_maria_temper_forgive.children = [ep1_maria_live, ep1_maria_dont_live]
 
-def ep1_maria_live_question():
-    quip = universal.format_text([['''Anyway, I was wondering if you'd like to live with me. It's not much, but it's a home. In fact, we could even upgrade a little, and still only''',
-        '''cost us each fifty matrons a month."'''],
-        ['''"But what about rent?" asks''', name() + ".", '''"I don't have fifty matrons, and I have no idea when I'll be getting some."'''],
-        ['''"Well, a friend of mine runs a clinic for helping Taironans break their addiction to potions. It's not as fancy as the one run by the Matirian Church, but it's run by Taironans, for''',
-            '''Taironans, so it's an option for people who don't trust Matirians. How about, in exchange for the first month's rent, you spend one morning volunteering there with me."''']])
-    if 'boarding_with_Adrian' in keywords(): 
-        quip = universal.format_text([quip, ['''"Sorry," says''', name() + ".", '''"But I'm already boarding with Adrian."'''],
-            ['''"Oh." Maria's hesitant smile fades. "Well, OK. I mean, you certainly don't have to live with me. Probably safer to live with Adrian, anyway."''']])
-        ep1_maria_live.comment = '''"Eh, you know? I think I'd rather live with you. I'm sure Adrian won't mind."'''
-        ep1_maria_dont_live.comment = '''"Yeah. But we'll see a lot of each other, still right? What with you working for Adrian, and all."'''
+def ep1_maria_live_question(node):
+    if 'boarding_with_Maria' in keywords():
+        node.children = None
+        quip = universal.format_text([['''"I'll see you at home?" asks Maria.'''], [name(), '''nods.'''], ['''"Alright. Don't be too late," says Maria as she turns to leave.''']])
+    else:
+        quip = universal.format_text([['''Anyway, I was wondering if you'd like to live with me. It's not much, but it's a home. In fact, we could even upgrade a little, and still only''',
+            '''cost us each fifty matrons a month."'''],
+            ['''"But what about rent?" asks''', name() + ".", '''"I don't have fifty matrons, and I have no idea when I'll be getting some."'''],
+            ['''"Well, a friend of mine runs a clinic for helping Taironans break their addiction to potions. It's not as fancy as the one run by the Matirian Church, but it's run by''',
+                '''Taironans, for''',
+                '''Taironans, so it's an option for people who don't trust Matirians. How about, in exchange for the first month's rent, you spend one morning volunteering there with me."''']])
+        if 'boarding_with_Adrian' in keywords(): 
+            quip = universal.format_text([quip, ['''"Sorry," says''', name() + ".", '''"But I'm already boarding with Adrian."'''],
+                ['''"Oh." Maria's hesitant smile fades. "Well, OK. I mean, you certainly don't have to live with me. Probably safer to live with Adrian, anyway."''']])
+            ep1_maria_live.comment = '''"Eh, you know? I think I'd rather live with you. I'm sure Adrian won't mind."'''
+            ep1_maria_dont_live.comment = '''"Yeah. But we'll see a lot of each other, still right? What with you working for Adrian, and all."'''
     return quip
 
 ep1_maria_live.comment = '''"Sure."'''
@@ -12265,7 +12281,7 @@ def ep1_maria_chase_qf():
     if 'Elise_shows_you_around' in keywords():
         ep1_maria_chase.quip = universal.format_text([ep1_maria_chase.quip, ['''Elise breathes a sigh of relief as the two return. "Thank the Mother. I was bit worried there. Is everything OK?"'''],
         ['''"Well, I don't know that everything is completely ok," says''', name() + ",", '''rubbing''', hisher(), '''ravaged bottom. "But I want it to be."'''],
-        '''Maria nods in agreement. She turns her attention to''', name() + ".", '"' + ep1_maria_live_question()])
+        '''Maria nods in agreement. She turns her attention to''', name() + ".", '"' + ep1_maria_live_question(ep1_maria_chase)])
         
 ep1_maria_chase.quip_function = ep1_maria_chase_qf
 ep1_maria_chase.children = [ep1_maria_live, ep1_maria_dont_live]
@@ -12384,7 +12400,7 @@ def ep1_maria_talk_qf():
         ['''Roland returns to Elise's slippering.'''],
         ['''"There, you see?" says Maria. "Make as big a stink as you want, and Roland'll just shrug it off."'''],
         [name(), '''grimaces. "I suppose you're right."'''],
-        '''"''' + ep1_maria_live_question()])
+        '''"''' + ep1_maria_live_question(ep1_maria_talk)])
     else:
         ep1_maria_talk.quip = format_text([ep1_maria_talk.quip, [name(), '''runs a hand through''', hisher(), '''hair. "So, what are we?"'''],
             ['''"Dirt," says Maria. She laughs bitterly. "Or mud, if you prefer."'''],
@@ -12396,7 +12412,7 @@ def ep1_maria_talk_qf():
             ['''"But-"'''],
             ['''"Please," says Maria. "Please just let it lie."'''],
             [name(), '''nods reluctantly.'''],
-            ['''"''' + ep1_maria_live_question()]])
+            ['''"''' + ep1_maria_live_question(ep1_maria_talk)]])
 
 
 ep1_maria_talk.quip_function = ep1_maria_talk_qf
@@ -12414,7 +12430,7 @@ def ep1_maria_talk_right_qf():
     [name(), '''shrugs. "I may have overreacted as well. I was just scared, and hurt, and angry. I needed a friend, and I didn't feel like youe were being one."'''],
     ['''Maria stands, and takes''', names(), '''hands. "Of course I'm your friend. I've always been your friend, and I've wanted to support you from the minute you''',
         '''told me. I just... as your friend I couldn't let you make such a terrible mistake."'''],
-    [name(), '''nods.'''], ep1_maria_live_question()])
+    [name(), '''nods.'''], ep1_maria_live_question(ep1_maria_talk_right)])
 
 
 ep1_maria_talk_right.quip_function = ep1_maria_talk_qf
@@ -12428,7 +12444,7 @@ def ep1_maria_talk_wrong_qf():
         [name(), '''grimaces, but nods reluctantly. "Alright. I'll do it your way, for now."'''],
         ['''Maria sighs in relief. "Thank you. Thank you so much."'''],
         [name(), '''shrugs. "I still don't like."'''],
-        ['''"In that respect at least, we agree," says Maria sardonically.''', ep1_maria_live_question()]])
+        ['''"In that respect at least, we agree," says Maria sardonically.''', ep1_maria_live_question(ep1_maria_talk_wrong)]])
 
 
 ep1_maria_talk_wrong.quip_function = ep1_maria_talk_wrong_qf
@@ -12467,7 +12483,7 @@ def ep1_maria_about_what_qf():
         ['''"Maybe it'll be different this time," says''', name(), '''weakly, rubbing''', hisher(), '''arm.'''],
         ['''Maria shakes her head. "No. Things have only gotten worse. Taironans are tolerated even less than they were when we started."'''],
         [name(), '''doesn't respond. Instead,''', heshe(), '''tries to digest the events of the day, and to figure out what to do about them, if anything.'''],
-        '"' + ep1_maria_live_question()])
+        '"' + ep1_maria_live_question(ep1_maria_about_what)])
 
 ep1_maria_about_what.quip_function = ep1_maria_about_what_qf
 ep1_maria_about_what.children = [ep1_maria_live, ep1_maria_dont_live]
@@ -12715,11 +12731,11 @@ def ep1_maria_home_qf():
             '''the Riots. Skilled, eloquent men and women making speeches on street corners, deep in the slums and far away from the guards. A powerful slinger taking''',
             '''down dozens of Potion Lord lackeys."'''],
             ['''"So, what they were saying, about 'freeing us.' They were telling the truth?" asks''', name() + "."],
-            ['''"As near as I can tell, they're sincere," says Maria uneasily. "Though I fail to see how sparking a two-front war with Avaricum and the Potion''',
-            '''Lords 'frees' anybody."'''],
+            ['''"As near as I can tell, they're sincere," says Maria uneasily. "Though I fail to see how sparking a two-front war with Avaricum and Tristana, our resident slum lord,''',
+            ''''frees' anybody."'''],
             [name(), '''nods thoughtfully.'''],
             ['''Maria stares down at the stew for a moment. Then, she shakes her head. '''],
-            ep1_maria_live_question()])
+            ep1_maria_live_question(ep1_maria_home)])
         exitLeft(maria, mariasHome)
         ep1_maria_home.children = [ep1_maria_live, ep1_maria_dont_live]
     ep1_maria_home.quip = quip
@@ -12755,7 +12771,7 @@ def ep1_maria_spank_light_qf():
             '''but you did have my own good in mind."'''],
         ['''Maria gratefully returns the hug. "Thank you."'''],
         ['''"Just don't do it again," says''', name() + "."],
-        ep1_maria_live_question()])
+        ep1_maria_live_question(ep1_maria_spank_light)])
 ep1_maria_spank_light.quip_function = ep1_maria_spank_light_qf
 
 ep1_maria_spank_light.children = [ep1_maria_live, ep1_maria_dont_live]
@@ -12778,7 +12794,7 @@ def ep1_maria_spank_hard_qf():
         ['''"We're good," says''', name() + ",", '''giving Maria a hug. "Just don't do something like that again."'''],
         ['''"Just so long as you have a cursed good reason for lying to the guards next time," says Maria.'''],
         ['''"Of course. I'll make sure to warn you about it too," says''', name() + "."],
-        ['''"Yes," says Maria uneasily. " ''' + ep1_maria_live_question()]])
+        ['''"Yes," says Maria uneasily. " ''' + ep1_maria_live_question(ep1_maria_spank_hard)]])
 ep1_maria_spank_hard.quip_function = ep1_maria_spank_hard_qf
 ep1_maria_spank_hard.children = [ep1_maria_live, ep1_maria_dont_live]
 

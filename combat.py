@@ -936,7 +936,6 @@ def choose_action_class(enemy, weightedActionClasses, warfareActions, grappleAct
                     pass
                 else:
                     possibleTargets = [ally for ally in allies if not ally.is_inflicted_with(statusEffects.get_name(spell.statusInflicted))]
-                    print(possibleTargets)
                     if possibleTargets == []: #and spell in magicActions:
                         try:
                             magicActions.remove(spell)

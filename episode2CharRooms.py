@@ -46,6 +46,7 @@ sofiasClinic = None
 #SHOULDER_HAIR_STYLE = SHORT_HAIR_STYLE + ['ponytail', 'braid', 'pigtail', 'bun']
 def build_chars():
     pass
+
 try:
     ildri = universal.state.get_character('Ildri.person')
 except KeyError:
@@ -90,6 +91,7 @@ except KeyError:
 
 def build_rooms():
     pass
+
 try:
     kitchen = universal.state.get_room('Kitchen')
 except KeyError:
@@ -100,13 +102,22 @@ except KeyError:
         "enters. There is a large hole in the south wall. The hole has been braced with several hastily carved timbers, and a few thick furs have been draped over it, so that",
         "customers can't peer directly into the back of the guild. A pair of high windows sit on the western wall on either side of the hearth."]), [universal.state.get_room("Adventurer's Guild")],
         None, None, textCommandsMusic.LIGHT_HEARTED, "textCommandsMusic.LIGHT_HEARTED", None)
+
 try:
     sofiasClinic = universal.state.get_room("Sofia's Clinic")
 except KeyError:
     sofiasClinic = townmode.Room("Sofia's Clinic", ' '.join(["The 'clinic' is nothing more than a long, dark, low-ceilinged room crammed with piles of ragged blankets. Immersed in the piles of",
         "blankets are dozens of Taironans, all in different states of duress. Most of them are shivering quietly, or sleeping fitfully. Some are moaning, and shifting. A few are crying, and shaking",
         "violently. There is even one man who is being wrestled back into his blankets, while screaming incoherently in an unrecognizable dialect. No more than",
-        "half a dozen helpers, mostly women, are moving about the clinic's patients."]), [universal.state.get_room("Slums")], None, None, textCommandsMusic.TAIRONAN, "textCommandsMusic.TAIRONAN", None)
+        "half a dozen helpers, mostly women, are moving amongst the clinic's patients."]), [], None, None, textCommandsMusic.TAIRONAN, "textCommandsMusic.TAIRONAN", 
+        None)
+
+try:
+    adriansOffice = universal.state.get_room("Adrian's Office")
+except KeyError:
+    adriansOffice = townmode.Room("Adrian's Office", ' '.join(["A spartan place consisting only of a large desk, and several chairs. A long, whippy cane hangs on the wall above Adrian's chair.",
+        "Despite being his 'office,' Adrian rarely uses it. He generally prefers to be out in the main room working behind the counter. He only uses his office when he wants to have a private",
+        "conversation, typically while negotiating with clients."]), [], None, None, textCommandsMusic.LIGHT_HEARTED, "textCommandsMusic.LIGHT_HEARTED", None)
 
 def start_scene_1_episode_3(loading=False): 
     universal.say("Next Time on Pandemonium Cycle: The Potion Wars")
