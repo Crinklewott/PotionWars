@@ -857,7 +857,11 @@ def select_action(enemy):
             allActions = [combatAction.StruggleAction] * (enemy.grapple() + 1) +  [combatAction.EndureAction] * (bestStat + 1)
             return allActions[random.randrange(len(allActions))](enemy, [spanker])
     elif enemy.is_grappling():
-        allActions.extend([combatAction.SpankAction, combatAction.ThrowAction, combatAction.BreakGrappleAction])
+        if not enemy.grapplingPartner.is_inflicted_with(statusEffects.Humiliated.name):
+            allActions.append(combatAction.SpankAction)
+        if enemy.grapple() // 2 <= enemy.grappleDuration:
+            allActions.append(combatAction.ThrowAction)
+        allActions.append(combatAction.BreakGrappleAction)
         allActions.extend([spell.__class__ for spell in enemy.flattened_spell_list() if spell.grappleStatus != combatAction.NOT_WHEN_GRAPPLED and 
             spell.cost <= enemy.current_mana()])
     else:

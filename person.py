@@ -2711,6 +2711,7 @@ class Healing(Buff):
         #If fortify is true, then this healing spell can heal health past the character's maximum health.
         self.fortify = False
         self.fortifyCap = None
+        self.magicMultiplier = 1
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         #We don't want to invoke the effect function of Buff.
@@ -2738,9 +2739,9 @@ class Healing(Buff):
                     recipient = availableRecipients[random.randrange(0, len(availableRecipients))]
                     availableRecipients.append(recipient)
             if recipient == caster:
-                healedHealth = self.magicMultiplier * caster.magic_attack(False)
+                healedHealth = int(math.trunc(self.magicMultiplier * caster.magic_attack(False)))
             else:
-                healedHealth = self.magicMultiplier * (caster.magic_attack(inCombat) - recipient.iron_modifier(self.rawMagic, inCombat))
+                healedHealth = int(math.trunc(self.magicMultiplier * (caster.magic_attack(inCombat) - recipient.iron_modifier(self.rawMagic, inCombat))))
             if self.fortify and recipient.current_health() <= recipient.health() and healedHealth <= self.fortifyCap:
                 if healedHealth < 0:
                     healedHealth = 1

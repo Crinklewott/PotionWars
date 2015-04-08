@@ -1061,7 +1061,11 @@ class State(object):
                name, _, charData = charData.partition('\n')
                if name.strip().lower() == 'lucilla.person' or name.strip().lower() == 'anastacia.person':
                    name = "Edita.person"
-               if self.characters[name.strip()].enemy:
+               try:
+                   if self.characters[name.strip()].enemy:
+                       continue
+               except KeyError:
+                   print("WARNING: Person name not found: " + name.strip() + "." "If this is not the name of an enemy, then it's a bug.")
                    continue
                try:
                    person.Person.load(charData, self.characters[name.strip()])
@@ -1079,7 +1083,11 @@ class State(object):
                if name.strip().lower() == 'lucilla.person' or name.strip().lower() == 'anastacia.person' or name.strip().lower() == "carlita.person":
                    name = "Edita.person"
                 #We don't want to save or load any enemies. They're supposed to be temporary opponents.
-               if self.characters[name.strip()].enemy:
+               try:
+                   if self.characters[name.strip()].enemy:
+                       continue
+               except KeyError:
+                   print("WARNING: Person name not found: " + name.strip() + "." "If this is not the name of an enemy, then it's a bug.")
                    continue
                try:
                    person.Person.load(charData, self.characters[name.strip() + '.person'])
