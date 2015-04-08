@@ -627,9 +627,9 @@ class Person(universal.RPGObject):
         return self.primaryStats[:-2]
 
     def highest_stat(self):
-        maxStat = 0
+        maxStat = float('-inf')
         for i in range(len(self.primaryStats[:-4])):
-            maxStat = maxStat if self.primaryStats[i] < maxStat else self.primaryStats[i]
+            maxStat = maxStat if self.primaryStats[i] < maxStat else i
         return maxStat
 
     def get_battle_stats(self):

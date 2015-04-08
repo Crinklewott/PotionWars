@@ -1415,6 +1415,7 @@ def start_round(chosenActions):
         activeEnemies = [enemy for enemy in enemies if enemy.current_health() > 0]
         if len(activeAllies) == 0 or len(activeEnemies) == 0:
             break
+        assert action is not None, "Action is None when it isn't supposed to be!"
         attacker = action.attacker
         if attacker in activeAllies or attacker in activeEnemies:
             if attacker.is_grappling() and action.grappleStatus == combatAction.GRAPPLER_ONLY or action.grappleStatus == combatAction.ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY:
@@ -1450,7 +1451,7 @@ def start_round(chosenActions):
                             #A defeated character can't do anything.
                             for index2 in range(len(chosenActions)):
                                 action2 = chosenActions[index2]
-                                if action2.attacker == defender:
+                                if action2 and action2.attacker == defender:
                                     chosenActions[index2] = None
                     isSpanking = isinstance(combatAction.executed_action(actionEffect), combatAction.SpankAction)
                     isSpellSpanking = isinstance(combatAction.executed_action(actionEffect), person.SpectralSpanking)
