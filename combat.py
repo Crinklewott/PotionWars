@@ -1016,7 +1016,7 @@ def cane_ai(enemy, weightedActionClasses, warfareActions, grappleActions, magicA
     while defenders == []:
         try:
             chosenAction = chosenActionClass.pop(random.randrange(len(chosenActionClass)))
-        except IndexError:
+        except ValueError:
                 weightedActionClasses = [actionClass for actionClass in weightedActionClasses if actionClass != originalChosenActionClass]
                 chosenActionClass = weightedActionClasses.pop(random.randrange(len(weightedActionClasses)))
         assert chosenAction, "Chosen Action is None! ChosenAction class: %s" % str(chosenActionClass)
