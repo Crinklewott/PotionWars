@@ -533,7 +533,7 @@ def continue_spanking():
     chosenActions.append(combatAction.ContinueSpankingAction(activeAlly, [spankee], severity))
     next_character()
 
-def end_spanking():
+def terminate_spanking():
     assert activeAlly.is_spanking(), "Active Ally: %s isn't spanking!" % activeAlly.name
     assert activeAlly.is_spanking(activeAlly.grapplingPartner), "Active Ally: %s isn't spanking %s!" % (activeAlly.name, activeAlly.grapplingPartner.name)
     activeAlly.spankee.spankingEnded = True
@@ -1433,7 +1433,10 @@ def start_round(chosenActions):
                     if defender is not None:
                         actionsEndured[defender].append((combatAction.executed_action(actionEffect), effect))
                         if defender.current_health() <= 0:
-                            defender.break_grapple()
+                            if defender.is_grappling():
+                                defender.break_grapple()
+                            if defender.involved_in_spanking():
+                                defender.terminate_spanking()
                             #A defeated character can't guard anyone.
                             for char in activeEnemies:
                                 try:
