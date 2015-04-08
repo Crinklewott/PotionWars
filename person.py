@@ -281,6 +281,7 @@ class Person(universal.RPGObject):
         fully healing before the boss, orders just provide unnecessary complexity.
         NOTE: defaultLitany doesn't actually do anything. Including it was a terrible, terrible mistake.
     """
+    enemy = False
     def __init__(self, name, gender, defaultLitany, litany, description="", printedName=None, 
             coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle='', marks=None,
             musculature='', hairLength='', height='', bodyType='', identifier=None, weaknesses=None): 
@@ -1071,10 +1072,10 @@ class Person(universal.RPGObject):
     def break_grapple(self):
         gp = self.grapplingPartner
         self.grapplingPartner = None
-        self.grappleDuration = None
-        if gp is not None:
+        self.grappleDuration = self.originalGrappleDuration = None
+        if gp:
             gp.grapplingPartner = None
-            gp.grappleDuration = None
+            gp.grappleDuration = self.originalGrappleDuration = None
 
     def speed(self):
         value = 2 * self.alertness()
@@ -2902,7 +2903,7 @@ class SpectralSpanking(Spectral):
             attacker.terminate_spanking()
             assert not attacker.involved_in_spanking()
             assert not defender.involved_in_spanking()
-            return '\n\n'.join([resultStatement, self.end_statement()])
+            return '\n\n'.join([resultStatement, self.end_statement(defender)])
 
     def effect_statement(self, defender):
         attacker = self.attacker

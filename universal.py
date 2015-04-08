@@ -967,6 +967,8 @@ class State(object):
         saveData.append(self.player.save())
         saveData.append("State Data:")
         for name, char in self.characters.iteritems():
+            if char.enemy:
+                continue
             if not char is self.player:
                 saveData.append("Character:")
                 saveData.append(name)
@@ -1058,7 +1060,9 @@ class State(object):
             for charData in characters:
                name, _, charData = charData.partition('\n')
                if name.strip().lower() == 'lucilla.person' or name.strip().lower() == 'anastacia.person':
-                   name = "Carlita.person"
+                   name = "Edita.person"
+               if self.characters[name.strip()].enemy:
+                   continue
                try:
                    person.Person.load(charData, self.characters[name.strip()])
                except KeyError:
@@ -1072,8 +1076,11 @@ class State(object):
             characters = [charData.strip() for charData in characters.split("Character:") if charData.strip()]
             for charData in characters:
                name, _, charData = charData.partition('\n')
-               if name.strip().lower() == 'lucilla' or name.strip().lower() == 'anastacia':
-                   name = "Carlita"
+               if name.strip().lower() == 'lucilla.person' or name.strip().lower() == 'anastacia.person' or name.strip().lower() == "carlita.person":
+                   name = "Edita.person"
+                #We don't want to save or load any enemies. They're supposed to be temporary opponents.
+               if self.characters[name.strip()].enemy:
+                   continue
                try:
                    person.Person.load(charData, self.characters[name.strip() + '.person'])
                except KeyError:

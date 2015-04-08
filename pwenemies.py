@@ -30,6 +30,7 @@ def name():
 
 class Enemy(person.Person):
     ROUND_INDEX = 1
+    enemy = True
     def __init__(self, name, gender, defaultLitany, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3, musculature='', 
             bodyType='', height='', hairLength='', hairStyle='', eyeColor='', skinColor='', order=person.zeroth_order, identifier=None, litany=None):
         """
