@@ -78,7 +78,7 @@ inlineCommandsPlayer = {
     r'\MisterMiss':("person.MisterMiss()",),  
     r'\manwoman':("person.manwoman()",),  
     r'\ManWoman':("person.ManWoman()",),  
-    r'\trousers':("universal.state.player.lower_clothing().name",),
+    r'\trousers':("universal.state.player.clothing_below_the_waist().name",),
     r'\hishers':("person.hishers()",),  
     r'\HisHers':("person.HisHers()",),  
     r'\boygirl':("person.boygirl()",),  
