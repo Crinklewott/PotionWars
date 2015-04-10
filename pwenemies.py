@@ -418,7 +418,7 @@ class VengadorSpellslinger(Enemy):
 
     def otk_reversal(self, top, bottom):
         if self is top:
-            return universal.format_text([[self.otk_intro(top, bottom)],['''Despite''', bottom.HisHer(), '''bottom already starting to burn,''', bottom.printedName, '''decides to relax''', 
+            return universal.format_text([[self.otk_intro(top, bottom)],['''Despite''', bottom.hisher(), '''bottom already starting to burn,''', bottom.printedName, '''decides to relax''', 
                 bottom.hisher(), '''body and wait until the Vengador lets''', top.hisher(), '''guard down. A few punishing swats later,''', bottom.printedName, '''twists''', bottom.hisher(), 
                 '''body with all''', bottom.hisher(), '''might, rolling''', top.printedName, '''to the side and off balance. Foisting the struggling slinger across''', bottom.hisher(), 
                 '''own knee,''', bottom.printedName, '''begins spanking''', top.printedName + "'s", '''wriggling bottom, returning''', top.printedName, '''favor.''']])
@@ -519,7 +519,7 @@ class VengadorSpellslinger(Enemy):
         if self is top:
             return universal.format_text([[bottom.printedName, '''lunges up and grabs for''', top.printedName + ",", '''but the slinger pushes''', bottom.himher(), '''back down with''', 
                 top.hisher(), '''foot, never breaking''', top.hisher(), '''tight grip on the''',
-                bottom.heroheroine + "'s", '''legs. The slinger grips''', bottom.printedName + "'s", '''thighs even tighter, and''', bottom.printedName, 
+                bottom.heroheroine() + "'s", '''legs. The slinger grips''', bottom.printedName + "'s", '''thighs even tighter, and''', bottom.printedName, 
                 '''is helpless to prevent a renewed barrage of swats to''', bottom.hisher(),
                 '''stinging cheeks.''']]) 
         else:

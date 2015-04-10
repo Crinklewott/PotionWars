@@ -1,4 +1,5 @@
 import enemytests
+import combatTests
 import unittest
 
 pwSuite = unittest.TestSuite([combatTests.combatSuite, enemytests.enemyTestSuite])
