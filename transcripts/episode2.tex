@@ -42,6 +42,11 @@
         '''and a few blankets. Adrian's''','''obscene''','''wealth continues to boggle the brain.''']) 
     slums = universal.state.get_room("Slums")
     shrine = universal.state.get_room("Shrine")
+    if 'introvert' in textCommandsMusic.keywords() or 'extrovert' in textCommandsMusic.keywords():
+        shrine.description = universal.format_line(['''A brief inquiry with the student cleaning the Shrine sends''', universal.state.player.name, '''into the back of the Church, to Sister Samantha's office.''', ' '.join([textCommandsMusic.name(), '''hesitates outside the office, remembering''',
+            '''all too well the last time''', person.heshe(), '''entered this office, and the tender bottom that ensued. But then''', person.heshe(), '''gives''', person.himselfherself(), '''a shake, and knocks.''']) 
+            if 'ep1_spanked_by_Samantha' in textCommandsMusic.keywords() else
+        ' '.join([universal.state.player.name, '''knocks.''']), '''"Come in," says Sister Samantha. When''', universal.state.player.name, '''enters''', person.heshe(), '''finds Sister Samantha is sitting at her desk, while Elise writes something on a smooth stretch of wall with some chalk. The two are in the middle of an animated discussion, but are speaking far too fast, and with too much overlap, for''', universal.state.player.name, '''to understand more than a few scattered words.'''])
     mariasHome = universal.state.get_room("Maria's Home")
     mariasHome.description = universal.format_line(['''Maria lives in a dinky little room with barely enough room for two people to lie down comfortably. The''',
     '''floor is packed dirt, and the old wooden walls sag, seeming on the verge of collapse at any moment. A small, stone-circled firepit sits in the''',
@@ -50,25 +55,18 @@
     sofiasClinic = universal.state.get_room("Sofia's Clinic")
     if 'boarding_with_Maria' in textCommandsMusic.keywords():
         slums.add_adjacent(sofiasClinic)
-    else:
-        try:
-            slums.remove_adjacent(sofiasClinic)
-        except ValueError:
-            pass
+    universal.state.player.restores()
+    universal.state.player.marks = []
     universal.state.party.remove_member(carrie)
     if 'flirting_with_Carrie' in textCommandsMusic.keywords():
         textCommandsMusic.remove_keyword('flirting_with_Carrie')
         textCommandsMusic.add_keyword('attractedToCarrie')
     if not loading:
-        universal.state.player.restores()
-        universal.state.player.marks = []
-        universal.state.player.bumStatus = 0
         textCommandsMusic.enterLeft(sofia, sofiasClinic)
         textCommandsMusic.enterLeft(ildri, kitchen)
         textCommandsMusic.enterLeft(alondra, kitchen)
         textCommandsMusic.enterLeft(deidre, guild)
         textCommandsMusic.exitLeft(carrie, shrine)
-        universal.state.player.marks = []
         if 'introvert' in textCommandsMusic.keywords() or 'extrovert' in textCommandsMusic.keywords():
             textCommandsMusic.enterLeft(elise, shrine)
         else:
@@ -109,6 +107,8 @@
 
 \begin{childnode}{ep2 guild wake up}{Andrew Russell}
 
+    \music{textCommandsMusic.ALONDRA}
+
     \childif{'extrovert' in textCommandsMusic.keywords()}{ep2 extrovert}
 
     \childelif{'introvert' in textCommandsMusic.keywords()}{ep2 guild introvert}
@@ -118,8 +118,6 @@
 \end{childnode}
 
 \begin{childnode}{ep2 extrovert}{Andrew Russell}
-
-    \music{textCommandsMusic.CARRIE}
 
     \name{} weaves out of Talan's Tavern, giggling excessively. \cond{universal.state.player.is\_female()}{\HeShe{} is wearing a dark grey, backless dress with a plunging neckline. The hem of the 
         dress
@@ -748,8 +746,8 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     "Actually, yes I can," says \name{}. \HeShe{} grabs the hem of Carrie's dress and tugs it up to her waist, revealing the young student's firm, large, round bottom, "covered" by a dinky little 
     g-string. 
-    \cond{'Samantha\_saw\_Carries\_dress' in textCommandsMusic.keywords()}{\name{} shakes \hisher{} head. "Didn't Sister Samantha spank you good for wearing a g-string? Don't you ever learn?"}{"One 
-        thing I'll say about you Carrie, you sure make it easy to bare your bottom."}
+    \cond{'Samantha\_saw\_Carries\_dress' in textCommandsMusic.keywords()}{\name{} shakes \hisher{} head. "Didn't Sister Samantha spank you good for wearing a g-string? Don't you ever learn?"}{"One thing I'll say about you Carrie, you sure make it easy to bare
+    your bottom."}
 
     \cond{'Samantha\_saw\_Carries\_dress' in textCommandsMusic.keywords()}{"I'm an adult," says Carrie snottily. "I can wear whatever I want."}{"Oh shut up and get this over with," says Carrie. "I don't need your mockery."}
 
@@ -1480,7 +1478,8 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     No one needs to be told twice.
 
-    As soon as the others have left, Ildri grabs \names{} forearm, spins \himher{} around, and lands two hard smacks to the seat of \hisher{} \trousers{}. "What the hell do you think you're doing? This place is enough of a mess already without you throwing a 
+    As soon as the others have left, Ildri grabs \names{} forearm, spins \himher{} around, and lands two hard smacks to the seat of \hisher{} \trousers{}. "What the hell do you think you're doing? 
+    This place is enough of a mess already without you throwing a 
     tantrum."
 
     "Not my fault Ron sucks at-oww!"
@@ -1981,6 +1980,8 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 \end{childnode}
 
 \begin{childnode}{ep2 marias wake up}{Andrew Russell}
+
+    \music{textCommandsMusic.MARIA}
 
     \childif{'extrovert' in textCommandsMusic.keywords()}{ep2 extrovert}
 
@@ -2512,6 +2513,8 @@ Juliana returns the hug with one arm, rubbing her sore bottom with the other han
 
 \begin{code}
 
+    universal.state.get\_room("Slums").leaving = None
+
     townmode.go(universal.state.get\_room(episode2CharRooms.sofiasClinic.name), sayDescription=False)
 
 \end{code}
@@ -2578,7 +2581,7 @@ Juliana returns the hug with one arm, rubbing her sore bottom with the other han
     \cond{universal.state.player.risque < 4}{"Umm..."}{\name{} blinks, and shifts back a few inches. "Umm, what?"}
 
     \cond{universal.state.player.risque < 4}{"Sorry," says the old man. "Probably not the first thing you expect out of a strange old man you're meeting for the first time. Especially not in a place like this."}{"That outfit," says the old man, gesturing at \names{} 
-    \pwearingdress{\shirt{}.}{\shirt{} and \trousers{}.} "I'd never let my \isfemale{granddaughter}{grandson} go out like that. Least not without feeling the sting of my hand on \hisher{} backside."}
+        \shirt{} and \trousers{}. "I'd never let my \isfemale{granddaughter}{grandson} go out like that. Least not without feeling the sting of my hand on \hisher{} backside."}
 
     \cond{universal.state.player.risque < 4}{"Not the first thing that comes to mind, no," says \name{}.}{"Guess it's a good thing I'm not your \isfemale{granddaughter}{grandson} then, huh?"}
 
@@ -2689,15 +2692,12 @@ Juliana returns the hug with one arm, rubbing her sore bottom with the other han
         maria = universal.state.get\_character("Maria.person")
         sofia = universal.state.get\_character("Sofia.person")
         clinic = universal.state.get\_room(episode2CharRooms.sofiasClinic.name)
-        bedroom = universal.state.get\_room("Maria's Home")
+        bedroom = universal.state.get\_room("Bedroom")
         universal.state.party.remove\_member(maria)
-        textCommandsMusic.remove_keyword('travelingToSofias')
         textCommandsMusic.exitLeft(maria, bedroom)
         textCommandsMusic.enterLeft(maria, clinic)
-        maria.litany = maria.defaultLitany = None
-        sofia.litany = sofia.defaultLitany = None
-        universal.state.player.add\_keyword('ep2VisitedClinic')
-        universal.state.get\_room("Slums").leaving = None
+        maria.litany = None
+        sofia.litany = None
 
     \end{code}
         
@@ -2900,8 +2900,8 @@ Ildri drags \name{} back through the store, pays for the dresses then drags \nam
         else: 
 
             universal.state.player.take_item(itemspotionwars.powderBlueTrousers)
-            universal.state.player.take_item(itemspotionwars.powderBlueTunic)
-            universal.state.player.equip(itemspotionwars.powderBlueTunic)
+            universal.state.player.take_item(itemspotionwars.powderBlueTrousers)
+            universal.state.player.equip(itemspotionwars.powderBlueTrousers)
             universal.state.player.equip(itemspotionwars.powderBlueTrousers)
 
 \end{code}
@@ -2914,7 +2914,7 @@ Ildri drags \name{} back through the store, pays for the dresses then drags \nam
 
     "Hey \nickname{}," says Ildri, not looking up from her bread dough.
 
-    "Hey." \name{} approaches Ildri, and takes a deep breath of the savory smell of baking bread that fills the kitchen. "Hmm, that smells good."
+    "Hey." \name{} approaches Ildri, and breathes in the savory smell of baking bread. "Hmm, that smells good."
 
     Ildri turns to respond to \name{}, and gets a good look at \names{} rather risque outfit. Her expression darkens, and her hand snaps out to catch \name{} around the arm.
     
@@ -4345,13 +4345,6 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     \name{} nods, and tucks the gem back into a small pouch on \hisher{} belt. "Ok. See you around."
 
-    \begin{code}
-
-        peter = universal.state.get_character("Peter.person")
-        peter.litany = peter.defaultLitany = ep2_peter_conversation.index 
-
-    \end{code}
-
 \end{childnode}
 
 \begin{childnode}{ep2 peter leave}{Andrew Russell}
@@ -4378,9 +4371,9 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
     %The player has a conversation with Elise about Carrie's graduation. Elise gripes about Roland's mother getting involved, and trying to use it as an excuse to get Elise to meet various noblewomen her own age. Should probably have a few variations
     %based on the actions in the first episode: yelling and running from Samantha without making up, getting angry at Maria, etc.
 
-    \name{} enters the orphanage, and asks one of the nearby Brothers about the location of Elise. The Brother points towards Sister Samantha's office at the end of the 
-    hall. \name{} makes \hisher{} way to the door, and knocks.
-    
+    \name{} enters the orphanage, and asks one of the nearby Brothers about the location of Elise. The Brother points towards Sister Samantha's office at the end of the hall. \name{} makes \hisher{} way to the 
+    door, and knocks.
+
     "Come in," calls Sister Samantha's voice.
 
     \name{} pushes the door open and enters.
@@ -4392,14 +4385,6 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 \end{node}
 
 \begin{childnode}{ep2 elise second hand tragedy}{Andrew Russell}
-
-    \begin{code}
-
-        import episode1
-        shrine = universal.state.get_room("Shrine")
-        shrine.description = episode1.shrine.description
-
-    \end{code}
 
     Elise tenses when she sees \name{}, and glances at Samantha, who has also tensed.
 
@@ -4441,6 +4426,12 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 \end{childnode}
 
 \begin{childnode}{ep2 elise second hand tragedy still annoyed forgive Samantha}{Andrew Russell}
+
+    \begin{code}
+
+        universal.state.player.keywords.remove('second\_hand\_tragedy')
+
+    \end{code}
 
     "Great. I'll go get her." Elise hurries out the door, a broad grin on her face.
 
@@ -4863,8 +4854,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     \child{"Well, fine. But you're the one whose going to be providing the distraction."}{ep2 carrie distraction}
 
-    \child{"Hmm. Sister Samantha would probably bail you out, but she might not me. Guess I'll distract everyone. Being a whiny customer isn't illegal, after 
-    all."}{ep2 carrie agree}
+    \child{"Hmm. Sister Samantha would probably bail you out, but she might not me. Guess I'll distract everyone. Being a whiny customer isn't illegal, after all."}{ep2 carrie agree}
 
     \child{"I don't think so. Thanks to Cat, I'm on thin ice with the guards as it is. Think I'd rather not push my luck."}{ep2 carrie refuse}
 
@@ -4945,7 +4935,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     "Fine," says Carrie. She gestures for \name{} to lead the way, and smiles sweetly.
 
-    By the late afternoon/early evening, both \name{} and Carrie are sweaty, dirty and kind of sore. The two make their slow way back to the Shrine.
+    By the late afternoon/early evening, both \name{} and Carrie are sweaty, dirty and kind of sore. The two make their slow way back to the Avaricum Square.
 
     "See you later," says Carrie, giving \names{} arm a squeeze. "And remember, I'm graduating soon. I won't make you come to the ceremony, it's in competition with watching grass grow for
     most exciting show of the year. But you need to come the party."
@@ -4956,9 +4946,15 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     "So, never," says \name{}.
 
-    "Yeah, yeah. Snark snark snark." Carrie sticks her tongue out at \name{}, then disappears into the back of the Church. "See you later!"
+    "Yeah, yeah. Snark snark snark." Carrie sticks her tongue out at \name{}, then turns and slogs her way up the stairs. "See you later!"
 
     \name{} chuckles. 
+
+    \begin{code}
+
+        townmode.go(universal.state.get\_room('Avaricum Square'))
+
+    \end{code}
 
 \end{childnode}
 
@@ -5492,8 +5488,6 @@ people's laps with her pants around her ankles.}
 
     \keyword{'ep2HelpedCarrie'}
 
-    The two walk back to the Shrine.
-
     "So I'll see you later?" says Carrie. "You'll be coming to my graduation party right? Don't bother with the graduation itself. Just a pompous ceremony with boring, pompous speeches about the
     'next generation' and 'holy vows' and 'the Mother's pride' and blah blah blah. But the party'll be fun!"
 
@@ -5508,65 +5502,12 @@ people's laps with her pants around her ankles.}
     \stageDirections{The two figure out that they have a letter written in some sort of cipher. Carrie resolves to break it. She thanks the player, and goes off to do her own thing, leaving the
     player to do their own thing.}
 
-\end{childnode}
+    \begin{code}
 
-\begin{node}{ep2 intro deidre}{Adventurer's Guild}{Deidre}{Andrew Russell}
+        townmode.go(universal.state.get\_room("Craftman's Corridor"))
 
-    "What are you doing here?" asks \name{} sharply, stepping up to Deidre. 
-
-    Deidre gives \name{} a small smirk. "Why? Afraid I'm gonna arrest you?"
-
-    \childif{'tried\_to\_help\_Edita' in textCommandsMusic.keywords()}{ep2 intro deidre where is edita}
-
-    \childelif{'charmed\_by\_Deidre' in textCommandsMusic.keywords()}{ep2 intro deidre charmed}
-
-    \childelif{True}{ep2 intro deidre other}
-
-\end{node}
-
-\begin{childnode}{ep2 intro deidre where is edita}{Andrew Russell}
-
-    "Where's that girl?" asks \name{}. "What did you do with her?"
-
-    Deidre frowns in confusion. "What girl?"
-
-    "The one you arrested last month. With the birthmark," says \name{}. "Where is she?"
-
-    Deidre rolls her eyes. "Do you have any idea how many girls we arrested at this wretched raid of yours? Hell, do you have any idea how many girls I've arrested period? What the Mother's name 
-    makes you think I'd remember any of them? Now leave me be."
-
-    \name{} sets \hisher{} jaw. "Not until you tell me where she is."
-
-    \cond{'charmed\_by\_Deidre' in textCommandsMusic.keywords()}{Deidre leans forward and speaks in a low voice. "I don't know, and I don't care. Now, leave me be. Before I make you."}{"We probably
-    let her rot in a dungeon cell for a few weeks,e hooked her, asked her a few questions, then tossed her back on the streets. Just like two-thirds of the Vengadores we arrested. Happy now?"}
-
-    \name{} backs up a step, \hisher{} glare never leaving Deidre. "She was just a girl, barely eighteen."
-
-    "They always are," says Deidre, turning back towards the counter and ignoring \name{}.
-
-\end{childnode}
-
-\begin{childnode}{ep2 intro deidre charmed}{Andrew Russell}
-
-    Deidre's eyes flash, and \name{} thoughts slow. "Now why don't you leave me be. I didn't come here to chat with cocky adventurers who barely know how to hold a sword."
-
-    \name{} backs up step, then spins on \hisher{} heel and walks to the closest unoccupied table. \HeShe{} plops down, and \HeShe{} stares at \hisher{} hands. \HeShe{} folds and unfolds them a few 
-    times, then stands and paces about
-    the room. The other adventurers glance at \himher{} a few times, but mostly pay \himher{} no mind. Most of them are very carefully ignoring Deidre.
-
-\end{childnode}
-
-\begin{childnode}{ep2 intro deidre other}{Andrew Russell}
-
-    \names{} eyes narrow. "Of course not. I just want to know what the hell gives you the right to burst into my home in the middle of the night."
-
-    Deidre arches an eyebrow in amusement, and her smirk widens. "We're the city guard, and you were chatting it up with the leader of the Vengadores. What, you think we were going to just sit there
-    and let you two have your little heart-to-heart? Please. Way I see it, you're lucky Roland didn't make me dig into that empty little head of yours. 
-    \cond{'Elise\_shows\_you\_around' in textCommandsMusic.keywords()}{Probably because you're friends with his fiancee. Now, why don't you run off and leave me be. I didn't come here to talk to 
-    you."}{Now, why don't you run off and leave me be. I didn't come here to talk to you."}
-   
-    \name{} backs up, but \hisher{} eyes never leave the Puppeteer. Deidre, meanwhile, turns her back on \name{} and returns to her vigil.
-
+    \end{code}
+        
 \end{childnode}
 
 \begin{closeScene}

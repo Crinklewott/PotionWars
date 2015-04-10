@@ -708,6 +708,14 @@ class Edita(pwenemies.Enemy):
             self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
             self.level = 0
 
+    def otk_reversal(self, top, bottom):
+        return self.spanking_reversal_text(top, bottom, positions.overTheKnee)
+
+    def standing_reversal(self, top, bottom):
+        return self.spanking_reversal_text(top, bottom, positions.standing)
+
+    def on_the_ground_reversal(self, top, bottom):
+        return self.spanking_reversal_text(top, bottom, positions.onTheGround)
 
     def had_spanking_reversed_by(self, person, position):
         return self.spanking_reversal_text(person, self, position)
@@ -918,10 +926,11 @@ class Edita(pwenemies.Enemy):
         elif position == positions.standing:
             missPhrases.append(universal.format_text([[T.printedName, 'hooks', hisher(T), 'arm around', B.printedName + "'s", 'neck. Before', heshe(T), 'can get a good hold,', 
             B.printedName, 'jerks backward, and slips out of', T.printedName + "'s", 'grip']]))
-        elif position == position.onTheGround:
+        elif position == positions.onTheGround:
             missPhrases.append(universal.format_text([[Tname, "pivots to the side, sweeping", hisher(T), 'leg at', Bname + "'s", 'feet. But', Bname + "'s", 'own foot lashes out and',
             'catches', hisher(T), 'leg. The two balance precariously. Finally,', Tname, 'steps back, and the two regain their footing.']]))
         return missPhrases[random.randrange(0, len(missPhrases))]
+
 
     #def reset_stats(self, episode=None):
     #    edita = Edita(self.litany, coins=self.coins, printedName=self.printedName)
@@ -963,7 +972,7 @@ class Necia(pwenemies.Enemy):
         '''the''', bottom.heroheroine() if self is top else '''Vengador''' + ".", bottom.printedName, '''trips over the knee, throwing''', bottom.himher(), '''off balance enough for''', 
         top.printedName, 
         '''to easily pull''', bottom.himher(), '''over the proffered knee.''', top.printedName, '''plants''', top.hisher(), '''holds''', top.hisher(), '''opponent down with one hand while''',
-        top.heshe(), '''raining spank after spank down upon''', bottom.printedName + "'s", bottom.muscle_adj(), '''bottom with the other.''']])
+        top.heshe(), '''rains spank after spank down upon''', bottom.printedName + "'s", bottom.muscle_adj(), '''bottom with the other.''']])
 
     def otk_round(self, top, bottom):
         return universal.format_text([[bottom.printedName, '''struggles to extricate''', bottom.himselfherself(), '''from''', top.printedName + "'s", '''hold on''', bottom.himher() + ",", 

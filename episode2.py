@@ -40,6 +40,11 @@ def start_scene_1_episode_2(loading=False):
         '''and a few blankets. Adrian's''','''obscene''','''wealth continues to boggle the brain.''']) 
     slums = universal.state.get_room("Slums")
     shrine = universal.state.get_room("Shrine")
+    if 'introvert' in textCommandsMusic.keywords() or 'extrovert' in textCommandsMusic.keywords():
+        shrine.description = universal.format_line(['''A brief inquiry with the student cleaning the Shrine sends''', universal.state.player.name, '''into the back of the Church, to Sister Samantha's office.''', ' '.join([textCommandsMusic.name(), '''hesitates outside the office, remembering''',
+            '''all too well the last time''', person.heshe(), '''entered this office, and the tender bottom that ensued. But then''', person.heshe(), '''gives''', person.himselfherself(), '''a shake, and knocks.''']) 
+            if 'ep1_spanked_by_Samantha' in textCommandsMusic.keywords() else
+        ' '.join([universal.state.player.name, '''knocks.''']), '''"Come in," says Sister Samantha. When''', universal.state.player.name, '''enters''', person.heshe(), '''finds Sister Samantha is sitting at her desk, while Elise writes something on a smooth stretch of wall with some chalk. The two are in the middle of an animated discussion, but are speaking far too fast, and with too much overlap, for''', universal.state.player.name, '''to understand more than a few scattered words.'''])
     mariasHome = universal.state.get_room("Maria's Home")
     mariasHome.description = universal.format_line(['''Maria lives in a dinky little room with barely enough room for two people to lie down comfortably. The''',
     '''floor is packed dirt, and the old wooden walls sag, seeming on the verge of collapse at any moment. A small, stone-circled firepit sits in the''',
@@ -48,25 +53,18 @@ def start_scene_1_episode_2(loading=False):
     sofiasClinic = universal.state.get_room("Sofia's Clinic")
     if 'boarding_with_Maria' in textCommandsMusic.keywords():
         slums.add_adjacent(sofiasClinic)
-    else:
-        try:
-            slums.remove_adjacent(sofiasClinic)
-        except ValueError:
-            pass
+    universal.state.player.restores()
+    universal.state.player.marks = []
     universal.state.party.remove_member(carrie)
     if 'flirting_with_Carrie' in textCommandsMusic.keywords():
         textCommandsMusic.remove_keyword('flirting_with_Carrie')
         textCommandsMusic.add_keyword('attractedToCarrie')
     if not loading:
-        universal.state.player.restores()
-        universal.state.player.marks = []
-        universal.state.player.bumStatus = 0
         textCommandsMusic.enterLeft(sofia, sofiasClinic)
         textCommandsMusic.enterLeft(ildri, kitchen)
         textCommandsMusic.enterLeft(alondra, kitchen)
         textCommandsMusic.enterLeft(deidre, guild)
         textCommandsMusic.exitLeft(carrie, shrine)
-        universal.state.player.marks = []
         if 'introvert' in textCommandsMusic.keywords() or 'extrovert' in textCommandsMusic.keywords():
             textCommandsMusic.enterLeft(elise, shrine)
         else:
@@ -108,9 +106,6 @@ def start_scene_1_episode_2(loading=False):
     if not loading:
         carrie = universal.state.get_character('''Carrie.person''')
         carrie.litany = conversation.allNodes[453]
-    if not loading:
-        deidre = universal.state.get_character('''Deidre.person''')
-        deidre.litany = conversation.allNodes[469]
 
 
 def init_scene_1_episode_2():
@@ -135,8 +130,9 @@ def init_scene_1_episode_2():
     
     
     def ep2_guild_wake_up_qf():
+        universal.say('\m') ; universal.playedMusic.put(textCommandsMusic.ALONDRA)
         ep2_guild_wake_up.quip = " "
-        universal.say(universal.format_text_translate([[], []]), justification=0)
+        universal.say(universal.format_text_translate([[], [], []]), justification=0)
         if 'extrovert' in textCommandsMusic.keywords():
             conversation.continue_to_node(ep2_guild_wake_up, ep2_extrovert)
         elif 'introvert' in textCommandsMusic.keywords():
@@ -148,9 +144,8 @@ def init_scene_1_episode_2():
     
     
     def ep2_extrovert_qf():
-        universal.say('\m') ; universal.playedMusic.put(textCommandsMusic.CARRIE)
         ep2_extrovert.quip = " "
-        universal.say(universal.format_text_translate([[], [], [], [''.join([ universal.state.player.name , ' ']), ''.join([ "weaves"
+        universal.say(universal.format_text_translate([[], [], [''.join([ universal.state.player.name , ' ']), ''.join([ "weaves"
  , ' ']), ''.join([ "out"
  , ' ']), ''.join([ "of"
  , ' ']), ''.join([ "Talan's"
@@ -12389,7 +12384,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "seat"
  , ' ']), ''.join([ "of"
- , ' ']), ''.join([ person.hisher() , ' ']), universal.state.player.lower_clothing().name, ''.join([ "."
+ , ' ']), ''.join([ person.hisher() , ' ']), universal.state.player.clothing_below_the_waist().name, ''.join([ "."
  , ' ']), ''.join([ '"'
  ]), ''.join([ "What"
  , ' ']), ''.join([ "the"
@@ -12641,13 +12636,13 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Ildri"
  , ' ']), ''.join([ items.wearing_trousers(universal.state.player, ''.join([""
 , ''.join([ "tugs"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' ']), ''.join([ "down"
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ "down"
  , ' ']), ''.join([ "to"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "knees."
  , ' ']), ''.join([ "Then,"
  , ' '])]), ''.join([""
 , ''.join([ "bunches"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' ']), ''.join([ "up"
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ "up"
  , ' ']), ''.join([ "around"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "waist."
  , ' ']), ''.join([ "Then,"
@@ -16782,8 +16777,9 @@ def init_scene_1_episode_2():
     
     
     def ep2_marias_wake_up_qf():
+        universal.say('\m') ; universal.playedMusic.put(textCommandsMusic.MARIA)
         ep2_marias_wake_up.quip = " "
-        universal.say(universal.format_text_translate([[], []]), justification=0)
+        universal.say(universal.format_text_translate([[], [], []]), justification=0)
         if 'extrovert' in textCommandsMusic.keywords():
             conversation.continue_to_node(ep2_marias_wake_up, ep2_extrovert)
         elif True:
@@ -21581,6 +21577,7 @@ def init_scene_1_episode_2():
     
     def ep2_wrong_way_qf():
         textCommandsMusic.add_keyword('ep2WrongWay')
+        universal.state.get_room("Slums").leaving = None
         townmode.go(universal.state.get_room(episode2CharRooms.sofiasClinic.name), sayDescription=False)
         ep2_wrong_way.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [], [''.join([ "As"
@@ -22295,15 +22292,12 @@ def init_scene_1_episode_2():
         maria = universal.state.get_character("Maria.person")
         sofia = universal.state.get_character("Sofia.person")
         clinic = universal.state.get_room(episode2CharRooms.sofiasClinic.name)
-        bedroom = universal.state.get_room("Maria's Home")
+        bedroom = universal.state.get_room("Bedroom")
         universal.state.party.remove_member(maria)
-        textCommandsMusic.remove_keyword('travelingToSofias')
         textCommandsMusic.exitLeft(maria, bedroom)
         textCommandsMusic.enterLeft(maria, clinic)
-        maria.litany = maria.defaultLitany = None
-        sofia.litany = sofia.defaultLitany = None
-        universal.state.player.add_keyword('ep2VisitedClinic')
-        universal.state.get_room("Slums").leaving = None
+        maria.litany = None
+        sofia.litany = None
         ep2_clinic.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ "As"
  , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "and"
@@ -23153,12 +23147,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "man,"
  , ' ']), ''.join([ "gesturing"
  , ' ']), ''.join([ "at"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ items.wearing_dress(universal.state.player, ''.join([""
-, universal.state.player.shirt().name, ''.join([ "."
- , ' '])]), ''.join([""
-, ''.join([ universal.state.player.shirt().name , ' ']), ''.join([ "and"
- , ' ']), universal.state.player.lower_clothing().name, ''.join([ "."
- , ' '])])) , ' ']), ''.join([ '"'
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.shirt().name , ' ']), ''.join([ "and"
+ , ' ']), universal.state.player.clothing_below_the_waist().name, ''.join([ "."
+ , ' ']), ''.join([ '"'
  ]), ''.join([ "I'd"
  , ' ']), ''.join([ "never"
  , ' ']), ''.join([ "let"
@@ -24733,8 +24724,8 @@ def init_scene_1_episode_2():
                 universal.state.player.equip(itemspotionwars.powderBlueDress)
             else: 
                 universal.state.player.take_item(itemspotionwars.powderBlueTrousers)
-                universal.state.player.take_item(itemspotionwars.powderBlueTunic)
-                universal.state.player.equip(itemspotionwars.powderBlueTunic)
+                universal.state.player.take_item(itemspotionwars.powderBlueTrousers)
+                universal.state.player.equip(itemspotionwars.powderBlueTrousers)
                 universal.state.player.equip(itemspotionwars.powderBlueTrousers)
         ep2_ildri_indecent_no_pants.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ "Ildri"
@@ -25060,7 +25051,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Ildri"
  , ' ']), ''.join([ "starts"
  , ' ']), ''.join([ "smacking"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' ']), ''.join([ "-clad,"
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ "-clad,"
  , ' ']), ''.join([ universal.state.player.bum_adj() , ' ']), ''.join([ "bottom."
  , ' ']), ''.join([ '"'
  ]), ''.join([ "I"
@@ -25328,7 +25319,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "She"
  , ' ']), ''.join([ universal.cond(universal.state.player.lower_clothing().armorType == items.Dress.armorType or universal.state.player.lower_clothing().armorType == items.Skirt.armorType, ''.join([""
 , ''.join([ "pushes"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' ']), ''.join([ "up"
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ "up"
  , ' ']), ''.join([ "over"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ person.bodytype_based_msg(universal.state.player, ''.join([""
 , ''.join([ "narrow"
@@ -25341,7 +25332,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' ']), ''.join([ "hips"
  , ' '])]), ''.join([""
 , ''.join([ "tugs"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' ']), ''.join([ "down"
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ "down"
  , ' ']), ''.join([ "to"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "knees"
  , ' '])])) , ' ']), ''.join([ "and"
@@ -26587,21 +26578,14 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "approaches"
  , ' ']), ''.join([ "Ildri,"
  , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "takes"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "deep"
- , ' ']), ''.join([ "breath"
- , ' ']), ''.join([ "of"
+ , ' ']), ''.join([ "breathes"
+ , ' ']), ''.join([ "in"
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "savory"
  , ' ']), ''.join([ "smell"
  , ' ']), ''.join([ "of"
  , ' ']), ''.join([ "baking"
- , ' ']), ''.join([ "bread"
- , ' ']), ''.join([ "that"
- , ' ']), ''.join([ "fills"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "kitchen."
+ , ' ']), ''.join([ "bread."
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Hmm,"
  , ' ']), ''.join([ "that"
@@ -26665,7 +26649,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), items.wearing_dress(universal.state.player, ''.join([""
 , ''.join([ universal.state.player.shirt().name , ' '])]), ''.join([""
 , ''.join([ universal.state.player.shirt().name , ' ']), ''.join([ "and"
- , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' '])])), ''.join([ "."
+ , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' '])])), ''.join([ "."
  , ' '])]]), justification=0)
         conversation.continue_to_node(ep2_ildri_indecent, ep2_no_pants, False)
     ep2_ildri_indecent.quip_function = ep2_ildri_indecent_qf
@@ -28286,7 +28270,7 @@ def init_scene_1_episode_2():
         ep2_acceptable_clothing.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [], [''.join([ universal.state.player.name , ' ']), ''.join([ "throws"
  , ' ']), ''.join([ "on"
- , ' ']), ''.join([ person.hisher() , ' ']), universal.state.player.lower_clothing().name, ''.join([ ","
+ , ' ']), ''.join([ person.hisher() , ' ']), universal.state.player.clothing_below_the_waist().name, ''.join([ ","
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "returns"
  , ' ']), ''.join([ "to"
@@ -32660,7 +32644,7 @@ def init_scene_1_episode_2():
 , ''.join([ "the"
  , ' ']), ''.join([ "waistband"
  , ' ']), ''.join([ "of"
- , ' '])])) , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), universal.state.player.lower_clothing().name, ''.join([ "."
+ , ' '])])) , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), universal.state.player.clothing_below_the_waist().name, ''.join([ "."
  , ' ']), ''.join([ "Almost"
  , ' ']), ''.join([ "as"
  , ' ']), ''.join([ "soon"
@@ -32931,7 +32915,7 @@ def init_scene_1_episode_2():
 , ''.join([ "pushes"
  , ' '])]), ''.join([""
 , ''.join([ "yanks"
- , ' '])])) , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' ']), items.wearing_trousers(universal.state.player, ''.join([""
+ , ' '])])) , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), items.wearing_trousers(universal.state.player, ''.join([""
 , ''.join([ items.wearing_underwear(universal.state.player, ''.join([""
 , ''.join([ "and"
  , ' ']), ''.join([ universal.state.player.underwear().name , ' '])]), ''.join([""
@@ -34637,7 +34621,7 @@ def init_scene_1_episode_2():
 ])) , ' ']), ''.join([ items.wearing_trousers(universal.state.player, ''.join([""
 , ''.join([ "then"
  , ' ']), ''.join([ "yanks"
- , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' ']), ''.join([ "back"
+ , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ "back"
  , ' ']), ''.join([ "up."
  , ' '])]), ''.join([""
 , ''.join([ "then"
@@ -35614,7 +35598,7 @@ def init_scene_1_episode_2():
  , ' '])]), ''.join([""
 , ''.join([ "waistband"
  , ' '])])) , ' ']), ''.join([ "of"
- , ' ']), ''.join([ person.hisher() , ' ']), universal.state.player.lower_clothing().name, ''.join([ "."
+ , ' ']), ''.join([ person.hisher() , ' ']), universal.state.player.clothing_below_the_waist().name, ''.join([ "."
  , ' '])], [''.join([ '"'
  ]), ''.join([ "I'll"
  , ' ']), ''.join([ "take"
@@ -35681,10 +35665,10 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ items.wearing_dress(universal.state.player, ''.join([""
 , ''.join([ "seat"
  , ' ']), ''.join([ "of"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' '])]), ''.join([""
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' '])]), ''.join([""
 , ''.join([ "back"
  , ' ']), ''.join([ "of"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' '])]), ''.join([""
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' '])]), ''.join([""
 , ''.join([ "back"
  , ' ']), ''.join([ "of"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.shirt().name , ' '])])) , ' ']), ''.join([ "with"
@@ -35750,10 +35734,10 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ items.wearing_dress(universal.state.player, ''.join([""
 , ''.join([ "seat"
  , ' ']), ''.join([ "of"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' '])]), ''.join([""
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' '])]), ''.join([""
 , ''.join([ "back"
  , ' ']), ''.join([ "of"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' '])]), ''.join([""
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' '])]), ''.join([""
 , ''.join([ "back"
  , ' ']), ''.join([ "of"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.shirt().name , ' '])])) , ' ']), ''.join([ "with"
@@ -35952,7 +35936,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Peter"
  , ' ']), ''.join([ items.wearing_trousers(universal.state.player, ''.join([""
 , ''.join([ "lowers"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "pushes"
  , ' ']), ''.join([ "them"
  , ' ']), ''.join([ "completely"
@@ -35979,7 +35963,7 @@ def init_scene_1_episode_2():
  , ' '])]), ''.join([""
 ])) , ' '])]), ''.join([""
 , ''.join([ "lifts"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' ']), ''.join([ "up"
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ "up"
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "over"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "hips,"
@@ -36948,7 +36932,7 @@ def init_scene_1_episode_2():
  , ' '])]), ''.join([""
 , ''.join([ "waistband"
  , ' '])])) , ' ']), ''.join([ "of"
- , ' ']), ''.join([ person.hisher() , ' ']), universal.state.player.lower_clothing().name, ''.join([ "."
+ , ' ']), ''.join([ person.hisher() , ' ']), universal.state.player.clothing_below_the_waist().name, ''.join([ "."
  , ' '])], [''.join([ '"'
  ]), ''.join([ "I'll"
  , ' ']), ''.join([ "take"
@@ -37015,10 +36999,10 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ items.wearing_dress(universal.state.player, ''.join([""
 , ''.join([ "seat"
  , ' ']), ''.join([ "of"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' '])]), ''.join([""
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' '])]), ''.join([""
 , ''.join([ "back"
  , ' ']), ''.join([ "of"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' '])]), ''.join([""
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' '])]), ''.join([""
 , ''.join([ "back"
  , ' ']), ''.join([ "of"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.shirt().name , ' '])])) , ' ']), ''.join([ "with"
@@ -37087,10 +37071,10 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ items.wearing_dress(universal.state.player, ''.join([""
 , ''.join([ "seat"
  , ' ']), ''.join([ "of"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' '])]), ''.join([""
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' '])]), ''.join([""
 , ''.join([ "back"
  , ' ']), ''.join([ "of"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' '])]), ''.join([""
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' '])]), ''.join([""
 , ''.join([ "back"
  , ' ']), ''.join([ "of"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.shirt().name , ' '])])) , ' ']), ''.join([ "with"
@@ -37289,7 +37273,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Peter"
  , ' ']), ''.join([ items.wearing_trousers(universal.state.player, ''.join([""
 , ''.join([ "lowers"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "pushes"
  , ' ']), ''.join([ "them"
  , ' ']), ''.join([ "completely"
@@ -37317,7 +37301,7 @@ def init_scene_1_episode_2():
 ])) , ' '])]), ''.join([""
 , ''.join([ "Peter"
  , ' ']), ''.join([ "lifts"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.lower_clothing().name , ' ']), ''.join([ "up"
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ "up"
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "over"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "hips,"
@@ -39370,7 +39354,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "brushes"
  , ' ']), ''.join([ "off"
- , ' ']), ''.join([ person.hisher() , ' ']), universal.state.player.lower_clothing().name, ''.join([ "."
+ , ' ']), ''.join([ person.hisher() , ' ']), universal.state.player.clothing_below_the_waist().name, ''.join([ "."
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Well,"
  , ' ']), ''.join([ "I"
@@ -40104,8 +40088,6 @@ def init_scene_1_episode_2():
     
     
     def ep2_peter_shop_mode_qf():
-        peter = universal.state.get_character("Peter.person")
-        peter.litany = peter.defaultLitany = ep2_peter_conversation.index 
         ep2_peter_shop_mode.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ textCommandsMusic.stage_directions(''.join([""
 , ''.join([ "Segue"
@@ -40211,7 +40193,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "you"
  , ' ']), ''.join([ "around."
  ]), ''.join([ '"'
- , ' '])], [], []]), justification=0)
+ , ' '])]]), justification=0)
     ep2_peter_shop_mode.quip_function = ep2_peter_shop_mode_qf
     ep2_peter_leave = conversation.Node(443, '''ep2 peter leave''')
     
@@ -40313,11 +40295,8 @@ def init_scene_1_episode_2():
     
     
     def ep2_elise_second_hand_tragedy_qf():
-        import episode1
-        shrine = universal.state.get_room("Shrine")
-        shrine.description = episode1.shrine.description
         ep2_elise_second_hand_tragedy.quip = " "
-        universal.say(universal.format_text_translate([[], [], [], [], [''.join([ "Elise"
+        universal.say(universal.format_text_translate([[], [], [''.join([ "Elise"
  , ' ']), ''.join([ "tenses"
  , ' ']), ''.join([ "when"
  , ' ']), ''.join([ "she"
@@ -40700,8 +40679,9 @@ def init_scene_1_episode_2():
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha_qf():
+        universal.state.player.keywords.remove('second_hand_tragedy')
         ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ '"'
+        universal.say(universal.format_text_translate([[], [], [], [], [''.join([ '"'
  ]), ''.join([ "Great."
  , ' ']), ''.join([ "I'll"
  , ' ']), ''.join([ "go"
@@ -45144,6 +45124,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_practice_spectral_magic_qf():
+        townmode.go(universal.state.get_room('Avaricum Square'))
         ep2_practice_spectral_magic.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ universal.state.player.name , ' ']), ''.join([ "grins."
  , ' ']), ''.join([ '"'
@@ -45244,7 +45225,8 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "back"
  , ' ']), ''.join([ "to"
  , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "Shrine."
+ , ' ']), ''.join([ "Avaricum"
+ , ' ']), ''.join([ "Square."
  , ' '])], [''.join([ '"'
  ]), ''.join([ "See"
  , ' ']), ''.join([ "you"
@@ -45334,20 +45316,21 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "at"
  , ' ']), universal.state.player.name, ''.join([ ","
  , ' ']), ''.join([ "then"
- , ' ']), ''.join([ "disappears"
- , ' ']), ''.join([ "into"
+ , ' ']), ''.join([ "turns"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "slogs"
+ , ' ']), ''.join([ "her"
+ , ' ']), ''.join([ "way"
+ , ' ']), ''.join([ "up"
  , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "back"
- , ' ']), ''.join([ "of"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "Church."
+ , ' ']), ''.join([ "stairs."
  , ' ']), ''.join([ '"'
  ]), ''.join([ "See"
  , ' ']), ''.join([ "you"
  , ' ']), ''.join([ "later!"
  ]), ''.join([ '"'
  , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "chuckles."
- , ' '])]]), justification=0)
+ , ' '])], [], []]), justification=0)
     ep2_practice_spectral_magic.quip_function = ep2_practice_spectral_magic_qf
     ep2_carrie_subplot_spanking = conversation.Node(465, '''ep2 carrie subplot spanking''')
     
@@ -49702,13 +49685,13 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "seconds"
  , ' ']), ''.join([ "later,"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ items.wearing_dress(universal.state.player, ''.join([""
-, ''.join([ universal.state.player.lower_clothing().name , ' ']), ''.join([ "is"
+, ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ "is"
  , ' ']), ''.join([ "flipped"
  , ' ']), ''.join([ "up"
  , ' ']), ''.join([ "over"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "back"
  , ' '])]), ''.join([""
-, ''.join([ universal.state.player.lower_clothing().name , ' ']), ''.join([ universal.cond(universal.state.player.lower_clothing().armorType != items.Skirt.armorType, ''.join([""
+, ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ universal.cond(universal.state.player.lower_clothing().armorType != items.Skirt.armorType, ''.join([""
 , ''.join([ "are"
  , ' '])]), ''.join([""
 , ''.join([ "is"
@@ -51422,15 +51405,9 @@ def init_scene_1_episode_2():
     
     def ep2_carrie_subplot_end_qf():
         textCommandsMusic.add_keyword('ep2HelpedCarrie')
+        townmode.go(universal.state.get_room("Craftman's Corridor"))
         ep2_carrie_subplot_end.quip = " "
-        universal.say(universal.format_text_translate([[], [], [], [''.join([ "The"
- , ' ']), ''.join([ "two"
- , ' ']), ''.join([ "walk"
- , ' ']), ''.join([ "back"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "Shrine."
- , ' '])], [''.join([ '"'
+        universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
  ]), ''.join([ "So"
  , ' ']), ''.join([ "I'll"
  , ' ']), ''.join([ "see"
@@ -51575,517 +51552,8 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "their"
  , ' ']), ''.join([ "own"
  , ' ']), ''.join([ "thing."
- , ' '])])) , ' '])]]), justification=0)
+ , ' '])])) , ' '])], [], []]), justification=0)
     ep2_carrie_subplot_end.quip_function = ep2_carrie_subplot_end_qf
-    ep2_intro_deidre = conversation.Node(469, '''ep2 intro deidre''')
-    
-    
-    def ep2_intro_deidre_qf():
-        ep2_intro_deidre.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ '"'
- ]), ''.join([ "What"
- , ' ']), ''.join([ "are"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "doing"
- , ' ']), ''.join([ "here?"
- ]), ''.join([ '"'
- , ' ']), ''.join([ "asks"
- , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "sharply,"
- , ' ']), ''.join([ "stepping"
- , ' ']), ''.join([ "up"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "Deidre."
- , ' '])], [''.join([ "Deidre"
- , ' ']), ''.join([ "gives"
- , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "small"
- , ' ']), ''.join([ "smirk."
- , ' ']), ''.join([ '"'
- ]), ''.join([ "Why?"
- , ' ']), ''.join([ "Afraid"
- , ' ']), ''.join([ "I'm"
- , ' ']), ''.join([ "gonna"
- , ' ']), ''.join([ "arrest"
- , ' ']), ''.join([ "you?"
- ]), ''.join([ '"'
- , ' '])]]), justification=0)
-        if 'tried_to_help_Edita' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_intro_deidre, ep2_intro_deidre_where_is_edita)
-        elif 'charmed_by_Deidre' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_intro_deidre, ep2_intro_deidre_charmed)
-        elif True:
-            conversation.continue_to_node(ep2_intro_deidre, ep2_intro_deidre_other)
-    ep2_intro_deidre.quip_function = ep2_intro_deidre_qf
-    ep2_intro_deidre_where_is_edita = conversation.Node(470, '''ep2 intro deidre where is edita''')
-    
-    
-    def ep2_intro_deidre_where_is_edita_qf():
-        ep2_intro_deidre_where_is_edita.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ '"'
- ]), ''.join([ "Where's"
- , ' ']), ''.join([ "that"
- , ' ']), ''.join([ "girl?"
- ]), ''.join([ '"'
- , ' ']), ''.join([ "asks"
- , ' ']), universal.state.player.name, ''.join([ "."
- , ' ']), ''.join([ '"'
- ]), ''.join([ "What"
- , ' ']), ''.join([ "did"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "do"
- , ' ']), ''.join([ "with"
- , ' ']), ''.join([ "her?"
- ]), ''.join([ '"'
- , ' '])], [''.join([ "Deidre"
- , ' ']), ''.join([ "frowns"
- , ' ']), ''.join([ "in"
- , ' ']), ''.join([ "confusion."
- , ' ']), ''.join([ '"'
- ]), ''.join([ "What"
- , ' ']), ''.join([ "girl?"
- ]), ''.join([ '"'
- , ' '])], [''.join([ '"'
- ]), ''.join([ "The"
- , ' ']), ''.join([ "one"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "arrested"
- , ' ']), ''.join([ "last"
- , ' ']), ''.join([ "month."
- , ' ']), ''.join([ "With"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "birthmark,"
- ]), ''.join([ '"'
- , ' ']), ''.join([ "says"
- , ' ']), universal.state.player.name, ''.join([ "."
- , ' ']), ''.join([ '"'
- ]), ''.join([ "Where"
- , ' ']), ''.join([ "is"
- , ' ']), ''.join([ "she?"
- ]), ''.join([ '"'
- , ' '])], [''.join([ "Deidre"
- , ' ']), ''.join([ "rolls"
- , ' ']), ''.join([ "her"
- , ' ']), ''.join([ "eyes."
- , ' ']), ''.join([ '"'
- ]), ''.join([ "Do"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "have"
- , ' ']), ''.join([ "any"
- , ' ']), ''.join([ "idea"
- , ' ']), ''.join([ "how"
- , ' ']), ''.join([ "many"
- , ' ']), ''.join([ "girls"
- , ' ']), ''.join([ "we"
- , ' ']), ''.join([ "arrested"
- , ' ']), ''.join([ "at"
- , ' ']), ''.join([ "this"
- , ' ']), ''.join([ "wretched"
- , ' ']), ''.join([ "raid"
- , ' ']), ''.join([ "of"
- , ' ']), ''.join([ "yours?"
- , ' ']), ''.join([ "Hell,"
- , ' ']), ''.join([ "do"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "have"
- , ' ']), ''.join([ "any"
- , ' ']), ''.join([ "idea"
- , ' ']), ''.join([ "how"
- , ' ']), ''.join([ "many"
- , ' ']), ''.join([ "girls"
- , ' ']), ''.join([ "I've"
- , ' ']), ''.join([ "arrested"
- , ' ']), ''.join([ "period?"
- , ' ']), ''.join([ "What"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "Mother's"
- , ' ']), ''.join([ "name"
- , ' ']), ''.join([ "makes"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "think"
- , ' ']), ''.join([ "I'd"
- , ' ']), ''.join([ "remember"
- , ' ']), ''.join([ "any"
- , ' ']), ''.join([ "of"
- , ' ']), ''.join([ "them?"
- , ' ']), ''.join([ "Now"
- , ' ']), ''.join([ "leave"
- , ' ']), ''.join([ "me"
- , ' ']), ''.join([ "be."
- ]), ''.join([ '"'
- , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "sets"
- , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "jaw."
- , ' ']), ''.join([ '"'
- ]), ''.join([ "Not"
- , ' ']), ''.join([ "until"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "tell"
- , ' ']), ''.join([ "me"
- , ' ']), ''.join([ "where"
- , ' ']), ''.join([ "she"
- , ' ']), ''.join([ "is."
- ]), ''.join([ '"'
- , ' '])], [''.join([ universal.cond('charmed_by_Deidre' in textCommandsMusic.keywords(), ''.join([""
-, ''.join([ "Deidre"
- , ' ']), ''.join([ "leans"
- , ' ']), ''.join([ "forward"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "speaks"
- , ' ']), ''.join([ "in"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "low"
- , ' ']), ''.join([ "voice."
- , ' ']), ''.join([ '"'
- ]), ''.join([ "I"
- , ' ']), ''.join([ "don't"
- , ' ']), ''.join([ "know,"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "I"
- , ' ']), ''.join([ "don't"
- , ' ']), ''.join([ "care."
- , ' ']), ''.join([ "Now,"
- , ' ']), ''.join([ "leave"
- , ' ']), ''.join([ "me"
- , ' ']), ''.join([ "be."
- , ' ']), ''.join([ "Before"
- , ' ']), ''.join([ "I"
- , ' ']), ''.join([ "make"
- , ' ']), ''.join([ "you."
- ]), ''.join([ '"'
- , ' '])]), ''.join([''.join([ ""
- , ' ']), ''.join([ '"'
- ]), ''.join([ "We"
- , ' ']), ''.join([ "probably"
- , ' ']), ''.join([ "let"
- , ' ']), ''.join([ "her"
- , ' ']), ''.join([ "rot"
- , ' ']), ''.join([ "in"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "dungeon"
- , ' ']), ''.join([ "cell"
- , ' ']), ''.join([ "for"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "few"
- , ' ']), ''.join([ "weeks,e"
- , ' ']), ''.join([ "hooked"
- , ' ']), ''.join([ "her,"
- , ' ']), ''.join([ "asked"
- , ' ']), ''.join([ "her"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "few"
- , ' ']), ''.join([ "questions,"
- , ' ']), ''.join([ "then"
- , ' ']), ''.join([ "tossed"
- , ' ']), ''.join([ "her"
- , ' ']), ''.join([ "back"
- , ' ']), ''.join([ "on"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "streets."
- , ' ']), ''.join([ "Just"
- , ' ']), ''.join([ "like"
- , ' ']), ''.join([ "two-thirds"
- , ' ']), ''.join([ "of"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "Vengadores"
- , ' ']), ''.join([ "we"
- , ' ']), ''.join([ "arrested."
- , ' ']), ''.join([ "Happy"
- , ' ']), ''.join([ "now?"
- ]), ''.join([ '"'
- , ' '])])) , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "backs"
- , ' ']), ''.join([ "up"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "step,"
- , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "glare"
- , ' ']), ''.join([ "never"
- , ' ']), ''.join([ "leaving"
- , ' ']), ''.join([ "Deidre."
- , ' ']), ''.join([ '"'
- ]), ''.join([ "She"
- , ' ']), ''.join([ "was"
- , ' ']), ''.join([ "just"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "girl,"
- , ' ']), ''.join([ "barely"
- , ' ']), ''.join([ "eighteen."
- ]), ''.join([ '"'
- , ' '])], [''.join([ '"'
- ]), ''.join([ "They"
- , ' ']), ''.join([ "always"
- , ' ']), ''.join([ "are,"
- ]), ''.join([ '"'
- , ' ']), ''.join([ "says"
- , ' ']), ''.join([ "Deidre,"
- , ' ']), ''.join([ "turning"
- , ' ']), ''.join([ "back"
- , ' ']), ''.join([ "towards"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "counter"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "ignoring"
- , ' ']), universal.state.player.name, ''.join([ "."
- , ' '])]]), justification=0)
-    ep2_intro_deidre_where_is_edita.quip_function = ep2_intro_deidre_where_is_edita_qf
-    ep2_intro_deidre_charmed = conversation.Node(471, '''ep2 intro deidre charmed''')
-    
-    
-    def ep2_intro_deidre_charmed_qf():
-        ep2_intro_deidre_charmed.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ "Deidre's"
- , ' ']), ''.join([ "eyes"
- , ' ']), ''.join([ "flash,"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "thoughts"
- , ' ']), ''.join([ "slow."
- , ' ']), ''.join([ '"'
- ]), ''.join([ "Now"
- , ' ']), ''.join([ "why"
- , ' ']), ''.join([ "don't"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "leave"
- , ' ']), ''.join([ "me"
- , ' ']), ''.join([ "be."
- , ' ']), ''.join([ "I"
- , ' ']), ''.join([ "didn't"
- , ' ']), ''.join([ "come"
- , ' ']), ''.join([ "here"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "chat"
- , ' ']), ''.join([ "with"
- , ' ']), ''.join([ "cocky"
- , ' ']), ''.join([ "adventurers"
- , ' ']), ''.join([ "who"
- , ' ']), ''.join([ "barely"
- , ' ']), ''.join([ "know"
- , ' ']), ''.join([ "how"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "hold"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "sword."
- ]), ''.join([ '"'
- , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "backs"
- , ' ']), ''.join([ "up"
- , ' ']), ''.join([ "step,"
- , ' ']), ''.join([ "then"
- , ' ']), ''.join([ "spins"
- , ' ']), ''.join([ "on"
- , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "heel"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "walks"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "closest"
- , ' ']), ''.join([ "unoccupied"
- , ' ']), ''.join([ "table."
- , ' ']), ''.join([ person.HeShe() , ' ']), ''.join([ "plops"
- , ' ']), ''.join([ "down,"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ person.HeShe() , ' ']), ''.join([ "stares"
- , ' ']), ''.join([ "at"
- , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "hands."
- , ' ']), ''.join([ person.HeShe() , ' ']), ''.join([ "folds"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "unfolds"
- , ' ']), ''.join([ "them"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "few"
- , ' ']), ''.join([ "times,"
- , ' ']), ''.join([ "then"
- , ' ']), ''.join([ "stands"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "paces"
- , ' ']), ''.join([ "about"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "room."
- , ' ']), ''.join([ "The"
- , ' ']), ''.join([ "other"
- , ' ']), ''.join([ "adventurers"
- , ' ']), ''.join([ "glance"
- , ' ']), ''.join([ "at"
- , ' ']), ''.join([ person.himher() , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "few"
- , ' ']), ''.join([ "times,"
- , ' ']), ''.join([ "but"
- , ' ']), ''.join([ "mostly"
- , ' ']), ''.join([ "pay"
- , ' ']), ''.join([ person.himher() , ' ']), ''.join([ "no"
- , ' ']), ''.join([ "mind."
- , ' ']), ''.join([ "Most"
- , ' ']), ''.join([ "of"
- , ' ']), ''.join([ "them"
- , ' ']), ''.join([ "are"
- , ' ']), ''.join([ "very"
- , ' ']), ''.join([ "carefully"
- , ' ']), ''.join([ "ignoring"
- , ' ']), ''.join([ "Deidre."
- , ' '])]]), justification=0)
-    ep2_intro_deidre_charmed.quip_function = ep2_intro_deidre_charmed_qf
-    ep2_intro_deidre_other = conversation.Node(472, '''ep2 intro deidre other''')
-    
-    
-    def ep2_intro_deidre_other_qf():
-        ep2_intro_deidre_other.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "eyes"
- , ' ']), ''.join([ "narrow."
- , ' ']), ''.join([ '"'
- ]), ''.join([ "Of"
- , ' ']), ''.join([ "course"
- , ' ']), ''.join([ "not."
- , ' ']), ''.join([ "I"
- , ' ']), ''.join([ "just"
- , ' ']), ''.join([ "want"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "know"
- , ' ']), ''.join([ "what"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "hell"
- , ' ']), ''.join([ "gives"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "right"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "burst"
- , ' ']), ''.join([ "into"
- , ' ']), ''.join([ "my"
- , ' ']), ''.join([ "home"
- , ' ']), ''.join([ "in"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "middle"
- , ' ']), ''.join([ "of"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "night."
- ]), ''.join([ '"'
- , ' '])], [''.join([ "Deidre"
- , ' ']), ''.join([ "arches"
- , ' ']), ''.join([ "an"
- , ' ']), ''.join([ "eyebrow"
- , ' ']), ''.join([ "in"
- , ' ']), ''.join([ "amusement,"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "her"
- , ' ']), ''.join([ "smirk"
- , ' ']), ''.join([ "widens."
- , ' ']), ''.join([ '"'
- ]), ''.join([ "We're"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "city"
- , ' ']), ''.join([ "guard,"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "were"
- , ' ']), ''.join([ "chatting"
- , ' ']), ''.join([ "it"
- , ' ']), ''.join([ "up"
- , ' ']), ''.join([ "with"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "leader"
- , ' ']), ''.join([ "of"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "Vengadores."
- , ' ']), ''.join([ "What,"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "think"
- , ' ']), ''.join([ "we"
- , ' ']), ''.join([ "were"
- , ' ']), ''.join([ "going"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "just"
- , ' ']), ''.join([ "sit"
- , ' ']), ''.join([ "there"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "let"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "two"
- , ' ']), ''.join([ "have"
- , ' ']), ''.join([ "your"
- , ' ']), ''.join([ "little"
- , ' ']), ''.join([ "heart-to-heart?"
- , ' ']), ''.join([ "Please."
- , ' ']), ''.join([ "Way"
- , ' ']), ''.join([ "I"
- , ' ']), ''.join([ "see"
- , ' ']), ''.join([ "it,"
- , ' ']), ''.join([ "you're"
- , ' ']), ''.join([ "lucky"
- , ' ']), ''.join([ "Roland"
- , ' ']), ''.join([ "didn't"
- , ' ']), ''.join([ "make"
- , ' ']), ''.join([ "me"
- , ' ']), ''.join([ "dig"
- , ' ']), ''.join([ "into"
- , ' ']), ''.join([ "that"
- , ' ']), ''.join([ "empty"
- , ' ']), ''.join([ "little"
- , ' ']), ''.join([ "head"
- , ' ']), ''.join([ "of"
- , ' ']), ''.join([ "yours."
- , ' ']), ''.join([ universal.cond('Elise_shows_you_around' in textCommandsMusic.keywords(), ''.join([""
-, ''.join([ "Probably"
- , ' ']), ''.join([ "because"
- , ' ']), ''.join([ "you're"
- , ' ']), ''.join([ "friends"
- , ' ']), ''.join([ "with"
- , ' ']), ''.join([ "his"
- , ' ']), ''.join([ "fiancee."
- , ' ']), ''.join([ "Now,"
- , ' ']), ''.join([ "why"
- , ' ']), ''.join([ "don't"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "run"
- , ' ']), ''.join([ "off"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "leave"
- , ' ']), ''.join([ "me"
- , ' ']), ''.join([ "be."
- , ' ']), ''.join([ "I"
- , ' ']), ''.join([ "didn't"
- , ' ']), ''.join([ "come"
- , ' ']), ''.join([ "here"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "talk"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "you."
- , ' ']), ''.join([ '"'
- ])]), ''.join([""
-, ''.join([ "Now,"
- , ' ']), ''.join([ "why"
- , ' ']), ''.join([ "don't"
- , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "run"
- , ' ']), ''.join([ "off"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "leave"
- , ' ']), ''.join([ "me"
- , ' ']), ''.join([ "be."
- , ' ']), ''.join([ "I"
- , ' ']), ''.join([ "didn't"
- , ' ']), ''.join([ "come"
- , ' ']), ''.join([ "here"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "talk"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "you."
- , ' ']), ''.join([ '"'
- ])])) , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "backs"
- , ' ']), ''.join([ "up,"
- , ' ']), ''.join([ "but"
- , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "eyes"
- , ' ']), ''.join([ "never"
- , ' ']), ''.join([ "leave"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "Puppeteer."
- , ' ']), ''.join([ "Deidre,"
- , ' ']), ''.join([ "meanwhile,"
- , ' ']), ''.join([ "turns"
- , ' ']), ''.join([ "her"
- , ' ']), ''.join([ "back"
- , ' ']), ''.join([ "on"
- , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "returns"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "her"
- , ' ']), ''.join([ "vigil."
- , ' '])]]), justification=0)
-    ep2_intro_deidre_other.quip_function = ep2_intro_deidre_other_qf
 def end_scene_1_episode_2():
     pass
 
