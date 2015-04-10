@@ -311,7 +311,7 @@ class GrappleAction(CombatAction):
                 return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
             else:
                 duration = compute_damage(attacker.grapple(), attacker.grapple() - defender.grapple()) // self.GRAPPLE_DURATION_DIVISOR
-                if duration < 1:
+                if duration <= 1:
                     duration = 0
                     return (' '.join([attacker.printedName, 'cannot grapple' ,defender.printedName + '!']), [duration], self)
                 else:
@@ -597,7 +597,7 @@ class ThrowAction(CombatAction):
             while newTarget.is_grappling() and not attacker.is_grappling(newTarget):
                 newTarget = opponentsCopy.pop(random.randrange(len(opponentsCopy)))
             defender = newTarget
-        damage = compute_damage(attacker.warfare() if attacker.warfare() > attacker.grapple() else attacker.grapple(), 0)
+        damage = attacker.warfare() if attacker.warfare() > attacker.grapple() else attacker.grapple()
         opponents = enemies if self.attacker in allies else allies
         if not grappler in opponents:
             return AttackAction(attacker, defender).effect(inCombat, allies, enemies)

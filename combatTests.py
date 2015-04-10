@@ -202,7 +202,7 @@ class TestAttackAction(unittest.TestCase):
         self.set_grapple_stats(10, 10, 40)
         resultString, grappleDuration = self.grapple()
         grappleDuration = grappleDuration[0]
-        self.assertEqual(grappleDuration, 10)
+        self.assertEqual(grappleDuration, 20)
         self.assertEqual(resultString, 'attacker grapples defender!')
 
     def test_grapple_guardian(self):
@@ -210,13 +210,15 @@ class TestAttackAction(unittest.TestCase):
         self.defend()
         resultString, grappleDuration = self.grapple()
         grappleDuration = grappleDuration[0]
-        self.assertEqual(grappleDuration, 22)
+        self.assertEqual(grappleDuration, 45)
         self.assertEqual(resultString, 'guardian defends defender from attacker!\nattacker grapples guardian!')
         resultString, success = self.break_grapple()
         success = success[0]
         self.assertFalse(success)
         self.assertEqual(resultString, "attacker loosens guardian's hold on her!")
         self.grappleAction.defenders = [self.defender]
+        self.break_grapple()
+        self.break_grapple()
         resultString, success = self.break_grapple()
         sucess = success[0]
         self.assertTrue(success)
@@ -226,12 +228,14 @@ class TestAttackAction(unittest.TestCase):
         self.set_grapple_stats(14, 10, 40)
         resultString, grappleDuration = self.grapple()
         grappleDuration = grappleDuration[0]
-        self.assertEqual(grappleDuration, 22)
+        self.assertEqual(grappleDuration, 45)
         self.assertEqual(resultString, 'attacker grapples defender!')
         resultString, success = self.break_grapple()
         success = success[0]
         self.assertFalse(success)
         self.assertEqual(resultString, "attacker loosens defender's hold on her!")
+        self.break_grapple()
+        self.break_grapple()
         resultString, damage = self.throw()
         damage = damage[0]
         self.assertEqual(damage, 28)
@@ -241,7 +245,7 @@ class TestAttackAction(unittest.TestCase):
         self.set_grapple_stats(40, 10, 100)
         resultString, grappleDuration = self.grapple()
         grappleDuration = grappleDuration[0]
-        self.assertEqual(grappleDuration, 87)
+        self.assertEqual(grappleDuration, 175)
         self.assertEqual(resultString, 'attacker grapples defender!')
         resultString, damage = self.throw()
         damage = damage[0]
@@ -250,21 +254,23 @@ class TestAttackAction(unittest.TestCase):
         resultString, success = self.break_grapple()
         success = success[0]
         self.assertFalse(success)
-        self.assertEqual(self.attacker.grapple_duration(), 47)
+        self.assertEqual(self.attacker.grapple_duration(), 135)
         self.assertEqual(self.defender.grapple_duration(), self.attacker.grapple_duration())
         self.assertEqual(resultString, "attacker loosens defender's hold on her!")
         self.assertEqual(self.attacker.grapple_duration(), self.defender.grapple_duration())
         self.break_grapple()
+        self.break_grapple()
+        self.break_grapple()
         resultString, damage = self.throw()
         damage = damage[0]
-        self.assertEqual(damage, 80)
         self.assertEqual(resultString, 'attacker throws defender for 80 damage!')
+        self.assertEqual(damage, 80)
         
     def test_grapple_slightly_lower_grapple(self):
         self.set_grapple_stats(10, 14, 30)
         resultString, grappleDuration = self.grapple()
         grappleDuration = grappleDuration[0]
-        self.assertEqual(grappleDuration, 3)
+        self.assertEqual(grappleDuration, 7)
         self.assertEqual(resultString, 'attacker grapples defender!')
 
     def test_grapple_much_lower_grapple(self):
