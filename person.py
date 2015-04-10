@@ -534,6 +534,9 @@ class Person(universal.RPGObject):
     def hisher(self):
         return hisher(self)
 
+    def HisHer(self):
+        return HisHer(self)
+
     def boygirl(self):
         return boygirl(self)
 
