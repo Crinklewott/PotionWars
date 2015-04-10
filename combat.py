@@ -731,7 +731,8 @@ def defend_interpreter(keyEvent):
         if 0 <= num and num < len(allies) and not allies[num].is_grappling():
             chosenActions.append(combatAction.DefendAction(activeAlly, allies[num]))
             next_character()
-        elif ally.is_grappling():
+        #Note: If the activeAlly is trying to defend himself and he's grappling, then he is automatically made the target of defend as a part of defend()
+        elif allies[num].is_grappling():
             print_enemies(["Cannot defend a grappled ally!"])
             set_commands(["(Enter) Acknowledge"])
             set_command_interpreter(combat_acknowledge_interpreter)
