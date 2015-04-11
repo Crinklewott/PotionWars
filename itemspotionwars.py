@@ -141,7 +141,7 @@ flowerPrintDress = items.Dress('flower print dress', "A small, flower print yell
 blackDress = items.Dress('black dress', "A long, slinky black dress that extends from the bottom of your neck to your ankles, but hugs your form in all the right places. A " +
 "slit runs up the side of the dress to allow for front-saddle riding.", price=20, risque=2, tightness=items.TIGHT)
 
-sunDress = items.Dress('sun dress', 'A low-cut cotton dress  that extends to about two-thirds down the thigh.', price=20, risque=3, tightness=items.LOOSE)
+sunDress = items.Dress('sun dress', 'A low-cut cotton dress that extends to about two-thirds down the thigh.', price=20, risque=3, tightness=items.LOOSE)
 
 deidresDress = items.Dress("Deidre's dress", "A black dress with red trim made from high quality cotton. The dress is floor-length on Deidre, and is cut to balance professionalism with showing off Deidre's average bust, shapely hips and long legs. Though an elegant dress, it can interfere with combat and other highly physical activities.", 
         attackDefense=4, attackPenalty=1, tightness=items.LOOSE)

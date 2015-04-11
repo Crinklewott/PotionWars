@@ -971,7 +971,7 @@ class Necia(pwenemies.Enemy):
         return universal.format_text([[top.printedName, '''slides under a particularly heavy strike from''', bottom.printedName, '''and extends''', top.hisher(), '''bent leg in front of''',
         '''the''', bottom.heroheroine() if self is top else '''Vengador''' + ".", bottom.printedName, '''trips over the knee, throwing''', bottom.himher(), '''off balance enough for''', 
         top.printedName, 
-        '''to easily pull''', bottom.himher(), '''over the proffered knee.''', top.printedName, '''plants''', top.hisher(), '''holds''', top.hisher(), '''opponent down with one hand while''',
+        '''to easily pull''', bottom.himher(), '''over the proffered knee.''', top.printedName, '''holds''', top.hisher(), '''opponent down with one hand while''',
         top.heshe(), '''rains spank after spank down upon''', bottom.printedName + "'s", bottom.muscle_adj(), '''bottom with the other.''']])
 
     def otk_round(self, top, bottom):

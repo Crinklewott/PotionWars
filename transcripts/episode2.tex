@@ -2920,7 +2920,7 @@ Ildri drags \name{} back through the store, pays for the dresses then drags \nam
     
     "Hey, what are you doing?" cries \name{}.
 
-    Ildri doesn't respond immediately. Instead, she just glares down at the large amount of skin exposed by \names{} \pwearingdress{\shirt{}}{\shirt{} and \trousers{}}.
+    Ildri doesn't respond immediately. Instead, she just glares down at the large amount of skin exposed by \names{} \pwearingdress{\shirt{}}{\shirt{} and \trousers{}}{\underwear{}}.
 
     \continue{ep2 no pants}    
 
@@ -5321,7 +5321,8 @@ people's laps with her pants around her ankles.}
     the way down.
 
     A few seconds later, \names{} \pwearingdress{\trousers{} is flipped up over \hisher{} back}{\trousers{} 
-    \cond{universal.state.player.lower\_clothing().armorType != items.Skirt.armorType}{are}{is} pooled around \names{} ankles.} 
+    \cond{universal.state.player.lower\_clothing().armorType != items.Skirt.armorType}{are}{is} pooled around \names{} ankles.}{\underwear{} \cond{universal.state.player.underwear().armorType ==
+    items.Thong.armorType}{is}{are} pooled around \names{} ankles.}
     \cond{universal.state.player.lower\_clothing().name != items.emptyLowerArmor.name}{\pisbaring{A few other customers titter when they see \names{} 
     minimalistic \underwearpanties{}}{Terry then grabs the back of \names{} \underwear{} and tugs \itthem{universal.state.player.underwear()} down to \names{} knees.}{"Figures a brat like you 
     wouldn't bother to wear panties."}}{\name{} growls and pounds the table. "Ah bugger off you stupid prude!"}

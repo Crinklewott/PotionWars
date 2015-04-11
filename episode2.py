@@ -26649,7 +26649,8 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), items.wearing_dress(universal.state.player, ''.join([""
 , ''.join([ universal.state.player.shirt().name , ' '])]), ''.join([""
 , ''.join([ universal.state.player.shirt().name , ' ']), ''.join([ "and"
- , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' '])])), ''.join([ "."
+ , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' '])]), ''.join([""
+, ''.join([ universal.state.player.underwear().name , ' '])])), ''.join([ "."
  , ' '])]]), justification=0)
         conversation.continue_to_node(ep2_ildri_indecent, ep2_no_pants, False)
     ep2_ildri_indecent.quip_function = ep2_ildri_indecent_qf
@@ -49695,6 +49696,14 @@ def init_scene_1_episode_2():
 , ''.join([ "are"
  , ' '])]), ''.join([""
 , ''.join([ "is"
+ , ' '])])) , ' ']), ''.join([ "pooled"
+ , ' ']), ''.join([ "around"
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "ankles."
+ , ' '])]), ''.join([""
+, ''.join([ universal.state.player.underwear().name , ' ']), ''.join([ universal.cond(universal.state.player.underwear().armorType == items.Thong.armorType, ''.join([""
+, ''.join([ "is"
+ , ' '])]), ''.join([""
+, ''.join([ "are"
  , ' '])])) , ' ']), ''.join([ "pooled"
  , ' ']), ''.join([ "around"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "ankles."
