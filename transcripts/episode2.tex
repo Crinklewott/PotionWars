@@ -458,14 +458,14 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
     "Yes ma'am," mutters \name{}.
 
     "Good. Now, let's drive that lesson home," says Ildri. \cond{universal.state.player.wearing\_underwear()}{She grabs the waistband of \names{}
-    \cond{universal.state.player.underwear().is\_baring()}{teeny}{thin} \underwear{} and tugs \itthem{universal.state.player.underwear()} down to \names{} knees.}{}
+    \cond{universal.state.player.underwear().baring}{teeny}{thin} \underwear{} and tugs \itthem{universal.state.player.underwear()} down to \names{} knees.}{}
 
     \name{} groans. \HeShe{} reflexively clenches \hisher{} bottom, and squeezes \hisher{} thighs together. Then there is a sharp crack, and another wave of pain washes across \names{} bottom.
     \name{} starts to cry. \HisHer{} naked hips squirm desperately, rubbing against the rough wool of Ildri's nightgown, and pressing against 
     Alondra's warm hip. \HisHer{} legs kick in time with Ildri's heavy blows, while \hisher{} right hand grabs Ildri's ankle in a deathgrip, and 
     \hisher{} left tightens its hold on Alondra's. The young woman's hand is small comfort, but it's comfort nonetheless.
 
-    Finally, Ildri gives them another overlapped slap, then rolls her eyes at Carrie. "Two \cond{universal.state.player.s\_female()}{girls}{young adults} sharing a room, and they don't set up sex rules? What is up with 
+    Finally, Ildri gives them another overlapped slap, then rolls her eyes at Carrie. "Two \cond{universal.state.player.is\_female()}{girls}{young adults} sharing a room, and they don't set up sex rules? What is up with 
     kids these days?" 
 
     "We're all just full of foolishness," says Carrie with a nervous smile. She is chewing on a strand of hair, her eyes fixated on \names{} and Alondra's red bottoms.
@@ -2120,7 +2120,7 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
 \begin{childnode}{ep2 maria to sofias carrie leaves}{Andrew Russell}
 
-    The next morning opens with Carrie scooping up her dress, and hunting for her slippers. \name{} rolls onto \hisher{} side, \cond{'ep2CarrieSexSpanking' in textCommandsMusic.keywords}{wincing a little as \hisher{} bruised bottom twinges.}{smiling as
+    The next morning opens with Carrie scooping up her dress, and hunting for her slippers. \name{} rolls onto \hisher{} side, \cond{'ep2CarrieSexSpanking' in textCommandsMusic.keywords()}{wincing a little as \hisher{} bruised bottom twinges.}{smiling as
     \heshe{} watches Carrie start to throw on her dress.}
 
     "Worried Sister Samantha will find out you spent the night here?" asks Maria, as she cooks some porridge for herself and \name{}.
@@ -4429,7 +4429,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     \begin{code}
 
-        universal.state.player.keywords.remove('second\_hand\_tragedy')
+        textCommandsMusic.remove\_keyword('second\_hand\_tragedy')
 
     \end{code}
 
@@ -4487,7 +4487,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     \begin{code}
 
-        universal.state.player.keywords.remove('second\_hand\_tragedy')
+        textCommandsMusic.remove\_keyword('second\_hand\_tragedy')
 
     \end{code}
 

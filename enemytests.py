@@ -17,61 +17,26 @@ class TestEnemyMethods(unittest.TestCase):
         enemy = self.warrior
         for position in enemy.spankingFunctions:
             intro, duringRound, failure, reversal = enemy.spankingFunctions[position]
-            print(intro(enemy, self.slinger))
-            print('---------------------')
-            print(duringRound(enemy, self.slinger))
-            print('---------------------')
-            print(failure(enemy, self.slinger))
-            print('---------------------')
-            print(reversal(enemy, self.slinger))
 
     def test_slinger_spanking(self):
         enemy = self.slinger
         for position in enemy.spankingFunctions:
             intro, duringRound, failure, reversal = enemy.spankingFunctions[position]
-            print(intro(enemy, self.slinger))
-            print('---------------------')
-            print(duringRound(enemy, self.slinger))
-            print('---------------------')
-            print(failure(enemy, self.slinger))
-            print('---------------------')
-            print(reversal(enemy, self.slinger))
 
     def test_scout_spanking(self):
         enemy = self.scout
         for position in enemy.spankingFunctions:
             intro, duringRound, failure, reversal = enemy.spankingFunctions[position]
-            print(intro(enemy, self.slinger))
-            print('---------------------')
-            print(duringRound(enemy, self.slinger))
-            print('---------------------')
-            print(failure(enemy, self.slinger))
-            print('---------------------')
-            print(reversal(enemy, self.slinger))
 
     def test_necia_spanking(self):
         enemy = self.necia
         for position in enemy.spankingFunctions:
             intro, duringRound, failure, reversal = enemy.spankingFunctions[position]
-            print(intro(enemy, self.slinger))
-            print('---------------------')
-            print(duringRound(enemy, self.slinger))
-            print('---------------------')
-            print(failure(enemy, self.slinger))
-            print('---------------------')
-            print(reversal(enemy, self.slinger))
              
     def test_edita_spanking(self):
         enemy = self.edita
         for position in enemy.spankingFunctions:
             intro, duringRound, failure, reversal = enemy.spankingFunctions[position]
-            print(intro(enemy, self.slinger))
-            print('---------------------')
-            print(duringRound(enemy, self.slinger))
-            print('---------------------')
-            print(failure(enemy, self.slinger))
-            print('---------------------')
-            print(reversal(enemy, self.slinger))
 
 enemyTestSuite = unittest.TestLoader().loadTestsFromTestCase(TestEnemyMethods)
 

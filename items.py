@@ -459,7 +459,6 @@ class Underwear(Armor):
             char._set_underwear(emptyUnderwear)
             char.take_item(self)
 
-
 class Thong(Underwear):
     armorType = 'thong'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, armorType='underwear', enchantments=None, maxEnchantment=9,

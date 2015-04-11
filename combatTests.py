@@ -7,6 +7,8 @@ import combatAction
 class TestAttackAction(unittest.TestCase):
     """
     I should test spanking, but that would require me to write a bunch of functions for spanking by the attacker or defender, and I'm lazy.
+
+    Note that the spanking text is tested under enemy tests. Basically it just grabs the text and prints it out to make sure that any typos or crashes are caught.
     """
 
     def setUp(self):

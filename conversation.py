@@ -164,7 +164,9 @@ def converse_with_interpreter(keyEvent):
             converse_with(conversationPartner, previousMode)
 
 
+#A mapping from litany numbers to the actual litanies. Note: We use a map rather than array because there could be holes in the integers (i.e. because we didn't load a particular scene).
 allNodes = {}
+#A mapping from the name of each litany to the actual litany.
 allNodeNames = {}
 class Node(universal.RPGObject):
     def __init__(self, index, name=''):

@@ -3644,7 +3644,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "waistband"
  , ' ']), ''.join([ "of"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.cond(universal.state.player.underwear().is_baring(), ''.join([""
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.cond(universal.state.player.underwear().baring, ''.join([""
 , ''.join([ "teeny"
  , ' '])]), ''.join([""
 , ''.join([ "thin"
@@ -3747,7 +3747,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Carrie."
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Two"
- , ' ']), ''.join([ universal.cond(universal.state.player.s_female(), ''.join([""
+ , ' ']), ''.join([ universal.cond(universal.state.player.is_female(), ''.join([""
 , ''.join([ "girls"
  , ' '])]), ''.join([""
 , ''.join([ "young"
@@ -18168,7 +18168,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "rolls"
  , ' ']), ''.join([ "onto"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "side,"
- , ' ']), ''.join([ universal.cond('ep2CarrieSexSpanking' in textCommandsMusic.keywords, ''.join([""
+ , ' ']), ''.join([ universal.cond('ep2CarrieSexSpanking' in textCommandsMusic.keywords(), ''.join([""
 , ''.join([ "wincing"
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "little"
@@ -40680,7 +40680,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha_qf():
-        universal.state.player.keywords.remove('second_hand_tragedy')
+        textCommandsMusic.remove_keyword('second_hand_tragedy')
         ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [], [''.join([ '"'
  ]), ''.join([ "Great."
@@ -40966,7 +40966,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_elise_second_hand_tragedy_make_up_qf():
-        universal.state.player.keywords.remove('second_hand_tragedy')
+        textCommandsMusic.remove_keyword('second_hand_tragedy')
         ep2_elise_second_hand_tragedy_make_up.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [], [''.join([ "Sister"
  , ' ']), ''.join([ "Samantha"
