@@ -3441,15 +3441,16 @@ Things sped up after that.}{Nana would not be impressed. No siree.}
 
     The (wo)man waves good-bye, then steps back through the hole in reality. The hole closes with a sharp zippering sound.
 
-    \continue{end scene 1}
+   \continue{ep2 end scene 1}
 
 \end{childnode}
 
-\begin{childnode}{end scene 1}{Andrew Russell}
-
+\begin{childnode}{ep2 end scene 1}{Andrew Russell}
+    
     \begin{code}
 
-        episode.allEpisodes[universal.state.player.currentEpisode].next\_scene()
+        return (episode.allEpisodes[universal.state.player.currentEpisode].next_scene, (), True)
+        #return episode.allEpisodes[universal.state.player.currentEpisode].next_scene()
 
     \end{code}
 

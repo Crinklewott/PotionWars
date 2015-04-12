@@ -22,6 +22,7 @@ import itemspotionwars
 import textCommandsMusic
 import townmode
 import episode
+import music
 
 ildri = None
 kitchen = None
@@ -129,6 +130,12 @@ def start_scene_1_episode_3(loading=False):
 
 def end_scene_1_episode3():
         pass
+
+def start_scene_2_episode_2(loading=False):
+    universal.say("You've reached the end of the current content. Hope you've enjoyed playing it. If you have any comments or criticisms, please either post on my website spankingrpgs.com, or send me an e-mail at sprpgs@gmail.com. Once the next scene is posted, you'll be able to enjoy by loading a save from just before this scene. Thanks!")
+    universal.set_commands('Press Enter to go back to the title screen')
+    universal.set_command_interpreter(textCommandsMusic.to_title_screen_interpreter)
+episode2Scene2 = episode.Scene('Episode 2 Scene 2', start_scene_2_episode_2, None)
 
 episode3Scene1 = episode.Scene("Episode 3 Scene 1", start_scene_1_episode_3, end_scene_1_episode3)
 episode3 = episode.Episode(3, 'No Good Deed', scenes=[episode3Scene1])

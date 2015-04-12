@@ -306,9 +306,10 @@ class CloseScene(ParseTree):
         super(CloseScene, self).__init__(parent.episodeNum, lineNum, children, parent)
         self.startToken = BEGIN_CLOSE_SCENE
         self.endToken = END_CLOSE_SCENE
-                                                #Because close scene comes after open scene, the associated scene number for close scene will be one less than what is currently stored (because OpenScene.sceneNum increments every
-                                                #time a new open scene node is created).
+        #Because close scene comes after open scene, the associated scene number for close scene will be one less than what is currently stored (because OpenScene.sceneNum increments every
+        #time a new open scene node is created).
         self.data = [''.join(['def end_scene_', str(OpenScene.sceneNum-1), '_episode_', str(self.episodeNum), '():'])] + ([TAB + line for line in data if line.strip()] if data else [])
+        
 
     def translate(self):
         return [line.replace('\n', '') for line in self.data]
@@ -541,13 +542,13 @@ class Link(ParseTree):
             #import sys
             destination = self.extract_destination(0)
             destination = destination.replace("'''", '')
-            linkCode = [''.join(['conversation.continue_to_node(', nodeName, ', ', destination, ', ', str(newPage), ')'])]
+            linkCode = [''.join(['return conversation.continue_to_node(', nodeName, ', ', destination, ', ', str(newPage), ')'])]
             return (linkCode, 'link')
         elif cmd == r'\childif' or cmd == r'\childelif':
             #The test is a code node, and the translate of the code node returns a pair of text with code.
             test = ' '.join(self.children[0].translate()[0])
             destination = self.extract_destination(1)
-            linkCode = [''.join([TAB, 'conversation.continue_to_node(', nodeName, ', ', destination, ')'])]
+            linkCode = [''.join([TAB, 'return conversation.continue_to_node(', nodeName, ', ', destination, ')'])]
             return ([''.join(['if ' if cmd == r'\childif' else 'elif ', test, ':'])] + linkCode, 'link')
         elif cmd == r'\child':
             playerComment = ''.join(['universal.format_line_translate(', self.children[0].translate()[0], ')'])

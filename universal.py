@@ -31,7 +31,7 @@ import os
 import math
 import ast
 
-DEBUG = False
+DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 
@@ -286,7 +286,6 @@ def say(text, columnNum=1, justification=1, fontSize=36, italic=False, bold=Fals
     global numColumns
     global textJustification
     textJustification = justification
-    import traceback
     assert type(numColumns) == int, "%s" % traceback.print_stack()
     numColumns = columnNum
     if type(text) is list:

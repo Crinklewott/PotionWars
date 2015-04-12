@@ -33,12 +33,13 @@ def continue_to_node(origin, destination, newPage=False):
     episode 1.
     """
     if newPage:
-        universal.say('\p')
+        universal.say('\p', justification=0)
     else:
-        universal.say('\n\n')
-    destination.quip_function()
+        universal.say('\n\n', justification=0)
+    result = destination.quip_function()
     origin.children = destination.children
     origin.playerComments = destination.playerComments
+    return result
 
 
 def converse_with(person, previousModeIn=None):
@@ -81,8 +82,10 @@ def say_node(litanyIndex):
     executeImmediately = False
     if litany.quip_function is not None:
         result = litany.quip_function()
+        print(result)
         if result is not None:
             function = result[0]
+            assert function
             args = result[1]
             try:
                 executeImmediately = result[2]
@@ -104,13 +107,13 @@ def say_node(litanyIndex):
         acknowledge(say_node, (litany))
         return
     elif litany.playerComments:
-        universal.say('\p')
+        universal.say('\p', justification=0)
         universal.say('\n'.join([str(i) + '. ' + comment for (i, comment) in zip([i for i in range(1, len(litany.playerComments)+1)], litany.playerComments)]), justification=0)
         set_commands(['(#)Select a number.'])
         set_command_interpreter(converse_with_interpreter)
     elif litany.children:
         playerComments = [child.comment for child in litany.children]
-        universal.say('\p')
+        universal.say('\p', justification=0)
         try:
             universal.say('\n'.join([str(i) + '. ' + comment for (i, comment) in zip([i for i in range(1, len(playerComments)+1)], playerComments)]), justification=0)
         except TypeError:

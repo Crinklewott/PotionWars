@@ -78,7 +78,7 @@ class Episode(universal.RPGObject):
         allEpisodes[universal.state.player.currentEpisode].start_episode()
 
     def next_scene(self, previousSceneArgs=(), startingSceneArgs=()):
-        if self.scenes[self.currentSceneIndex].endScene is not None:
+        if self.scenes[self.currentSceneIndex].endScene:
             if previousSceneArgs is ():
                 self.scenes[self.currentSceneIndex].endScene()      
             else:
@@ -107,7 +107,7 @@ class Episode(universal.RPGObject):
 def end_content_mode():
     universal.say(universal.format_line(['''That's the end of the content, I hope you've enjoyed playing this far. If you have any comments, criticisms, questions, bug reports, or anything else, either comment on my blog''',
             '''spankingrpgs.blogspot.com, or send me an e-mail at sprpgs@gmail.com (please post bug reports on the blog however, so that others can see them). Criticisms are welcome, however please keep them constructive. Saying "This game''',
-            '''sucks!" tells me nothing except that you didn't like it. Saying "Your combat system felt unbalanced. The magic was way too powerful." tells  me much much more.''']))
+            '''sucks!" tells me nothing except that you didn't like it. Saying "Your combat system felt unbalanced. The magic was way too powerful." tells  me much much more.''']), justification=0)
     universal.set_commands(['(Esc) To exit'])
     universal.set_command_interpreter(quit_interpreter)
 

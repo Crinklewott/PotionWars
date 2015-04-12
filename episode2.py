@@ -122,9 +122,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "passes..."
  , ' '])], []]), justification=0)
         if 'boarding_with_Adrian' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_wakeup, ep2_guild_wake_up)
+            return conversation.continue_to_node(ep2_wakeup, ep2_guild_wake_up)
         elif 'boarding_with_Maria' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_wakeup, ep2_marias_wake_up)
+            return conversation.continue_to_node(ep2_wakeup, ep2_marias_wake_up)
     ep2_wakeup.quip_function = ep2_wakeup_qf
     ep2_guild_wake_up = conversation.Node(328, '''ep2 guild wake up''')
     
@@ -134,11 +134,11 @@ def init_scene_1_episode_2():
         ep2_guild_wake_up.quip = " "
         universal.say(universal.format_text_translate([[], [], []]), justification=0)
         if 'extrovert' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_guild_wake_up, ep2_extrovert)
+            return conversation.continue_to_node(ep2_guild_wake_up, ep2_extrovert)
         elif 'introvert' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_guild_wake_up, ep2_guild_introvert)
+            return conversation.continue_to_node(ep2_guild_wake_up, ep2_guild_introvert)
         elif True:
-            conversation.continue_to_node(ep2_guild_wake_up, ep2_guild_no_bar)
+            return conversation.continue_to_node(ep2_guild_wake_up, ep2_guild_no_bar)
     ep2_guild_wake_up.quip_function = ep2_guild_wake_up_qf
     ep2_extrovert = conversation.Node(329, '''ep2 extrovert''')
     
@@ -598,9 +598,9 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
         if 'lesbian_in_denial' in universal.state.player.keywords:
-            conversation.continue_to_node(ep2_extrovert, ep2_carrie_in_denial)
+            return conversation.continue_to_node(ep2_extrovert, ep2_carrie_in_denial)
         elif True:
-            conversation.continue_to_node(ep2_extrovert, ep2_carrie_no_denial)
+            return conversation.continue_to_node(ep2_extrovert, ep2_carrie_no_denial)
     ep2_extrovert.quip_function = ep2_extrovert_qf
     ep2_carrie_in_denial = conversation.Node(330, '''ep2 carrie in denial''')
     
@@ -1083,9 +1083,9 @@ def init_scene_1_episode_2():
         ep2_extrovert_take_carrie_home.quip = " "
         universal.say(universal.format_text_translate([[], [], [], []]), justification=0)
         if universal.state.player.is_female():
-            conversation.continue_to_node(ep2_extrovert_take_carrie_home, ep2_take_carrie_home_female)
+            return conversation.continue_to_node(ep2_extrovert_take_carrie_home, ep2_take_carrie_home_female)
         elif True:
-            conversation.continue_to_node(ep2_extrovert_take_carrie_home, ep2_take_carrie_home_male)
+            return conversation.continue_to_node(ep2_extrovert_take_carrie_home, ep2_take_carrie_home_male)
     ep2_extrovert_take_carrie_home.quip_function = ep2_extrovert_take_carrie_home_qf
     ep2_take_carrie_home_female = conversation.Node(334, '''ep2 take carrie home female''')
     
@@ -1433,9 +1433,9 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
         if 'boarding_with_Adrian' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_take_carrie_home_female, ep2_take_carrie_home_guild)
+            return conversation.continue_to_node(ep2_take_carrie_home_female, ep2_take_carrie_home_guild)
         elif 'boarding_with_Maria' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_take_carrie_home_female, ep2_take_carrie_home_maria)
+            return conversation.continue_to_node(ep2_take_carrie_home_female, ep2_take_carrie_home_maria)
     ep2_take_carrie_home_female.quip_function = ep2_take_carrie_home_female_qf
     ep2_take_carrie_home_male = conversation.Node(335, '''ep2 take carrie home male''')
     
@@ -1827,9 +1827,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "cheek."
  , ' '])]]), justification=0)
         if 'boarding_with_Adrian' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_take_carrie_home_male, ep2_take_carrie_home_guild)
+            return conversation.continue_to_node(ep2_take_carrie_home_male, ep2_take_carrie_home_guild)
         elif 'boarding_with_Maria' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_take_carrie_home_male, ep2_take_carrie_home_maria)
+            return conversation.continue_to_node(ep2_take_carrie_home_male, ep2_take_carrie_home_maria)
     ep2_take_carrie_home_male.quip_function = ep2_take_carrie_home_male_qf
     ep2_take_carrie_home_guild = conversation.Node(336, '''ep2 take carrie home guild''')
     
@@ -4227,7 +4227,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "tender"
  , ' ']), ''.join([ "walk."
  , ' '])])) , ' '])], [], [], []]), justification=0)
-        conversation.continue_to_node(ep2_ildri_double_spanking_apologize, ep2_carrie_guild_wake_up, False)
+        return conversation.continue_to_node(ep2_ildri_double_spanking_apologize, ep2_carrie_guild_wake_up, False)
     ep2_ildri_double_spanking_apologize.quip_function = ep2_ildri_double_spanking_apologize_qf
     ep2_ildri_double_spanking_unapologetic = conversation.Node(339, '''ep2 ildri double spanking unapologetic''')
     
@@ -4560,7 +4560,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "fake"
  , ' ']), ''.join([ "it!)."
  , ' '])])) , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_ildri_double_spanking_unapologetic, ep2_ildri_double_spanking_apologize, False)
+        return conversation.continue_to_node(ep2_ildri_double_spanking_unapologetic, ep2_ildri_double_spanking_apologize, False)
     ep2_ildri_double_spanking_unapologetic.quip_function = ep2_ildri_double_spanking_unapologetic_qf
     ep2_take_carrie_home_alondra_apologize = conversation.Node(340, '''ep2 take carrie home alondra apologize''')
     
@@ -5012,7 +5012,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "really..."
  ]), ''.join([ '"'
  , ' '])], []]), justification=0)
-        conversation.continue_to_node(ep2_take_carrie_home_alondra_apologize, ep2_carrie_guild_wake_up, False)
+        return conversation.continue_to_node(ep2_take_carrie_home_alondra_apologize, ep2_carrie_guild_wake_up, False)
     ep2_take_carrie_home_alondra_apologize.quip_function = ep2_take_carrie_home_alondra_apologize_qf
     ep2_carrie_guild_wake_up = conversation.Node(341, '''ep2 carrie guild wake up''')
     
@@ -6024,9 +6024,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "home."
  , ' '])]]), justification=0)
         if 'boarding_with_Adrian' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_sissy, ep2_guild_wake_up_no_carrie)
+            return conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_sissy, ep2_guild_wake_up_no_carrie)
         elif 'boarding_with_Maria' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_sissy, ep2_maria_wake_up_no_carrie)
+            return conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_sissy, ep2_maria_wake_up_no_carrie)
     ep2_carrie_extrovert_refuse_spank_sissy.quip_function = ep2_carrie_extrovert_refuse_spank_sissy_qf
     ep2_carrie_extrovert_refuse_spank_stern = conversation.Node(345, '''ep2 carrie extrovert refuse spank stern''')
     
@@ -7589,9 +7589,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "carefully."
  , ' '])])) , ' '])], [], [], []]), justification=0)
         if 'boarding_with_Adrian' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_stern, ep2_guild_wake_up_no_carrie)
+            return conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_stern, ep2_guild_wake_up_no_carrie)
         elif 'boarding_with_Maria' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_stern, ep2_maria_wake_up_no_carrie)
+            return conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_stern, ep2_maria_wake_up_no_carrie)
     ep2_carrie_extrovert_refuse_spank_stern.quip_function = ep2_carrie_extrovert_refuse_spank_stern_qf
     ep2_extrovert_refuse_Carrie_again = conversation.Node(346, '''ep2 extrovert refuse Carrie again''')
     
@@ -7943,9 +7943,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "home."
  , ' '])], []]), justification=0)
         if 'boarding_with_Adrian' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_extrovert_refuse_Carrie_adamantly, ep2_guild_wake_up_no_carrie)
+            return conversation.continue_to_node(ep2_extrovert_refuse_Carrie_adamantly, ep2_guild_wake_up_no_carrie)
         elif 'boarding_with_Adrian' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_extrovert_refuse_Carrie_adamantly, ep2_maria_wake_up_no_carrie)
+            return conversation.continue_to_node(ep2_extrovert_refuse_Carrie_adamantly, ep2_maria_wake_up_no_carrie)
     ep2_extrovert_refuse_Carrie_adamantly.quip_function = ep2_extrovert_refuse_Carrie_adamantly_qf
     ep2_extrovert_carrie_refuse_not_interested = conversation.Node(348, '''ep2 extrovert carrie refuse not interested''')
     
@@ -8173,9 +8173,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "home."
  , ' '])]]), justification=0)
         if 'boarding_with_Adrian' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_extrovert_carrie_refuse_not_interested, ep2_guild_wake_up_no_carrie)
+            return conversation.continue_to_node(ep2_extrovert_carrie_refuse_not_interested, ep2_guild_wake_up_no_carrie)
         elif 'boarding_with_Maria' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_extrovert_carrie_refuse_not_interested, ep2_maria_wake_up_no_carrie)
+            return conversation.continue_to_node(ep2_extrovert_carrie_refuse_not_interested, ep2_maria_wake_up_no_carrie)
     ep2_extrovert_carrie_refuse_not_interested.quip_function = ep2_extrovert_carrie_refuse_not_interested_qf
     ep2_guild_wake_up_no_carrie = conversation.Node(349, '''ep2 guild wake up no carrie''')
     
@@ -8371,7 +8371,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "deal."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_guild_introvert, ep2_alondra_borrow_brush, False)
+        return conversation.continue_to_node(ep2_guild_introvert, ep2_alondra_borrow_brush, False)
     ep2_guild_introvert.quip_function = ep2_guild_introvert_qf
     ep2_alondra_borrow_brush = conversation.Node(351, '''ep2 alondra borrow brush''')
     
@@ -8467,7 +8467,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "me,"
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_alondra_borrow_brush, ep2_alondra_brush_hair, False)
+        return conversation.continue_to_node(ep2_alondra_borrow_brush, ep2_alondra_brush_hair, False)
     ep2_alondra_borrow_brush.quip_function = ep2_alondra_borrow_brush_qf
     ep2_alondra_brush_hair = conversation.Node(352, '''ep2 alondra brush hair''')
     
@@ -9667,7 +9667,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "says"
  , ' ']), ''.join([ "Alondra."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_guild_kiss_alondra_wait, ep2_Alondra_kiss_unpleasant_turn, True)
+        return conversation.continue_to_node(ep2_guild_kiss_alondra_wait, ep2_Alondra_kiss_unpleasant_turn, True)
     ep2_guild_kiss_alondra_wait.quip_function = ep2_guild_kiss_alondra_wait_qf
     ep2_Alondra_kiss_unpleasant_turn = conversation.Node(357, '''ep2 Alondra kiss unpleasant turn''')
     
@@ -9757,9 +9757,9 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])])) , ' '])]]), justification=0)
         if universal.state.player.is_female():
-            conversation.continue_to_node(ep2_Alondra_kiss_unpleasant_turn, ep2_guild_kiss_alondra_wait_female)
+            return conversation.continue_to_node(ep2_Alondra_kiss_unpleasant_turn, ep2_guild_kiss_alondra_wait_female)
         elif universal.state.player.is_male():
-            conversation.continue_to_node(ep2_Alondra_kiss_unpleasant_turn, ep2_guild_kiss_alondra_wait_male)
+            return conversation.continue_to_node(ep2_Alondra_kiss_unpleasant_turn, ep2_guild_kiss_alondra_wait_male)
     ep2_Alondra_kiss_unpleasant_turn.quip_function = ep2_Alondra_kiss_unpleasant_turn_qf
     ep2_guild_kiss_alondra_wait_female = conversation.Node(358, '''ep2 guild kiss alondra wait female''')
     
@@ -10272,7 +10272,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "spanking."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_guild_kiss_alondra_argue, ep2_guild_kiss_alondra_spanking, False)
+        return conversation.continue_to_node(ep2_guild_kiss_alondra_argue, ep2_guild_kiss_alondra_spanking, False)
     ep2_guild_kiss_alondra_argue.quip_function = ep2_guild_kiss_alondra_argue_qf
     ep2_guild_kiss_alondra_wait_male = conversation.Node(360, '''ep2 guild kiss alondra wait male''')
     
@@ -10423,7 +10423,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "grab"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "ankles."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_guild_kiss_alondra_spanking_prep, ep2_guild_kiss_alondra_spanking, False)
+        return conversation.continue_to_node(ep2_guild_kiss_alondra_spanking_prep, ep2_guild_kiss_alondra_spanking, False)
     ep2_guild_kiss_alondra_spanking_prep.quip_function = ep2_guild_kiss_alondra_spanking_prep_qf
     ep2_guild_kiss_alondra_spanking = conversation.Node(362, '''ep2 guild kiss alondra spanking''')
     
@@ -13074,7 +13074,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "large"
  , ' ']), ''.join([ "handprints."
  , ' '])])) , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_guild_no_bar_tantrum_push_it, ep2_ildri_start_age_regression, False)
+        return conversation.continue_to_node(ep2_guild_no_bar_tantrum_push_it, ep2_ildri_start_age_regression, False)
     ep2_guild_no_bar_tantrum_push_it.quip_function = ep2_guild_no_bar_tantrum_push_it_qf
     ep2_ildri_start_age_regression = conversation.Node(370, '''ep2 ildri start age regression''')
     
@@ -13341,9 +13341,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "spatula."
  , ' '])])) , ' '])]]), justification=0)
         if universal.state.player.is_female():
-            conversation.continue_to_node(ep2_ildri_start_age_regression, ep2_ildri_child_female)
+            return conversation.continue_to_node(ep2_ildri_start_age_regression, ep2_ildri_child_female)
         elif True:
-            conversation.continue_to_node(ep2_ildri_start_age_regression, ep2_ildri_child_male)
+            return conversation.continue_to_node(ep2_ildri_start_age_regression, ep2_ildri_child_male)
     ep2_ildri_start_age_regression.quip_function = ep2_ildri_start_age_regression_qf
     ep2_guild_no_bar_drink_offer = conversation.Node(371, '''ep2 guild no bar drink offer''')
     
@@ -13491,7 +13491,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "of"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.muscle_adj() , ' ']), ''.join([ "bottom."
  , ' '])])) , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_guild_no_bar_drink_offer, ep2_guild_no_bar_drink_start, False)
+        return conversation.continue_to_node(ep2_guild_no_bar_drink_offer, ep2_guild_no_bar_drink_start, False)
     ep2_guild_no_bar_drink_offer.quip_function = ep2_guild_no_bar_drink_offer_qf
     ep2_ildri_child_female = conversation.Node(372, '''ep2 ildri child female''')
     
@@ -13554,9 +13554,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Taironan."
  , ' '])]]), justification=0)
         if universal.state.player.shirt().name != items.emptyUpperArmor.name:
-            conversation.continue_to_node(ep2_ildri_child_female, ep2_ildri_remove_shirt)
+            return conversation.continue_to_node(ep2_ildri_child_female, ep2_ildri_remove_shirt)
         elif True:
-            conversation.continue_to_node(ep2_ildri_child_female, ep2_ildri_put_on_dress)
+            return conversation.continue_to_node(ep2_ildri_child_female, ep2_ildri_put_on_dress)
     ep2_ildri_child_female.quip_function = ep2_ildri_child_female_qf
     ep2_ildri_remove_shirt = conversation.Node(373, '''ep2 ildri remove shirt''')
     
@@ -13650,9 +13650,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "facedown."
  , ' '])]]), justification=0)
         if universal.state.player.is_female():
-            conversation.continue_to_node(ep2_ildri_remove_shirt, ep2_ildri_put_on_dress)
+            return conversation.continue_to_node(ep2_ildri_remove_shirt, ep2_ildri_put_on_dress)
         elif True:
-            conversation.continue_to_node(ep2_ildri_remove_shirt, ep2_ildri_put_on_shorts)
+            return conversation.continue_to_node(ep2_ildri_remove_shirt, ep2_ildri_put_on_shorts)
     ep2_ildri_remove_shirt.quip_function = ep2_ildri_remove_shirt_qf
     ep2_ildri_put_on_dress = conversation.Node(374, '''ep2 ildri put on dress''')
     
@@ -13701,9 +13701,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "knees."
  , ' '])]]), justification=0)
         if universal.state.player.long_hair():
-            conversation.continue_to_node(ep2_ildri_put_on_dress, ep2_ildri_put_in_bows)
+            return conversation.continue_to_node(ep2_ildri_put_on_dress, ep2_ildri_put_in_bows)
         elif True:
-            conversation.continue_to_node(ep2_ildri_put_on_dress, ep2_ildri_female_done)
+            return conversation.continue_to_node(ep2_ildri_put_on_dress, ep2_ildri_female_done)
     ep2_ildri_put_on_dress.quip_function = ep2_ildri_put_on_dress_qf
     ep2_ildri_put_in_bows = conversation.Node(375, '''ep2 ildri put in bows''')
     
@@ -13731,7 +13731,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "two"
  , ' ']), ''.join([ "bows."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_ildri_put_in_bows, ep2_ildri_female_done, False)
+        return conversation.continue_to_node(ep2_ildri_put_in_bows, ep2_ildri_female_done, False)
     ep2_ildri_put_in_bows.quip_function = ep2_ildri_put_in_bows_qf
     ep2_ildri_female_done = conversation.Node(376, '''ep2 ildri female done''')
     
@@ -14104,7 +14104,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "eat."
  ]), ''.join([ '"'
  , ' '])], [], [], []]), justification=0)
-        conversation.continue_to_node(ep2_ildri_female_done, ep2_guild_tantrum_breakfast, False)
+        return conversation.continue_to_node(ep2_ildri_female_done, ep2_guild_tantrum_breakfast, False)
     ep2_ildri_female_done.quip_function = ep2_ildri_female_done_qf
     ep2_ildri_child_male = conversation.Node(377, '''ep2 ildri child male''')
     
@@ -14169,9 +14169,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Taironan."
  , ' '])], []]), justification=0)
         if universal.state.player.shirt().name != items.emptyUpperArmor.name:
-            conversation.continue_to_node(ep2_ildri_child_male, ep2_ildri_remove_shirt)
+            return conversation.continue_to_node(ep2_ildri_child_male, ep2_ildri_remove_shirt)
         elif True:
-            conversation.continue_to_node(ep2_ildri_child_male, ep2_ildri_put_on_shorts)
+            return conversation.continue_to_node(ep2_ildri_child_male, ep2_ildri_put_on_shorts)
     ep2_ildri_child_male.quip_function = ep2_ildri_child_male_qf
     ep2_ildri_put_on_shorts = conversation.Node(378, '''ep2 ildri put on shorts''')
     
@@ -14231,7 +14231,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "vest"
  , ' ']), ''.join([ "on."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_ildri_put_on_shorts, ep2_ildri_male_done, False)
+        return conversation.continue_to_node(ep2_ildri_put_on_shorts, ep2_ildri_male_done, False)
     ep2_ildri_put_on_shorts.quip_function = ep2_ildri_put_on_shorts_qf
     ep2_ildri_male_done = conversation.Node(379, '''ep2 ildri male done''')
     
@@ -14563,7 +14563,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "eat."
  ]), ''.join([ '"'
  , ' '])], [], []]), justification=0)
-        conversation.continue_to_node(ep2_ildri_male_done, ep2_guild_tantrum_breakfast, False)
+        return conversation.continue_to_node(ep2_ildri_male_done, ep2_guild_tantrum_breakfast, False)
     ep2_ildri_male_done.quip_function = ep2_ildri_male_done_qf
     ep2_guild_tantrum_breakfast = conversation.Node(380, '''ep2 guild tantrum breakfast''')
     
@@ -15763,7 +15763,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "alright."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_guild_no_bar_drink, ep2_guild_no_bar_drink_start, False)
+        return conversation.continue_to_node(ep2_guild_no_bar_drink, ep2_guild_no_bar_drink_start, False)
     ep2_guild_no_bar_drink.quip_function = ep2_guild_no_bar_drink_qf
     ep2_guild_no_bar_drink_start = conversation.Node(382, '''ep2 guild no bar drink start''')
     
@@ -16781,9 +16781,9 @@ def init_scene_1_episode_2():
         ep2_marias_wake_up.quip = " "
         universal.say(universal.format_text_translate([[], [], []]), justification=0)
         if 'extrovert' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_marias_wake_up, ep2_extrovert)
+            return conversation.continue_to_node(ep2_marias_wake_up, ep2_extrovert)
         elif True:
-            conversation.continue_to_node(ep2_marias_wake_up, ep2_maria_no_bar)
+            return conversation.continue_to_node(ep2_marias_wake_up, ep2_maria_no_bar)
     ep2_marias_wake_up.quip_function = ep2_marias_wake_up_qf
     ep2_take_carrie_home_maria = conversation.Node(384, '''ep2 take carrie home maria''')
     
@@ -17881,7 +17881,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "circular"
  , ' ']), ''.join([ "bruises."
  , ' '])])) , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_take_carrie_home_maria_fight, ep2_maria_to_sofias_carrie_leaves, False)
+        return conversation.continue_to_node(ep2_take_carrie_home_maria_fight, ep2_maria_to_sofias_carrie_leaves, False)
     ep2_take_carrie_home_maria_fight.quip_function = ep2_take_carrie_home_maria_fight_qf
     ep2_take_carrie_home_maria_apologize = conversation.Node(386, '''ep2 take carrie home maria apologize''')
     
@@ -18143,7 +18143,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "murmurs"
  , ' ']), universal.state.player.name, ''.join([ "."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_take_carrie_home_maria_apologize, ep2_maria_to_sofias_carrie_leaves, False)
+        return conversation.continue_to_node(ep2_take_carrie_home_maria_apologize, ep2_maria_to_sofias_carrie_leaves, False)
     ep2_take_carrie_home_maria_apologize.quip_function = ep2_take_carrie_home_maria_apologize_qf
     ep2_maria_to_sofias_carrie_leaves = conversation.Node(387, '''ep2 maria to sofias carrie leaves''')
     
@@ -18291,7 +18291,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "door."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_maria_to_sofias_carrie_leaves, ep2_maria_to_sofias, False)
+        return conversation.continue_to_node(ep2_maria_to_sofias_carrie_leaves, ep2_maria_to_sofias, False)
     ep2_maria_to_sofias_carrie_leaves.quip_function = ep2_maria_to_sofias_carrie_leaves_qf
     ep2_maria_wake_up_no_carrie = conversation.Node(388, '''ep2 maria wake up no carrie''')
     
@@ -18355,7 +18355,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "danger."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_maria_wake_up_no_carrie, ep2_maria_to_sofias, False)
+        return conversation.continue_to_node(ep2_maria_wake_up_no_carrie, ep2_maria_to_sofias, False)
     ep2_maria_wake_up_no_carrie.quip_function = ep2_maria_wake_up_no_carrie_qf
     ep2_maria_no_bar = conversation.Node(389, '''ep2 maria no bar''')
     
@@ -19343,7 +19343,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "of"
  , ' ']), ''.join([ "Bonda."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_maria_no_bar_articulate, ep2_maria_no_bar_next_morning, False)
+        return conversation.continue_to_node(ep2_maria_no_bar_articulate, ep2_maria_no_bar_next_morning, False)
     ep2_maria_no_bar_articulate.quip_function = ep2_maria_no_bar_articulate_qf
     ep2_maria_no_bar_bratty = conversation.Node(391, '''ep2 maria no bar bratty''')
     
@@ -20655,7 +20655,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "lingering"
  , ' ']), ''.join([ "sting."
  , ' '])])) , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_maria_no_bar_bratty_spanking, ep2_maria_no_bar_next_morning, False)
+        return conversation.continue_to_node(ep2_maria_no_bar_bratty_spanking, ep2_maria_no_bar_next_morning, False)
     ep2_maria_no_bar_bratty_spanking.quip_function = ep2_maria_no_bar_bratty_spanking_qf
     ep2_maria_no_bar_cave = conversation.Node(393, '''ep2 maria no bar cave''')
     
@@ -20784,7 +20784,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "her"
  , ' ']), ''.join([ "blankets."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_maria_no_bar_cave, ep2_maria_no_bar_next_morning, False)
+        return conversation.continue_to_node(ep2_maria_no_bar_cave, ep2_maria_no_bar_next_morning, False)
     ep2_maria_no_bar_cave.quip_function = ep2_maria_no_bar_cave_qf
     ep2_maria_no_bar_next_morning = conversation.Node(394, '''ep2 maria no bar next morning''')
     
@@ -21212,7 +21212,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "porridge"
  , ' ']), ''.join([ "cooks."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_maria_no_bar_next_morning, ep2_maria_to_sofias, False)
+        return conversation.continue_to_node(ep2_maria_no_bar_next_morning, ep2_maria_to_sofias, False)
     ep2_maria_no_bar_next_morning.quip_function = ep2_maria_no_bar_next_morning_qf
     ep2_maria_to_sofias = conversation.Node(395, '''ep2 maria to sofias''')
     
@@ -24698,11 +24698,11 @@ def init_scene_1_episode_2():
         ep2_ildri_chat.quip = " "
         universal.say(universal.format_text_translate([[], []]), justification=0)
         if 'risqueScene' not in textCommandsMusic.keywords() and universal.state.player.risque() >= 4 and 'Ildri_no_pants' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_ildri_chat, ep2_ildri_indecent_no_pants)
+            return conversation.continue_to_node(ep2_ildri_chat, ep2_ildri_indecent_no_pants)
         elif 'risqueScene' not in textCommandsMusic.keywords() and universal.state.player.risque() >= 4:
-            conversation.continue_to_node(ep2_ildri_chat, ep2_ildri_indecent)
+            return conversation.continue_to_node(ep2_ildri_chat, ep2_ildri_indecent)
         elif True:
-            conversation.continue_to_node(ep2_ildri_chat, ep2_ildri_scene_1_chat)
+            return conversation.continue_to_node(ep2_ildri_chat, ep2_ildri_scene_1_chat)
     ep2_ildri_chat.quip_function = ep2_ildri_chat_qf
     ep2_ildri_indecent_no_pants = conversation.Node(399, '''ep2 ildri indecent no pants''')
     
@@ -26652,7 +26652,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' '])]), ''.join([""
 , ''.join([ universal.state.player.underwear().name , ' '])])), ''.join([ "."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_ildri_indecent, ep2_no_pants, False)
+        return conversation.continue_to_node(ep2_ildri_indecent, ep2_no_pants, False)
     ep2_ildri_indecent.quip_function = ep2_ildri_indecent_qf
     ep2_no_pants = conversation.Node(401, '''ep2 no pants''')
     
@@ -26788,9 +26788,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "ass."
  , ' '])], [], []]), justification=0)
         if acceptableClothing == []:
-            conversation.continue_to_node(ep2_ildri_bare_backpedal, ep2_no_acceptable_clothing)
+            return conversation.continue_to_node(ep2_ildri_bare_backpedal, ep2_no_acceptable_clothing)
         elif True:
-            conversation.continue_to_node(ep2_ildri_bare_backpedal, ep2_acceptable_clothing)
+            return conversation.continue_to_node(ep2_ildri_bare_backpedal, ep2_acceptable_clothing)
     ep2_ildri_bare_backpedal.quip_function = ep2_ildri_bare_backpedal_qf
     ep2_no_acceptable_clothing = conversation.Node(403, '''ep2 no acceptable clothing''')
     
@@ -27715,7 +27715,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Ali?"
  , ' ']), ''.join([ '"'
  ])]]), justification=0)
-        conversation.continue_to_node(ep2_salvage_trousers, ep2_alondra_stares, False)
+        return conversation.continue_to_node(ep2_salvage_trousers, ep2_alondra_stares, False)
     ep2_salvage_trousers.quip_function = ep2_salvage_trousers_qf
     ep2_alondra_stares = conversation.Node(406, '''ep2 alondra stares''')
     
@@ -27891,7 +27891,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "breakfast?"
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_alondra_stares, ep2_ildri_scene_1_transition, False)
+        return conversation.continue_to_node(ep2_alondra_stares, ep2_ildri_scene_1_transition, False)
     ep2_alondra_stares.quip_function = ep2_alondra_stares_qf
     ep2_borrow_skirt = conversation.Node(407, '''ep2 borrow skirt''')
     
@@ -28258,7 +28258,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "breakfast?"
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_borrow_skirt, ep2_ildri_scene_1_transition, False)
+        return conversation.continue_to_node(ep2_borrow_skirt, ep2_ildri_scene_1_transition, False)
     ep2_borrow_skirt.quip_function = ep2_borrow_skirt_qf
     ep2_acceptable_clothing = conversation.Node(408, '''ep2 acceptable clothing''')
     
@@ -28299,7 +28299,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "breakfast?"
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_acceptable_clothing, ep2_ildri_scene_1_transition, False)
+        return conversation.continue_to_node(ep2_acceptable_clothing, ep2_ildri_scene_1_transition, False)
     ep2_acceptable_clothing.quip_function = ep2_acceptable_clothing_qf
     ep2_ildri_bare = conversation.Node(409, '''ep2 ildri bare''')
     
@@ -28446,7 +28446,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "says"
  , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "quickly."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_ildri_hate_sewing, ep2_ildri_sexy_idols_cover_ass, False)
+        return conversation.continue_to_node(ep2_ildri_hate_sewing, ep2_ildri_sexy_idols_cover_ass, False)
     ep2_ildri_hate_sewing.quip_function = ep2_ildri_hate_sewing_qf
     ep2_ildri_sexy_idols = conversation.Node(411, '''ep2 ildri sexy idols''')
     
@@ -28455,9 +28455,9 @@ def init_scene_1_episode_2():
         ep2_ildri_sexy_idols.quip = " "
         universal.say(universal.format_text_translate([[], []]), justification=0)
         if universal.state.player.is_female():
-            conversation.continue_to_node(ep2_ildri_sexy_idols, ep2_ildri_sexy_idols_female)
+            return conversation.continue_to_node(ep2_ildri_sexy_idols, ep2_ildri_sexy_idols_female)
         elif True:
-            conversation.continue_to_node(ep2_ildri_sexy_idols, ep2_ildri_sexy_idols_male)
+            return conversation.continue_to_node(ep2_ildri_sexy_idols, ep2_ildri_sexy_idols_male)
     ep2_ildri_sexy_idols.quip_function = ep2_ildri_sexy_idols_qf
     ep2_ildri_sexy_idols_female = conversation.Node(412, '''ep2 ildri sexy idols female''')
     
@@ -28684,7 +28684,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "ma'am."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_ildri_sexy_idols_male, ep2_ildri_sexy_idols_cover_ass, False)
+        return conversation.continue_to_node(ep2_ildri_sexy_idols_male, ep2_ildri_sexy_idols_cover_ass, False)
     ep2_ildri_sexy_idols_male.quip_function = ep2_ildri_sexy_idols_male_qf
     ep2_alondra_sexy_compliment = conversation.Node(414, '''ep2 alondra sexy compliment''')
     
@@ -28775,7 +28775,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "ma'am."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_alondra_sexy_compliment, ep2_ildri_sexy_idols_cover_ass_bounce, False)
+        return conversation.continue_to_node(ep2_alondra_sexy_compliment, ep2_ildri_sexy_idols_cover_ass_bounce, False)
     ep2_alondra_sexy_compliment.quip_function = ep2_alondra_sexy_compliment_qf
     ep2_ildri_sexy_idols_cover_ass_bounce = conversation.Node(415, '''ep2 ildri sexy idols cover ass bounce''')
     
@@ -28845,7 +28845,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "says"
  , ' ']), ''.join([ "Ildri."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_ildri_sexy_idols_cover_ass_bounce, ep2_ildri_sexy_idols_cover_ass, False)
+        return conversation.continue_to_node(ep2_ildri_sexy_idols_cover_ass_bounce, ep2_ildri_sexy_idols_cover_ass, False)
     ep2_ildri_sexy_idols_cover_ass_bounce.quip_function = ep2_ildri_sexy_idols_cover_ass_bounce_qf
     ep2_alondra_appreciate = conversation.Node(416, '''ep2 alondra appreciate''')
     
@@ -28910,7 +28910,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "says"
  , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "quickly."
  , ' '])], []]), justification=0)
-        conversation.continue_to_node(ep2_alondra_appreciate, ep2_ildri_sexy_idols_cover_ass, False)
+        return conversation.continue_to_node(ep2_alondra_appreciate, ep2_ildri_sexy_idols_cover_ass, False)
     ep2_alondra_appreciate.quip_function = ep2_alondra_appreciate_qf
     ep2_ildri_sexy_idols_cover_ass = conversation.Node(417, '''ep2 ildri sexy idols cover ass''')
     
@@ -28936,9 +28936,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "acceptable."
  , ' '])], [], []]), justification=0)
         if acceptableClothing == []:
-            conversation.continue_to_node(ep2_ildri_sexy_idols_cover_ass, ep2_ildri_sexy_idols_cover_ass_no_clothing)
+            return conversation.continue_to_node(ep2_ildri_sexy_idols_cover_ass, ep2_ildri_sexy_idols_cover_ass_no_clothing)
         elif True:
-            conversation.continue_to_node(ep2_ildri_sexy_idols_cover_ass, ep2_acceptable_clothing)
+            return conversation.continue_to_node(ep2_ildri_sexy_idols_cover_ass, ep2_acceptable_clothing)
     ep2_ildri_sexy_idols_cover_ass.quip_function = ep2_ildri_sexy_idols_cover_ass_qf
     ep2_ildri_sexy_idols_cover_ass_no_clothing = conversation.Node(418, '''ep2 ildri sexy idols cover ass no clothing''')
     
@@ -29213,9 +29213,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "counter."
  , ' '])]]), justification=0)
         if 'ep2IldriSceneTransition' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_ildri_scene_1_chat, ep2_ildri_scene_1_transition_again)
+            return conversation.continue_to_node(ep2_ildri_scene_1_chat, ep2_ildri_scene_1_transition_again)
         elif True:
-            conversation.continue_to_node(ep2_ildri_scene_1_chat, ep2_ildri_scene_1_transition)
+            return conversation.continue_to_node(ep2_ildri_scene_1_chat, ep2_ildri_scene_1_transition)
     ep2_ildri_scene_1_chat.quip_function = ep2_ildri_scene_1_chat_qf
     ep2_ildri_scene_1_transition_again = conversation.Node(420, '''ep2 ildri scene 1 transition again''')
     
@@ -30247,16 +30247,17 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "zippering"
  , ' ']), ''.join([ "sound."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_help_repair_guild, end_scene_1, False)
+        return conversation.continue_to_node(ep2_help_repair_guild, ep2_end_scene_1, False)
     ep2_help_repair_guild.quip_function = ep2_help_repair_guild_qf
-    end_scene_1 = conversation.Node(423, '''end scene 1''')
+    ep2_end_scene_1 = conversation.Node(423, '''ep2 end scene 1''')
     
     
-    def end_scene_1_qf():
-        episode.allEpisodes[universal.state.player.currentEpisode].next_scene()
-        end_scene_1.quip = " "
+    def ep2_end_scene_1_qf():
+        return (episode.allEpisodes[universal.state.player.currentEpisode].next_scene, (), True)
+        #return episode.allEpisodes[universal.state.player.currentEpisode].next_scene()
+        ep2_end_scene_1.quip = " "
         universal.say(universal.format_text_translate([[], [], [], []]), justification=0)
-    end_scene_1.quip_function = end_scene_1_qf
+    ep2_end_scene_1.quip_function = ep2_end_scene_1_qf
     ep2_peter = conversation.Node(424, '''ep2 peter''')
     
     
@@ -30264,9 +30265,9 @@ def init_scene_1_episode_2():
         ep2_peter.quip = " "
         universal.say(universal.format_text_translate([[], []]), justification=0)
         if 'teaching_Anne' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_peter, ep2_peter_teaching_anne)
+            return conversation.continue_to_node(ep2_peter, ep2_peter_teaching_anne)
         elif True:
-            conversation.continue_to_node(ep2_peter, ep2_peter_conversation)
+            return conversation.continue_to_node(ep2_peter, ep2_peter_conversation)
     ep2_peter.quip_function = ep2_peter_qf
     ep2_peter_teaching_anne = conversation.Node(425, '''ep2 peter teaching anne''')
     
@@ -30434,9 +30435,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "backyard."
  , ' '])]]), justification=0)
         if universal.state.player.is_female():
-            conversation.continue_to_node(ep2_peter_teaching_anne, ep2_peter_attracted_or_not)
+            return conversation.continue_to_node(ep2_peter_teaching_anne, ep2_peter_attracted_or_not)
         elif True:
-            conversation.continue_to_node(ep2_peter_teaching_anne, ep2_peter_teaching_anne_continued)
+            return conversation.continue_to_node(ep2_peter_teaching_anne, ep2_peter_teaching_anne_continued)
     ep2_peter_teaching_anne.quip_function = ep2_peter_teaching_anne_qf
     ep2_peter_attracted_or_not = conversation.Node(426, '''ep2 peter attracted or not''')
     
@@ -30473,7 +30474,7 @@ def init_scene_1_episode_2():
         textCommandsMusic.add_keyword('attractedToPeter')
         ep2_peter_crush.quip = " "
         universal.say(universal.format_text_translate([[], [], []]), justification=0)
-        conversation.continue_to_node(ep2_peter_crush, ep2_peter_teaching_anne_continued, False)
+        return conversation.continue_to_node(ep2_peter_crush, ep2_peter_teaching_anne_continued, False)
     ep2_peter_crush.quip_function = ep2_peter_crush_qf
     ep2_peter_teaching_anne_continued = conversation.Node(428, '''ep2 peter teaching anne continued''')
     
@@ -31172,7 +31173,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "as"
  , ' ']), universal.state.player.name, ''.join([ "."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_anne_prank, ep2_anne_meditation, False)
+        return conversation.continue_to_node(ep2_anne_prank, ep2_anne_meditation, False)
     ep2_anne_prank.quip_function = ep2_anne_prank_qf
     ep2_anne_meditation = conversation.Node(430, '''ep2 anne meditation''')
     
@@ -31887,9 +31888,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "more."
  , ' '])]]), justification=0)
         if 'ep2AnnePrank' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_anne_meditation, ep2_anne_start_prank)
+            return conversation.continue_to_node(ep2_anne_meditation, ep2_anne_start_prank)
         elif True:
-            conversation.continue_to_node(ep2_anne_meditation, ep2_anne_play)
+            return conversation.continue_to_node(ep2_anne_meditation, ep2_anne_play)
     ep2_anne_meditation.quip_function = ep2_anne_meditation_qf
     ep2_anne_start_prank = conversation.Node(431, '''ep2 anne start prank''')
     
@@ -34704,7 +34705,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "cane."
  , ' '])])) , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_peter_run_for_it, ep2_peter_buckles_canceled, False)
+        return conversation.continue_to_node(ep2_peter_run_for_it, ep2_peter_buckles_canceled, False)
     ep2_peter_run_for_it.quip_function = ep2_peter_run_for_it_qf
     ep2_peter_wait = conversation.Node(433, '''ep2 peter wait''')
     
@@ -35252,9 +35253,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "tears."
  , ' '])])) , ' '])]]), justification=0)
         if 'attractedToPeter' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_peter_wait, ep2_peter_wait_attracted_to_him)
+            return conversation.continue_to_node(ep2_peter_wait, ep2_peter_wait_attracted_to_him)
         elif True:
-            conversation.continue_to_node(ep2_peter_wait, ep2_peter_wait_not_attracted_to_him)
+            return conversation.continue_to_node(ep2_peter_wait, ep2_peter_wait_not_attracted_to_him)
     ep2_peter_wait.quip_function = ep2_peter_wait_qf
     ep2_peter_wait_attracted_to_him = conversation.Node(434, '''ep2 peter wait attracted to him''')
     
@@ -36787,7 +36788,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "you."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_peter_wait_attracted_to_him, ep2_peter_buckles_canceled, False)
+        return conversation.continue_to_node(ep2_peter_wait_attracted_to_him, ep2_peter_buckles_canceled, False)
     ep2_peter_wait_attracted_to_him.quip_function = ep2_peter_wait_attracted_to_him_qf
     ep2_peter_wait_not_attracted_to_him = conversation.Node(435, '''ep2 peter wait not attracted to him''')
     
@@ -38027,7 +38028,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "you."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_peter_wait_not_attracted_to_him, ep2_peter_buckles_canceled, False)
+        return conversation.continue_to_node(ep2_peter_wait_not_attracted_to_him, ep2_peter_buckles_canceled, False)
     ep2_peter_wait_not_attracted_to_him.quip_function = ep2_peter_wait_not_attracted_to_him_qf
     ep2_anne_carrot = conversation.Node(436, '''ep2 anne carrot''')
     
@@ -38061,7 +38062,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "small"
  , ' ']), ''.join([ "tree."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_anne_carrot, ep2_anne_meditation, False)
+        return conversation.continue_to_node(ep2_anne_carrot, ep2_anne_meditation, False)
     ep2_anne_carrot.quip_function = ep2_anne_carrot_qf
     ep2_anne_play = conversation.Node(437, '''ep2 anne play''')
     
@@ -38635,9 +38636,9 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])])) , ' '])]]), justification=0)
         if 'attractedToPeter' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_anne_play, ep2_peter_small_conversation)
+            return conversation.continue_to_node(ep2_anne_play, ep2_peter_small_conversation)
         elif True:
-            conversation.continue_to_node(ep2_anne_play, ep2_anne_goes_to_grandma)
+            return conversation.continue_to_node(ep2_anne_play, ep2_anne_goes_to_grandma)
     ep2_anne_play.quip_function = ep2_anne_play_qf
     ep2_peter_small_conversation = conversation.Node(438, '''ep2 peter small conversation''')
     
@@ -39201,7 +39202,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "to"
  , ' ']), ''.join([ "foot."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_peter_small_conversation, ep2_peter_buckles_canceled, False)
+        return conversation.continue_to_node(ep2_peter_small_conversation, ep2_peter_buckles_canceled, False)
     ep2_peter_small_conversation.quip_function = ep2_peter_small_conversation_qf
     ep2_anne_goes_to_grandma = conversation.Node(439, '''ep2 anne goes to grandma''')
     
@@ -39402,7 +39403,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "you."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_anne_goes_to_grandma, ep2_peter_buckles_canceled, False)
+        return conversation.continue_to_node(ep2_anne_goes_to_grandma, ep2_peter_buckles_canceled, False)
     ep2_anne_goes_to_grandma.quip_function = ep2_anne_goes_to_grandma_qf
     ep2_peter_buckles_canceled = conversation.Node(440, '''ep2 peter buckles canceled''')
     
@@ -40288,9 +40289,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "enters."
  , ' '])]]), justification=0)
         if 'second_hand_tragedy' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_elise_prologue, ep2_elise_second_hand_tragedy)
+            return conversation.continue_to_node(ep2_elise_prologue, ep2_elise_second_hand_tragedy)
         elif True:
-            conversation.continue_to_node(ep2_elise_prologue, ep2_elise_greeting)
+            return conversation.continue_to_node(ep2_elise_prologue, ep2_elise_greeting)
     ep2_elise_prologue.quip_function = ep2_elise_prologue_qf
     ep2_elise_second_hand_tragedy = conversation.Node(446, '''ep2 elise second hand tragedy''')
     
@@ -40889,7 +40890,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "says"
  , ' ']), universal.state.player.name, ''.join([ "."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha, ep2_elise_gripe, False)
+        return conversation.continue_to_node(ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha, ep2_elise_gripe, False)
     ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha.quip_function = ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha_qf
     ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha = conversation.Node(449, '''ep2 elise second hand tragedy still annoyed dont forgive Samantha''')
     
@@ -41010,7 +41011,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "says"
  , ' ']), universal.state.player.name, ''.join([ "."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_elise_second_hand_tragedy_make_up, ep2_elise_gripe, False)
+        return conversation.continue_to_node(ep2_elise_second_hand_tragedy_make_up, ep2_elise_gripe, False)
     ep2_elise_second_hand_tragedy_make_up.quip_function = ep2_elise_second_hand_tragedy_make_up_qf
     ep2_elise_greeting = conversation.Node(451, '''ep2 elise greeting''')
     
@@ -41053,7 +41054,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "says"
  , ' ']), universal.state.player.name, ''.join([ "."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_elise_greeting, ep2_elise_gripe, False)
+        return conversation.continue_to_node(ep2_elise_greeting, ep2_elise_gripe, False)
     ep2_elise_greeting.quip_function = ep2_elise_greeting_qf
     ep2_elise_gripe = conversation.Node(452, '''ep2 elise gripe''')
     
@@ -41825,9 +41826,9 @@ def init_scene_1_episode_2():
         ep2_carrie.quip = " "
         universal.say(universal.format_text_translate([[], []]), justification=0)
         if 'ep2BeginningLostTemperWithCarrie' in textCommandsMusic.keywords():
-            conversation.continue_to_node(ep2_carrie, ep2_carrie_lost_temper_apologize)
+            return conversation.continue_to_node(ep2_carrie, ep2_carrie_lost_temper_apologize)
         elif True:
-            conversation.continue_to_node(ep2_carrie, ep2_carrie_subplot_begin)
+            return conversation.continue_to_node(ep2_carrie, ep2_carrie_subplot_begin)
     ep2_carrie.quip_function = ep2_carrie_qf
     ep2_carrie_lost_temper_apologize = conversation.Node(454, '''ep2 carrie lost temper apologize''')
     
@@ -42273,7 +42274,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ "Yes."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_carrie_lost_temper_chastise, ep2_carrie_lost_temper_paddle, False)
+        return conversation.continue_to_node(ep2_carrie_lost_temper_chastise, ep2_carrie_lost_temper_paddle, False)
     ep2_carrie_lost_temper_chastise.quip_function = ep2_carrie_lost_temper_chastise_qf
     ep2_carrie_lost_temper_paddle = conversation.Node(457, '''ep2 carrie lost temper paddle''')
     
@@ -42780,7 +42781,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "wrong."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_carrie_lost_temper_paddle, ep2_carrie_outside, False)
+        return conversation.continue_to_node(ep2_carrie_lost_temper_paddle, ep2_carrie_outside, False)
     ep2_carrie_lost_temper_paddle.quip_function = ep2_carrie_lost_temper_paddle_qf
     ep2_carrie_lost_temper_refuse_to_spank = conversation.Node(458, '''ep2 carrie lost temper refuse to spank''')
     
@@ -42966,7 +42967,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "wrong."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_carrie_lost_temper_refuse_to_spank, ep2_carrie_outside, False)
+        return conversation.continue_to_node(ep2_carrie_lost_temper_refuse_to_spank, ep2_carrie_outside, False)
     ep2_carrie_lost_temper_refuse_to_spank.quip_function = ep2_carrie_lost_temper_refuse_to_spank_qf
     ep2_carrie_subplot_begin = conversation.Node(459, '''ep2 carrie subplot begin''')
     
@@ -43503,7 +43504,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "too"
  , ' ']), ''.join([ "eagerly."
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_carrie_subplot_begin, ep2_carrie_outside, False)
+        return conversation.continue_to_node(ep2_carrie_subplot_begin, ep2_carrie_outside, False)
     ep2_carrie_subplot_begin.quip_function = ep2_carrie_subplot_begin_qf
     ep2_carrie_outside = conversation.Node(460, '''ep2 carrie outside''')
     
@@ -45119,7 +45120,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "something."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_carrie_ignore, ep2_practice_spectral_magic, False)
+        return conversation.continue_to_node(ep2_carrie_ignore, ep2_practice_spectral_magic, False)
     ep2_carrie_ignore.quip_function = ep2_carrie_ignore_qf
     ep2_practice_spectral_magic = conversation.Node(464, '''ep2 practice spectral magic''')
     
@@ -46206,7 +46207,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "ideas?"
  ]), ''.join([ '"'
  , ' '])])) , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_carrie_subplot_spanking, ep2_practice_spectral_magic, False)
+        return conversation.continue_to_node(ep2_carrie_subplot_spanking, ep2_practice_spectral_magic, False)
     ep2_carrie_subplot_spanking.quip_function = ep2_carrie_subplot_spanking_qf
     ep2_carrie_distraction = conversation.Node(466, '''ep2 carrie distraction''')
     
@@ -48730,7 +48731,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "it."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        conversation.continue_to_node(ep2_carrie_distraction, ep2_carrie_subplot_end, False)
+        return conversation.continue_to_node(ep2_carrie_distraction, ep2_carrie_subplot_end, False)
     ep2_carrie_distraction.quip_function = ep2_carrie_distraction_qf
     ep2_carrie_agree = conversation.Node(467, '''ep2 carrie agree''')
     
@@ -51407,7 +51408,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "or"
  , ' ']), ''.join([ person.heshe() , ' ']), ''.join([ "sits)."
  , ' '])])) , ' '])], [], []]), justification=0)
-        conversation.continue_to_node(ep2_carrie_agree, ep2_carrie_subplot_end, False)
+        return conversation.continue_to_node(ep2_carrie_agree, ep2_carrie_subplot_end, False)
     ep2_carrie_agree.quip_function = ep2_carrie_agree_qf
     ep2_carrie_subplot_end = conversation.Node(468, '''ep2 carrie subplot end''')
     

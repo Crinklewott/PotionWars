@@ -47,6 +47,7 @@ pygame.init()
 errorLog.setLevel(logging.ERROR)
 #episode1.episode1.nextEpisode = episode1.episode2
 episode1.episode1.nextEpisode = episode2.episode2
+#episode2.episode2.scenes.append(episode2CharRooms.episode2Scene2)
 #episode2.episode2.nextEpisode = episode2CharRooms.episode3
 with open("errors.log", 'a') as f:
     pass

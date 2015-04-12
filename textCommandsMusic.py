@@ -15,9 +15,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
-import universal
+import episode
 import music
 import titleScreen
+import townmode
+import universal
 
 
 def enterLeft(character, room):
@@ -154,10 +156,15 @@ def no_shirt():
     return universal.state.player.shirt().name == items.emptyUpperArmor.name
 
 def end_content_interpreter(keyEvent):    
-    townmode.go(offStage)
-    clear_screen()
-    if keyEvent.key == K_RETURN:
-        townmode.save(end_content_mode)
+    townmode.go(townmode.offStage)
+    universal.clear_screen()
+    if keyEvent.key == universal.K_RETURN:
+        townmode.save(episode.end_content_mode)
+
+def to_title_screen_interpreter(keyEvent):
+    universal.clear_screen()
+    if keyEvent.key == universal.K_RETURN:
+        titleScreen.title_screen()
 
 
 #-------------------------------------Music Files----------------------------------------
