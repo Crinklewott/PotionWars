@@ -31,7 +31,7 @@ import os
 import math
 import ast
 
-DEBUG = False
+DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 

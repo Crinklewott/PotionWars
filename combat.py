@@ -502,6 +502,7 @@ def confirm_to_title_interpreter(keyEvent):
 def combat_acknowledge_interpreter(keyEvent):
     if keyEvent.key == K_RETURN:
         set_battle_commands()
+        print_enemies(enemies)
 
 def attack(target):
     if target < 0:
@@ -781,10 +782,15 @@ def run():
     chosenActions.append(combatAction.RunAction(activeAlly, None))
     next_character()
 def spank():
-    positions = activeAlly.grapplingPartner.positions
-    print_command('Select Position')
-    set_commands([''.join([str(num+1), '. ', pos.name]) for num, pos in enumerate(positions)])
-    universal.set_command_interpreter(spank_interpreter)
+    if activeAlly.grapplingPartner.is_inflicted_with(statusEffects.Humiliated.name):
+        print_enemies("Cannot spank an already humiliated enemy.")
+        set_commands(["(Enter) Acknowledge"])
+        set_command_interpreter(combat_acknowledge_interpreter)
+    else:
+        positions = activeAlly.grapplingPartner.positions
+        print_command('Select Position')
+        set_commands([''.join([str(num+1), '. ', pos.name]) for num, pos in enumerate(positions)])
+        universal.set_command_interpreter(spank_interpreter)
 
 chosenPos = None
 def spank_interpreter(keyEvent):
