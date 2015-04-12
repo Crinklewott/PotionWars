@@ -1440,6 +1440,7 @@ def start_round(chosenActions):
                     raise KeyError(str(e))
                 defenders = combatAction.executed_action(actionEffect).defenders
                 attacker = combatAction.executed_action(actionEffect).attacker
+                print(actionEffect[0])
                 for defender, effect in zip(defenders, combatAction.effects(actionEffect)):
                     if defender is not None:
                         actionsEndured[defender].append((combatAction.executed_action(actionEffect), effect))

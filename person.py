@@ -2571,7 +2571,8 @@ class Status(Spell):
                     effects.append(False)
                 else:
                     if defender.is_inflicted_with(statusEffects.get_name(self.statusInflicted)):
-                        resultString.append(' '.join([defender.printedName, "is already inflicted with", self.statusInflicted.name + "!"]))
+                        resultString.append(' '.join([defender.printedName, "is already inflicted with", statusEffects.get_name(self.statusInflicted) + "!"]))
+                        effects.append(False)
                     else:
                         resultString.append(self.success_statement(defender))
                         defender.inflict_status(statusEffects.build_status(self.statusInflicted, duration))
