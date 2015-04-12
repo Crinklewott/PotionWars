@@ -447,11 +447,14 @@ class SpankAction(CombatAction):
                 spankerResilience, spankeeResilience = max(spanker.resilience(), spankee.resilience()), min(spanker.resilience(), spankee.resilience())
                 resultStringFunction = spanking.reversed_spanking
             resultString = resultStringFunction(spanker, spankee, self.position)
-            grappleBonus = int(math.trunc(self.position.maintainability / self.DIVISOR * spankerGrapple))
-            durationBonus = int(math.trunc(self.position.humiliating / self.DIVISOR * spankerGrapple))
+            grappleBonus = int(math.trunc((self.position.maintainability / self.DIVISOR) * spankerGrapple))
+            durationBonus = int(math.trunc((self.position.humiliating / self.DIVISOR) * spankerGrapple))
             spankingDuration =  durationMultiplier * max(self.MIN_SPANKING_DURATION, spankerGrapple - spankeeGrapple) + grappleBonus
-            if spankingDuration < self.minDuration:
+            if durationMultiplier > 0 and spankingDuration < self.minDuration:
                 spankingDuration = self.minDuration
+            elif durationMultiplier < 0 and spankingDuration > -self.minDuration:
+                spankingDuration =  -self.minDuration
+            assert durationMultiplier > 0 or spankingDuration < 0, "Duration Multiplier: %d spankingDuration: %d" % (durationMultiplier, spankingDuration)
             spanker.begin_spanking(spankee, self.position, spankingDuration if spankingDuration > 0 else -spankingDuration)
             spankee.begin_spanked_by(spanker, self.position, spanker.grappleDuration)
             duration = max(self.MIN_HUMILIATED_DURATION, spankerResilience - spankeeResilience) + durationBonus
@@ -460,6 +463,7 @@ class SpankAction(CombatAction):
             else:
                 spankee.inflict_status(statusEffects.build_status(statusEffects.Humiliated.name, duration))
                 spanker.spankeeAlreadyHumiliated = False
+            assert spankingDuration
             return (resultString, [spankingDuration], self)
         else:
             if attacker.grapple() > defender.grapple():
