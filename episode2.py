@@ -53,6 +53,9 @@ def start_scene_1_episode_2(loading=False):
     sofiasClinic = universal.state.get_room("Sofia's Clinic")
     if 'boarding_with_Maria' in textCommandsMusic.keywords():
         slums.add_adjacent(sofiasClinic)
+    else:
+        slums.remove_adjacent(sofiasClinic)
+        textCommandsMusic.exitLeft(maria, mariasHome)
     universal.state.player.restores()
     universal.state.player.marks = []
     universal.state.party.remove_member(carrie)
@@ -77,6 +80,8 @@ def start_scene_1_episode_2(loading=False):
             raise transExceptions.TranslationError("Neither 'boarding_with_Adrian' nor 'boarding_with_Maria' is in the player's keywords. Keywords: " + str(textCommandsMusic.keywords()))
     if 'boarding_with_Adrian' in textCommandsMusic.keywords():
         kitchen.add_adjacent(bedroom)
+    else:
+        kitchen.remove_adjacent(bedroom)
     def slums_leaving(destination):
         if 'travelingToSofias' in textCommandsMusic.keywords() and destination != universal.state.get_room("Sofia's Clinic"):
             maria.litany = conversation.allNodeNames["ep2 wrong way"]
@@ -22292,12 +22297,13 @@ def init_scene_1_episode_2():
         maria = universal.state.get_character("Maria.person")
         sofia = universal.state.get_character("Sofia.person")
         clinic = universal.state.get_room(episode2CharRooms.sofiasClinic.name)
-        bedroom = universal.state.get_room("Bedroom")
+        mariasHome = universal.state.get_room("Maria's Home")
         universal.state.party.remove_member(maria)
-        textCommandsMusic.exitLeft(maria, bedroom)
+        textCommandsMusic.exitLeft(maria, mariasHome)
         textCommandsMusic.enterLeft(maria, clinic)
         maria.litany = None
         sofia.litany = None
+        textCommandsMusic.remove_keyword("travelingToSofias")
         ep2_clinic.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ "As"
  , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "and"
@@ -25126,7 +25132,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "were"
  , ' ']), ''.join([ "kidding!"
  ]), ''.join([ '"'
- , ' ']), ''.join([ "cried"
+ , ' ']), ''.join([ "cries"
  , ' ']), universal.state.player.name, ''.join([ ","
  , ' ']), ''.join([ "kicking"
  , ' ']), ''.join([ "and"
@@ -26551,7 +26557,21 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "with"
  , ' ']), ''.join([ "mine."
  ]), ''.join([ '"'
- , ' '])], [], []]), justification=0)
+ , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.player, ''.join([""
+, ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.bum_adj() , ' ']), ''.join([ "bottom"
+ , ' ']), ''.join([ "is"
+ , ' ']), ''.join([ "covered"
+ , ' ']), ''.join([ "with"
+ , ' ']), ''.join([ "an"
+ , ' ']), ''.join([ "even"
+ , ' ']), ''.join([ "mixture"
+ , ' ']), ''.join([ "of"
+ , ' ']), ''.join([ "large"
+ , ' ']), ''.join([ "handprints"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "spatula"
+ , ' ']), ''.join([ "marks."
+ , ' '])])) , ' '])], [], []]), justification=0)
     ep2_ildri_indecent_no_pants.quip_function = ep2_ildri_indecent_no_pants_qf
     ep2_ildri_indecent = conversation.Node(400, '''ep2 ildri indecent''')
     
@@ -45126,7 +45146,6 @@ def init_scene_1_episode_2():
     
     
     def ep2_practice_spectral_magic_qf():
-        townmode.go(universal.state.get_room('Avaricum Square'))
         ep2_practice_spectral_magic.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ universal.state.player.name , ' ']), ''.join([ "grins."
  , ' ']), ''.join([ '"'
@@ -45227,8 +45246,8 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "back"
  , ' ']), ''.join([ "to"
  , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "Avaricum"
- , ' ']), ''.join([ "Square."
+ , ' ']), ''.join([ "Matirian"
+ , ' ']), ''.join([ "Cathedral."
  , ' '])], [''.join([ '"'
  ]), ''.join([ "See"
  , ' ']), ''.join([ "you"
@@ -45318,21 +45337,22 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "at"
  , ' ']), universal.state.player.name, ''.join([ ","
  , ' ']), ''.join([ "then"
- , ' ']), ''.join([ "turns"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "slogs"
- , ' ']), ''.join([ "her"
- , ' ']), ''.join([ "way"
- , ' ']), ''.join([ "up"
+ , ' ']), ''.join([ "heads"
+ , ' ']), ''.join([ "towards"
  , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "stairs."
+ , ' ']), ''.join([ "doors"
+ , ' ']), ''.join([ "leading"
+ , ' ']), ''.join([ "deeper"
+ , ' ']), ''.join([ "into"
+ , ' ']), ''.join([ "the"
+ , ' ']), ''.join([ "church."
  , ' ']), ''.join([ '"'
  ]), ''.join([ "See"
  , ' ']), ''.join([ "you"
  , ' ']), ''.join([ "later!"
  ]), ''.join([ '"'
  , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "chuckles."
- , ' '])], [], []]), justification=0)
+ , ' '])]]), justification=0)
     ep2_practice_spectral_magic.quip_function = ep2_practice_spectral_magic_qf
     ep2_carrie_subplot_spanking = conversation.Node(465, '''ep2 carrie subplot spanking''')
     
@@ -51415,7 +51435,6 @@ def init_scene_1_episode_2():
     
     def ep2_carrie_subplot_end_qf():
         textCommandsMusic.add_keyword('ep2HelpedCarrie')
-        townmode.go(universal.state.get_room("Craftman's Corridor"))
         ep2_carrie_subplot_end.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
  ]), ''.join([ "So"
@@ -51424,8 +51443,15 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "you"
  , ' ']), ''.join([ "later?"
  ]), ''.join([ '"'
- , ' ']), ''.join([ "says"
- , ' ']), ''.join([ "Carrie."
+ , ' ']), ''.join([ "asks"
+ , ' ']), ''.join([ "Carrie"
+ , ' ']), ''.join([ "as"
+ , ' ']), ''.join([ "they"
+ , ' ']), ''.join([ "walk"
+ , ' ']), ''.join([ "back"
+ , ' ']), ''.join([ "to"
+ , ' ']), ''.join([ "the"
+ , ' ']), ''.join([ "shrine."
  , ' ']), ''.join([ '"'
  ]), ''.join([ "You'll"
  , ' ']), ''.join([ "be"
@@ -51562,7 +51588,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "their"
  , ' ']), ''.join([ "own"
  , ' ']), ''.join([ "thing."
- , ' '])])) , ' '])], [], []]), justification=0)
+ , ' '])])) , ' '])]]), justification=0)
     ep2_carrie_subplot_end.quip_function = ep2_carrie_subplot_end_qf
 def end_scene_1_episode_2():
     pass

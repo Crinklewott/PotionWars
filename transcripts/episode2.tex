@@ -55,6 +55,9 @@
     sofiasClinic = universal.state.get_room("Sofia's Clinic")
     if 'boarding_with_Maria' in textCommandsMusic.keywords():
         slums.add_adjacent(sofiasClinic)
+    else:
+        slums.remove_adjacent(sofiasClinic)
+        textCommandsMusic.exitLeft(maria, mariasHome)
     universal.state.player.restores()
     universal.state.player.marks = []
     universal.state.party.remove_member(carrie)
@@ -79,6 +82,8 @@
             raise transExceptions.TranslationError("Neither 'boarding_with_Adrian' nor 'boarding_with_Maria' is in the player's keywords. Keywords: " + str(textCommandsMusic.keywords()))
     if 'boarding_with_Adrian' in textCommandsMusic.keywords():
         kitchen.add_adjacent(bedroom)
+    else:
+        kitchen.remove_adjacent(bedroom)
     def slums_leaving(destination):
         if 'travelingToSofias' in textCommandsMusic.keywords() and destination != universal.state.get_room("Sofia's Clinic"):
             maria.litany = conversation.allNodeNames["ep2 wrong way"]
@@ -2689,15 +2694,16 @@ Juliana returns the hug with one arm, rubbing her sore bottom with the other han
 
     \begin{code}
 
-        maria = universal.state.get\_character("Maria.person")
-        sofia = universal.state.get\_character("Sofia.person")
-        clinic = universal.state.get\_room(episode2CharRooms.sofiasClinic.name)
-        bedroom = universal.state.get\_room("Bedroom")
-        universal.state.party.remove\_member(maria)
-        textCommandsMusic.exitLeft(maria, bedroom)
+        maria = universal.state.get_character("Maria.person")
+        sofia = universal.state.get_character("Sofia.person")
+        clinic = universal.state.get_room(episode2CharRooms.sofiasClinic.name)
+        mariasHome = universal.state.get_room("Maria's Home")
+        universal.state.party.remove_member(maria)
+        textCommandsMusic.exitLeft(maria, mariasHome)
         textCommandsMusic.enterLeft(maria, clinic)
         maria.litany = None
         sofia.litany = None
+        textCommandsMusic.remove_keyword("travelingToSofias")
 
     \end{code}
         
@@ -2760,7 +2766,7 @@ you an outfit that actually covers your ass."
 
 "You got nobody to blame but yourself," says Ildri, landing a particularly hard smack to \names{} right sitspot. "I warned you."
 
-"I thought you were kidding!" cried \name{}, kicking and struggling in Ildri's grip.
+"I thought you were kidding!" cries \name{}, kicking and struggling in Ildri's grip.
 
 "I can't even begin to imagine what would make you think that," says Ildri. She grabs her spatula off the counter and begins smacking \names{} \muscleadj{} bum with it.
 
@@ -2876,6 +2882,8 @@ get on with my day. You've wasted enough of my time."
 
 Ildri drags \name{} back through the store, pays for the dresses then drags \name{} back to the guild. When they enter the kitchen, Ildri spins \name{} around and gives \name{} one last smack. 
 "Now get on with your day, and let me get on with mine."
+
+\bummarks{universal.state.player}{\names{} \bumadj{} bottom is covered with an even mixture of large handprints and spatula marks.}
 
 \begin{code}
 
@@ -4936,7 +4944,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     "Fine," says Carrie. She gestures for \name{} to lead the way, and smiles sweetly.
 
-    By the late afternoon/early evening, both \name{} and Carrie are sweaty, dirty and kind of sore. The two make their slow way back to the Avaricum Square.
+    By the late afternoon/early evening, both \name{} and Carrie are sweaty, dirty and kind of sore. The two make their slow way back to the Matirian Cathedral.
 
     "See you later," says Carrie, giving \names{} arm a squeeze. "And remember, I'm graduating soon. I won't make you come to the ceremony, it's in competition with watching grass grow for
     most exciting show of the year. But you need to come the party."
@@ -4947,15 +4955,9 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     "So, never," says \name{}.
 
-    "Yeah, yeah. Snark snark snark." Carrie sticks her tongue out at \name{}, then turns and slogs her way up the stairs. "See you later!"
+    "Yeah, yeah. Snark snark snark." Carrie sticks her tongue out at \name{}, then heads towards the doors leading deeper into the church. "See you later!"
 
     \name{} chuckles. 
-
-    \begin{code}
-
-        townmode.go(universal.state.get\_room('Avaricum Square'))
-
-    \end{code}
 
 \end{childnode}
 
@@ -5490,7 +5492,8 @@ people's laps with her pants around her ankles.}
 
     \keyword{'ep2HelpedCarrie'}
 
-    "So I'll see you later?" says Carrie. "You'll be coming to my graduation party right? Don't bother with the graduation itself. Just a pompous ceremony with boring, pompous speeches about the
+    "So I'll see you later?" asks Carrie as they walk back to the shrine. "You'll be coming to my graduation party right? Don't bother with the graduation itself. Just a pompous ceremony with 
+    boring, pompous speeches about the
     'next generation' and 'holy vows' and 'the Mother's pride' and blah blah blah. But the party'll be fun!"
 
     "Of course. When will it be?" says \name{}.
@@ -5504,12 +5507,6 @@ people's laps with her pants around her ankles.}
     \stageDirections{The two figure out that they have a letter written in some sort of cipher. Carrie resolves to break it. She thanks the player, and goes off to do her own thing, leaving the
     player to do their own thing.}
 
-    \begin{code}
-
-        townmode.go(universal.state.get\_room("Craftman's Corridor"))
-
-    \end{code}
-        
 \end{childnode}
 
 \begin{closeScene}
