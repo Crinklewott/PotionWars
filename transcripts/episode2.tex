@@ -2778,7 +2778,7 @@ Then, Ildri starts walking to the kitchen door.
 
 "Of course you will, because I'm going to take you there," says Ildri, her spatula never slowing.
 
-"No!" \names{} face flushes as they walked out into the main room. Adrian stood behind the main counter doing paperwork. He glanced up as Ildri came out, shook his head, and returned to
+"No!" \names{} face flushes as they walked out into the main room. Adrian stands behind the main counter doing paperwork. He glances up as Ildri comes out, shakes his head, and returns to
 his forms. Various other adventurers stop chatting long enough to watch Ildri walk out, cracking her spatula against \names{} bottom the whole way.
 
 "Hey isn't that the new girl? The Taironan?" mutters one man.
@@ -2885,6 +2885,11 @@ Ildri drags \name{} back through the store, pays for the dresses then drags \nam
 
 \bummarks{universal.state.player}{\names{} \bumadj{} bottom is covered with an even mixture of large handprints and spatula marks.}
 
+\continue{ep2 equip clothing}
+
+\end{childnode}
+
+\begin{childnode}{ep2 equip clothing}{Andrew Russell}
 \begin{code}
 
     if universal.state.player.is_short():
@@ -2912,6 +2917,7 @@ Ildri drags \name{} back through the store, pays for the dresses then drags \nam
             universal.state.player.equip(itemspotionwars.powderBlueTrousers)
             universal.state.player.equip(itemspotionwars.powderBlueTrousers)
 
+    universal.state.get_character("Ildri.person").defaultLitany = ep2_ildri_chat.index
 \end{code}
 
 \end{childnode}

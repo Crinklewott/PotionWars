@@ -1181,6 +1181,16 @@ class State(object):
         except TypeError:
             pass
 
+    def clear_previous_scene(self):
+        """
+        Iterates through each character and makes their litany None. Also iterates through each room and sets their adjacent rooms to None. You can call this at the
+        beginning of each scene, and then set the adjacent rooms that you actually care about.
+        """
+        for person in self.characters.values():
+            person.litany = person.defaultLitany = None
+        for room in self.rooms.values():
+            room.adjacent = None
+
     """
         def add_position(self, position):
             self.positions[position.name] = position

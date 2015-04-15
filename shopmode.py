@@ -311,6 +311,7 @@ def window_sell_interpreter(keyEvent):
                 confirm_sell()
         else:
             partialNum += pygame.key.name(keyEvent.key)
+            set_commands(['(#) Select item to sell:' + str(partialNum) + '_', '<==Back'])
     elif keyEvent.key == K_BACKSPACE:
         if len(playerGoods) >= 10 and partialNum != '':
             partialNum = partialNum[:-1]
@@ -321,7 +322,7 @@ def window_sell_interpreter(keyEvent):
     elif keyEvent.key == K_RETURN:
         try:
             chosenGood = chosenPerson.get_item(int(partialNum)-1)
-        except:
+        except IndexError:
             return
         else:
             confirm_sell()
@@ -331,6 +332,8 @@ def confirm_sell():
     universal.say(chosenGood.display())
     set_commands([' '.join(['Sell for', str(chosenGood.price // 2), 
         ('matrons' if chosenGood.price // 2 > 1 else 'matron') + "?", '(Y/N)'])])
+    global partialNum
+    partialNum = ''
     set_command_interpreter(confirm_sell_interpreter)
 
 def confirm_sell_interpreter(keyEvent):

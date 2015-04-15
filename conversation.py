@@ -82,7 +82,6 @@ def say_node(litanyIndex):
     executeImmediately = False
     if litany.quip_function is not None:
         result = litany.quip_function()
-        print(result)
         if result is not None:
             function = result[0]
             assert function
@@ -153,8 +152,7 @@ def converse_with_interpreter(keyEvent):
             conversationPartner.litany = allNodes[conversationPartner.litany].children[num-1].index
             assert isinstance(conversationPartner.litany, int), "Problem node:%r" % previousConversation.litany
             converse_with(conversationPartner, previousMode)
-    elif keyEvent.key == K_RETURN and (allNodes[conversationPartner.litany].children is None or 
-        allNodes[conversationPartner.litany].children == []):
+    elif keyEvent.key == K_RETURN and (allNodes[conversationPartner.litany].children is None or allNodes[conversationPartner.litany].children == []):
         previousMode()
     #Note: This DOES NOT attempt to maintain any sort of consistent state. It's merely to allow the debugger to easily look at all the text in the conversation. In order
     #to ensure that the states are being modified correctly, one needs to play the conversations normally (i.e. without backtracking).

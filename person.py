@@ -779,12 +779,17 @@ class Person(universal.RPGObject):
             self.inventory.append(copy.deepcopy(item))
 
     def drop_item(self, item):
+        success = True
         if not item in self.inventory:
-            self.unequip(item)
+            try:
+                self.unequip(item)
+            except items.NakedError:
+                success = False
         try:
             self.inventory.remove(item)
         except ValueError:
             pass
+        return success
 
     def set_spanking_positions(self, positions):
         self.positions = positions
