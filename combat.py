@@ -866,7 +866,7 @@ def select_action(enemy):
             allActions = [combatAction.StruggleAction] * (enemy.grapple() + 1) +  [combatAction.EndureAction] * (bestStat + 1)
             return allActions[random.randrange(len(allActions))](enemy, [spanker])
     elif enemy.is_grappling():
-        if not enemy.grapplingPartner.is_inflicted_with(statusEffects.Humiliated.name):
+        if not enemy.grapplingPartner.is_inflicted_with(statusEffects.Humiliated.name) and universal.state.enemiesCanSpank:
             allActions.append(combatAction.SpankAction)
         if enemy.grapple() // 2 <= enemy.grappleDuration:
             allActions.append(combatAction.ThrowAction)
@@ -902,6 +902,7 @@ def hand_ai(enemy, allActions):
                 defenders.append(defenders[0])
                 break
     if action == combatAction.SpankAction:
+        assert universal.state.enemiesCanSpank
         action = action(enemy, defenders, enemy.positions[random.randrange(0, len(enemy.positions))])
     else:
         action = action(enemy, defenders)
@@ -919,7 +920,7 @@ def choose_action_class(enemy, weightedActionClasses, warfareActions, grappleAct
                 warfareActions.extend([combatAction.AttackAction for i in range(max(0, enemy.warfare()))])
         elif chosenActionClass == grappleActions:
             if enemy.is_grappling():
-                if not enemy.grapplingPartner.is_inflicted_with(statusEffects.Humiliated.name):
+                if not enemy.grapplingPartner.is_inflicted_with(statusEffects.Humiliated.name) and universal.state.enemiesCanSpank:
                     grappleActions.extend([combatAction.SpankAction for i in range(max(1, enemy.grapple()))])
                 grappleActions.extend([combatAction.AttackAction for i in range(max(1, enemy.warfare()))])
                 if enemy.grapple() <= enemy.grappleDuration // 2:
@@ -1030,6 +1031,7 @@ def cane_ai(enemy, weightedActionClasses, warfareActions, grappleActions, magicA
         assert chosenAction, "Chosen Action is None! ChosenAction class: %s" % str(chosenActionClass)
         defenders = select_targets(chosenAction, enemy)
     if chosenAction == combatAction.SpankAction:
+        assert universal.state.enemiesCanSpank
         return chosenAction(enemy, defenders, random.choice(list(positions.allPositions.values())))
     try:
         return chosenAction(enemy, defenders)
@@ -1084,6 +1086,7 @@ def strap_ai(enemy, weightedActionClasses, warfareActions, grappleActions, magic
             if activeOpponents == []:
                 break
     if chosenAction == combatAction.SpankAction:
+        assert universal.state.enemiesCanSpank
         return chosenAction(enemy, defenders, positions.allPositions.values()[random.randrange(0, len(positions.allPositions))])
     try:
         return chosenAction(enemy, defenders)
@@ -1190,6 +1193,7 @@ def select_targets(chosenAction, enemy):
             defenders.append(enemy)
         return defenders
     elif chosenAction == combatAction.SpankAction:
+        assert universal.state.enemiesCanSpank
         return [enemy.grapplingPartner]
     elif chosenAction == combatAction.GrappleAction:
         targets = [target for target in targets if not target.is_grappling()]

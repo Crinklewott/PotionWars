@@ -959,9 +959,12 @@ class State(object):
         self.reset = None
         #A list of triples containing the coordinates of one-time encounters that have been cleared. This is automatically emptied at the end of each episode.
         self.clearedSquares = []
+        self.enemiesCanSpank = True
 
     def save(self, saveFile):
         saveData = []
+        saveData.append("State Data:")
+        saveData.append(str(self.enemiesCanSpank))
         saveData.append("State Data:")
         saveData.append(self.player.save())
         saveData.append("State Data:")
@@ -1005,10 +1008,15 @@ class State(object):
         fileData = '\n'.join(loadFile.readlines())
         #Note: The first entry in the list is just the empty string.
         try:
-            _, player, characters, rooms, bedroom, party, location, itemList, difficulty, clearedSquares = fileData.split('State Data:')
+            _, enemiesCanSpank, player, characters, rooms, bedroom, party, location, itemList, difficulty, clearedSquares = fileData.split('State Data:')
         except ValueError:
-            _, player, characters, rooms, bedroom, party, location, itemList, difficulty = fileData.split('State Data:')
-            clearedSquares = ''
+            try:
+                _, player, characters, rooms, bedroom, party, location, itemList, difficulty, clearedSquares = fileData.split('State Data:')
+            except ValueError:
+                _, player, characters, rooms, bedroom, party, location, itemList, difficulty = fileData.split('State Data:')
+                clearedSquares = ''
+            enemiesCanSpank = True
+        self.enemiesCanSpank = enemiesCanSpank
         person.PlayerCharacter.load(player, self.player)   
         rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
         for roomData in rooms:

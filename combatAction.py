@@ -439,7 +439,7 @@ class SpankAction(CombatAction):
             spankerResilience, spankeeResilience = spanker.resilience(), spankee.resilience()
             resultStringFunction = spanking.spanking_string
             durationMultiplier = 1
-            if random.randrange(100) < self.REVERSAL_CHANCE:
+            if random.randrange(100) < self.REVERSAL_CHANCE and universal.state.enemiesCanSpank:
                 spankee, spanker = spanker, spankee
                 durationMultiplier = -1
                 #Reversals suck. They use whichever combination of grapples and willpowers that most benefits the new spanker, and hurts the new spankee! 

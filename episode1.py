@@ -591,7 +591,7 @@ offStage.add_character(paloma)
 class Maria(p.Person):
     def __init__(self, defaultLitany, litany):
         super(Maria, self).__init__('Maria', p.FEMALE, defaultLitany, litany, "A tall, willowy woman in her early thirties. She has the dark eyes and hair of a Taironan, along with the tell-tale bronze skin. Her hair is also cut very short. In fact, between her height, her slim build, and her short hair, she could easily pass for a young man. As if to counteract this, she wears a short skirt that draws attention to her smooth, slender legs.  A large, wicked looking dagger rests on her hip.", height="tall", bodyType="slim")
-        self.set_all_stats(strength=90, dexterity=75, willpower=60, talent=25, alterness=80, health=900, mana=0)
+        self.set_all_stats(strength=90, dexterity=75, willpower=60, talent=25, alertness=80, health=900, mana=0)
 
     def reset_stats(self, episode=None):
         return Maria(self.defaultLitany, self.defaultLitany)

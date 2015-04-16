@@ -722,10 +722,27 @@ def select_weapon_interpreter(keyEvent):
 def confirm_weapon_interpreter(keyEvent):
     if keyEvent.key == K_RETURN:
         universal.state.player._set_weapon(copy.deepcopy(chosenWeapon))
-        final_confirmation()
+        can_enemies_spank()
     elif keyEvent.key == K_BACKSPACE:
         select_weapon()
 
+def can_enemies_spank():
+    universal.say_title("Can Enemies Spank Your Characters In Battle?")
+    universal.say(' '.join(["Now you have to decide whether or not enemies are allowed you to spank your characters in battle. If you select (Y)es, then enemies will try to spank you during",
+        "combat. If you select no, then enemies will never try to spank you, however you can still try to spank them. Note that this does NOT affect story scenes. It only affects the generic",
+        "spankings you can see in combat (so if you choose (N)o, but lose to a boss, the boss may still spank you after the battle. However the boss will not spank you during battle)."]))
+    set_commands(['(Y)es', '(N)o', '<==Back'])
+    set_command_interpreter(can_enemies_spank_interpreter)
+
+def can_enemies_spank_interpreter(keyEvent):
+    if keyEvent.key == K_y:
+        universal.state.enemiesCanSpank = True
+        final_confirmation()
+    elif keyEvent.key == K_n:
+        universal.state.enemiesCanSpank = False
+        final_confirmation()
+    elif keyEvent.key == K_BACKSPACE:
+        select_weapon()
     
 
 def simpleTitleCase(string):
@@ -840,6 +857,7 @@ def final_confirmation():
     for i in range(len(spells)):
         universal.state.player.quickSpells[i] = spells[i]
     universal.say(universal.state.player.appearance(True), justification=0)
+    universal.say(' '.join(["\n\nEnemies will try to spank you in battle: ", "Yes" if universal.state.enemiesCanSpank else "No"]), justification=0)
     universal.set_commands(['(Enter) Begin Game', '<==Back', '(Esc) To Title Screen'])
     universal.set_command_interpreter(final_confirmation_interpreter)
 
@@ -852,7 +870,7 @@ def final_confirmation_interpreter(keyEvent):
         episode.allEpisodes[universal.state.player.currentEpisode].start_episode(False)
         townmode.saveName = ''
     elif keyEvent.key == K_BACKSPACE:
-        select_weapon()
+        can_enemies_spank()
     elif keyEvent.key == K_ESCAPE:
         global spellPoints
         global statPoints
