@@ -300,7 +300,9 @@ def battle_interpreter(keyEvent):
     elif keyEvent.key == K_RETURN:
         attack(-1)
     elif keyEvent.key in universal.NUMBER_KEYS:
-        attack(int(universal.key_name(keyEvent)) - 1)
+        number = int(universal.key_name(keyEvent)) - 1
+        if number < len(enemies):
+            attack(number)
     elif keyEvent.key == K_c:
         cast()
     elif keyEvent.key == K_d:
