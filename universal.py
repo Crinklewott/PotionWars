@@ -31,7 +31,7 @@ import os
 import math
 import ast
 
-DEBUG = False
+DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 
@@ -1190,37 +1190,6 @@ class State(object):
             person.litany = person.defaultLitany = None
         for room in self.rooms.values():
             room.adjacent = None
-
-    """
-        def add_position(self, position):
-            self.positions[position.name] = position
-
-        def remove_position(self, position):
-            try:
-                del positions[position.name]
-            except KeyError:
-                return
-
-
-        def add_scene(self, scene):
-            self.scenes[scene.name] = scene
-
-        def remove_scene(self, scene):
-            try:
-                self.scenes.remove(scene)
-            except KeyError:
-                return
-
-        def add_episode(self, episode):
-            self.episodes[episode.name] = episode
-
-        def remove_episode(self, episode):
-            try:
-                del self.episodes[episode.name]
-            except KeyError:
-                return
-
-    """
 
     def add_item(self, item):
         self.items[item.name] = item

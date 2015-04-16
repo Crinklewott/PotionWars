@@ -30,6 +30,8 @@ def town_mode(sayDescription=True):
     say the description.
     """
     room = universal.state.location
+    global previousMode
+    previousMode = town_mode
     if sayDescription:
         universal.say_title(room.name)
     if sayDescription:

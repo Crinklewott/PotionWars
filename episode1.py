@@ -48,7 +48,7 @@ import copy
 import pwenemies
 import sys
 import textCommandsMusic
-from textCommandsMusic import add_keyword, remove_keyword
+from textCommandsMusic import add_keyword, remove_keyword, enterLeft, exitLeft
 
 def spanked_episode_1():
     return one_in_keywords(['Ildri_spanked_you_unjustly', 'spanked_by_Airell', 'spanked_by_Cosima', 'Maria_spanked_you', 'spectral_caned', 'met_Mai', 'spanked_by_Necia'])
@@ -148,49 +148,12 @@ def wearing_skirt_or_dress_or_pants():
 
 def no_shirt():
     return universal.state.player.shirt().name == items.emptyUpperArmor.name
-#-------------------------------------Music Files----------------------------------------
-"""
-textCommandsMusic.CHURCH = music.decrypt(universal.resource_path('POL-apparition-long.wav'))
-textCommandsMusic.GUARDS = music.decrypt(universal.resource_path('POL-war-victims-long.wav'))
-textCommandsMusic.TAIRONAN = music.decrypt(universal.resource_path('POL-holy-forest-long.wav'))
-textCommandsMusic.LIGHT_HEARTED = music.decrypt(universal.resource_path('POL-jesu-long.wav'))
-textCommandsMusic.INTENSE = music.decrypt(universal.resource_path('POL-hurry-up-long.wav'))
-textCommandsMusic.SADISTIC_GAME = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'))
-textCommandsMusic.VENGADOR = music.decrypt(universal.resource_path('POL-antique-market-long.wav'))
-textCommandsMusic.OMINOUS = music.decrypt(universal.resource_path('POL-bridge-over-darkness-long.wav'))
-textCommandsMusic.CARLITA = music.decrypt(universal.resource_path('POL-goodbye-long.wav'))
-textCommandsMusic.MARIA = music.decrypt(universal.resource_path('POL-moonlight-long.wav'))
-textCommandsMusic.ROLAND = music.decrypt(universal.resource_path('POL-risky-plan-long.wav'))
-textCommandsMusic.ELISE = music.decrypt(universal.resource_path('POL-land-of-peace-long.wav'))
-textCommandsMusic.CATALIN = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'))
-CARRIE = music.decrypt(universal.resource_path('POL-smart-ideas-long.wav'))
-textCommandsMusic.PETER = music.decrypt(universal.resource_path('POL-telekinesis-long.wav'))
-textCommandsMusic.COMBAT = music.decrypt(universal.resource_path('POL-chase-long.wav'))
-textCommandsMusic.DEFEAT = music.decrypt(universal.resource_path('POL-graveyard-lord-long.wav'))
-music.set_combat(universal.resource_path('POL-chase-long.wav'))
-music.set_boss(universal.resource_path('POL-last-duel-long.wav'))
-music.set_town(universal.resource_path('POL-spiritual-path-long.wav'))
-music.set_theme(universal.resource_path('POL-the-challenge-long.wav'))
-music.set_defeated(universal.resource_path('POL-graveyard-lord-long.wav'))
-music.set_victory(universal.resource_path('POL-the-challenge-long.wav'))
-titleScreen.set_opening_crawl(textCommandsMusic.CHURCH)
-"""
-
 
 #--------------------------------------------Rooms-----------------------------------------------------------------------------------
 #Characters and other things go here when I want to remove them from play.
 #offStage.add_character(universal.state.player)
 edgeOfAvaricum = Room('Edge of Avaricum', "The road is overflowing with people, mostly merchants and farmers bringing their goods to market. Scattered amongst them is a much sadder crowd: Taironan refugees fleeing the strife of the Potion Riots. Many stumble down the road with dead eyes and ragged clothing, hunched under the weight of their children and few precious possessions. Just down the road is the city of Avaricum, the most powerful Carnutian city-state in this region of the One-Thousand-Twenty-Four. Several guards stand on either side of the road studying the people making their way into the Outer City.", bgMusic=textCommandsMusic.VENGADOR, bgMusicName='textCommandsMusic.VENGADOR')
 
-def enterLeft(character, room):
-    offStage = universal.state.get_room('offStage')
-    offStage.remove_character(character)
-    room.add_character(character)
-
-def exitLeft(character, room):
-    offStage = universal.state.get_room('offStage')
-    room.remove_character(character)
-    offStage.add_character(character)
 
 #Note: The room is automatically added to the universal.state.rooms by the Room's constructor.
 avaricumSquare = Room('Avaricum Square', "Avaricum Square is the center of daily life for the commoners living in Avaricum. Men and women (and even a handful of elves) of all shapes and sizes arrive from every direction and leave towards every other. Hawkers wander the crowds, shouting their wares at the top of their lungs. Corner entertainers juggle, dance to silent music, or create little sparkling butterflies with bits of magic. Children sprint around and between the legs of adults. A massive sundial dominates the center of the square.")
@@ -708,6 +671,18 @@ class Edita(pwenemies.Enemy):
             self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
             self.level = 0
 
+    def get_id(self):
+        """
+        Returns a string that consists of a person's name annotated with their type (in this case person). This is to ensure that id's are distinct, even if the 
+        player happens to give their character the same name as another character in the game (because player characters will be appended with 'playerCharacter').
+        """
+        if self.identifier:
+            rawName = self.rawName + str(self.identifier)
+        else:
+            rawName = self.rawName
+        return rawName + ".person"
+
+
     def otk_reversal(self, top, bottom):
         return self.spanking_reversal_text(top, bottom, positions.overTheKnee)
 
@@ -966,6 +941,17 @@ class Necia(pwenemies.Enemy):
                         description, printedName, coins, specialization, order=p.second_order, bodyType='average', height='average', musculature='fit', hairLength='short', litany=litany)
             self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
             self.level = 0
+
+    def get_id(self):
+        """
+        Returns a string that consists of a person's name annotated with their type (in this case person). This is to ensure that id's are distinct, even if the 
+        player happens to give their character the same name as another character in the game (because player characters will be appended with 'playerCharacter').
+        """
+        if self.identifier:
+            rawName = self.rawName + str(self.identifier)
+        else:
+            rawName = self.rawName
+        return rawName + ".person"
 
     def otk_intro(self, top, bottom):
         return universal.format_text([[top.printedName, '''slides under a particularly heavy strike from''', bottom.printedName, '''and extends''', top.hisher(), '''bent leg in front of''',
@@ -8517,6 +8503,9 @@ def start_scene_3_episode_1(loading=False):
     if not loading:
         exitLeft(universal.state.player, backOfGuild)
         enterLeft(universal.state.player, adventurersGuild)
+        print(universal.state.location)
+        print(backOfGuild.characters)
+        print(adventurersGuild.characters)
     universal.state.set_init_scene(init_episode_1_scene_3)
     southGuard = universal.state.get_character('Guard.person')
     southGuard.litany = too_busy.index

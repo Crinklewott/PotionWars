@@ -31,11 +31,13 @@ def name():
 class Enemy(person.Person):
     ROUND_INDEX = 1
     enemy = True
+    count = 0
     def __init__(self, name, gender, defaultLitany, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3, musculature='', 
             bodyType='', height='', hairLength='', hairStyle='', eyeColor='', skinColor='', order=person.zeroth_order, identifier=None, litany=None):
         """
         Drop chance determines the chances that this character will drop a piece of equipment.
         """
+        self.count = Enemy.count = Enemy.count + 1
         super(Enemy, self).__init__(name, gender, defaultLitany, litany if litany else defaultLitany, description, printedName, coins, specialization, order, musculature=musculature,
                 bodyType=bodyType, height=height, hairLength=hairLength, hairStyle=hairStyle, eyeColor=eyeColor, skinColor=skinColor, identifier=identifier)
         self.dropChance = dropChance
@@ -52,6 +54,9 @@ class Enemy(person.Person):
             }
 
         self.firstRound = True
+
+    def get_id(self):
+        return super(Enemy, self).get_id() + str(self.count)
 
     def spanks(self, bottom, position):
         return self.spankingFunctions[position][0](self, bottom)
