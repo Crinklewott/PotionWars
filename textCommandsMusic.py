@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
+import conversation
 import episode
 import music
 import titleScreen
@@ -194,3 +195,17 @@ music.set_theme(universal.resource_path('POL-the-challenge-long.wav'))
 music.set_defeated(universal.resource_path('POL-graveyard-lord-long.wav'))
 music.set_victory(universal.resource_path('POL-the-challenge-long.wav'))
 titleScreen.set_opening_crawl(CHURCH)
+
+#A dummy character who exists solely to give us someone to talk to for arbitrary conversations. Conversations are incorporated into the dungeons as follows:
+maze = Person("maze", FEMALE, None, None)
+
+def begin_maze_event(node, eventTitle):
+    """
+    Given a conversation node, and the title of the desired dungeon event, begins the dungeon event.
+    This should be called in every event function that needs to display automatically generated conversation nodes.
+    """
+    global maze
+    maze.name = eventTitle
+    maze.litany = node.index
+    conversation.converse_with(maze)
+
