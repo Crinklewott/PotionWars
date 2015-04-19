@@ -941,7 +941,7 @@ def update_location(room, party=None):
 
 def talk(previousModeIn):
     party = person.get_party()
-    talkableCharacters = [c for cName, c in universal.state.location.characters.iteritems() if 
+    talkableCharacters = [c for cName, c in universal.state.location.characters.iteritems() if c and
             not party.inParty(c)]
     if talkableCharacters:
         print(talkableCharacters)
@@ -962,7 +962,7 @@ def talk_interpreter(keyEvent):
         previousMode()
     elif keyEvent.key in NUMBER_KEYS:
         chosenNum = int(pygame.key.name(keyEvent.key)) - 1
-        talkableCharacters = [c for cName, c in universal.state.location.characters.iteritems() if c not in person.get_party().members]
+        talkableCharacters = [c for cName, c in universal.state.location.characters.iteritems() if c and c not in person.get_party().members]
         if 0 <= chosenNum and chosenNum < len(talkableCharacters):
             conversation.converse_with(talkableCharacters[chosenNum], town_mode)
 
