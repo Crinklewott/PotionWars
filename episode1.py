@@ -8526,7 +8526,6 @@ def start_scene_3_episode_1(loading=False):
     try:
         universal.state.get_room("Sofia's Clinic").remove_adjacent(universal.state.get_room("Slums"))
     except KeyError:
-        print("Key Error")
         pass
     try:
         kitchen = universal.state.get_room("Kitchen")
@@ -8540,9 +8539,6 @@ def start_scene_3_episode_1(loading=False):
     if not loading:
         exitLeft(universal.state.player, backOfGuild)
         enterLeft(universal.state.player, adventurersGuild)
-        print(universal.state.location)
-        print(backOfGuild.characters)
-        print(adventurersGuild.characters)
     universal.state.set_init_scene(init_episode_1_scene_3)
     southGuard = universal.state.get_character('Guard.person')
     southGuard.litany = too_busy.index
@@ -11857,7 +11853,7 @@ def ep1_carrie_too_fast_qf():
         ['''"Yeah, but at least that way, I'd get some comfort afterwards," mutters Carrie, sticking her tongue out at''', name() + "."],
         ['''"You know, I'm getting very tempted to spank you myself," says''', name() + ".", HisHer(), '''tone darkens. "After Sister Samantha is finished."'''],
         ['''Carrie slips a bit of hair in her mouth, smiles uneasily, then turns and walks rapidly up the steps.'''],
-        ep1_sister_samantha(ep1_carrie_home)])
+        ep1_sister_samantha(ep1_carrie_too_fast)])
 ep1_carrie_too_fast.quip_function = ep1_carrie_too_fast_qf
 
 def ep1_sister_samantha(node):
@@ -11907,13 +11903,13 @@ def maria_no_problems_function(node):
             ['''Maria shakes her head. "Ballsy move. Never imagined they'd attack the armory."'''],
             ['''"You know about them?" says''', name(), '''sharply.'''],
             ['''"Every Taironan in the city knows about them," says Maria. "You could hear the rumblings for months now. A strange, secretive group recruiting anyone with''',
-                '''two arms, two legs, and a grudge against both the Carnutians, and the Tristana. Drug mules deserting, grown children vanishing, only to reappear a''',
+                '''two arms, two legs, and a grudge against both the Carnutians, and Tristana. Drug mules deserting, grown children vanishing, only to reappear a''',
                 '''few weeks later armed to the teeth, and full of revolutionary zeal. Older folk growing worried, not letting their kids go out at night, reminiscing about''',
                 '''the Riots. Skilled, eloquent men and women making speeches on street corners, deep in the slums and far away from the guards. A powerful slinger taking''',
-                '''down dozens of Potion Lord lackeys."'''],
+                '''down dozens of Tristana's lackeys."'''],
             ['''"So, what they were saying, about 'freeing us.' They were telling the truth?" asks''', name() + "."],
-            ['''"As near as I can tell, they're sincere," says Maria uneasily. "Though I fail to see how sparking a two-front war with Avaricum and the Potion''',
-            '''Lords 'frees' anybody."'''],
+            ['''"As near as I can tell, they're sincere," says Maria uneasily. "Though I fail to see how sparking a two-front war with Avaricum and Tristana''',
+            ''''frees' anybody."'''],
             ['''Before''', name(), '''can respond, the door opens up, and Elise and Roland come out. Elise's face is streaked with tears. She is holding Roland's hand''',
                 '''with her right, while her left is clutching gingerly at her bottom.'''],
             ['''"Hey," says Maria, smiling. "Get through your spanking ok?"'''],
@@ -11922,6 +11918,7 @@ def maria_no_problems_function(node):
             ['''Elise grins, despite the hint of tears in her eyes. "Oh I am. I am."'''],
             ['''Maria chuckles as Roland and Elise make their way down the steps and towards the Inner City.''']])
     if 'taking_Carrie_home' in keywords():
+            conversation.allNodes[node.index].children = [ep1_maria_live, ep1_maria_dont_live]
             quip = universal.format_text([quip, ['''Carrie limps out a few seconds later. Her eyes light up when she sees''', name() + ".", '''"Hey''', name() + "!", '''Good news.''',
             '''Sister''',
                 '''Samantha is letting you take me home. Just so long as we use protection, have a safeword if things get rough, and she told me to tell you that if I''',
@@ -11941,7 +11938,7 @@ def maria_no_problems_function(node):
     else:
             quip = universal.format_text([quip, ['''"They're a cute couple," says Maria.'''],
                 [name(), '''shrugs.'''], '"' + ep1_maria_live_question(node)])
-    node.children = [ep1_maria_live, ep1_maria_dont_live]
+    conversation.allNodes[node.index].children = [ep1_maria_live, ep1_maria_dont_live]
     return quip
 
 def maria_no_problems_qf(node):
@@ -12057,7 +12054,7 @@ def maria_lied(node):
             universal.format_line(['''revealing a surprisingly modest pair of purple panties. However Sister Samantha also pulled down the panties, exposing the young woman's''',
                 '''round, plump orbs, still very red and sore looking from her earlier spanking.''']), '''Now, Samantha is beating a rapid tattoo on Carrie's''',
             '''rippling cheeks.''']]) 
-    node.children = [ep1_maria_submit, ep1_maria_resist]
+    conversation.allNodes[node.index].children = [ep1_maria_live, ep1_maria_dont_live]
     return quip
 
 
@@ -12120,7 +12117,7 @@ def ep1_maria_temper_continue(node):
             '''ravaged bottom.'''],
         ['''"Sorry, sorry, sorry," says Maria, following after''', name(), '''a few steps. "It's just, I've never been so scared in my life, as when the guards''',
         '''started talking about arresting you."''']])
-    node.children = [ep1_maria_temper_forgive, ep1_maria_temper_refuse, ep1_maria_temper_spank]
+    conversation.allNodes[node.index].children = [ep1_maria_temper_forgive, ep1_maria_temper_refuse, ep1_maria_temper_spank]
     return quip
 
 def ep1_maria_temper(node):
@@ -12230,11 +12227,11 @@ ep1_maria_temper_forgive.children = [ep1_maria_live, ep1_maria_dont_live]
 
 def ep1_maria_live_question(node):
     if 'boarding_with_Maria' in keywords():
-        node.children = None
+        conversation.allNodes[node.index].children = None
         quip = universal.format_text([['''"I'll see you at home?" asks Maria.'''], [name(), '''nods.'''], 
             ['''"Alright. Don't be too late," says Maria as she turns to leave.''']])
     else:
-        node.children = [ep1_maria_live, ep1_maria_dont_live]
+        conversation.allNodes[node.index].children = [ep1_maria_live, ep1_maria_dont_live]
         quip = universal.format_text([['''Anyway, I was wondering if you'd like to live with me. It's not much, but it's a home. In fact, we could even upgrade a little, and still only''',
             '''cost us each fifty matrons a month."'''],
             ['''"But what about rent?" asks''', name() + ".", '''"I don't have fifty matrons, and I have no idea when I'll be getting some."'''],
