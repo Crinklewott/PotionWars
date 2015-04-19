@@ -12231,8 +12231,10 @@ ep1_maria_temper_forgive.children = [ep1_maria_live, ep1_maria_dont_live]
 def ep1_maria_live_question(node):
     if 'boarding_with_Maria' in keywords():
         node.children = None
-        quip = universal.format_text([['''"I'll see you at home?" asks Maria.'''], [name(), '''nods.'''], ['''"Alright. Don't be too late," says Maria as she turns to leave.''']])
+        quip = universal.format_text([['''"I'll see you at home?" asks Maria.'''], [name(), '''nods.'''], 
+            ['''"Alright. Don't be too late," says Maria as she turns to leave.''']])
     else:
+        node.children = [ep1_maria_live, ep1_maria_dont_live]
         quip = universal.format_text([['''Anyway, I was wondering if you'd like to live with me. It's not much, but it's a home. In fact, we could even upgrade a little, and still only''',
             '''cost us each fifty matrons a month."'''],
             ['''"But what about rent?" asks''', name() + ".", '''"I don't have fifty matrons, and I have no idea when I'll be getting some."'''],
