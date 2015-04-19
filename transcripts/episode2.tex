@@ -30,6 +30,7 @@
     elise = universal.state.get_character("Elise.person")
     carrie = universal.state.get_character("Carrie.person")
     adrian = universal.state.get_character("Adrian.person")
+    airell = universal.state.get_character("Airell.person")
     guild = universal.state.get_room("Adventurer's Guild")
     textCommandsMusic.exitLeft(adrian, guild)
     kitchen = universal.state.get_room("Kitchen")
@@ -38,7 +39,7 @@
     if not kitchen in guild.adjacent:
         guild.add_adjacent(kitchen)
     bedroom = universal.state.get_room("Bedroom")
-    bedroom.description = universal.format_line(['''A small, bare room containing four beds in two stacks of two. The beds are feather-beds, complete with pillows''',
+    bedroom.description = universal.format_line(['''A small, bare room containing six beds in two stacks of two. The beds are feather-beds, complete with pillows''',
         '''and a few blankets. Adrian's''','''obscene''','''wealth continues to boggle the brain.''']) 
     slums = universal.state.get_room("Slums")
     shrine = universal.state.get_room("Shrine")
@@ -69,6 +70,7 @@
         textCommandsMusic.enterLeft(ildri, kitchen)
         textCommandsMusic.enterLeft(alondra, kitchen)
         textCommandsMusic.enterLeft(deidre, guild)
+        textCommandsMusic.enterLeft(airell, guild)
         textCommandsMusic.exitLeft(carrie, shrine)
         if 'introvert' in textCommandsMusic.keywords() or 'extrovert' in textCommandsMusic.keywords():
             textCommandsMusic.enterLeft(elise, shrine)
@@ -5518,6 +5520,433 @@ people's laps with her pants around her ankles.}
 \begin{closeScene}
         pass
 \end{closeScene}
+
+\begin{node}{ep2 airell}{Adventurer's Guild}{Airell}{Andrew Russell}
+
+    \childif{'punched\_Airell' in textCommandsMusic.keywords()}{ep2 airell face punch}
+
+    \childelif{'talk\_with\_Airell' in textCommandsMusic.keywords()}{ep2 airell talk}
+
+    \childelif{True}{ep2 airell busy}
+
+\end{node}
+
+\begin{childnode}{ep2 airell face punch}{Andrew Russell and Bonemouth the Boxfish}
+
+    \name{} runs a hand anxiously through \hisher{} hair, as \heshe{} considers the door into the back of the guild. Four weeks \heshe{} had been putting it off. How many times had \heshe{} gotten
+    up and decided "today was the day." The day \heshe{} finally confronted Airell and took the hell of a licking \heshe{} had coming. Not that it was \hisher{} fault or anything. Airell's a 
+    pompous ass. But a pompous ass whose got the ear of Adrian.
+
+    Best get it over with. Should have "gotten it over with" a month ago. Why didn't \heshe{} get it over with a month ago? \name{} enters the back of the guild, and makes \hisher{} way downstairs
+    to Airell's classroom. 
+
+    \child{Notice that Airell is in the middle of a class, and wait until it ends.}{ep2 airell wait}
+
+    \child{Walk right in and confront Airell.}{ep2 airell dont wait}
+
+\end{childnode}
+
+\begin{childnode}{ep2 airell wait}{Bonemouth the Boxfish}
+
+    \name{} paces anxiously back and forth in front of the hallway, \hisher{} stomach clenching nervously. A few times \heshe{} hears a sharp crack, followed by a cry of pain emanate from 
+    Airell's classroom. \HeShe{} winces each time. That'll be \himher{} in a few minutes, only it won't be a single smack. Oh no, it'll be so much more.
+
+    At one point, Cosima exits her own training room. She smiles when she sees \name{}. "Hey \nickname{}. What's up?"
+
+    \name{} gestures to Airell's room.
+
+    A knowing smirk creases Cosima's lips. "Oh I see. Finally paying your dues eh? I heard you punched Airell in the face. Is that true?"
+
+    \name{} nods.
+
+    "Bet you're regretting it now, huh?"
+
+    \name{} shakes \hisher{} head.
+
+    Cosima throws her head back and laughs. "Mother love, you've got spunk if nothing else."
+
+    \name{} shrugs. "I'll be happy when it's over, though."
+
+    \cond{'spar\_with\_Cosima' in textCommandsMusic.keywords()}{"Doesn't surprise me. Don't forget we've still got a little sparring match, you and I. Though you might want to wait a few days. My 
+        paddle stings like you wouldn't believe over stripes."}
+        {\cond{'talk\_with\_Cosima'}{"Doesn't surprise me. Don't forget he's not the only one who owes you a spanking," says Cosima, givingt \name{} a stern look. "And you'd better report soon. 
+        Or I'll give you worse."}{"Doesn't surprise me. Well, good luck. And don't bother trying to keep the tears in. He won't stop until you've sobbed yourself hoarse. Better sooner rather than
+    later."}}
+
+    With that, Cosima turned and headed up the stairs.
+
+    Then, Airell's six students filter out. One of the adventurers throws \name{} a confused look. Then her friend leans in and whispers something. The girl's confusion turns into a smirk as
+    the three make their down the hall towards Mai's maze. \name{} takes a deep breath, then enters the magic training room, \hisher{} eyes downcast. 
+
+    "Ah, I've expected you. \name{}, is it?" asks Airell as \names{} footsteps echo across the room. 
+
+    \name{} looks at the pale-skinned slinger whom \heshe{} had dared punch. \HeShe{} had the same wild red mane and bushy beard as always. \name{} wonders idly if the man has ever heard of a razor. 
+    Airell is sitting at a desk in the corner of the damaged training room busying himself with paperwork. After several awkward seconds, he tells Juliana, "Well, don't just stand there. Bring that 
+    stool out of the corner and place it in the middle of the room."
+
+    \name{} complies. Airell opens his desk drawer and slides out a thick, 16-inch-long wooden paddle with two rows of holes running down its length. He then gets up from his desk and strides over 
+    to \name{}. "Very well! Now, Morey was attempting to teach you a very important lesson when he punished you, initiate. Do you remember what it was?"
+
+    \continue{ep2 remember what morey was trying to teach}
+
+\end{childnode}
+
+\begin{childnode}{ep2 airell dont wait}{Bonemouth the Boxfish}
+
+    \name{} nonchalantly enters the magic training room without so much as knocking. 
+
+    "Stop right there, young \manlady{}!" cries the instructor, the pale-skinned slinger with the same wild red mane and bushy beard whom Juliana had dared punch in the nose. \name{} notices he's 
+    standing next to a stool and brandishing that wicked switch she encountered earlier. "To the front of the class, please!"
+    
+    The students, paired up and hunched over small desks to  try and light a candle, look up to see the \pmusculature{soft}{fit}{muscular}, \pbodytype{short}{average}{tall}{massive} 
+    \boygirl{} 
+    stand in front of Airell. \name{} takes another breath, and tries not to wither under his stern gaze. 
+    
+    "I imagine you know why I'm here," says \name{}, trying to hide \hisher{} discomfort as the eyes of the six students bore into \himher{}. "Err, couldn't we get this over with in private while 
+    the kids here do some busywork?"
+    
+"Impertinence!" The slinger's voice booms again as he snaps the switch down to his side. "You dare to interrupt my class, then insult my diligent students? Unlike you, 
+\boygirl{}, they have been nothing but respectful." Airell strokes his hand through his thick beard and continues, "However, I surmise they won't be the only ones learning lessons today." 
+
+\name{} rolls \hisher{} eyes. "How clever. Think of that all by yourself?"
+
+"Indeed. Thought of this too." Airell brings up one hand, then the other in a swift motion. Energy immediately flows from them and coalesces into the ethereal hands of the Spectral Spanking spell 
+\name{} is beginning to see far too often. However, this time, there's something new -- though the hands are smaller than the ones she's used to, there are three sets. 
+
+"Wha--?" says \name{} as each of her wrists is clenched by a spectral hand. With a flick of his wrist, Airell directs them toward the tall stool at the front of the room. 
+They drag their helpless captive towards the stool. Once at their destination, the hands easily bend \name{} over the stool, \pheight{}{which is lifted slightly into the air by two of the 
+spectral hands,}{which is lifted into the
+air by two of the spectral hands,}{which is lifted into the air by two of the spectal hands,} forcing \name{} to point \hisher{} toes downward to support the weight of \hisher{} lower body. The
+hands holding \himher{}
+clasp \hisher{} wrists tightly beside the legs of the stool's far side. Though \heshe{} has a good idea of what will happen next, \name{} nonetheless cranes \hisher{} neck around behind \himher{} 
+to see not only the eager eyes of the students, but also the two remaining spectral hands come into an ominous position several inches behind and above \hisher{} bottom. \HeShe{} groans.
+
+"Now, you keep it down while I finish today's lesson, \boygirl{}," says Airell. He flicks his wrist again. One spectral hand smacks the curved top of \names{} 
+left cheek, and almost immediately after, the other smacks the same place on the opposite cheek. \name{} tenses at the sharp pain. This one-two motion is repeated five times in the same place before 
+moving down half an inch.
+
+\name{} swiftly learns that unlike the usual spell, each one of these Spectral Hands is uniquely shaped to \hisher{} \bumadj{} hindquarters. They don't even have to move laterally to perfectly 
+cover the full swath of \hisher{} \bumadj{}, \quivering{} bottom. 
+
+Seeing that his spell is acting as intended, Airell nonchalantly turns back to the classroom to finish his lecture. Meanwhile, \name{} struggles to remain silent as \hisher{} \muscleadj{} butt 
+is endlessly drummed by two tireless, stinging hands. \HeShe{} quickly begins to deeply regret interrupting the slinger's class. Then the methodical hands reach \hisher{} sit spots. 
+
+At that point, 
+\heshe{} can't hold back the vocal protests. \HeShe{} also begins violently rocking \hisher{} hips to ease the sting. 
+
+"Jessica! Leena!" exclaims Airell as he walks over to the desk shared by two young Carnutian women. The first is a raven-haired girl with large breasts spilling over onto her desk, and the other is 
+the 
+girl she was giggling with, a smaller, auburn-haired girl with a build not unlike Maria's. Both stop and sit upright at the instructor's roar.
+
+"How many times have I had to tell you: if you can't focus while someone is being spanked, how can you expect to focus during a battle?" Airell sweeps the candle off the desk, and conjures yet 
+another set of spectral hands, each of 
+which roughly lifts a girl by the collar and bends her over the desk. Their bottoms wave in the air as a spectral bar presses against the small of the girls' backs, forcing them to arch their
+backs and push up their bottoms, their
+short pleated skirts riding high up the girls' thighs.
+
+"W-we're sorry, sir," pleads Leena, while Jessica thrashes her legs from side to side in an attempt to right herself, giving the portion of the class not red-facedly looking away a glimpse of her 
+pale butt cheeks. 
+
+"I have had it with your apologies!" Airell strides up behind Lenna and lifts her skirt to reveal a pair of boyshorts that hug the girl's compact bottom. "It's a full dozen for you 
+this time, girl!"
+
+With that, Airell sets the girl's bottom ablaze with strokes from his switch that leave crimps in her boyshorts from top to bottom. She's sobbing by the time he crisscrosses the strokes across her 
+entire bottom, which is firm enough to make the switch bounce right back after it lands, again and again. She howls after each and bucks her hips but to no avail.
+
+"Let that be a lesson to you, girl," Airell admonishes with a final stroke of his switch, turning to Jessica. "As for you, troublemaker, it's double! Don't think I'm oblivion as to who instigates 
+these outbursts." 
+
+"You mean 'oblivious!' And I hope that old stick of yours breaks on me!" Jessica snarls as Airell drapes her skirt across her back, revealing an unmarked, creamy bottom with lacy panties flirting 
+across its wide expanse. 
+
+"We'll just have to make sure there's nothing in its way, then!" Airell exclaims as he tugs down the tight-fitting panties, leaving Jessica's most intimate parts exposed to most of the class as 
+several students gasp (and several more leer).
+
+Jessica barely has time to gasp herself, as the switch begins tattooing her vulnerable ass from top to bottom. It doesn't take long before the girl begins apologizing and pleading, but the flexible 
+switch inexorably 
+falls a full 24 times. The girl blubbers apologies, wetting the floor below her with her tears. 
+
+"Now, girls, concentrate on the lesson!" says Airell as he lands the last of Jessica's stripes to her voluptuous, but now angrily red, behind. "Magic is too powerful to treat with irreverence. We're 
+training for the battlefield. Never forget that!"
+
+"Y-yes, sir!" the girls stutter through sniffles. The spectral bar that had been holding them so tightly dissipates, and each student rights herself. Jessica carefully pulls her panties up over her 
+chubby behind with a wince. Both punished girls turn their attention back to the candle that Airell sets back on the desk. 
+
+Finished with his unruly students, Airell turns his attention to the wailing \name{}, whose screams have begun to echo throughout the classroom. He sighs. "Excuse me, pupils," he says. He motions 
+his hands in a way that makes the spectral versions holding Juliana's wrists bring them up over her head. Then, the other set \ptrousers{unbuttons \hisher{} trousers and begin sliding them down 
+    \hisher{} 
+hips.}{grabs the hem of \names{} \trousers{} and lifts it up and over \hisher{} throbbing bottom.}{yanks \names{} \underwearpanties{} up between \names{} \bumadj{} cheeks.} \name{} begins to protest 
+but stops when Airell tuts. "That's enough out of you, naughty \boygirl{}. Class is nearly over, and if you want to get through it with any dignity at all, you will not interrupt 
+again."
+
+Now that they have mostly revealed their target, the hands return \name{} to her position of penitence and begin slapping \hisher{} ass right where they left off. \name{} resigns \himselfherself{} 
+to the punishment. \HeShe{} wriggles \hisher{} butt lewdly, but manages to keep \hisher{} moans of pain muted enough to not draw more attention from Airell. 
+
+There is no the students' lesson ended prematurely, but after what seems like an age to Juliana, Airell finishes his lecture and dismisses the class. Seeing that his ethereal hands have covered 
+every inch of Juliana's bottom at least twice over (depending on the spot), he pauses them, and \pwearingunderwear{whisks down \hisher{} \underwear{}, and}{pats \hisher{} bare bottom, and} inspect 
+their progress. 
+
+After inspecting \hisher{} battered butt, Airell asks, "That should be enough to teach you not to interrupt the most important class in the guild, yes?" 
+
+\name{} nods \hisher{} affirmation. 
+
+"Good. Corner time for you, then!" exclaims Airell. "I will get to you shortly. Until then, you will stand silently with your nose pressed firmly against the wall, and you will keep your hands on 
+your head until I say otherwise. Even think of deifying me, and I give you a very thorough demonstration of exactly what that spell is capable of."
+
+The spectral hands gripping \names{} wrists loosen enough to free \himher{} of the stool. Once \name{} stands, they guide \himher{} toward the far corner of the room. \name{} hobbles quickly, but 
+not quickly enough to prevent several more swats from the other pair of spectral hands. They dissipate (thank La Madre!) once \name{} is in the desired spot, where \heshe{} quickly does as 
+instructed. Satisfied for now, Airell retires to the other end of the room to deal with paperwork.
+
+Thirty minutes pass. Thirty minutes of staring at the most boring wall imaginable. Thirty minutes of shifting from foot to foot, trying to find some comfort for \hisher{} burning legs. Thirty
+minutes of resisting every overpowering urge to rub \hisher{} throbbing, burning, pulsing bottom. 
+
+"Very well! You may replace your clothing!" exclaims Airell. As \name{} eagerly takes him up on the offer, he opens his desk drawer, reaches into it and slides out a thick, 16-inch-long wooden 
+paddle with two rows of holes running down its length. He then gets up from his desk and strides over to Juliana, tapping the paddle ominously against his thigh. "Now, Morey was attempting to teach 
+you a very important lesson when he punished you, initiate. Do you remember what it was?"
+
+\continue{ep2 remember what morey was trying to teach}
+
+\end{childnode}
+
+\begin{childnode}{ep2 remember what morey was trying to teach}{Bonemouth the Boxfish}
+
+    \child{Hang your head dejectedly. "That I should only strike an instructor if my safety is threatened, sir."}{ep2 airell recall moreys lesson}
+
+    \child{Turn your head to the side in a huff. "That you get to treat me however you want, because you're a cranky old windbag, right?"}{ep2 airell moreys lesson bratty}
+
+\end{childnode}
+
+\begin{childnode}{ep2 airell recall moreys lesson}{Bonemouth the Boxfish}
+
+"Yes, that is correct. Now, we shall drive that lesson home," says Airell as he sits on the stool and stands the ominous paddle up against a rear leg of the stool. "Over my knee, \boygirl{}!"
+
+\name{} drapes \himselfherself{} over the slinger's lap, \hisher{} bottom stretching the fabric of \hisher{} \trousers{}. The spectral hands holding the stool adjust it to \names{} height, arcing 
+the woman over Airell's thighs, making \hisher{} butt \hisher{} highest point, and \hisher{} toes barely touching the floor. 
+
+"I hope you didn't think I'd use Spectral Spanking for meting out all my discipline! Even I believe that a corporeal aspect is sometimes needed when delivering corporal punishment," says Airell 
+as he takes hold of Juliana's right hand in his left, and smacks \hisher{} behind with his right. 
+
+If \name{} expected the slinger to be a weak bookworm, \heshe{} is sorely dissapointed. Airell's practiced hand rises and falls methodically across every part of \hisher{} \quivering{} behind while 
+\heshe{} ineffectually squirms. 
+
+"You'd just as well crease your movement right now, young \manlady{}." Airell tightens his grip on \name{}.
+
+"You mean--OW! You mean 'cease'!" says \name{} between smacks. 
+
+"Whatever! Don't you know better than to interrupt your instructors?" 
+
+Airell hikes a knee up \ptrousers{so he can get to \names{} trouser buttons and undo them. Then he quickly shimmies the \trousers{} down \names{} \pmusculature{doughy}{fit}{solid} hips to 
+bunch around \hisher{} knees.}{to push \names{} \muscleadj{} bottom higher into the air, and flips \names{} \trousers{} up onto the small of \hisher{} back}{to push \names{} \muscleadj{} bottom
+higher into the air. Then he gathers \names{} \underwearpanties{} and yanks them up into \names{} crack, inflicting a deeply uncomfortable wedgie upon the chastised adventurer, and almost fully 
+exposing \names{} \bumadj{} cheeks.}
+
+"This" SMACK! "is" WHAP! "a very" SLAP! "important" CLAP! "lesson, my girl!" 
+
+As Airell continues lecturing \name{} while manifesting his inflections with his hand against \bumadj{}, \pwearingunderwear{\underwear{}-covered}{bare} bottom, \name{} begins to wish \heshe{} 
+had never antagonized Airell and begins to plead for him to stop.
+
+"Very well!" says Airell to \names{} surprise. "However, I want to see nothing but bare skin below your waist and for you to bend over this stool intermittently. I'm a very busy man."
+
+\continue{ep2 airell finish}
+
+\end{childnode}
+
+\begin{childnode}{ep2 airell moreys lesson bratty}{Bonemouth the Boxfish}
+
+    "What. Did. You. Say?" roars Airell. If \name{} had had \hisher{} eyes on his, \heshe{} would have seen them flash. \HeShe{} only has a moment to consider whether the thunder \heshe{} just heard 
+    was a coincidence as \heshe{} is jerked in the direction of the stool. \HeShe{} hops in midair as the holey paddle strikes \hisher{} \trousers{}-clad bottom with full force, but the slinger 
+    maintains his harsh hold on \names{} appendage. \names{} \bumadj{} butt and thighs are battered with the hard paddle as the two slowly make their way to their destination despite \names{} 
+    protests. 
+
+    The sore-bottomed \boygirl{} and an angry slinger arrive at the stool, over which \name{} is roughly forced. Airell never stops swinging the paddle, tattooing the \boygirl{}'s bottom even 
+    through \hisher{} \trousers{} \pwearingunderwear{and \underwearpanties{}}{}. 
+
+    After Airell has covered \names{} entire \bumadj{} bottom with his hard swats, he tugs \hisher{} \trousers{} \pwearingunderwear{and \underwearpanties{}} down with a vengeance and repeats the 
+    entire process on \hisher{} bare ass, which violently bounces left and right with Airell's staccato rhythm. \name{} is weeping openly by the time the slinger addresses \himher{} again, asking if 
+    \heshe is ready to cooperate. Just as Airell finishes his sentence, \name{} hears a "whoosh" followed by a loud "SPLAT!" as the paddle slams into the very center of \hisher{} bottom harder than 
+    it had before, covering both cheeks. The \boygirl{}'s tears flow freely as the swat is immediately followed up by another to the top of \hisher{} behind and a third directly on \hisher{} sit 
+    spots. \name{} howls and drums \hisher{} feet against the floor but keeps a death grip on the stool's legs. 
+
+    Airell gives \name{} a minute to get \himselfherself{} under control, after which \heshe{} realizes that holding \hisher{} position has required \himher{} to spread \hisher{} legs a bit,
+    revealing all \hisher{} most sensitive bits to the slinger. \HeShe{}
+    curses \himselfherself{} for getting \himselfherself{} in this situation.
+
+    Airell inspects the considerable damage \heshe{} has wrought to the \boygirl{}'s \bumadj{} backside. "Hmm. You do seem to finally be acting sincerely, and with a bit of discipline. After a few 
+    more strokes, you will be free to go."
+
+"A-a f-f-few, sir?" 
+
+"Aye. You're due seven more licks. To show mercy on this already battered bottom, I'll allow most of these to be on your thighs."
+
+\name{} groans and contemplates challenging this sentence on account of having taken several swats to her thighs already, but decides not to risk any impertinence again. Besides, \heshe{} is 
+pretty sure \hisher{} sensitive ass can't take much more punishment.
+
+\HisHer{} reverie is quickly interrupted by four rapid swats, two to each thigh. \names{} tears run in a stream down \hisher{} face, but \heshe{} somehow maintains \hisher{} position. Then two more 
+strokes land on the same spots. \HeShe{} begins to moan as the final stroke is swung, landing directly on \hisher{} sit spot in a mighty "WHAP!"
+
+\name{} is gently helped off the stool. Dressing is done with care and only after some tender rubbing. 
+
+"Alright, we're done here," says Airell. He returns to his desk and returns the paddle to its place. "Now get out of here. I've got a sparring match with Morey in a few minutes."
+
+\name{} hussles out of the classroom. 
+
+\bummarks{universal.state.player}{\names{} \bumadj{} bottom is coated in handmarks, overlaid by more than a few large paddle marks.}
+
+\begin{code}
+
+    airell = universal.state.get_character("Airell.person")
+    airell.litany = airell.defaultLitany = None
+
+\end{code}
+
+\end{childnode}
+
+\begin{childnode}{ep2 airell talk}{Andrew Russell}
+
+    As \name{} approaches Airell's training room, half a dozen students are filing out. Two of them, a buxom raven-haired girl, and a slender brunette glance at \name{} and giggle to themselves.
+    \name{} ignores them, and enters Airell's training room.
+
+    Airell is sitting behind a desk in the far corner, riffling through sheets of parchment. \name{} shakes \hisher{} head in bemusement. \HeShe{} would have to thank Nana for forcing \himher{}
+    to learn how to read. It'd be so embarassing, being illiterate while surrounded by all this writing.
+
+    "Ah, \name{}," says Airell, breaking into a broad grin. "Finally hear to pay for your blatant disrespect?"
+
+    \names{} lips tighten, and \heshe{} nods.
+
+    Airell nods, and waves his hand. A pair of small spectral hands appear in the air above him. \name{} tenses, but the hands instead float over and grasp a stool sitting in front
+    of the room. Airell flicks his wrists a few times, and the hands lift and carry the stool towards \name{}. "Good. Now bare your bottom and bend over that stool."
+
+    "Bare? Oh come on, it wasn't--"
+
+    "Indeed it wasn't, but it's taken you a full month to report for your chastisement!" roars Airell, bolting to his feet. "A month! I've known elves with more spine than you! Now bend over that
+    stool intermittently! I'm a very busy man!"
+
+    \continue{ep2 airell finish}
+
+\end{childnode}
+
+\begin{childnode}{ep2 airell finish}{Bonemouth the Boxfish}
+
+    \child{"Y-yes sir."}{ep2 airell finish cooperative}
+
+    \child{"You mean 'immediately!' Why don't you--"}{ep2 airell finish combative}
+
+\end{childnode}
+
+\begin{childnode}{ep2 airell finish cooperative}{Bonemouth the Boxfish}
+
+    \cond{'punched\_Airell' in textCommandsMusic.keywords()}{\name{} nimbly climbs off the slinger's lap, this time ignoring his mistake in speech.}{\name{} grimaces, but doesn't protest further.} 
+    \HeShe{} 
+    removes \hisher{} \trousers{}
+    \pwearingunderwear{and panties,}{,} 
+    then bends over the stool and reaches toward the bottom of the legs furthest from \himher{}. The spectral hands holding the stool raise it to a height that begins to be uncomfortable. As it 
+    the hands lift \hisher{} hips to a point where \heshe{} has to stand on \hisher{} toes, \heshe{} feels \hisher{} sore round bottom bloom, the skin stretching tautly across it. 
+
+\cond{'talk\_with\_Airell' in textCommandsMusic.keywords()}{"Now," says Airell. "You will receive your promised paddling. And just in case you think I may have forgotten,  I recall guaranteeing you 
+'a thorough paddling that will have you crying and begging me to stop afore we are even half done!'"}{} 
+
+\cond{'talk\_with\_Airell' in textCommandsMusic.keywords()}{\name{} moans. \HeShe{} has nothing more to say as \heshe{} silently curses the uncanny memory of this old fart.}{} 
+
+Airell has retrieved his wicked paddle and is tapping it against the palm of his hand menacingly. "Excellent! I see this is not the first time you've followed such orders. Let this be a reminder 
+that none of mine are to be ignored!" 
+
+Just as he finishes his sentence, \name{} hears a "whoosh" followed by a loud "SPLAT!" as the paddle slams into the very center of \hisher{} bottom, covering both cheeks. The \boygirl{}'s tears flow 
+freely as the swat is immediately followed by another to the top of \hisher{} behind and a third directly on \hisher{} sit spots. \name{} howls and drums \hisher{} feet against the floor but keeps a 
+death grip on the stool's legs. 
+
+Airell gives \name{} a minute to get \himselfherself{} under control, after which \heshe{} realizes that holding \hisher{} position has required \himher{} to spread \hisher{} legs a bit, exposing
+all \hisher{} most sensitive bits. \HeShe{} curses \himselfherself{} for getting into this situation in the first place.
+
+"You have taken your paddling so far with discipline, which I respect," says Airell. "After a few more strokes, you will be free to go."
+
+"A-a f-f-few, sir?" 
+
+"Aye. You'll only be getting the minimum of 10 today, and to show mercy on this already battered bottom, I'll allow most of the remainder to be on your thighs."
+
+\name{} groans but decides not to risk "interfering" again. Besides, \heshe{} is pretty sure \hisher{} sensitive ass can't take much more punishment.
+
+\HisHer{} reverie is quickly interrupted by four rapid swats, two to each thigh. \names{} tears run in a stream down \hisher{} face, but \heshe{} somehow maintains \hisher{} position as two more 
+strokes strike the same spots. \HeShe{} begins to moan in pain as the final stroke is swung, landing directly on \hisher{} sit spot in a mighty "WHAP!"
+
+\name{} is gently helped off the stool. Dressing is done with care and only after some tender rubbing. 
+
+"We are done here," says Airell. He returns to his desk, and replaces the paddle in its drawer. "You are free to go. And remember what you learned here: You will treat me with the utmost respect 
+at all times."
+
+"Yes sir," mutters \name{} as \heshe{} scurries out of that accursed classroom.
+
+\bummarks{universal.state.player}{\names{} \bumadj{} bottom is coated in handmarks, overlaid by more than a few large paddle marks.}
+
+\begin{code}
+
+    airell = universal.state.get_character("Airell.person")
+    airell.litany = airell.defaultLitany = None
+
+\end{code}
+
+
+\end{childnode}
+
+\begin{childnode}{ep2 airell finish combative}{Bonemouth the Boxfish}
+
+    \name{} doesn't have time to finish \hisher{} sentence before \heshe{} is yanked up onto \hisher{} feet, had \hisher{} \ptrousers{\trousers{} \pwearingunderwear{and \underwearpanties{}}{} 
+    whisked down to \hisher{} ankles,}{\hisher{} \trousers{} lifted \pwearingunderwear{and \underwearpanties{} whisked down to \hisher{} ankles,}{}}{\hisher{} \underwear{} whisked down to \hisher{}
+        ankles,} and then
+        draped back over the slinger's lap. This time Airell locks \names{} arm tightly locked against \hisher{} back, and traps one of \names{} legs his own. \name{} hears the grating of wood on 
+        wood to \hisher{} right and doesn't have to guess that the paddle is being brought to bear, as it crashes into \hisher{} already-sore bottom with a sharp "WHAP!"
+
+        Airell pummels the Taironan's bottom with the heavy instrument, the impacts of which shake \hisher{} round globes as gale winds shake trees. \name{} squeals and bucks, succeeding in nothing 
+        but offering fresh territory to \hisher{} punisher. As \hisher{} thighs part, Airell dexterously swats their interiors, making sure that \name{} will be walking (as well as sitting) gingerly 
+        for quite some time. 
+
+        Eventually, the \boygirl{} stops fighting Airell and moans apologetically as hot tears roll down \hisher{} face. This time, when asked if \heshe{} will put \himselfherself{} in position for 
+        \hisher{} final swats, \heshe{} quickly climbs off the slinger's lap. \HeShe{} bends over the stool and grasps toward the bottom of the legs furthest from her. The specral hands holding the
+        stool raise the stool height (and \names{} hips) until \name{} has to stand on \hisher{} toes. \names{} sore, \bumadj{} bottom blooms, the skin stretching tautly. 
+
+Airell retrieves his wicked paddle and taps it against the palm of his hand. "Excellent! I see this is not the first time you've followed such orders. Let this be a reminder that none of mine are to 
+be ignored!" 
+
+Just as he finishes his sentence, \name{} hears a "whoosh" followed by a loud "SPLAT!" as the paddle slams into the very center of \hisher{} bottom, covering both cheeks. The \boygirl{}'s tears flow 
+freely as the swat is immediately followed up by another to the top of \hisher{} behind and a third directly on \hisher{} sit spots. \name{} howls and drums \hisher{} feet against the floor but 
+keeps a death grip on the stool's legs. 
+
+Airell gives \name{} a minute to get \himselfherself{} under control, after which \name{} realizes that holding \hisher{} position has required \himher{} to spread \hisher{} legs a bit. \HeShe{} 
+curses \himselfherself{} for getting into this situation in the first place.
+
+Airell inspects the considerable damage he's wrought. "Hmm. You do seem to finally be acting sincerely, and with a bit of discipline. After a few more strokes, you will be free to go."
+
+"A- a f-f-few, sir?" 
+
+"Aye. You're due seven more licks. To show mercy on this already battered bottom, I'll allow most of these to be on your thighs."
+
+\name{} groans but decides not to risk "interfering" again. Besides, \heshe{} is pretty sure \hisher{} sensitive ass can't take much more punishment.
+
+\HisHer{} reverie is quickly interrupted by four rapid swats, two to each thigh. \names{} tears run in a stream down \hisher{} face, but \heshe{} somehow maintains \hisher{} position as two more 
+strokes land in the same spots. \HeShe{} begins to moan as the final stroke is swung, landing directly on \hisher{} sit spot with a mighty "WHAP!"
+
+After the final blow lands, \name{} is gently helped off the stool. Dressing is done with care and only after some tender rubbing. 
+
+"We are done here," says Airell. He returns to his desk and slips the paddle back into its drawer. "Let this be a lesson to you. You always treat me, and all your instructors, with respect."
+
+\name{} nods, and waddles out of the room.
+
+\bummarks{universal.state.player}{\names{} bottom is coated in a layer of paddle shaped bruises overlaid on top of myriad handprints. \HisHer{} thighs are also more than a little red.}
+
+\begin{code}
+
+    airell = universal.state.get_character("Airell.person")
+    airell.litany = airell.defaultLitany = None
+
+\end{code}
+
+\end{childnode}
+
+\begin{childnode}{ep2 airell busy}{Andrew Russell}
+
+    \name{} drops by Airell's training room, and peeks in. Airell is in the middle of teaching a group of six fledgling adventurers some of the intricacies of magic. \name{} decides not to bother
+    them, and closes the door.
+
+\end{childnode}
 
 \end{document}
 
