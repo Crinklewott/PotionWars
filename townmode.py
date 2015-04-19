@@ -944,6 +944,7 @@ def talk(previousModeIn):
     talkableCharacters = [c for cName, c in universal.state.location.characters.iteritems() if 
             not party.inParty(c)]
     if talkableCharacters:
+        print(talkableCharacters)
         universal.say('Who would you like to speak to?\n')
         universal.say('\n'.join([j + name for j, name in zip(
             [str(i) + '. ' for i in range(1, len(talkableCharacters)+1)],

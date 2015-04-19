@@ -31,7 +31,7 @@ import os
 import math
 import ast
 
-DEBUG = False
+DEBUG = True
 SAVE_DELIMITER = '%%%'
 
 
@@ -228,8 +228,10 @@ def set_commands(newCommands, colors=None):
         raise ValueError('Number of commands cannot exceed 9. Problem commands: ' + ', '.join(newCommands))
     else:
         commands = newCommands
-        #(LIGHT_GREY,) is necessary as opposed to LIGHT_GREY in order to ensure that we get len(commands) copies of LIGHT_GREY, rather than the numbers in the tuple that LIGHT_GREY represents.
+        #[LIGHT_GREY] is necessary as opposed to LIGHT_GREY in order to ensure that we get len(commands) copies of LIGHT_GREY, rather than the numbers in the tuple that 
+        #LIGHT_GREY represents.
         commandColors = colors if colors else [LIGHT_GREY] * len(commands)
+        
 
 def get_commands():
     """
@@ -410,7 +412,7 @@ FONT_LIST_TITLE = 'Verdana'
 
 
 COMMAND_VIEW_LINE_WIDTH = 10
-BLACK = (0,0,0)
+BLACK = (0, 0, 0)
 DARK_BLUE = (11, 21, 40) 
 ORANGE =  (130, 84, 70)
 #DARK_BLUE = (70, 73, 130) 
@@ -1015,8 +1017,8 @@ class State(object):
             except ValueError:
                 _, player, characters, rooms, bedroom, party, location, itemList, difficulty = fileData.split('State Data:')
                 clearedSquares = ''
-            enemiesCanSpank = True
-        self.enemiesCanSpank = enemiesCanSpank
+            enemiesCanSpank = "True"
+        self.enemiesCanSpank = enemiesCanSpank.lower() == "true"
         person.PlayerCharacter.load(player, self.player)   
         rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
         for roomData in rooms:

@@ -629,9 +629,45 @@ class Carrie(p.Person):
         self.equip(itemspotionwars.carriesGString)
         self.equip(itemspotionwars.carriesDress)
         self.specialization = universal.BUFF_MAGIC
-        self.primaryStats = [0, 1, 2, 4, 1]  
+        self.primaryStats = [0, 1, 3, 4, 1, 20, 40, 20, 40]  
+        self.coins = 0
+
     def reset_stats(self, episode=None):
         return Carrie(self.defaultLitany, self.litany)
+
+    def health(self):
+        try:
+            return super(Carrie, self).health()
+        except IndexError:
+            self.fix_stats()
+            return super(Carrie, self).health()
+
+    def current_health(self):
+        try:
+            return super(Carrie, self).current_health()
+        except IndexError:
+            self.fix_stats()
+            return super(Carrie, self).current_health()
+
+    def mana(self):
+        try:
+            return super(Carrie, self).mana()
+        except IndexError:
+            self.fix_stats()
+            return super(Carrie, self).mana()
+
+    def current_mana(self):
+        try:
+            return super(Carrie, self).current_mana()
+        except IndexError:
+            self.fix_stats()
+            return super(Carrie, self).current_mana()
+
+    def fix_stats(self):
+        self.primaryStats.append(20) 
+        self.primaryStats.append(40) 
+        self.primaryStats.append(20) 
+        self.primaryStats.append(40) 
 
 carrie = Carrie(None, None)
 offStage.add_character(carrie)

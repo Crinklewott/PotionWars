@@ -74,7 +74,7 @@ def window_shop():
     else:
         say_title('Please select a character to go shopping.')
         universal.say(person.get_party().display())
-        set_commands('(#) Select a character.', '<==Back')
+        set_commands(['(#) Select a character.', '<==Back'])
         set_command_interpreter(select_character_to_buy_interpreter)
 
 def window_shop_person_chosen():
@@ -91,6 +91,7 @@ def window_shop_person_chosen():
     set_command_interpreter(window_shop_interpreter)
 
 def select_character_to_buy_interpreter(keyEvent):
+    global chosenPerson
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key)) - 1
         if 0 <= num and num < person.get_party().len():
