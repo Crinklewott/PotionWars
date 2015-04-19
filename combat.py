@@ -1676,6 +1676,7 @@ def specialization_bonus(ally, i):
 
 HIGH_STAT_PENALTY = .1
 HEALTH_MULTIPLIER = .05
+MANA_MULTIPLIER = .05
 def improve_characters(victorious, afterCombatEvent=None):
     """
     Takes as argument the function that should be invoked after leveling up is complete.
@@ -1706,7 +1707,7 @@ def improve_characters(victorious, afterCombatEvent=None):
                     gain += 1
                     ally.improve_stat(i, 1)
                     if i == universal.TALENT:
-                        manaGain += int(math.ceil(ally.mana() * .5))
+                        manaGain += int(math.ceil(ally.mana() * MANA_MULTIPLIER))
                         ally.improve_stat(person.MANA, manaGain)
                     ally.increaseStatPoints[i] -= stat 
                 statPoints = ally.increaseStatPoints[i]
