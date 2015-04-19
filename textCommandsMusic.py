@@ -21,6 +21,7 @@ import music
 import titleScreen
 import townmode
 import universal
+import person
 
 
 def enterLeft(character, room):
@@ -197,7 +198,7 @@ music.set_victory(universal.resource_path('POL-the-challenge-long.wav'))
 titleScreen.set_opening_crawl(CHURCH)
 
 #A dummy character who exists solely to give us someone to talk to for arbitrary conversations. Conversations are incorporated into the dungeons as follows:
-maze = Person("maze", FEMALE, None, None)
+maze = person.Person("maze", person.FEMALE, None, None)
 
 def begin_maze_event(node, eventTitle):
     """
