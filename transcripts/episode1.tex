@@ -13,38 +13,183 @@
 \begin{document}
 \maketitle
 \begin{openScene}
-    print('starting\\_scene\_1')
-    universal.state.set\_init\_scene(init\_episode\_1\_scene\_1)
+    universal.state.clear_previous_scene()
+    universal.state.set_init_scene(init_episode_1_scene_1)
     assert(universal.state.player)
-    edge = universal.state.get\_room(edgeOfAvaricum)
+    carol = universal.state.get_character('Carol.person')
+    peter = universal.state.get_character('Peter.person')
+    maria = universal.state.get_character('Maria.person')
+    elise = universal.state.get_character('Elise.person')
+    adrian = universal.state.get_character('Adrian.person')
+    southGuard = universal.state.get_character('Guard.person')
+    
+    edge = universal.state.get_room(edgeOfAvaricum)
+    guild = universal.state.get_room("Adventurer's Guild")
+    square = universal.state.get_room("Avaricum Square")
+    stateShrine = universal.state.get_room(shrine)
+    tailors = universal.state.get_room("Therese's Tailors)
+    armorShop = universal.state.get_room("Wesley and Anne's Smithy")
+    slums = universal.state.get_room("Slums")
+    craftmansCorridor = universal.state.get_room("Craftman's Corridor")
+    mariasHome = universal.state.get_room("Maria's Home")
+    bedroom = universal.state.get_room("Bedroom")
+
+    edge.add_adjacent(square)
+    square.add_adjacent(stateShrine)
+    square.add_adjacent(craftmansCorridor)
+    craftmansCorridor.add_adjacent(guild)
+    craftmansCorridor.add_adjacent(tailors)
+    craftmansCorridor.add_adjacent(armorShop)
+    craftmansCorridor.add_adjacent(slums)
+    slums.add_adjacent(mariasHome)
+
+    if 'boarding\_with\_Adrian' in textCommandsMusic.keywords():
+        adventurersGuild.add_adjacent(bedroom)
+
     if not loading:
-        townmode.set\_current\_room(townmode.offStage)
+        townmode.set_current_room(townmode.offStage)
         townmode.go(edge)
-        universal.state.player.take\_item(itemspotionwars.woodenSpoon)
-    tailors = universal.state.get\_room(theresesTailors)
-    carol = universal.state.get\_character('Carol.person')
-    enterLeft(carol, tailors)
-    carol.litany = carol\_first\_greeting.index
-    armorShop = universal.state.get\_room(wesleyAndAnnesArmorShop)
-    peter = universal.state.get\_character('Peter.person')
-    enterLeft(peter, armorShop)
-    peter.litany = peter\_greeting.index
-    square = universal.state.get\_room(avaricumSquare)
-    maria = universal.state.get\_character('Maria.person')
-    enterLeft(maria, square)
-    maria.litany = maria\_greeting\_1\_1.index
-    southGuard = universal.state.get\_character('Guard.person')
-    enterLeft(southGuard, edge)
-    stateShrine = universal.state.get\_room(shrine)
-    elise = universal.state.get\_character('Elise.person')
-    enterLeft(elise, stateShrine)
-    elise.litany = elise\_greeting\_1\_1.index
-    guild = universal.state.get\_room(adventurersGuild)
-    adrian = universal.state.get\_character('Adrian.person')
-    enterLeft(adrian, guild)
-    adrian.litany = adrian\_1\_initial\_greeting.index
-    print('shrine characters')
-    print(stateShrine.characters)
+        universal.state.player.take_item(itemspotionwars.woodenSpoon)
+        enterLeft(adrian, guild)
+        enterLeft(maria, square)
+        enterLeft(southGuard, edge)
+        enterLeft(elise, stateShrine)
+        enterLeft(peter, armorShop)
+        enterLeft(carol, tailors)
+
+        #carol.litany = carol_first_greeting.index
+        #peter.litany = peter_greeting.index
+        #maria.litany = maria_greeting_1_1.index
+        #elise.litany = elise_greeting_1_1.index
+        #adrian.litany = adrian_1_initial_greeting.index
+
 \end{openScene}
+
+\begin{node}{ep1 carol first greeting}{Therese's Taylors}{Carol}{Andrew Russell}
+
+    "Hello," says the young woman, her eyes flicking over \name{}. She smiles with a hint of uneasiness. "My name is Carol. How can I help you today?"
+
+    \begin{code}
+
+        universal.state.get_character("Carol.person").printedName = "Carol"
+
+    \end{code}
+
+    \child{"This is amazing! How did you make all of this? Surely not by hand."}{ep1 carol make}
+
+    \child{"Are you hiring?"}{ep1 carol work}
+
+    \child{"I'd like to buy or sell something."}{ep1 carol buy}
+
+    \child{"I think I'll be going now."}{ep1 carol leave}
+
+\end{node}
+
+\begin{childnode}{ep1 carol greeting}{Andrew Russell}
+
+    Carol flashes a professional, toothy smile. "Welcome back. How can I help you today?"
+
+    \continue{ep1 carol questions}
+
+\end{childnode}
+
+\begin{childnode}{ep1 carol questions}{Andrew Russell}
+
+    \childif{'asked\_Carol\_about\_work' in textCommandsMusic.keywords() and 'asked\_Carol\_about\_clothing' in textCommandsMusic.keywords()}{ep1 carol greeting no work and no clothing}
+
+    \childelif{'asked\_Carol\_about\_work' in textCommandsMusic.keywords()}{ep1 carol greeting no work}
+
+    \childelif{'asked\_Carol\_about\_clothing' in textCommandsMusic.keywords()}{ep1 carol greeting no clothing}
+
+    \childelif{True}{ep1 carol all questions}
+
+\end{childnode}
+
+\begin{childnode}{ep1 carol greeting no work and no clothing}{Andrew Russell}
+
+    \child{"I'd like to buy or sell something."}{ep1 carol buy}
+
+    \child{"I think I'll be going now."}{ep1 carol leave}
+
+\end{childnode}
+
+\begin{childnode}{ep1 carol greeting no work}{Andrew Russell}
+
+    \child{"This is amazing! How did you make all of this? Surely not by hand."}{ep1 carol make}
+
+    \child{"I'd like to buy or sell something."}{ep1 carol buy}
+
+    \child{"I think I'll be going now."}{ep1 carol leave}
+
+\end{childnode}
+
+\begin{childnode}{ep1 carol greeting no clothing}{Andrew Russell}
+
+    \child{"Are you hiring?"}{ep1 carol work}
+
+    \child{"I'd like to buy or sell something."}{ep1 carol buy}
+
+    \child{"I think I'll be going now."}{ep1 carol leave}
+
+\end{childnode}
+
+\begin{childnode}{ep1 carol all questions}{Andrew Russell}
+
+    \child{"This is amazing! How did you make all of this? Surely not by hand."}{ep1 carol make}
+
+    \child{"Are you hiring?"}{ep1 carol work}
+
+    \child{"I'd like to buy or sell something."}{ep1 carol buy}
+
+    \child{"I think I'll be going now."}{ep1 carol leave}
+
+\end{childnode}
+
+\begin{childnode}{ep1 carol buy}{Andrew Russell}
+
+    \stageDirections{At this point, we transition into the buying and selling screen.}
+
+    \begin{code}
+
+        carol.litany = carol.defaultLitany = ep1_carol_greeting.index
+        return (shopmode.shop_mode, [carol])
+
+    \end{code}
+
+\end{childnode}
+
+\begin{childnode}{ep1 carol work}{Andrew Russell}
+
+    \keyword{'asked\_Carol\_about\_work'}
+
+    Carol grimaces, and gives \name{} a quick look-over. "I'm sorry, but we're not currently hiring now. Is there anything else I can do for you?"
+
+    \continue{ep1 carol questions}
+
+\end{childnode}
+
+\begin{childnode}{ep1 carol make}{Andrew Russell}
+
+    Carol smiles conspiratorially. "That's our little secret. All I'm allowed to say is that a bit of magic's involved."
+
+    \keyword{'asked\_Carol\_about\_clothing'}
+
+    \continue{ep1 carol questions}
+
+\end{childnode}
+
+\begin{childnode}{ep1 carol leave}{Andrew Russell}
+
+    "Well, have a nice day. I hope to see you again."
+
+    \begin{code}
+
+        carol = universal.state.get_character("Carol.person")
+
+        carol.litany = carol.defaultLitany = ep1_carol_greeting.index
+
+    \end{code}
+
+\end{childnode}
 
 \end{document}
