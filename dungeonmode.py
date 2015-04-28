@@ -146,7 +146,7 @@ class DungeonFloor(universal.RPGObject):
         Implements a single floor. See the documentation for Dungeon for details.
         Floor should be a tuple of tuple of strings, events a list of list of functions.
     """
-    def __init__(self, floor, events=None, visibility=4, encounterRate=0, enemies=None, maxEnemies=2, ambushChance=5):
+    def __init__(self, floor, events=None, visibility=4, encounterRate=0, enemies=None, maxEnemies=2, ambushChance=0):
         self.floor = floor
         if not events:
             events = []
