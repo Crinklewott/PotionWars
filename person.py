@@ -1137,9 +1137,14 @@ class Person(universal.RPGObject):
     def lower_clothing(self):
         return self.equipmentList[LOWER_CLOTHING]
 
+    def is_naked(self):
+        return self.is_pantsless() and not self.wearing_underwear()
 
     def is_pantsless(self):
         return self.lower_clothing().name == items.emptyLowerArmor.name
+
+    def is_shirtless(self):
+        return self.upper_clothing().name == items.emptyUpperArmor.name
 
     def worn_lower_clothing(self):
         return self.lower_clothing().name if self.lower_clothing() != items.emptyLowerArmor else self.underwear().name
@@ -1168,7 +1173,7 @@ class Person(universal.RPGObject):
         return self.equipmentList[UNDERWEAR]
 
     def wearing_underwear(self):
-        return self.underwear().name == items.emptyUnderwear.name
+        return self.underwear().name != items.emptyUnderwear.name
 
     def pajama_top(self):
         return self.equipmentList[PAJAMA_TOP]

@@ -53,6 +53,8 @@ qualityTunic = items.Shirt('quality tunic', 'A heavy tunic made from high qualit
 """
 vNeckTunic = items.Shirt('V-neck tunic', 'A cotton tunic with a deep v-shaped slit down the front, revealing a fair amount of the upper chest.', price=5, risque=2)
 
+alondrasVNeckTunic = items.Shirt("Alondra's V-neck", 'A cotton tunic with a deep v-shaped slit down the front, revealing a fair amount of the upper chest. Belongs to Alondra.', price=0, risque=2)
+
 """
 qualityVNeckTunic = items.Shirt('quality V-neck tunic', 'A high quality v-neck tunic. There\'s even a little bit of magic woven into it, providing a bit of protection.', price=10, attackDefense=2)
 """
@@ -93,7 +95,7 @@ miniSkirt = items.Skirt('miniskirt', 'A tight leather skirt that extends about h
 pencilSkirt = items.Skirt('pencil skirt', 'A narrow, black skirt that extends just past the knees. The skirt has a slit in back to minimize movement restriction.',
         price=5, risque=1, tightness=items.TIGHT)
 
-alondrasSkirt = items.Skirt("Alondra's Skirt", "A plain wool skirt borrowed from Alondra", price=0, risque=0, tightness=items.LOOSE)
+alondrasSkirt = items.Skirt("Alondra's Skirt", "A plain wool skirt belonging to Alondra", price=0, risque=0, tightness=items.LOOSE)
 
 cutoffShorts = items.Shorts('cut off shorts', "A pair of cut-off leather shorts that barely cover one's bottom.", price=0, risque=4, tightness=items.TIGHT)
 
@@ -149,6 +151,8 @@ deidresDress = items.Dress("Deidre's dress", "A black dress with red trim made f
 pinkDress = items.Dress('pink dress', 'A modest pink dress cut in a style similar to what young children of the middle and upper classes tend to wear.', price=20, tightness=items.LOOSE)
 
 carriesDress = items.Dress("Carrie's dress", "A low-cut, tight, rich purple dress that extends to about halfway down Carrie's thighs. Comes with black cotton tights.", price=0, tightness=items.TIGHT)
+
+alondrasDress = items.Dress("Alondra's dress", "A plain wool dress that Alondra made for herself. Has a slight V-neck that shows off a bit of her plushy breasts, and the skirt hugs her hips just enough to show off her wide hips and round bottom, but not so tightly as to interfere with movement.", price=0) 
 
 
 #------------------------Robes----------------------------------------
@@ -225,6 +229,8 @@ comfyShorts = items.PajamaBottom('comfy shorts', 'A pair of soft, comfy short sh
 
 
 largeShirt = items.FullPajamas('large shirt', 'A comfortable shirt that reaches about halfway down your thighs. Great for sleeping in.', 3)
+
+alondrasChemise = items.FullPajamas("Alondra's Chemise", "A thin cotton worn by Alondra as nightwear. The chemise is quite low cut, showing off Alondra's large, firm breasts. It also just barely covers her wide hips and round, bouncy, protruding bottom.", 0)
 
 dropSeatPJs = items.DropSeatPajamas('drop seat pajamas', 
     format_line(['A one-piece, full body set of comfy pajamas. Great for cooler nights. Comes with a dropseat to make midnight bathroom rooms as painless as possible.']),

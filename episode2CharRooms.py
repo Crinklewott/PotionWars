@@ -23,6 +23,7 @@ import textCommandsMusic
 import townmode
 import episode
 import music
+import spells_PotionWars
 
 ildri = None
 kitchen = None
@@ -80,6 +81,20 @@ except KeyError:
         '''She has shoulder-length hair black hair, and relatively small, dark brown eyes. In contrast to her height, her breasts are a little on the large side of average.''',
         '''She has a round, protruding bottom that rolls enticingly when she walks.''']), specialization=universal.SPEED, order=person.second_order, skinColor="caramel", eyeColor="brown",
         hairColor="black", hairLength="shoulder-length", hairStyle="down", height="average", bodyType="voluptuous", musculature="soft")
+    alondra.set_all_stats(strength=2, willpower=2, talent=3, dexterity=1, aleterness=4, health=23, mana=18)
+
+if alondra.is_naked():
+    alondra.take_item(itemspotionwars.alondrasSkirt)
+    alondra.equip(itemspotionwars.alondrasSkirt)
+    alondra.take_item(itemspotionwars.alondrasVNeckTunic)
+    alondra.equip(itemspotionwars.alondrasVNeckTunic)
+    alondra.equip(itemspotionwars.alondrasChemise)
+if alondra.weapon().name == items.emptyWeapon.name:
+    alondra.take_item(itemspotionwars.dagger)
+    alondra.equip(itemspotionwars.dagger)
+
+alondra.learn_spell(spells_PotionWars.heal)
+alondra.learn_spell(spells_PotionWars.fortify)
 
 try:
     sofia = universal.state.get_character("Sofia.person")
