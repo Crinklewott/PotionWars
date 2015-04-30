@@ -23,6 +23,7 @@ import sys
 from pygame.locals import *
 import titleScreen
 import music
+import os
 """
 Here is where we have the basic interaction mode of the program. It displays the 
 current options, and requests a response. 
@@ -129,7 +130,11 @@ def begin_game(episode):
             else:
                 newDirtyRects.extend(maybeList)
         newDirtyRects.append(get_command_view())
-        if dirtyRects:
+        #Wine doesn't play nice with the dirty rects approach, so if we are running under Wine, then we update everything forever.
+        if universal.playOnMac:
+            pygame.display.flip()
+            dirtyRects = []
+        elif dirtyRects:
             pygame.display.update(newDirtyRects)
         dirtyRects = []
 
