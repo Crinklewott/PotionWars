@@ -1676,7 +1676,7 @@ def specialization_bonus(ally, i):
 
 HIGH_STAT_PENALTY = .1
 HEALTH_MULTIPLIER = .05
-MANA_MULTIPLIER = .05
+MANA_MULTIPLIER = .2
 def improve_characters(victorious, afterCombatEvent=None):
     """
     Takes as argument the function that should be invoked after leveling up is complete.
