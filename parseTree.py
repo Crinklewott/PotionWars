@@ -100,6 +100,7 @@ inlineCommandsPlayer = {
     r'\BastardBitch':("person.BastardBitch()",  ),
     r'\weaponName':("universal.state.player.weapon().name",  ),
     r'\name':("universal.state.player.name",  ),
+    r'\fakename':("universal.state.player.fakeName",  ),
     r'\names':('''universal.state.player.name, "'s"''',),
     r'\nickname':("universal.state.player.nickname",  ),
     r'\nicknames':("universal.state.player.nickname, 's'",),
