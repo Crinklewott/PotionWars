@@ -1388,6 +1388,9 @@ def start_round(chosenActions):
     delay = COMBAT_DELAY
     actionResults = []
     resultIndex = 0
+    for ally in allies:
+        if ally.is_grappling():
+            ally.increaseStatPoints[universal.STRENGTH] += 2
     def actions_sort_key(action):
         return action.attacker.stat(action.primaryStat) // 2 + action.attacker.alertness()
     #We order the actions based on the stat that each action depends on. For example, a character with a high warfare attacking is more likely to go first than a 
