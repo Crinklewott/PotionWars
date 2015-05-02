@@ -36,6 +36,9 @@ titleScreen.title('Pandemonium Cycle')
 titleScreen.subtitle('The Potion Wars')
 titleScreen.set_title_image(universal.resource_path('PotionWarsTitleScreen'), 'png', 6)
 
+#Clears out errors.log every time the game begins. If I didn't do this, then the errors.log
+#file would eventually become absurdly huge, since it's logging all the battle data.
+open('errors.log', 'w').close()
 logging.basicConfig(format='%(asctime)s %(message)s')
 logging.warning('is when this event was logged')
 errorLog = logging.getLogger("errors")
@@ -43,7 +46,7 @@ errorLog = logging.getLogger("errors")
 
 pygame.init()
 
-errorLog.setLevel(logging.ERROR)
+errorLog.setLevel(logging.NOTSET)
 #episode1.episode1.nextEpisode = episode1.episode2
 episode1.episode1.nextEpisode = episode2.episode2
 episode2.episode2.scenes.append(episode2CharRooms.episode2Scene2)

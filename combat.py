@@ -37,6 +37,7 @@ import townmode
 import dungeonmode
 import statusEffects
 import math
+import logger
 
 """
 Note: The interpreters all assume that you will only ever face up to 9 enemies at 
@@ -1424,6 +1425,10 @@ def start_round(chosenActions):
     assert len(chosenActions) == len(set(chosenActions)), "There is a duplicated action:%s" % str(chosenActions) 
     for index in range(len(chosenActions)):
         action = chosenActions[index]
+        errorLog = logging.getLogger("errors")
+        errorLog.setLevel(logging.INFO)
+        errorLog.addHandler(logging.FileHandler("errors.log"))
+        errorLog.info(repr(action))
         if action is None:
             continue
         activeAllies = [ally for ally in allies if ally.current_health() > 0]

@@ -89,6 +89,12 @@ class CombatAction(universal.RPGObject):
         self.primaryStat = primaryStat
         self.secondaryStat = secondaryStat
 
+    def __repr__(self):
+        result = [self.class.__name__]
+        for variable, value in vars(self):
+            result.append(variable + ": " repr(value))
+        return '\n'.join(result)
+
     def __eq__(self, other):
         """
         A simple equality test that returns true iff the two actions have the same name.

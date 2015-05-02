@@ -375,6 +375,12 @@ class Person(universal.RPGObject):
         self.spankeeAlreadyHumiliated = False
         self.implement = spanking.hand
 
+    def __repr__(self):
+        result = self.name
+        for var, value in vars(self):
+            result.append(var + ": " + repr(value))
+        return '\n'.join(result)
+
     def __getstate__(self):
         state = self.__dict__.copy()
         known_spells = [[] for i in range(universal.NUM_TIERS)]
