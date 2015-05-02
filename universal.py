@@ -1004,11 +1004,10 @@ class State(object):
 
     def load(self, loadFile):
         import episode, person, townmode, items 
-        try:
-            import itemspotionwars
-        except ImportError:
-            pass
-        fileData = '\n'.join(loadFile.readlines())
+        fileData = []
+        for line in loadFile:
+            fileData.append(line.replace("textCommandsMusic", "pwutilities"))
+        fileData = '\n'.join(fileData)
         #Note: The first entry in the list is just the empty string.
         try:
             _, enemiesCanSpank, player, characters, rooms, bedroom, party, location, itemList, difficulty, clearedSquares = fileData.split('State Data:')
