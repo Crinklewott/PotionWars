@@ -1199,7 +1199,7 @@ class State(object):
         for person in self.characters.values():
             person.litany = person.defaultLitany = None
         for room in self.rooms.values():
-            room.adjacent = None
+            room.adjacent = []
 
 
     def add_item(self, item):
