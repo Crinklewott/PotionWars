@@ -43,7 +43,7 @@
     craftmansCorridor.add_adjacent(slums)
     slums.add_adjacent(mariasHome)
 
-    if 'boarding\_with\_Adrian' in textCommandsMusic.keywords():
+    if 'boarding\_with\_Adrian' in pwutilities.keywords():
         adventurersGuild.add_adjacent(bedroom)
 
     if not loading:
@@ -98,11 +98,11 @@
 
 \begin{childnode}{ep1 carol questions}{Andrew Russell}
 
-    \childif{'asked\_Carol\_about\_work' in textCommandsMusic.keywords() and 'asked\_Carol\_about\_clothing' in textCommandsMusic.keywords()}{ep1 carol greeting no work and no clothing}
+    \childif{'asked\_Carol\_about\_work' in pwutilities.keywords() and 'asked\_Carol\_about\_clothing' in pwutilities.keywords()}{ep1 carol greeting no work and no clothing}
 
-    \childelif{'asked\_Carol\_about\_work' in textCommandsMusic.keywords()}{ep1 carol greeting no work}
+    \childelif{'asked\_Carol\_about\_work' in pwutilities.keywords()}{ep1 carol greeting no work}
 
-    \childelif{'asked\_Carol\_about\_clothing' in textCommandsMusic.keywords()}{ep1 carol greeting no clothing}
+    \childelif{'asked\_Carol\_about\_clothing' in pwutilities.keywords()}{ep1 carol greeting no clothing}
 
     \childelif{True}{ep1 carol all questions}
 

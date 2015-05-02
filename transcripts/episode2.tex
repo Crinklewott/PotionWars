@@ -32,7 +32,7 @@
     adrian = universal.state.get_character("Adrian.person")
     airell = universal.state.get_character("Airell.person")
     guild = universal.state.get_room("Adventurer's Guild")
-    textCommandsMusic.exitLeft(adrian, guild)
+    pwutilities.exitLeft(adrian, guild)
     kitchen = universal.state.get_room("Kitchen")
     if not guild in kitchen.adjacent:
         kitchen.add_adjacent(guild)
@@ -43,10 +43,10 @@
         '''and a few blankets. Adrian's''','''obscene''','''wealth continues to boggle the brain.''']) 
     slums = universal.state.get_room("Slums")
     shrine = universal.state.get_room("Shrine")
-    if 'introvert' in textCommandsMusic.keywords() or 'extrovert' in textCommandsMusic.keywords():
-        shrine.description = universal.format_line(['''A brief inquiry with the student cleaning the Shrine sends''', universal.state.player.name, '''into the back of the Church, to Sister Samantha's office.''', ' '.join([textCommandsMusic.name(), '''hesitates outside the office, remembering''',
+    if 'introvert' in pwutilities.keywords() or 'extrovert' in pwutilities.keywords():
+        shrine.description = universal.format_line(['''A brief inquiry with the student cleaning the Shrine sends''', universal.state.player.name, '''into the back of the Church, to Sister Samantha's office.''', ' '.join([pwutilities.name(), '''hesitates outside the office, remembering''',
             '''all too well the last time''', person.heshe(), '''entered this office, and the tender bottom that ensued. But then''', person.heshe(), '''gives''', person.himselfherself(), '''a shake, and knocks.''']) 
-            if 'ep1_spanked_by_Samantha' in textCommandsMusic.keywords() else
+            if 'ep1_spanked_by_Samantha' in pwutilities.keywords() else
         ' '.join([universal.state.player.name, '''knocks.''']), '''"Come in," says Sister Samantha. When''', universal.state.player.name, '''enters''', person.heshe(), '''finds Sister Samantha is sitting at her desk, while Elise writes something on a smooth stretch of wall with some chalk. The two are in the middle of an animated discussion, but are speaking far too fast, and with too much overlap, for''', universal.state.player.name, '''to understand more than a few scattered words.'''])
     mariasHome = universal.state.get_room("Maria's Home")
     mariasHome.description = universal.format_line(['''Maria lives in a dinky little room with barely enough room for two people to lie down comfortably. The''',
@@ -54,40 +54,40 @@
     '''center, just below a small hole in the ceiling. A small collection of wooden bowls, plates, and  skewers lie next to the pit. A pile of ragged''',
     '''blankets is crumpled up in the corner.'''])
     sofiasClinic = universal.state.get_room("Sofia's Clinic")
-    if 'boarding_with_Maria' in textCommandsMusic.keywords():
+    if 'boarding_with_Maria' in pwutilities.keywords():
         slums.add_adjacent(sofiasClinic)
     else:
         slums.remove_adjacent(sofiasClinic)
-        textCommandsMusic.exitLeft(maria, mariasHome)
+        pwutilities.exitLeft(maria, mariasHome)
     universal.state.player.restores()
     universal.state.player.marks = []
     universal.state.party.remove_member(carrie)
-    if 'flirting_with_Carrie' in textCommandsMusic.keywords():
-        textCommandsMusic.remove_keyword('flirting_with_Carrie')
-        textCommandsMusic.add_keyword('attractedToCarrie')
+    if 'flirting_with_Carrie' in pwutilities.keywords():
+        pwutilities.remove_keyword('flirting_with_Carrie')
+        pwutilities.add_keyword('attractedToCarrie')
     if not loading:
-        textCommandsMusic.enterLeft(sofia, sofiasClinic)
-        textCommandsMusic.enterLeft(ildri, kitchen)
-        textCommandsMusic.enterLeft(alondra, kitchen)
-        textCommandsMusic.enterLeft(deidre, guild)
-        textCommandsMusic.enterLeft(airell, guild)
-        textCommandsMusic.exitLeft(carrie, shrine)
-        if 'introvert' in textCommandsMusic.keywords() or 'extrovert' in textCommandsMusic.keywords():
-            textCommandsMusic.enterLeft(elise, shrine)
+        pwutilities.enterLeft(sofia, sofiasClinic)
+        pwutilities.enterLeft(ildri, kitchen)
+        pwutilities.enterLeft(alondra, kitchen)
+        pwutilities.enterLeft(deidre, guild)
+        pwutilities.enterLeft(airell, guild)
+        pwutilities.exitLeft(carrie, shrine)
+        if 'introvert' in pwutilities.keywords() or 'extrovert' in pwutilities.keywords():
+            pwutilities.enterLeft(elise, shrine)
         else:
-            textCommandsMusic.exitLeft(elise, shrine)
-        if 'boarding_with_Adrian' in textCommandsMusic.keywords():
-            textCommandsMusic.enterLeft(universal.state.player, bedroom)
-        elif 'boarding_with_Maria' in textCommandsMusic.keywords():
-            textCommandsMusic.enterLeft(universal.state.player, mariasHome)
+            pwutilities.exitLeft(elise, shrine)
+        if 'boarding_with_Adrian' in pwutilities.keywords():
+            pwutilities.enterLeft(universal.state.player, bedroom)
+        elif 'boarding_with_Maria' in pwutilities.keywords():
+            pwutilities.enterLeft(universal.state.player, mariasHome)
         else:
-            raise transExceptions.TranslationError("Neither 'boarding_with_Adrian' nor 'boarding_with_Maria' is in the player's keywords. Keywords: " + str(textCommandsMusic.keywords()))
-    if 'boarding_with_Adrian' in textCommandsMusic.keywords():
+            raise transExceptions.TranslationError("Neither 'boarding_with_Adrian' nor 'boarding_with_Maria' is in the player's keywords. Keywords: " + str(pwutilities.keywords()))
+    if 'boarding_with_Adrian' in pwutilities.keywords():
         kitchen.add_adjacent(bedroom)
     else:
         kitchen.remove_adjacent(bedroom)
     def slums_leaving(destination):
-        if 'travelingToSofias' in textCommandsMusic.keywords() and destination != universal.state.get_room("Sofia's Clinic"):
+        if 'travelingToSofias' in pwutilities.keywords() and destination != universal.state.get_room("Sofia's Clinic"):
             maria.litany = conversation.allNodeNames["ep2 wrong way"]
             conversation.converse_with(maria)
             return False
@@ -102,23 +102,23 @@
     A month passes...
     \begin{code}
         universal.say('\p')
-        if 'flirting_with_Carrie' in textCommandsMusic.keywords():
+        if 'flirting_with_Carrie' in pwutilities.keywords():
             universal.state.player.add_keyword('relationshipWithCarrie')
     \end{code}
 
-   \childif{'boarding\_with\_Adrian' in textCommandsMusic.keywords()}{ep2 guild wake up}
+   \childif{'boarding\_with\_Adrian' in pwutilities.keywords()}{ep2 guild wake up}
 
-    \childelif{'boarding\_with\_Maria' in textCommandsMusic.keywords()}{ep2 marias wake up}
+    \childelif{'boarding\_with\_Maria' in pwutilities.keywords()}{ep2 marias wake up}
 
 \end{node}
 
 \begin{childnode}{ep2 guild wake up}{Andrew Russell}
 
-    \music{textCommandsMusic.ALONDRA}
+    \music{pwutilities.ALONDRA}
 
-    \childif{'extrovert' in textCommandsMusic.keywords()}{ep2 extrovert}
+    \childif{'extrovert' in pwutilities.keywords()}{ep2 extrovert}
 
-    \childelif{'introvert' in textCommandsMusic.keywords()}{ep2 guild introvert}
+    \childelif{'introvert' in pwutilities.keywords()}{ep2 guild introvert}
 
     \childelif{True}{ep2 guild no bar}
 
@@ -239,7 +239,7 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
     Soon, the two are standing outside \names{} door. \name{} opens it, and ushers Carrie in. As Carrie enters the dark room, \name{} eases the door shut, then
     grabs Carrie's curvy hips, and thrusts \hisher{} pelvis against the blonde's firm, protruding, bouncy bottom. Carrie moans, and leans against \name{}, crushing the Taironan's 
     \pbodytype{small}{average}{ample}{large} breasts against her back, her hands reaching behind her to caress \names{} face. \name{} thrusts against Carrie's bottom a second time. Carrie pushes her hips back, and
-    starts to bounce her bottom up and down, and \name{} groans. \HeShe{} guides Carrie towards \hisher{} \cond{'boarding\_with\_Adrian' in textCommandsMusic.keywords()}{bed}{blankets}. \HeShe{} pushes the young student 
+    starts to bounce her bottom up and down, and \name{} groans. \HeShe{} guides Carrie towards \hisher{} \cond{'boarding\_with\_Adrian' in pwutilities.keywords()}{bed}{blankets}. \HeShe{} pushes the young student 
     facedown into the blankets, and wiggles the blonde's tight skirt up over her deliciously curvy hips, exposing
     her round, bubbly cheeks, clad only in a tiny G-String.
 
@@ -252,30 +252,30 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     "Exactly," moans Carrie, as \name{} pulls the dress free, and flings it to the side. "Oh, woe is me!"
 
-    \childif{'boarding\_with\_Adrian' in textCommandsMusic.keywords()}{ep2 take carrie home guild}
+    \childif{'boarding\_with\_Adrian' in pwutilities.keywords()}{ep2 take carrie home guild}
 
-    \childelif{'boarding\_with\_Maria' in textCommandsMusic.keywords()}{ep2 take carrie home maria}
+    \childelif{'boarding\_with\_Maria' in pwutilities.keywords()}{ep2 take carrie home maria}
 
 \end{childnode}
 
 \begin{childnode}{ep2 take carrie home male}{Andrew Russell}
 
     "I'll take that as a yes," says Carrie breathlessly when \name{} comes up for air. She puts her hands on \names{} chest, and grins up at him. 
-    \cond{'taking\_Carrie\_home' in textCommandsMusic.keywords()}{"I get to be on top this time. Gonna ride you like a pony."}{"Took you long enough. I was starting to get impatient."}
+    \cond{'taking\_Carrie\_home' in pwutilities.keywords()}{"I get to be on top this time. Gonna ride you like a pony."}{"Took you long enough. I was starting to get impatient."}
 
-    \cond{'taking\_Carrie\_home' in textCommandsMusic.keywords()}{"Oh? Where are we going?" asks \name{}, kissing Carrie again.}
+    \cond{'taking\_Carrie\_home' in pwutilities.keywords()}{"Oh? Where are we going?" asks \name{}, kissing Carrie again.}
     {"Well, we can't have that, now can we?" says \name{}, running \hisher{} hand down Carrie's back.} %This line is not being tokenized correctly. It's supposed to be grouped with the line above, but it is not.
 
-    \cond{'taking\_Carrie\_home' in textCommandsMusic.keywords()}{"And people call me cheeky," says Carrie. She starts to tug \name{} towards the street. "Come on. It's sexy time."}
+    \cond{'taking\_Carrie\_home' in pwutilities.keywords()}{"And people call me cheeky," says Carrie. She starts to tug \name{} towards the street. "Come on. It's sexy time."}
     {"Indeed. It'd be a tragedy for the ages," says Carrie. She starts to pull \name{} in the general direction of \hisher{} home. "Now come on, it's sexy time."}
 
-    \cond{'taking\_Carrie\_home' in textCommandsMusic.keywords()}{"That's because you are cheeky," says \name{}, lightly smacking Carrie's bottom.}{\name{} cranes \hisher{} neck to look up at the 
+    \cond{'taking\_Carrie\_home' in pwutilities.keywords()}{"That's because you are cheeky," says \name{}, lightly smacking Carrie's bottom.}{\name{} cranes \hisher{} neck to look up at the 
     cloudy night sky. "How can you tell?"}
 
-    \cond{'taking\_Carrie\_home' in textCommandsMusic.keywords()}{Carrie sticks her tongue out at \himher{}.}{"Magic."}
+    \cond{'taking\_Carrie\_home' in pwutilities.keywords()}{Carrie sticks her tongue out at \himher{}.}{"Magic."}
 
     Soon, the two are pushing their way into \names{} room, their tongues intertwined, and their hands exploring every crevice of the other's body. When they reach \names{}
-    \cond{'boarding\_with\_Adrian' in textCommandsMusic.keywords()}{bed}{blankets}, they half-fall, half-kneel onto the blankets. Carrie gives \name{} a light shove, pushing \himher{} onto \hisher{} back. She straddles \himher{}, 
+    \cond{'boarding\_with\_Adrian' in pwutilities.keywords()}{bed}{blankets}, they half-fall, half-kneel onto the blankets. Carrie gives \name{} a light shove, pushing \himher{} onto \hisher{} back. She straddles \himher{}, 
     and leans down to give \himher{} a kiss.
     As Carrie's plump lips meet \hishers{}, \name{} wraps \hisher{} arms around her back and pulls her tight against \hisher{} chest. \HeShe{} groans as the woman's soft, succulent breasts press 
     against
@@ -289,16 +289,16 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     "I'm not finding any evidence of them," says \name{}. He slides \hisher{} left hand down Carrie's equally bare right cheek.
 
-    \childif{'boarding\_with\_Adrian' in textCommandsMusic.keywords()}{ep2 take carrie home guild}
+    \childif{'boarding\_with\_Adrian' in pwutilities.keywords()}{ep2 take carrie home guild}
 
-    \childelif{'boarding\_with\_Maria' in textCommandsMusic.keywords()}{ep2 take carrie home maria}
+    \childelif{'boarding\_with\_Maria' in pwutilities.keywords()}{ep2 take carrie home maria}
 
 \end{childnode}
 
 \begin{childnode}{ep2 take carrie home guild}{Andrew Russell}
 
     "No. No no no no." Alondra's sharp voice cuts through the midnight air. "I am not going to stay up half the night listening to you two have sex 
-    \cond{'taking\_Carrie_home' in textCommandsMusic.keywords()}{again}{}."
+    \cond{'taking\_Carrie_home' in pwutilities.keywords()}{again}{}."
 
     \cond{universal.state.player.is\_female()}{"Silly girl, nobody's forcing you to just sit and listen," says Carrie, turning and smiling at Alondra.}{"Don't be ridiculous," says Carrie, grinning. "\name{} doesn't have that kind of endurance."}
 
@@ -741,9 +741,9 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     \name{} returns home.
 
-    \childif{'boarding\_with\_Adrian' in textCommandsMusic.keywords()}{ep2 guild wake up no carrie}
+    \childif{'boarding\_with\_Adrian' in pwutilities.keywords()}{ep2 guild wake up no carrie}
 
-    \childelif{'boarding\_with\_Maria' in textCommandsMusic.keywords()}{ep2 maria wake up no carrie}
+    \childelif{'boarding\_with\_Maria' in pwutilities.keywords()}{ep2 maria wake up no carrie}
 
 \end{childnode}
 
@@ -753,10 +753,10 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     "Actually, yes I can," says \name{}. \HeShe{} grabs the hem of Carrie's dress and tugs it up to her waist, revealing the young student's firm, large, round bottom, "covered" by a dinky little 
     g-string. 
-    \cond{'Samantha\_saw\_Carries\_dress' in textCommandsMusic.keywords()}{\name{} shakes \hisher{} head. "Didn't Sister Samantha spank you good for wearing a g-string? Don't you ever learn?"}{"One thing I'll say about you Carrie, you sure make it easy to bare
+    \cond{'Samantha\_saw\_Carries\_dress' in pwutilities.keywords()}{\name{} shakes \hisher{} head. "Didn't Sister Samantha spank you good for wearing a g-string? Don't you ever learn?"}{"One thing I'll say about you Carrie, you sure make it easy to bare
     your bottom."}
 
-    \cond{'Samantha\_saw\_Carries\_dress' in textCommandsMusic.keywords()}{"I'm an adult," says Carrie snottily. "I can wear whatever I want."}{"Oh shut up and get this over with," says Carrie. "I don't need your mockery."}
+    \cond{'Samantha\_saw\_Carries\_dress' in pwutilities.keywords()}{"I'm an adult," says Carrie snottily. "I can wear whatever I want."}{"Oh shut up and get this over with," says Carrie. "I don't need your mockery."}
 
     \name{} bends down, gently grabs Carrie's shin, and lifts her foot up a few inches off the ground.
 
@@ -896,9 +896,9 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     \keyword{'ep2BeginningSpankedCarrie'}
 
-    \childif{'boarding\_with\_Adrian' in textCommandsMusic.keywords()}{ep2 guild wake up no carrie}
+    \childif{'boarding\_with\_Adrian' in pwutilities.keywords()}{ep2 guild wake up no carrie}
 
-    \childelif{'boarding\_with\_Maria' in textCommandsMusic.keywords()}{ep2 maria wake up no carrie}
+    \childelif{'boarding\_with\_Maria' in pwutilities.keywords()}{ep2 maria wake up no carrie}
 
 \end{childnode}
 
@@ -948,9 +948,9 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     \keyword{'ep2BeginningLostTemperWithCarrie'}
 
-    \childif{'boarding\_with\_Adrian' in textCommandsMusic.keywords()}{ep2 guild wake up no carrie}
+    \childif{'boarding\_with\_Adrian' in pwutilities.keywords()}{ep2 guild wake up no carrie}
 
-    \childelif{'boarding\_with\_Adrian' in textCommandsMusic.keywords()}{ep2 maria wake up no carrie}
+    \childelif{'boarding\_with\_Adrian' in pwutilities.keywords()}{ep2 maria wake up no carrie}
 
 \end{childnode}
 
@@ -960,7 +960,7 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     \begin{code}
 
-        textCommandsMusic.remove_keyword('relationshipWithCarrie')
+        pwutilities.remove_keyword('relationshipWithCarrie')
 
     \end{code}
 
@@ -968,9 +968,9 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
     
     \name{} shrugs awkardly.
 
-    \cond{'taking\_Carrie\_home' in textCommandsMusic.keywords()}{"I thought...you know, last month when we--"}{"I thought...I mean, we were having so much fun together..."} says Carrie, her voice faltering.
+    \cond{'taking\_Carrie\_home' in pwutilities.keywords()}{"I thought...you know, last month when we--"}{"I thought...I mean, we were having so much fun together..."} says Carrie, her voice faltering.
 
-    \cond{'taking\_Carrie\_home' in textCommandsMusic.keywords()}{"Yeah, I know. Maybe we rushed into it, or something. But I mean, at the time there weren't really any expectations of anything serious right? Just some fun? I thought maybe it could become 
+    \cond{'taking\_Carrie\_home' in pwutilities.keywords()}{"Yeah, I know. Maybe we rushed into it, or something. But I mean, at the time there weren't really any expectations of anything serious right? Just some fun? I thought maybe it could become 
     something more, but you're just not my type. You're gorgeous, and smart, and fun, but you know..."}{"We do. I love hanging out with you. I just, that's all I want. You know?"} says \name{}.
 
     Carrie nods. "Yeah, yeah I get it. I've been in your position before. More times than I care to count really. Can't really blame you."
@@ -983,9 +983,9 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     \name{} returns home.
 
-    \childif{'boarding\_with\_Adrian' in textCommandsMusic.keywords()}{ep2 guild wake up no carrie}
+    \childif{'boarding\_with\_Adrian' in pwutilities.keywords()}{ep2 guild wake up no carrie}
 
-    \childelif{'boarding\_with\_Maria' in textCommandsMusic.keywords()}{ep2 maria wake up no carrie}
+    \childelif{'boarding\_with\_Maria' in pwutilities.keywords()}{ep2 maria wake up no carrie}
 
 \end{childnode}
 
@@ -1330,7 +1330,7 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     \name{} watches Alondra's hips sway as she hurries from the room, a small smile on \hisher{} own lips.
 
-    \cond{'lesbian\_in\_denial' in textCommandsMusic.keywords()}{As soon as Alondra leaves, \name{} plops down on the bed, and puts \hisher{} head in \hisher{} hands. \HeShe{} sits there for a moment, \hisher{} mind whirling and churning. Then, \hisher{} stomach
+    \cond{'lesbian\_in\_denial' in pwutilities.keywords()}{As soon as Alondra leaves, \name{} plops down on the bed, and puts \hisher{} head in \hisher{} hands. \HeShe{} sits there for a moment, \hisher{} mind whirling and churning. Then, \hisher{} stomach
     grumbles. Like it or not, \heshe{} will need to go and get some breakfast. \HeShe{} stands and gets changed, \hisher{} motions slow.}{\name{} can't help but whistle a merry tune as \heshe{} gets changed, stinging bottom or no.}
 
 \end{childnode}
@@ -1345,7 +1345,7 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     Alondra slips on her sandals, then walks out, her hips swaying with a bit more vigor than usual.
 
-    \cond{'lesbian\_in\_denial' in textCommandsMusic.keywords()}{As soon as Alondra leaves, \names{} smile fades. \HeShe{} stares blankly up at the ceiling, \hisher{} mind churning. Then, \heshe{} rolls out of bed and gets dressed.}{\name{} rolls out of bed,
+    \cond{'lesbian\_in\_denial' in pwutilities.keywords()}{As soon as Alondra leaves, \names{} smile fades. \HeShe{} stares blankly up at the ceiling, \hisher{} mind churning. Then, \heshe{} rolls out of bed and gets dressed.}{\name{} rolls out of bed,
     a grin splitting \hisher{} face from ear to ear. \HeShe{} whistles a merry tune as \heshe{} gets changed.} 
 \end{childnode}
 
@@ -1357,7 +1357,7 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
     Alondra leaves. \name{} can't help but watch Alondra walk out, her round, plump bottom rolling with every step beneath her plain skirt.
 
-    \cond{'lesbian\_in\_denial' in textCommandsMusic.keywords()}{\name{} shakes \hisher{} head,}{\name{}} runs a hand through \hisher{} hair, then gets changed. 
+    \cond{'lesbian\_in\_denial' in pwutilities.keywords()}{\name{} shakes \hisher{} head,}{\name{}} runs a hand through \hisher{} hair, then gets changed. 
 
 \end{childnode}
 
@@ -1935,7 +1935,7 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
     "That's true," says Ildri, staring into her drink. 
 
     "Girl's had a month, though," says \name{}. "She could have, I don't know, ambushed me in an alley or something. Dropped off a letter in the middle of the night. Something. An apology for bringing the guards down on my head, or for her friends 
-    stabbing me, burning me, \cond{'spanked\_by\_Necia' in textCommandsMusic.keywords() or 'spanked\_by\_Necia\_with\_sandal' in textCommandsMusic.keywords()}{spanking me."}{throwing me all over the 
+    stabbing me, burning me, \cond{'spanked\_by\_Necia' in pwutilities.keywords() or 'spanked\_by\_Necia\_with\_sandal' in pwutilities.keywords()}{spanking me."}{throwing me all over the 
     guild."}
 
     "Well, if it makes you feel any better, girl was just as incorrigible when she worked for us," says Ildri. She smiles fondly. "Her and Maria were quite the pair. Practically drove me to drinking. Was just about to buy a new paddle all for them, with holes
@@ -1988,9 +1988,9 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
 \begin{childnode}{ep2 marias wake up}{Andrew Russell}
 
-    \music{textCommandsMusic.MARIA}
+    \music{pwutilities.MARIA}
 
-    \childif{'extrovert' in textCommandsMusic.keywords()}{ep2 extrovert}
+    \childif{'extrovert' in pwutilities.keywords()}{ep2 extrovert}
 
     \childelif{True}{ep2 maria no bar}
 
@@ -2127,7 +2127,7 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
 
 \begin{childnode}{ep2 maria to sofias carrie leaves}{Andrew Russell}
 
-    The next morning opens with Carrie scooping up her dress, and hunting for her slippers. \name{} rolls onto \hisher{} side, \cond{'ep2CarrieSexSpanking' in textCommandsMusic.keywords()}{wincing a little as \hisher{} bruised bottom twinges.}{smiling as
+    The next morning opens with Carrie scooping up her dress, and hunting for her slippers. \name{} rolls onto \hisher{} side, \cond{'ep2CarrieSexSpanking' in pwutilities.keywords()}{wincing a little as \hisher{} bruised bottom twinges.}{smiling as
     \heshe{} watches Carrie start to throw on her dress.}
 
     "Worried Sister Samantha will find out you spent the night here?" asks Maria, as she cooks some porridge for herself and \name{}.
@@ -2258,10 +2258,10 @@ number of thin, freely hanging tassles.}{\HeShe{} is wearing
    
     Maria's eyes narrow. "Am I going to have to spank you?"
 
-    \cond{'Maria\_spanked\_you' in textCommandsMusic.keywords()}{"Of course. Threaten me with a spanking. That's all you ever do isn't it? You say 'No' I say 'Yes' you spank me into submission. Get buried."}{"What do you care anyway? I'm an adult, I know the 
+    \cond{'Maria\_spanked\_you' in pwutilities.keywords()}{"Of course. Threaten me with a spanking. That's all you ever do isn't it? You say 'No' I say 'Yes' you spank me into submission. Get buried."}{"What do you care anyway? I'm an adult, I know the 
     risks. Let me live my life."}
 
-    \cond{'Maria\_spanked\_you' in textCommandsMusic.keywords()}{"I'm trying to protect you," says Maria. "I won't just sit by and let you ruin your life. I've gone through that once already, and I won't go through
+    \cond{'Maria\_spanked\_you' in pwutilities.keywords()}{"I'm trying to protect you," says Maria. "I won't just sit by and let you ruin your life. I've gone through that once already, and I won't go through
     it again."}{"Yeah, you know the risks, but you don't understand them," says Maria. "Chengue doesn't have a dungeon, it's too small. They don't have puppeteers who can pick through your
         soul and learn your deepest, darkest, most personal feelings and secrets. They couldn't plant little hooks in your soul, forcing you to hop everytime they snapped their fingers. All your life, the worst you've had to fear was a grounding, scolding, or 
     spanking from Nana. Hardly life-shattering."}
@@ -2545,7 +2545,7 @@ Juliana returns the hug with one arm, rubbing her sore bottom with the other han
 
     Sofia turns her attention back to \name{}. "A pleasure to meet you, \name{}. Maria and Catalin, well before Cat went off the deepend anyway, have both told me so much about you. I almost feel like I know you."
 
-    "A pleasure," says \name{}, smiling politely. \cond{'met\_Paloma' in textCommandsMusic.keywords()}{There's something about Sofia that tickles \names{} memory. Something about her voice, or her mannerisms. Maybe her face.}{}
+    "A pleasure," says \name{}, smiling politely. \cond{'met\_Paloma' in pwutilities.keywords()}{There's something about Sofia that tickles \names{} memory. Something about her voice, or her mannerisms. Maybe her face.}{}
 
     "Here to help us, I hope," says Sofia, stepping to the side, and sweeping her arm to indicate the twenty or so men and women lying, sleeping, thrashing, and moaning in ratty blankets. "La Madre knows, we could use it."
 
@@ -2553,7 +2553,7 @@ Juliana returns the hug with one arm, rubbing her sore bottom with the other han
 
     Sofia raises an eyebrow, and glances at Maria. "Had to drag \himher{} here kicking and screaming I take it?"
 
-    \cond{'ep2WrongWay' in textCommandsMusic.keywords()}{"Just about,"}{"Actually, \heshe{} came without a fuss,"} says Maria.
+    \cond{'ep2WrongWay' in pwutilities.keywords()}{"Just about,"}{"Actually, \heshe{} came without a fuss,"} says Maria.
 
     "Well--" begins Sofia.
 
@@ -2701,11 +2701,11 @@ Juliana returns the hug with one arm, rubbing her sore bottom with the other han
         clinic = universal.state.get_room(episode2CharRooms.sofiasClinic.name)
         mariasHome = universal.state.get_room("Maria's Home")
         universal.state.party.remove_member(maria)
-        textCommandsMusic.exitLeft(maria, mariasHome)
-        textCommandsMusic.enterLeft(maria, clinic)
+        pwutilities.exitLeft(maria, mariasHome)
+        pwutilities.enterLeft(maria, clinic)
         maria.litany = None
         sofia.litany = None
-        textCommandsMusic.remove_keyword("travelingToSofias")
+        pwutilities.remove_keyword("travelingToSofias")
 
     \end{code}
         
@@ -2713,9 +2713,9 @@ Juliana returns the hug with one arm, rubbing her sore bottom with the other han
 
 \begin{node}{ep2 ildri chat}{Adventurer's Guild}{Ildri}{Andrew Russell}
 
-    \childif{'risqueScene' not in textCommandsMusic.keywords() and universal.state.player.risque() >= 4 and 'Ildri\_no\_pants' in textCommandsMusic.keywords()}{ep2 ildri indecent no pants}
+    \childif{'risqueScene' not in pwutilities.keywords() and universal.state.player.risque() >= 4 and 'Ildri\_no\_pants' in pwutilities.keywords()}{ep2 ildri indecent no pants}
 
-    \childelif{'risqueScene' not in textCommandsMusic.keywords() and universal.state.player.risque() >= 4}{ep2 ildri indecent}
+    \childelif{'risqueScene' not in pwutilities.keywords() and universal.state.player.risque() >= 4}{ep2 ildri indecent}
 
     \childelif{True}{ep2 ildri scene 1 chat}
 
@@ -3230,10 +3230,10 @@ stops at best halfway down \hisher{} thighs.}
 
     "Oh," says Alondra. 
 
-    \cond{'attractedToAlondra' in textCommandsMusic.keywords() and 'lesbian\_in\_denial' in textCommandsMusic.keywords()}{\name{} feels a brief stab of regret. Was that dissapointment in Alondra's 
+    \cond{'attractedToAlondra' in pwutilities.keywords() and 'lesbian\_in\_denial' in pwutilities.keywords()}{\name{} feels a brief stab of regret. Was that dissapointment in Alondra's 
         voice? Perhaps \heshe{} said-No, of course not. No way \heshe{} could be serious.}{}
 
-    \cond{'attractedToAlondra' in textCommandsMusic.keywords() and 'lesbian\_in\_denial' not in textCommandsMusic.keywords()}{\name{} feels a jolt. Was that disappointment in her voice? Perhaps 
+    \cond{'attractedToAlondra' in pwutilities.keywords() and 'lesbian\_in\_denial' not in pwutilities.keywords()}{\name{} feels a jolt. Was that disappointment in her voice? Perhaps 
     later, \heshe{} should have a little chat with Alondra...}{}
 
     "Anyway," says Ildri, giving \name{} a warning glare and shaking her spatula at \name{}. "I don't care how little clothing other adventurers wear. You go and cover your ass, or I'll really give 
@@ -3256,11 +3256,11 @@ stops at best halfway down \hisher{} thighs.}
 
 \begin{childnode}{ep2 ildri sexy idols female}{Andrew Russell}
 
-    \cond{'ep2KissedAlondra' in textCommandsMusic.keywords()}{"You know, she makes a good point," says Alondra thoughtfully.}{Alondra's eyes widen. "Really?"}
+    \cond{'ep2KissedAlondra' in pwutilities.keywords()}{"You know, she makes a good point," says Alondra thoughtfully.}{Alondra's eyes widen. "Really?"}
 
     \child{"Better believe it. 'Course, they're not as sexy as you."}{ep2 alondra sexy compliment}
 
-    \child{\cond{'ep2KissedAlondra' in textCommandsMusic.keywords()}{"Better believe it. Gotta love the female body."}{"Sure. I appreciate a gorgeous female body as much as the next person."}}{ep2 
+    \child{\cond{'ep2KissedAlondra' in pwutilities.keywords()}{"Better believe it. Gotta love the female body."}{"Sure. I appreciate a gorgeous female body as much as the next person."}}{ep2 
         alondra appreciate}
 
     \child{"Nah, I'm just kidding. In all seriousness, it's just because I hate having to constantly fix my clothing. So long as you got health, skin heals instantly. Wool or cotton, not so much."}
@@ -3371,7 +3371,7 @@ stops at best halfway down \hisher{} thighs.}
 
     \name{} slides \hisher{} elbow off the counter, crosses \hisher{} arms, and leans \hisher{} hips against the counter. 
 
-    \childif{'ep2IldriSceneTransition' in textCommandsMusic.keywords()}{ep2 ildri scene 1 transition again}
+    \childif{'ep2IldriSceneTransition' in pwutilities.keywords()}{ep2 ildri scene 1 transition again}
 
     \childelif{True}{ep2 ildri scene 1 transition}
 
@@ -3407,7 +3407,7 @@ stops at best halfway down \hisher{} thighs.}
     "Yes ma'am," says \name{}, making \hisher{} way to the dining room.
 
     It takes a year and a day to get everything cleaned up. At least that's what it felt like. Never in all of \names{} short life had \heshe{} ever seen a group make as much of a mess as hungry
-    adventurers. \cond{'attractedToAlondra' in textCommandsMusic.keywords()}{It didn't help that Alondra and \name{} kept playfully flicking food at each other and playing 
+    adventurers. \cond{'attractedToAlondra' in pwutilities.keywords()}{It didn't help that Alondra and \name{} kept playfully flicking food at each other and playing 
     chase-the-other-around-the-hall-because-said-other-got-snarky. At least until Ildri burst in and promised grim consequences if the two didn't stop messing around and did their job.
 Things sped up after that.}{Nana would not be impressed. No siree.}
 
@@ -3474,7 +3474,7 @@ Things sped up after that.}{Nana would not be impressed. No siree.}
 
 \begin{node}{ep2 peter}{Wesley and Anne's Weapons and Armor}{Peter}{Andrew Russell}
 
-    \childif{'teaching\_Anne' in textCommandsMusic.keywords()}{ep2 peter teaching anne}
+    \childif{'teaching\_Anne' in pwutilities.keywords()}{ep2 peter teaching anne}
 
     \childelif{True}{ep2 peter conversation}
 
@@ -3522,7 +3522,7 @@ Things sped up after that.}{Nana would not be impressed. No siree.}
 
 \begin{childnode}{ep2 peter teaching anne continued}{Andrew Russell}
 
-    \cond{'attractedToPeter' in textCommandsMusic.keywords()}{"Worried I might ruin your daughter?" says \name{}, smirking at Peter.}{"Ever the protective father," says \name{}.}
+    \cond{'attractedToPeter' in pwutilities.keywords()}{"Worried I might ruin your daughter?" says \name{}, smirking at Peter.}{"Ever the protective father," says \name{}.}
 
     Peter shrugs and steps towards the smithy. "Just want to make sure you don't try to teach her firebolt or something."
 
@@ -3597,7 +3597,7 @@ Things sped up after that.}{Nana would not be impressed. No siree.}
 
     "Good. I'd hate to have another talk like last week," says Peter.
 
-    "Oh, don't worry about that," says \name{}, sharing a \cond{'ep2AnnePrank' in textCommandsMusic.keywords()}{mischievous grin}{smile} with Anne. "We've got a deal worked out, no problem. Isn't that right, Anne?"
+    "Oh, don't worry about that," says \name{}, sharing a \cond{'ep2AnnePrank' in pwutilities.keywords()}{mischievous grin}{smile} with Anne. "We've got a deal worked out, no problem. Isn't that right, Anne?"
 
     "Yup." Anne nods.
 
@@ -3612,19 +3612,19 @@ Things sped up after that.}{Nana would not be impressed. No siree.}
 
     "I see," says \name{}, \hisher{} voice carefully controlled, neither agreeing nor disagreeing. "Well, close your eyes, and let's try again."
 
-    \cond{'ep2AnnePrank' in textCommandsMusic.keywords()}{"Can we prank Daddy yet?"}{"Can we make sparkles now?"} asks Anne.
+    \cond{'ep2AnnePrank' in pwutilities.keywords()}{"Can we prank Daddy yet?"}{"Can we make sparkles now?"} asks Anne.
 
     "Have you completed your meditation yet?" asks \name{}.
 
     "No..."
 
-    \cond{'ep2AnnePrank' in textCommandsMusic.keywords()}{"Then what makes you think we're ready to prank your father?"}{"Then what makes you think we're ready to play with the sparkles?"} asks \name{}.
+    \cond{'ep2AnnePrank' in pwutilities.keywords()}{"Then what makes you think we're ready to prank your father?"}{"Then what makes you think we're ready to play with the sparkles?"} asks \name{}.
 
     "Oh alright." Anne huffs dramatically, then closes her eyes.
 
     "Right." \name{} starts to repeat the chant, but then stops. A memory floats up from the deep recesses of \hisher{} mind: sitting in \hisher{} mother's lap, \hisher{} eyes closed, while \hisher{} mother sang softly, the women's soothing melody guiding 
     \himher{} unerringly towards the small, glowing orb of holy life deep within \himher{}. Following on the heels of the memory are words, and a tune. An old Taironan tune about a search for a father's strong embrace. \name{} shoots 
-    a glance at Peter, \cond{'attractedToPeter' in textCommandsMusic.keywords()}{admiring his muscled, round bottom as he bends over to peer into the forge}{Anee's father}. \name{} hums a little, and starts to sing.
+    a glance at Peter, \cond{'attractedToPeter' in pwutilities.keywords()}{admiring his muscled, round bottom as he bends over to peer into the forge}{Anee's father}. \name{} hums a little, and starts to sing.
 
     Anne stops fidgeting. Her breathing falls into step with the song's slow, steady beat. \name{} stumbles a few places, where \hisher{} memory fails \himher{}, but \heshe{} half-mumbles, half-hums 
     until \heshe{} reaches a line \heshe{} does
@@ -3651,7 +3651,7 @@ Things sped up after that.}{Nana would not be impressed. No siree.}
 
     \name{} sings the song five more times, and Anne manages to get her hands on her talent twice more.
 
-    \childif{'ep2AnnePrank' in textCommandsMusic.keywords()}{ep2 anne start prank}
+    \childif{'ep2AnnePrank' in pwutilities.keywords()}{ep2 anne start prank}
 
     \childelif{True}{ep2 anne play}
 
@@ -3677,7 +3677,7 @@ Things sped up after that.}{Nana would not be impressed. No siree.}
 
     "Put it down daddy's pants," says Anne with a giggle.
 
-    \name{} \cond{'attractedToPeter' in textCommandsMusic.keywords()}{blushes. "Well, alright."}{grins. "Devious child."}
+    \name{} \cond{'attractedToPeter' in pwutilities.keywords()}{blushes. "Well, alright."}{grins. "Devious child."}
 
     The spark zips through the air, and down Peter's trousers.
     
@@ -3768,8 +3768,8 @@ Things sped up after that.}{Nana would not be impressed. No siree.}
 
     He opens the door and gestures for \name{} to enter.
 
-    \cond{'attractedToPeter' in textCommandsMusic.keywords() and universal.state.player.is\_female()}{"Ladies first?" says \name{}, smiling weakly.}{\name{} lowers \hisher{} head and scurries inside.}
-    \cond{'attractedToPeter' in textCommandsMusic.keywords() and universal.state.player.is\_female()}{\names{} smile fades beneath Peter's harsh glare. \HeShe{} lowers \hisher{} head and ducks into the shed.}{}
+    \cond{'attractedToPeter' in pwutilities.keywords() and universal.state.player.is\_female()}{"Ladies first?" says \name{}, smiling weakly.}{\name{} lowers \hisher{} head and scurries inside.}
+    \cond{'attractedToPeter' in pwutilities.keywords() and universal.state.player.is\_female()}{\names{} smile fades beneath Peter's harsh glare. \HeShe{} lowers \hisher{} head and ducks into the shed.}{}
 
     Peter enters behind \name{}, closing the door behind him, and bathing the two in darkness. "Make light, if you will."
 
@@ -3785,27 +3785,27 @@ Things sped up after that.}{Nana would not be impressed. No siree.}
 
     Peter flexes the cane, a distant look in his eyes. "This is where Marcela and I came whenever one of us stepped out of line. My parents and grandparents used it for the same purposes."
 
-    \cond{'attractedToPeter' in textCommandsMusic.keywords()}{A small feeling of intimacy worms its way through \names{} chest. Peter had spent many emotional moments here, with his ex-wife. How did Peter spank her? Was he quiet? Scolding? Was he regretful?
+    \cond{'attractedToPeter' in pwutilities.keywords()}{A small feeling of intimacy worms its way through \names{} chest. Peter had spent many emotional moments here, with his ex-wife. How did Peter spank her? Was he quiet? Scolding? Was he regretful?
         When he was done, did he comfort her, or leave her here to think about it? Was forgiveness granted then and there, or later, after they'd both calmed down? Was forgiveness given at all? 
         \name{} feels a jolt of fear. Oh Madre, what happens if Peter doesn't
     forgive \himher{}? What if he hates \himher{}? Gives \himher{} a caning, and then stops letting \himher{} teach Anne? Stops talking to \himher{}?}{"Was that ever used?" asks \name{}, pointing at the whip.}
 
-    \cond{'attractedToPeter' in textCommandsMusic.keywords()}{"I'm sorry," says \name{}. "I didn't mean it, it won't happen again, please don't fire me..."}{Peter looks at the whip. He raises an eyebrow at \name{}. "Would you behave if I said yes? Actually,
+    \cond{'attractedToPeter' in pwutilities.keywords()}{"I'm sorry," says \name{}. "I didn't mean it, it won't happen again, please don't fire me..."}{Peter looks at the whip. He raises an eyebrow at \name{}. "Would you behave if I said yes? Actually,
     that's a relic from my grandfather. Guy was a far better smith than I could ever hope to be. He could afford to keep a few horses in the old stables, over where the Adventurer's Guild is now. Used to take his family out riding on the weekends. The whip
     was for the horses, not his family."}
 
-    \cond{'attractedToPeter' in textCommandsMusic.keywords()}{"Relax," says Peter, patting \name{} on the shoulder. "Anne wasn't hurt, and I'm not going to fire you for doing one stupid thing. No, I'm just going to cane you silly, and plop you in the corner of the
+    \cond{'attractedToPeter' in pwutilities.keywords()}{"Relax," says Peter, patting \name{} on the shoulder. "Anne wasn't hurt, and I'm not going to fire you for doing one stupid thing. No, I'm just going to cane you silly, and plop you in the corner of the
     yard for a while, before sending you to the rest of your day, with plans to see you bright and early tomorrow."}{"That's a relief," says \name{}.}
 
-    \cond{'attractedToPeter' in textCommandsMusic.keywords()}{\name{} feels a surge of relief. "Thank Madre. I was afraid...well, I don't know. Anne's a lot of fun, and I, um, well I need the money."}{"Don't think you're getting off easy, though," says Peter,
+    \cond{'attractedToPeter' in pwutilities.keywords()}{\name{} feels a surge of relief. "Thank Madre. I was afraid...well, I don't know. Anne's a lot of fun, and I, um, well I need the money."}{"Don't think you're getting off easy, though," says Peter,
     flexing the thick cane. "This baby's the harshest we get around here. Now, bend over and put your hands on the stool."}
 
-    \cond{'attractedToPeter' in textCommandsMusic.keywords()}{"We'll see if you're still singing the same tune when we're done here," says Peter. "Now bend over and put your hands on the stool."}
+    \cond{'attractedToPeter' in pwutilities.keywords()}{"We'll see if you're still singing the same tune when we're done here," says Peter. "Now bend over and put your hands on the stool."}
     {\name{} eyes the stool apprehensively, as the full weight of the caning \heshe{} is about to receive crashes
     down on \hisher{} shoulders. Not like there's anything to do about it now, though. Escaping is looking less than possible, and even if \heshe{} did successfully get away, Ildri'd probably drag \himher{} right back over as soon as she found out, spanking 
     \himher{} all the way.}
 
-    \name{} bends over and puts \hisher{} hands on the stool. \HeShe{} locks \hisher{} knees, and thrusts \hisher{} tender, pinkish, \bumadj{} bottom towards Peter. \cond{'attractedToPeter' in textCommandsMusic.keywords()}{\name{} is surprised by a faint
+    \name{} bends over and puts \hisher{} hands on the stool. \HeShe{} locks \hisher{} knees, and thrusts \hisher{} tender, pinkish, \bumadj{} bottom towards Peter. \cond{'attractedToPeter' in pwutilities.keywords()}{\name{} is surprised by a faint
     tingle spreading through the pit of \hisher{} stomach, as \heshe{} considers \hisher{} position: half-naked, bent over, with \hisher{} bare ass and pussy thrust out at Peter.}{\name{} takes a deep breath, and tries
     to force \himselfherself{} to relax.}
 
@@ -3839,16 +3839,16 @@ Things sped up after that.}{Nana would not be impressed. No siree.}
     Twice more the cane cuts into \names{} bottom, each stroke punctuated by a howl and a sob. \name{} is left with six parallel lines of agony, overlaid on top of an even blanket of soreness. Each stripe is a few inches apart and ranging from the very top of 
     \hisher{} cheeks to the very bottom.
 
-    "It's over." \cond{'attractedToPeter' in textCommandsMusic.keywords()}{Peter sets the cane back in its hooks on the wall, and gently pries \names{} fingers off the stool. Then, to \names{} surprise, he sits down on the stool, his legs open, and guides 
+    "It's over." \cond{'attractedToPeter' in pwutilities.keywords()}{Peter sets the cane back in its hooks on the wall, and gently pries \names{} fingers off the stool. Then, to \names{} surprise, he sits down on the stool, his legs open, and guides 
     \name{} onto his lap, positioning the sobbing \manwoman{} so that \heshe{} is straddling Peter, with \hisher{} striped bottom hanging in empty air.}{Peter sets the cane back in its hook on the wall. "Come on."}
 
-    \cond{'attractedToPeter' in textCommandsMusic.keywords()}{\name{} buries \hisher{} face in Peter's warm chest, and clutches the front of his shirt. \HeShe{} alternates between sobbing, and mumbling apologies. Peter holds \himher{} tight, and rocks
+    \cond{'attractedToPeter' in pwutilities.keywords()}{\name{} buries \hisher{} face in Peter's warm chest, and clutches the front of his shirt. \HeShe{} alternates between sobbing, and mumbling apologies. Peter holds \himher{} tight, and rocks
     gently, murmuring words of comfort and forgiveness. As \names{} sobs slowly fade, \heshe{} nuzzles deeper into Peter's chest, basking in the warmth and stability of his strong grip.}{\name{} stands and dances in place, rubbing \hisher{} bottom and hiccuping.}
 
-    "Alright, come on," says Peter after a moment, \cond{'attractedToPeter' in textCommandsMusic.keywords()}{gently patting \names{} thigh}{}. "Day's not getting any younger, and I've got work to do. And keep your bottom bare. You've still got corner time,
+    "Alright, come on," says Peter after a moment, \cond{'attractedToPeter' in pwutilities.keywords()}{gently patting \names{} thigh}{}. "Day's not getting any younger, and I've got work to do. And keep your bottom bare. You've still got corner time,
     remember." 
 
-    \cond{'attractedToPeter' in textCommandsMusic.keywords()}{With Peter's help, \name{} clambers off of \hisher{} lap, and follows him back towards the smithy,}{\name{} follows Peter back towards the smithy,} rubbing \hisher{} bottom and sniffing.
+    \cond{'attractedToPeter' in pwutilities.keywords()}{With Peter's help, \name{} clambers off of \hisher{} lap, and follows him back towards the smithy,}{\name{} follows Peter back towards the smithy,} rubbing \hisher{} bottom and sniffing.
 
     Peter makes \name{} put \hisher{} hands on \hisher{} head, and stand in front of the tree, butt towards the smithy. \name{} stares at the tree in front of \himher{}, listening to the rhythmic, soothing sounds of Peter working. A few times, \heshe{} hears
     Sebastian come out to speak with Peter, and \name{} tenses, expecting some nasty remark, or scolding for endagering the man's only grandchild. However, Sebastian never says anything to \name{}. He merely exchanges a few quiet words with Peter before returning
@@ -3885,7 +3885,7 @@ Things sped up after that.}{Nana would not be impressed. No siree.}
     hunk of molten metal it'd have gone flying.
     Anne could have been hurt! 
     Madre, she almost was! If I'd been even a fraction of a second slower... And she doesn't have any health. Anne'd be screaming her lungs out right now. She could have ended up blind in one eye. Madre, how could I have been so stupid? 
-    \cond{'attractedToPeter' in textCommandsMusic.keywords()}{Peter probably hates me now. W-well, well he should. Because I'm stupid. I'm a horrible, stupid little--"}{}
+    \cond{'attractedToPeter' in pwutilities.keywords()}{Peter probably hates me now. W-well, well he should. Because I'm stupid. I'm a horrible, stupid little--"}{}
 
     Peter comes outside, his expression stony. \names{} babbling stops. The bottom drops out of \hisher{} stomach. \HisHer{} knees go weak. \HisHer{} eyes flick down to \hisher{} sandals.
 
@@ -3902,10 +3902,10 @@ Things sped up after that.}{Nana would not be impressed. No siree.}
     Mother, she almost was! And she doesn't have any health you dimwit. She'd be screaming her lungs out right now! I'd be holding her thrashing body down while Paloma treated her! And what could Paloma do? Wrap a few bandages around it. That's it. My baby girl would 
     be in agony, and there'd be nothing I could do. You almost maimed my baby girl! She could have ended up blind in one eye. Permanently blinded! She--"
     
-    Peter stops. \cond{'attractedToPeter' in textCommandsMusic.keywords()}{\name{} is bawling \hisher{} eyes out. \HisHer{} body is shaking, and \heshe{}'s bitten \hisher{} thumbnail down to the quick.}{\name{} swallows once. Twice. \HeShe{} blinks rapidly,
+    Peter stops. \cond{'attractedToPeter' in pwutilities.keywords()}{\name{} is bawling \hisher{} eyes out. \HisHer{} body is shaking, and \heshe{}'s bitten \hisher{} thumbnail down to the quick.}{\name{} swallows once. Twice. \HeShe{} blinks rapidly,
     fighting back tears.}
 
-    \childif{'attractedToPeter' in textCommandsMusic.keywords()}{ep2 peter wait attracted to him}
+    \childif{'attractedToPeter' in pwutilities.keywords()}{ep2 peter wait attracted to him}
 
     \childelif{True}{ep2 peter wait not attracted to him}
 
@@ -4150,16 +4150,16 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     Eventually, her running slows. \isfemale{She walks over to \name{}, and flops into \hisher{} lap.}{\name{} extinguishes the sparkles.}
 
-    \cond{'attractedToPeter' in textCommandsMusic.keywords()}{"All tuckered out?" asks \name{} as \heshe{} extinguishes the sparkles.}{"Daddy, can I go inside? I'm tired," says Anne.}
+    \cond{'attractedToPeter' in pwutilities.keywords()}{"All tuckered out?" asks \name{} as \heshe{} extinguishes the sparkles.}{"Daddy, can I go inside? I'm tired," says Anne.}
 
     \name{} glances at Peter, and realizes with a start that he isn't working. Instead, he appears to have been watching his daughter play.
 
-    \cond{'attractedToPeter' in textCommandsMusic.keywords()}{\name{} rubs the top of Anne's head, then glances up at Peter. Peter is leaning against the stone pillar holding up the smithy roof. A 
+    \cond{'attractedToPeter' in pwutilities.keywords()}{\name{} rubs the top of Anne's head, then glances up at Peter. Peter is leaning against the stone pillar holding up the smithy roof. A 
         small smile is on his lips as he watches his daughter cuddle with 
         \name{}. Peter shares the smile with \name{}.}{"Well, if \names{} alright with it..." Peter looks at \name{}, who nods. "Then why don't you go check on grandma? I'll bet she'll get
     a lot better a lot faster if you spend some time with her."}
 
-    \childif{'attractedToPeter' in textCommandsMusic.keywords()}{ep2 peter small conversation}
+    \childif{'attractedToPeter' in pwutilities.keywords()}{ep2 peter small conversation}
 
     \childelif{True}{ep2 anne goes to grandma}
 
@@ -4395,7 +4395,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     \name{} pushes the door open and enters.
 
-    \childif{'second\_hand\_tragedy' in textCommandsMusic.keywords()}{ep2 elise second hand tragedy}
+    \childif{'second\_hand\_tragedy' in pwutilities.keywords()}{ep2 elise second hand tragedy}
 
     \childelif{True}{ep2 elise greeting}
 
@@ -4446,7 +4446,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     \begin{code}
 
-        textCommandsMusic.remove\_keyword('second\_hand\_tragedy')
+        pwutilities.remove\_keyword('second\_hand\_tragedy')
 
     \end{code}
 
@@ -4504,7 +4504,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     \begin{code}
 
-        textCommandsMusic.remove\_keyword('second\_hand\_tragedy')
+        pwutilities.remove\_keyword('second\_hand\_tragedy')
 
     \end{code}
 
@@ -4595,7 +4595,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     \begin{code}
 
-        textCommandsMusic.enterLeft(universal.state.get\_character("Carrie.person"), universal.state.get\_room("Shrine"))
+        pwutilities.enterLeft(universal.state.get\_character("Carrie.person"), universal.state.get\_room("Shrine"))
 
     \end{code}
 
@@ -4603,7 +4603,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
 \begin{node}{ep2 carrie}{offStage}{Carrie}{Andrew Russell}
 
-    \childif{'ep2BeginningLostTemperWithCarrie' in textCommandsMusic.keywords()}{ep2 carrie lost temper apologize}
+    \childif{'ep2BeginningLostTemperWithCarrie' in pwutilities.keywords()}{ep2 carrie lost temper apologize}
 
     \childelif{True}{ep2 carrie subplot begin}
 
@@ -4613,7 +4613,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     \begin{code}
 
-        textCommandsMusic.remove_keyword('ep2BeginningLostTemperWithCarrie')
+        pwutilities.remove_keyword('ep2BeginningLostTemperWithCarrie')
 
     \end{code}
 
@@ -4680,7 +4680,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     Carrie gnaws anxiously on her lower lip, but obediantly shimmies her pants down her legs. Then she lays herself across \names{} lap, her large, bouncy bottom dominating \names{} view.
     As usual, the young woman is wearing only a g-string beneath her trousers, leaving her wobbling cheeks completely exposed. She squirms a little,
-    \cond{'attractedToCarrie' in textCommandsMusic.keywords()}{setting off a little fire in \names{} belly.}{trying to get comfortable.}
+    \cond{'attractedToCarrie' in pwutilities.keywords()}{setting off a little fire in \names{} belly.}{trying to get comfortable.}
 
     \name{} presses firmly on the small of her back, and raises the hairbrush. "Ready?"
 
@@ -4726,7 +4726,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     "But you forgive me right? We're good again, right?" asks Carrie, meeting \names{} eyes with her watery gaze.
 
-    \name{} \cond{'attractedToCarrie' in textCommandsMusic.keywords() and 'lesbian\_in\_denial' not in textCommandsMusic.keywords()}{pulls Carrie into a hug and gives her a kiss on the forehead.}{
+    \name{} \cond{'attractedToCarrie' in pwutilities.keywords() and 'lesbian\_in\_denial' not in pwutilities.keywords()}{pulls Carrie into a hug and gives her a kiss on the forehead.}{
     \name{} pulls Carrie into a brief hug.} "Yeah, we're good."
 
     Carrie's smile widens. It's still a bit hesitant, but it becomes less so with every second. "Great. So come on, let's go for a walk. I need to get out of this stuffy ol' Church."
@@ -4749,7 +4749,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
 \begin{childnode}{ep2 carrie subplot begin}{Andrew Russell}
 
-    \music{textCommandsMusic.CARRIE}
+    \music{pwutilities.CARRIE}
 
     \stageDirections{Crazy shenanigans with Carrie. Note: It doesn't actually take place off stage, however I don't want Carrie to be in the Shrine until after the conversation with Elise.}
 
@@ -4763,9 +4763,9 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
     covers her chest and a pair of light blue trousers. Both the shirt and trousers are marred by a small collection of minor stains. A pair of worn, heavily stained brown oxhide 
     boots finishes off the ensemble.
 
-    "Hey," says Carrie. She gives \name{} a quick \cond{'relationshipWithCarrie' in textCommandsMusic.keywords()}{hug, and kiss.}{hug.} "Sorry for the wait, I was in the lab with Sister Terese."
+    "Hey," says Carrie. She gives \name{} a quick \cond{'relationshipWithCarrie' in pwutilities.keywords()}{hug, and kiss.}{hug.} "Sorry for the wait, I was in the lab with Sister Terese."
 
-    "No big deal. Working your terrible potion magic as usual?" asks \name{}, \cond{'relationshipWithCarrie' in textCommandsMusic.keywords()}{giving Carrie's shoulders a squeeze.}{leaning against
+    "No big deal. Working your terrible potion magic as usual?" asks \name{}, \cond{'relationshipWithCarrie' in pwutilities.keywords()}{giving Carrie's shoulders a squeeze.}{leaning against
     the closest pew.}
 
     Carrie rubs her forehead and shakes her head. The sparkle fades a little from her eyes, and her face grows drawn and tired. "Terrible doesn't even begin to describe it. Our latest variation is 
@@ -4793,7 +4793,7 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
 \begin{childnode}{ep2 carrie outside}{Andrew Russell}
 
-    \music{textCommandsMusic.CARRIE}
+    \music{pwutilities.CARRIE}
 
     As the two step out into the warm sunlight, Carrie throws her hands into the air, arcs her back, and stretches. Then she gives herself a little shake. "Hmm. Sunlight. Best invention ever." 
 
@@ -4897,10 +4897,10 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     \name{} rolls \hisher{} eyes. "Breaking into the tailor is not going to give either of our lives meaning."
 
-    \cond{'relationshipWithCarrie' in textCommandsMusic.keywords()}{Carrie pouts for a moment, then sidles up next to \name{}. Her hands slip around \names{} waist, and she pushes her warm hips
+    \cond{'relationshipWithCarrie' in pwutilities.keywords()}{Carrie pouts for a moment, then sidles up next to \name{}. Her hands slip around \names{} waist, and she pushes her warm hips
     against \hishers{}. "Aww come on. It'll make me happy. And you want me to be happy right? A happy lover is a good lover."}{Carrie pouts. "Fine. Be a party pooper. See what I care. Jerk."}
 
-    \cond{'relationshipWithCarrie' in textCommandsMusic.keywords()}{"Trust me, there are plenty of other ways I can make you happy," says \name{}. "Like going for a walk through the fields around
+    \cond{'relationshipWithCarrie' in pwutilities.keywords()}{"Trust me, there are plenty of other ways I can make you happy," says \name{}. "Like going for a walk through the fields around
     the city, or telling you more about the history of the major Taironan cities, or about our faith."}{"OK."}
 
     "Come on!" says Carrie, hopping up and down. "You gotta help me, you won't get in trouble I promise. Let your hair down and live a little will ya? Stopping being a jerk, and help me. And I won't
@@ -4982,15 +4982,15 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
 
     \name{} begins battering Carrie's bottom, the soft, plushy cheeks rolling and jiggling beneath \hisher{} hard, callused hand.
 
-    \cond{'ep2BeginningSpankedCarrie' in textCommandsMusic.keywords()}{"Come on \name{}, you can't--oww--solve all your--oww--problems by spanking--oww--me," says Carrie}{"No, come on, not--oww--not
+    \cond{'ep2BeginningSpankedCarrie' in pwutilities.keywords()}{"Come on \name{}, you can't--oww--solve all your--oww--problems by spanking--oww--me," says Carrie}{"No, come on, not--oww--not
     in public like this. Oww! It's so--oww--embarassing," says Carrie} as her bottom rocks and bobs in a vain effort to evade \names{} hand.
 
-    \cond{'ep2BeginningSpankedCarrie' in textCommandsMusic.keywords()}{"I'm not solving all my problems by spanking you. I'm just teaching you what the word 'no' means," says \name{}.}{"You throw
+    \cond{'ep2BeginningSpankedCarrie' in pwutilities.keywords()}{"I'm not solving all my problems by spanking you. I'm just teaching you what the word 'no' means," says \name{}.}{"You throw
     a tantrum in public, you're getting spanked in public," says \name{}.} \HeShe{} wraps \hisher{} arm around the small of Carrie's back, and picks up the pace.
 
     "But I'm not your--oww--responsibility," wails Carrie. She slaps the flat of her hand against the side of the barrel, and stomps her foot. "Stop it!"
 
-    "I'm your \cond{'ep2CarrieSex' in textCommandsMusic.keywords()}{lover}{friend}. That makes you my responsibility," says \name{}. \HeShe{} leans over and administers a burst of heavy slaps to
+    "I'm your \cond{'ep2CarrieSex' in pwutilities.keywords()}{lover}{friend}. That makes you my responsibility," says \name{}. \HeShe{} leans over and administers a burst of heavy slaps to
     Carrie's sitspots. Carrie squeals and shakes her bottom. "Now stop whining, and stop squirming or your pants are coming down."
 
     "You wouldn't," says Carrie, her face is scarlet and turning redder by the second. She glances towards the crowded street, while \name{} continues to batter Carrie's soft bubble butt.
@@ -5038,10 +5038,10 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
         
     "Eh, don't worry about that," says Carrie. She gives her bottom an extra vigorous rubbing. 
 
-    \cond{'ep2BeginningSpankedCarrie' in textCommandsMusic.keywords()}{"I'd be more willing to believe you if I hadn't also paddled you last night," says \name{}.}{"Alright then," 
+    \cond{'ep2BeginningSpankedCarrie' in pwutilities.keywords()}{"I'd be more willing to believe you if I hadn't also paddled you last night," says \name{}.}{"Alright then," 
     says \name{}. "So what now?"}
 
-    \cond{'ep2BeginningSpankedCarrie' in textCommandsMusic.keywords()}{"Hey, that's not fair. That was for something totally different," says Carrie. "And I learned my lesson, see? I haven't 
+    \cond{'ep2BeginningSpankedCarrie' in pwutilities.keywords()}{"Hey, that's not fair. That was for something totally different," says Carrie. "And I learned my lesson, see? I haven't 
     propositioned you once all day. But whatever, I'm bored, and I don't want to go back to the Church just yet. Let's go do something."}{Carrie shrugs. "I dunno. Got any ideas?"}
 
     \continue{ep2 practice spectral magic}
@@ -5073,8 +5073,8 @@ stool leg with the other.}{\name{} lays \himselfherself{} across Peter's lap, \h
     "Hello," she says. "How can I help you?" 
 
     "I'm just browsing, for now," says \name{}, \hisher{} eyes sweeping the large space. It doesn't take \himher{} long to find Terry's office, situated next to the...women's panties. 
-    \isfemale{Well, nothing like a little bit of lingerie shopping. \cond{'attractedToAlondra'in textCommandsMusic.keywords()}{Maybe there's something here Alondra would enjoy...}{
-                \cond{'attractedToPeter' in textCommandsMusic.keywords()}{Maybe there's something here that'd impress Peter... Of course, getting him to see it would be tricky, but whatever. 
+    \isfemale{Well, nothing like a little bit of lingerie shopping. \cond{'attractedToAlondra'in pwutilities.keywords()}{Maybe there's something here Alondra would enjoy...}{
+                \cond{'attractedToPeter' in pwutilities.keywords()}{Maybe there's something here that'd impress Peter... Of course, getting him to see it would be tricky, but whatever. 
                 Baby steps.}{A girl can never have too much sexy underwear.}}}
               {Crap. This is going to be awkward.}
 
@@ -5418,19 +5418,19 @@ people's laps with her pants around her ankles.}
 
      "Hey, wait \nickname{}," says Carrie, shuffling after \name{}. "Come on, I know you're mad, but--"
 
-     "You be quiet," says \name{}. \cond{'boarding\_with\_Adrian' not in textCommandsMusic.keywords()}{"Hey Adrian, mind if I borrow a bedroom for a few 
+     "You be quiet," says \name{}. \cond{'boarding\_with\_Adrian' not in pwutilities.keywords()}{"Hey Adrian, mind if I borrow a bedroom for a few 
      minutes? Need to have a private chat with my friend."}{\name{} drags Carrie into \hisher{} room.}
 
-     \cond{'boarding\_with\_Maria' in textCommandsMusic.keywords()}{"Your clothes going to stay on?" asks Adrian without looking up from a piece of parchment he is writing on.}{}
+     \cond{'boarding\_with\_Maria' in pwutilities.keywords()}{"Your clothes going to stay on?" asks Adrian without looking up from a piece of parchment he is writing on.}{}
 
-     \cond{'boarding\_with\_Maria' in textCommandsMusic.keywords()}{"Well, my clothes will."}{}
+     \cond{'boarding\_with\_Maria' in pwutilities.keywords()}{"Well, my clothes will."}{}
 
-     \cond{'boarding\_with\_Maria' in textCommandsMusic.keywords()}{"That'll work. Let me know if you need to borrow an implement. Third door on the left."}{}
+     \cond{'boarding\_with\_Maria' in pwutilities.keywords()}{"That'll work. Let me know if you need to borrow an implement. Third door on the left."}{}
 
      Carrie starts to whimper. "Come on, \name{}, what's the big deal?"
 
      "Big deal? You knew that woman was going to spank me didn't you?" Once the two are in the room, \name{} bends Carrie over the bed, tugs down the girl's pants, and begins slapping her
-     \cond{'ep2BeginningSpankedCarrie' in textCommandsMusic.keywords()}{bottom through a pair of surprisingly modest white panties.}{bare cheeks,
+     \cond{'ep2BeginningSpankedCarrie' in pwutilities.keywords()}{bottom through a pair of surprisingly modest white panties.}{bare cheeks,
      the woman's tiny g-string doing absolutely nothing to protect her bottom, as usual.}
 
      Carrie yelps and squirms. "Aww come on, I didn't know that. And maybe if you'd found something reasonable to complain about, you wouldn't have been spanked. Who complains about an assistant 
@@ -5523,9 +5523,9 @@ people's laps with her pants around her ankles.}
 
 \begin{node}{ep2 airell}{Adventurer's Guild}{Airell}{Andrew Russell}
 
-    \childif{'punched\_Airell' in textCommandsMusic.keywords()}{ep2 airell face punch}
+    \childif{'punched\_Airell' in pwutilities.keywords()}{ep2 airell face punch}
 
-    \childelif{'talk\_with\_Airell' in textCommandsMusic.keywords()}{ep2 airell talk}
+    \childelif{'talk\_with\_Airell' in pwutilities.keywords()}{ep2 airell talk}
 
     \childelif{True}{ep2 airell busy}
 
@@ -5567,7 +5567,7 @@ people's laps with her pants around her ankles.}
 
     \name{} shrugs. "I'll be happy when it's over, though."
 
-    \cond{'spar\_with\_Cosima' in textCommandsMusic.keywords()}{"Doesn't surprise me. Don't forget we've still got a little sparring match, you and I. Though you might want to wait a few days. My 
+    \cond{'spar\_with\_Cosima' in pwutilities.keywords()}{"Doesn't surprise me. Don't forget we've still got a little sparring match, you and I. Though you might want to wait a few days. My 
         paddle stings like you wouldn't believe over stripes."}
         {\cond{'talk\_with\_Cosima'}{"Doesn't surprise me. Don't forget he's not the only one who owes you a spanking," says Cosima, givingt \name{} a stern look. "And you'd better report soon. 
         Or I'll give you worse."}{"Doesn't surprise me. Well, good luck. And don't bother trying to keep the tears in. He won't stop until you've sobbed yourself hoarse. Better sooner rather than
@@ -5835,17 +5835,17 @@ strokes land on the same spots. \HeShe{} begins to moan as the final stroke is s
 
 \begin{childnode}{ep2 airell finish cooperative}{Bonemouth the Boxfish}
 
-    \cond{'punched\_Airell' in textCommandsMusic.keywords()}{\name{} nimbly climbs off the slinger's lap, this time ignoring his mistake in speech.}{\name{} grimaces, but doesn't protest further.} 
+    \cond{'punched\_Airell' in pwutilities.keywords()}{\name{} nimbly climbs off the slinger's lap, this time ignoring his mistake in speech.}{\name{} grimaces, but doesn't protest further.} 
     \HeShe{} 
     removes \hisher{} \trousers{}
     \pwearingunderwear{and panties,}{,} 
     then bends over the stool and reaches toward the bottom of the legs furthest from \himher{}. The spectral hands holding the stool raise it to a height that begins to be uncomfortable. As it 
     the hands lift \hisher{} hips to a point where \heshe{} has to stand on \hisher{} toes, \heshe{} feels \hisher{} sore round bottom bloom, the skin stretching tautly across it. 
 
-\cond{'talk\_with\_Airell' in textCommandsMusic.keywords()}{"Now," says Airell. "You will receive your promised paddling. And just in case you think I may have forgotten,  I recall guaranteeing you 
+\cond{'talk\_with\_Airell' in pwutilities.keywords()}{"Now," says Airell. "You will receive your promised paddling. And just in case you think I may have forgotten,  I recall guaranteeing you 
 'a thorough paddling that will have you crying and begging me to stop afore we are even half done!'"}{} 
 
-\cond{'talk\_with\_Airell' in textCommandsMusic.keywords()}{\name{} moans. \HeShe{} has nothing more to say as \heshe{} silently curses the uncanny memory of this old fart.}{} 
+\cond{'talk\_with\_Airell' in pwutilities.keywords()}{\name{} moans. \HeShe{} has nothing more to say as \heshe{} silently curses the uncanny memory of this old fart.}{} 
 
 Airell has retrieved his wicked paddle and is tapping it against the palm of his hand menacingly. "Excellent! I see this is not the first time you've followed such orders. Let this be a reminder 
 that none of mine are to be ignored!" 
