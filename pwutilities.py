@@ -168,7 +168,7 @@ def to_title_screen_interpreter(keyEvent):
     if keyEvent.key == universal.K_RETURN:
         titleScreen.title_screen()
 
-def initialize_basic_rooms():
+def initialize_default_rooms():
     """
     Sets up the adjacencies of the basic rooms, whose adjacency lists shouldn't be affected: 
     Edge of Avaricum, Avaricum Square, Shrine, Craftman's Corridor, Therese's Tailors, Wesley and 
@@ -178,6 +178,7 @@ def initialize_basic_rooms():
     edge = universal.state.get_room("Edge of Avaricum")
     square = universal.state.get_room("Avaricum Square")
     shrine = universal.state.get_room("Shrine")
+    sofiasClinic = universal.state.get_room("Sofia's Clinic")
     craftmansCorridor = universal.state.get_room("Craftman's Corridor")
     taylors = universal.state.get_room("Therese's Tailors")
     smithy = universal.state.get_room("Wesley and Anne's Smithy")
@@ -195,6 +196,26 @@ def initialize_basic_rooms():
     guild.add_adjacent(kitchen)
     if 'boarding_with_Adrian' in keywords():
         slums.add_adjacent(mariasHome)
+    elif 'boarding_with_Maria' in keywords():
+        slums.add_adjacent(sofiasClinic)
+
+
+def initialize_default_char_locations():
+    """
+    Similar to initialize_basic_rooms, this puts those characters who are usually in a particular
+    place in that particular place (i.e. Peter in the Smithy, Ildri in the Kitchen).
+    """
+    ildri = universal.state.get_character("Ildri.person")
+    peter = universal.state.get_character("Peter.person")
+    carol = universal.state.get_character("Carol.person")
+    sofia = universal.state.get_character("Sofia.person")
+    kitchen = universal.state.get_room("Kitchen")
+    smithy = universal.state.get_room("Wesley and Anne's Smithy")
+    taylors = universal.state.get_room("Therese's Tailors")
+    enterLeft(ildri, kitchen)
+    enterLeft(peter, smithy)
+    enterLeft(carol, taylors)
+
 
 #-------------------------------------Music Files----------------------------------------
 CHURCH = music.decrypt(universal.resource_path('POL-apparition-long.wav'), 'church')
