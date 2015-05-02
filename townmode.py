@@ -932,7 +932,7 @@ def perform_go(room, party=None, sayDescription=True):
 
 def update_location(room, party=None):
     if party is None:
-        party = person.get_party()
+        party = universal.state.party
     if universal.state.location is not None:
         universal.state.location.remove_characters(party)
     room.add_characters(party)

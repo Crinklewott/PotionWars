@@ -80,6 +80,9 @@ def set_dungeon_commands(dungeon=None):
             #changingFloors = True
             commandColors.insert(0, GREEN)
             universal.set_commands(['(D)own'] + get_commands(), commandColors)
+        if has_char('s', square):
+            commandColors.insert(0, GREEN)
+            universal.set_commands(['(E)xit'] + get_commands(), commandColors)
 
 
 def print_dir(direction):
@@ -400,7 +403,9 @@ class Dungeon(townmode.Room):
         pygame.draw.line(mapSurface, universal.LIGHT_GREY, startPos, endPos, width)
 
 
-    def draw_vertical_door(self, startPos, horizontalLineLength, verticalLineLength, verticalGap, mapSurface, width=1):
+    def draw_vertical_door(
+            self, startPos, horizontalLineLength, verticalLineLength, verticalGap, mapSurface, 
+            width=1):
         endPos = (startPos[0], startPos[1]-(verticalLineLength // 2) + verticalGap)
         pygame.draw.line(mapSurface, universal.LIGHT_GREY, startPos, endPos, width)
         #Draw little horizontal dashes to mark doors
@@ -423,16 +428,20 @@ class Dungeon(townmode.Room):
 
     def draw_horizontal_door(self, startPos, horizontalLineLength, verticalLineLength, horizontalGap, mapSurface, width=1):
         #Could probably generalize this into a "draw door" function, but I'm lazy.
+        print(startPos)  #(134, 602)
+        print(horizontalLineLength) #86
+        print(verticalLineLength) #35
+        print(horizontalGap) #14
         endPos = (startPos[0]+(horizontalLineLength // 2) - horizontalGap, startPos[1])
         pygame.draw.line(mapSurface, universal.LIGHT_GREY, startPos, endPos, width)
         #Draw little vertical dashes to mark doors
-        verticalStart = (startPos[0], endPos[1] - verticalLineLength//16) 
-        verticalEnd = (startPos[0], endPos[1] + verticalLineLength//16) 
+        verticalStart = (endPos[0], endPos[1] - verticalLineLength//16) 
+        verticalEnd = (endPos[0], endPos[1] + verticalLineLength//16) 
         pygame.draw.line(mapSurface, universal.LIGHT_GREY, verticalStart, verticalEnd, width) 
         #Each side of the gap contributes equally to the width of the gap.
         originalStart = startPos
-        startPos = (startPos[0] + 2*horizontalGap, endPos[1])
-        endPos = (startPos[0]+horizontalLineLength, originalStart[1])
+        startPos = (endPos[0] + 2*horizontalGap, endPos[1])
+        endPos = (originalStart[0]+horizontalLineLength, originalStart[1])
         pygame.draw.line(mapSurface, universal.LIGHT_GREY, startPos, endPos, width)
         #Draw little horizontal dash to mark door
         verticalStart = (startPos[0], startPos[1] - verticalLineLength//16) 
@@ -540,10 +549,10 @@ class Dungeon(townmode.Room):
         originX, originY = (worldView.left + rowNumberWidth, worldView.bottom - columnNumberHeight - coordinateRect.height // 2)
         originY -= verticalLineLength
         originY -= universal.COMMAND_VIEW_LINE_WIDTH // 2
-        rowLeftX, rowBottomY = (worldView.left, originY + universal.COMMAND_VIEW_LINE_WIDTH // 3)
+        rowLeftX, rowBottomY = (worldView.left, .99 * originY + universal.COMMAND_VIEW_LINE_WIDTH // 3)
         columnLeftX, columnTopY = (worldView.left + rowNumberWidth + horizontalLineLength // 2 - columnNumberWidth // 3, worldView.top)
         rowRightX = worldView.right - rowNumberWidth
-        columnBottomY = originY - columnNumberHeight
+        columnBottomY = originY - columnNumberHeight 
         #number rows
         #Don't need to track dirtyRects, because clearScreen means the entire worldview gets redrawn.
         if clearScreen:
@@ -599,7 +608,7 @@ class Dungeon(townmode.Room):
                 #Note: Will actually want to draw the letter 'e' instead of coloring the square. Similar for the stairs, we'll want to insert the numbers.
                 color = universal.GOLD
                 icon = 'e'
-            elif  has_char('s', square):
+            elif has_char('s', square):
                 color = universal.ORANGE
                 icon = 's'
             elif has_char('d', square):
@@ -718,6 +727,8 @@ class Dungeon(townmode.Room):
         return self.coordinates[0]
 
     def mode(self, sayDescription=True):
+        global dungeon
+        dungeon = self
         return dungeon_mode()
 
     def _save(self):
@@ -940,6 +951,11 @@ changingFloors = 0
 def dungeon_interpreter(keyEvent):
     global dungeon
     dirtyRects = None
+    #if dungeon is not None:
+    floor = dungeon.coordinates[0]
+    row = dungeon.coordinates[1]
+    column = dungeon.coordinates[2]
+    square = dungeon[floor][row][column]
     if keyEvent.key == K_ESCAPE:
         townmode.confirm_quit(dungeon_mode)
     elif keyEvent.key == K_s:
@@ -969,6 +985,9 @@ def dungeon_interpreter(keyEvent):
         dirtyRects = dungeon.move(keyEvent.key)
     elif keyEvent.key == K_g:
         dungeon.go()
+    elif keyEvent.key == K_e and has_char('s', dungeon[floor][row][column]):
+        universal.clear_screen()
+        townmode.go(dungeon.adjacent[0])
     return dirtyRects
 
 def select_character_interpreter(keyEvent):

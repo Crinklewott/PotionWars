@@ -90,7 +90,7 @@ if alondra.is_naked():
     alondra.take_item(itemspotionwars.alondrasVNeckTunic)
     alondra.equip(itemspotionwars.alondrasVNeckTunic)
     alondra.equip(itemspotionwars.alondrasChemise)
-if alondra.weapon().name == items.emptyWeapon.name:
+    alondra.equip(itemspotionwars.boyShorts)
     alondra.take_item(itemspotionwars.dagger)
     alondra.equip(itemspotionwars.dagger)
 
@@ -103,6 +103,12 @@ except KeyError:
     sofia = person.Person("Sofia", person.FEMALE, None, None, ''.join(['''Sofia is a middle-aged Taironan woman with moderately dark skin. She is short and thin, with graying shoulder-length''',
         '''hair. She is wearing a plain cotton dress.''']))
 
+try:
+    airell = universal.state.get_character("Airell.person")
+except KeyError:
+    airell = person.Person("Airell", person.MALE, None, None, ''.join(['''A slouching,''',
+                '''exceptionally pale man with out of control red hair and a big bushy red''',
+                '''beard that extends all the way down to his chest.''']))
 
 
 
@@ -115,7 +121,7 @@ except KeyError:
     kitchen = townmode.Room("Kitchen", 
             ' '.join(["The kitchen is a rather large room with two long, waist-high counters running through the middle. Along the sides of the walls are a few small",
         "tables and",
-        "stools. A pair of massive hearths sit at the far end, a pair of turnspit dogs are lying next to the hearth. Their heads come up, and their tails thump against the ground as the Taironan", 
+        "stools. A pair of massive hearths sit at the far end, and a pair of turnspit dogs are lying next to the hearth. Their heads come up, and their tails thump against the ground as the Taironan", 
         "enters. There is a large hole in the south wall. The hole has been braced with several hastily carved timbers, and a few thick furs have been draped over it, so that",
         "customers can't peer directly into the back of the guild. A pair of high windows sit on the western wall on either side of the hearth."]), [universal.state.get_room("Adventurer's Guild")],
         None, None, pwutilities.LIGHT_HEARTED, "pwutilities.LIGHT_HEARTED", None)
@@ -141,25 +147,25 @@ except KeyError:
 slumsLevel1Map = (
                  ( "___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___", "_"),
                  ("|   ","___","___","   ","___"," .,","   ","___","___","___",".,", "___","___","___","___","___","___","___","___","   ","|" ), #19
-                 ("|   ","|.,",";.,","|  ","|.,",";__","|  ","|__",";  ","___","   ",";__","   ",";__","|.,",";.,",";.,",";__","|.,","|  ","|" ), #18
-                 ("|   ","|.,",";.,","|  ","|__","|.,","   ","___",";  ",";__","|  ",";__","|  ",";__","|.,",";__",";__","|  ","|__",";  ","|" ), #17
-                 ("|   ","|.,",";.,","|  ",";__","|__","|  ","|__",";__",";__","|  ",";__","|  ",";__","|__","___","   ","___","   ","___","|" ), #16 
+                 ("|   ","|.,",";.,","|  ","|.,",";__","|  ","|__",";  ","___","   ","___","   ",";__","|.,",";.,",";.,",";__","|.,","|  ","|" ), #18
+                 ("|   ","|.,",";.,","|  ","|__","|.,","   ","|__",";  ",";__","|  ",";__","|  ",";__","|.,",";__",";__","|  ","|__",";  ","|" ), #17
+                 ("|   ","|.,",";.,","|  ",";__","|__","|  ","|__",";__",";__","|.,",";__","|__",";__","|__","___","   ","___","   ","___","|" ), #16 
                  ("|   ",";.,",";.,","|  ",";__","|.,","   ","___","___","   ","___","___","|__",";  ","||.,",";.","|  ",";.,","|  ","|.,","|" ), #15
                  ("|   ","|.,",";.,","|  ","|.,",";.,","|  ","|  ","   ","|  ","|__",";__",";__","   ","|.,",";.,",";  ","|__","|  ",";__","|" ), #14
                  ("|   ","|.,",";.,","|  ","|.,",";.,","|  ","|  ","   ","|  ","|  ","   ","   ","|  ","|__",";__","|  ",";__","|  ",";.,","|" ), #13
                  ("|   ","|.,",";.,","|  ","|__",";.,","|  ",";  ","   ","|  ",";  ","   ","   ","|__","___","   ","   ","   ","   ","|__","|" ), #12
                  ("|   ","|__",";__",";__","., ","|__","|  ","|__","___","|  ",";  ","   ","   ","|__",";__",";  ","   ","., ","   ",";.,","|" ), #11
-                 ("|   ","   ","   ","|.,",";.,",";.,","|  ",";.,","|.,","|.,","|__","___","___","|__","   ","., ","., ",";.,",";.,","|__","|" ), #10
+                 ("|   ","   ","   ","|.,",";.,",";.,","|  ","|.,","|.,","|.,","|__","___","___","|__","   ","., ","., ",";.,",";.,","|__","|" ), #10
                  ("|   ","___","   ","|.,",";.,",";.,","|  ","|.,",";__",";__",";__",";__",";__","|__",";  ","|__","|__",";__",";__","|.,","|" ), #9
                  ("|___","|  ","|  ","|.,",";.,",";.,","|  ","|.,","|  ","   ","   ","   ","   ","., ","., ","___","., ","___","   ",";.,","|" ), #8
-                 ("|___","___","|  ","|__",";__",";__","|  ","|__","|  ","   ","   ","   ","   ","|__","|__","|__",";__",";__","., ","|__","|" ), #7
+                 ("|___","___","|  ","|__",";__",";__","|  ","|__","|  ","   ","   ","   ","   ","|__","|__","|__",";__",";__","|., ","|__","|" ), #7
                  ("|   ","   ","   ","___","___","___","___","___","   ","   ","   ","   ","   ","., ","___","., ","   ","___","|__","|.,","|" ), #6
                  ("|   ","., ","   ","|  ","   ","   ","   ","|__",";  ","   ","   ","   ","   ","|.,",";.,","|.,","|  ",";__","|.,",";.,","|" ), #5
                  ("|   ","|.,","|  ","|  ","   ","   ","   ","|__",";  ","___","___","___","   ","|__","|__","|__","|  ","., ",";__",";__","|" ), #4
                  ("|   ","|.,","|  ","|  ","   ","   ","   ","|__",";  ","|.,",";.,",";.,",";.,",";.,","|  ","|.,","|  ","|__","   ","|.,","|" ), #3
-                 ("|   ","|.,","|.,","|  ","   ","   ","   ","___",";__","|__",";__",";.,",";__",";__","|  ",";.,",";__","|.,",";__",";.,","|" ), #2
-                 ("|   ","|__",";__"<"|__","___","___","___","|.,","|__","___","___","___","   ",";__",";__","|  ","|.,","|.,","|.,","|  ","|" ), #1  
-                 ("|___","___","___","___","___"<"___","___","___","___",";__","___","___","|__","___","___","___","___"<"___","___","___","|" )  #0
+                 ("|   ","|.,","|.,","|  ","   ","   ","   ","___",";  ","|__",";__",";.,",";__",";__","|  ",";.,",";__","|.,",";__",";.,","|" ), #2
+                 ("|   ","|__",";__","|__","___","___","___","|.,","|  ","___","___","___","   ",";__",";__","|  ","|.,","|.,","|.,","|  ","|" ), #1  
+                 ("|s__","___","___","___","___","___","___","___","___",";__","___","___","|__","___","___","___","___","___","___","___","|" )  #0
                  )
 
 slumsLevel1Events = (
@@ -187,7 +193,7 @@ slumsLevel1Events = (
                  )
 
 slumEvents = [slumsLevel1Events]
-allegriasDomain = dungeonmode.Dungeon("Allegria's Slums", [slumsLevel1Map], slumEvents, bgMusic=pwutilities.TAIRONAN,
+allegriasDomain = dungeonmode.Dungeon("Allegria's Domain", [slumsLevel1Map], slumEvents, bgMusic=pwutilities.TAIRONAN,
         enemies=None)
 
 def start_scene_1_episode_3(loading=False): 
