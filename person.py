@@ -24,6 +24,7 @@ import copy
 import episode
 import inspect
 import items
+import math
 import operator
 import random
 import statusEffects
@@ -696,9 +697,9 @@ class Person(universal.RPGObject):
 
     def apply_specialization(self, stat, statPoints):
         if self.is_bonus(stat):
-            return statPoints * 1.5
+            return int(math.floor(statPoints * 1.5))
         elif self.is_penalty(stat):
-            return statPoints * .75
+            return int(math.floor(statPoints * .75))
         else:
             return statPoints
 
@@ -1220,7 +1221,7 @@ class Person(universal.RPGObject):
             else:
                 specialtyModifier = 1
             primaryStatValue = self.primaryStats[statIndex]
-            statPointData.append('/'.join([str(statPoint), str(primaryStatValue if statIndex == universal.HEALTH else primaryStatValue * STAT_GROWTH_RATE_MULTIPLIER * specialtyModifier)]))
+            statPointData.append('/'.join([str(statPoint), str(int(math.floor(primaryStatValue if statIndex == universal.HEALTH else primaryStatValue * STAT_GROWTH_RATE_MULTIPLIER * specialtyModifier)))]))
         for statPoint, statIndex in zip(self.increaseSpellPoints, range(0, NUM_SPELL_CATEGORIES)):
             spellStatValue = self.tier * STAT_GROWTH_RATE_MULTIPLIER if self.tier else TIER_0_SPELL_POINTS
             statPointData.append('/'.join([str(statPoint), str(spellStatValue)]))
@@ -1476,6 +1477,10 @@ class Person(universal.RPGObject):
             equipmentList.extend(["Equipment:", equipment.name, equipment.save()])
         Person.add_data('\n'.join(equipmentList), saveData)
         Person.add_data('\n'.join([str(stat) for stat in self.primaryStats]), saveData)
+        Person.add_data('\n'.join([str(statPoint) for statPoint in self.increaseStatPoints]), 
+                saveData)
+        Person.add_data('\n'.join([str(spellPoint) for spellPoint in self.increaseSpellPoints]),
+                saveData)
         Person.add_data(str(self.tier), saveData)
         Person.add_data(str(self.specialization), saveData)
         Person.add_data('\n'.join([spell.name for spell in self.ignoredSpells]), saveData)
@@ -1491,7 +1496,8 @@ class Person(universal.RPGObject):
         Person.add_data(str(self.coins), saveData)
         Person.add_data(str(self.specialization), saveData)
         Person.add_data(str(self.order), saveData)
-        Person.add_data('\n'.join([spell.name if spell else "None" for spell in self.quickSpells]), saveData)
+        Person.add_data('\n'.join([spell.name if spell else "None" for spell in self.quickSpells]), 
+                saveData)
         Person.add_data(str(self.printedName), saveData)
         Person.add_data(str(self.emerits), saveData)
         Person.add_data(str(self.demerits), saveData)
@@ -1522,18 +1528,30 @@ class Person(universal.RPGObject):
     def load(data, person):
         #Note: First entry in the list is the empty string.
         data = data.strip()
-        person.spanker = person.spankee = person.grappleDuration = person.originalGrappleDuration = None
+        person.spanker = person.spankee = None
+        person.grappleDuration = person.originalGrappleDuration = None
+        increaseStatPoints = None
+        increaseSpellPoints = None
         try:
-            _, name, gender, description, statuses, rawName, spellNames, inventory, equipmentList, stats, tier, specialization, ignoredSpells, combatType, litany, defaultLitany, coins, specialization, \
-                    order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, hairStyle, marks, increaseStatPoints, increaseSpellPoints = \
-                    data.split("Person Data:")
+            (_, name, gender, description, statuses, rawName, spellNames, inventory, equipmentList, 
+                    stats, increaseStatPoints, increaseSpellPoints, tier, specialization, 
+                    ignoredSpells, combatType, litany, defaultLitany, coins, specialization, 
+                    order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, 
+                    height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, 
+                    hairStyle, marks, increaseStatPoints, 
+                    increaseSpellPoints) = data.split("Person Data:")
+                    
         except ValueError:
-            _, name, gender, description, statuses, rawName, spellNames, inventory, equipmentList, stats, tier, specialization, ignoredSpells, combatType, litany, defaultLitany, coins, specialization, \
-                    order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, hairStyle, marks,  = \
-                    data.split("Person Data:")
+            (_, name, gender, description, statuses, rawName, spellNames, inventory, equipmentList, 
+                    stats, tier, specialization, ignoredSpells, combatType, litany, defaultLitany, 
+                    coins, specialization,
+                    order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, 
+                    height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, 
+                    hairStyle, marks) = data.split("Person Data:")
+        name = name.strip()
         if name == 'Lucilla' or name == 'Anastacia' or name == 'Carlita': 
             name = 'Edita'
-        person.name = name.strip()
+        person.name = name
         person.description = description.strip()
         person.gender = int(gender.strip())
         person.specialization = int(specialization.strip())
@@ -1583,6 +1601,18 @@ class Person(universal.RPGObject):
             person.primaryStats = [int(stat.strip()) for stat in stats]
         except ValueError:
             person.primaryStats = [int(float(stat.strip())) for stat in stats]
+        try:
+            person.increaseStatPoints  = [int(statPoints.strip()) for statPoints in 
+                increaseStatPoints]
+        except ValueError:
+            person.increaseStatPoints = [int(float(statPoints.strip())) for statPoints in 
+                    increaseStatPoints]
+        try:
+            person.increaseSpellPoints = [int(spellPoints.strip()) for spellPoints in
+                    increaseSpellPoints]
+        except ValueError:
+            person.increaseSpellPoints = [int(float(spellPoints.strip())) for spellPoints in
+                    increaseSpellPoints]
         person.tier = int(tier.strip())
         person.specialization = int(specialization.strip())
         ignoredSpells = [spellName.strip() for spellName in ignoredSpells if spellName.strip()]
