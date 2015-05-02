@@ -193,7 +193,7 @@ def initialize_basic_rooms():
     craftmansCorridor.add_adjacent(smithy)
     craftmansCorridor.add_adjacent(taylors)
     guild.add_adjacent(kitchen)
-    if 'boarding_with_Adrian' in pwutilities.keywords():
+    if 'boarding_with_Adrian' in keywords():
         slums.add_adjacent(mariasHome)
 
 #-------------------------------------Music Files----------------------------------------
