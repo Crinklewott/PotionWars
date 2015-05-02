@@ -57,11 +57,14 @@
         enterLeft(peter, armorShop)
         enterLeft(carol, tailors)
 
-        #carol.litany = carol_first_greeting.index
-        #peter.litany = peter_greeting.index
-        #maria.litany = maria_greeting_1_1.index
-        #elise.litany = elise_greeting_1_1.index
-        #adrian.litany = adrian_1_initial_greeting.index
+    def south_guard_scene(): 
+        if not 'spoke_to_guard' in universal.state.player.keywords:
+            southGuard = universal.state.get_character('Guard.person')
+            southGuard.litany = guard_greeting_1_1.index
+            conversation.converse_with(southGuard, townmode.town_mode)
+        else:
+            townmode.town_mode()
+    square.after_arrival = south_guard_scene
 
 \end{openScene}
 
@@ -189,6 +192,269 @@
         carol.litany = carol.defaultLitany = ep1_carol_greeting.index
 
     \end{code}
+
+\end{childnode}
+
+\begin{node}{ep1 guard greeting}{southGuard}{Andrew Russell}
+
+The guard on the south side of the road blocks \names{} path with an arm. 
+    He is a broad-shouldered, heavily muscled brute of a man. At over six feet tall, he towers over just about everyone else on the road. The large, steel-tipped
+    spear he carries only adds to his intimidating appearance. "I'd like to ask you a few questions."
+
+\name{} hesitates for a moment, then steps onto the side of the road, making sure to keep \hisher{} distance. 
+
+"What's your name?" asks the guard.
+
+\child{"I don't have to answer that."}{ep2 guard refuse answer name}
+
+\child{\name{}}{ep2 guard respond name}
+
+\child{\fakename{}}{ep2 guard fake name}
+
+\end{node}
+
+\begin{childnode}{ep2 guard refuse answer name}{Andrew Russell}
+
+"Actually, yes you do," says the guard. "Unless you want to be thrown in the dungeons for a while."
+
+\name{} grimaces. Although, there's nothing stopping \himher{} from giving a fake name...
+
+\child{\name{}}{ep2 guard respond name}
+
+\child{\fakename{}}{ep2 guard fake name}
+
+\end{childnode}
+
+\begin{childnode}{ep2 guard respond name}{Andrew Russell}
+
+    "Excellent," says the guard. "Sorry for this \name{}, but it's strict policy that we question every Taironan that tries to enter the city."
+
+\continue{ep1 guard questions 2}
+
+\end{childnode}
+
+\begin{childnode}{ep2 guard fake name}{Andrew Russell}
+
+    "Excellent," says the guard. "Sorry for this \fakename{}, but it's strict policy that we question every Taironan that tries to enter the city."
+
+    \continue{ep1 guard questions 2}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guard questions 2}{Andrew Russell}
+
+    "You are a Taironan, correct?"
+
+    \child{Sarcasm: "No, I'm the one person in the city with brown skin who doesn't have a drop of Taironan blood in \himher{}. Crazy, right?"}{ep1 question 2 sarcasm}
+
+    \child{"I am."}{ep1 question 2 answer}
+
+\end{childnode}
+
+\begin{childnode}{ep1 question 2 sarcasm}{Andrew Russell}
+
+The guard scowls. "Your sarcasm is not appreciated \mistermiss{} . It's just protocol."
+
+\continue{ep1 guard questions 3}
+
+\end{childnode}
+
+\begin{childnode}{ep1 question 2 answer}{Andrew Russell}
+
+    The guard nods.
+
+    \continue{ep1 guard questions 3}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guard questions 3}{Andrew Russell}
+
+    "When was the last time you were in Bonda?"
+
+    \child{"None of your business."}{ep1 guard questions 3 business}
+
+    \child{"LIE: I've never been to Bonda. I was born and raised in Chengue."}{ep1 guard questions 3 lie}
+
+    \child{"I was born in Bonda, but my family left when I was about three, when the Potion Riots began. I was raised in Chengue."}{ep1 guard questions 3 truth}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guard questions 3 business}{Andrew Russell}
+
+The guard scowls. "It is my business, because the safety of this city is my business."
+
+"What does the last time I was in Bonda have to do with the safety of this city?" asks \name{}, crossing \hisher{} arms over \hisher{} chest.
+
+"There has been a rash of attacks against this city by a Taironan terrorist group calling themselves the Harapiento Vengadores-"
+
+"And because I'm Taironan you naturally assume I'm involved," snaps \name{}.
+
+"I'm tempted," says the guard in a low growl. "These are exclusively Taironan rebels. Focusing on Taironans is a lot easier than questioning everyone. Now, are you going to answer my questions, or 
+will I have to haul you off to the guardhouse to be questioned there?"
+
+\child{"The Tyrant take you."}{ep1 guardhouse}
+
+\child{"LIE: I've never been to Bonda. I was born and raised in Chengue."}{ep1 guard questions 3 lie}
+
+\child{"I was born in Bonda, but my family left when I was about three, when the Potion Riots began. I was raised in Chengue."}{ep1 guard questions 3 truth}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guard questions 3 lie}{Andrew Russell}
+
+    \keyword{'lied\_about\_Bonda'}
+
+"You've never been to Bonda? I find that hard to believe," says the guard.
+
+"You do realize the Taironans are an entire civilization with well over a dozen major city-states, dozens more smaller towns, and hundreds of villages, right?" says \name{} testily. "I was born and 
+raised in Chengue, an unremarkable city-state of average wealth and minor influence. Even when conditions are good, it takes a week to reach Bonda from there."
+
+The guard studies \name{} for a minute, obviously trying to decide if \heshe{} is lying. Then, he shrugs. "Very well."
+
+\continue{ep1 guard questions 4}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guard questions 3 truth}{Andrew Russell}
+
+    "I see," says the guard. He studies \name{} for a moment, probably trying to decide if \heshe{} looks young enough for \hisher{} story to make sense. He nods, apparently satisfied.
+
+\continue{ep1 guard questions 4}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guard questions 4}{Andrew Russell}
+
+    "And you were raised by your parents?"
+
+    \child{"My father died when I was young, and my mother left soon after. I was raised by my Nana, a woman named Reyna."}{ep1 raised truth}
+
+    \child{"LIE: Yes, I was raised by my mother."}{ep1 raised lie}
+
+\end{childnode}
+
+\begin{childnode}{ep1 raised truth}{Andrew Russell}
+
+    "Interesting," says the guard.
+
+    \continue{ep1 guard questions 5}
+
+\end{childnode}
+
+\begin{childnode}{ep1 raised lie}{Andrew Russell}
+
+The guard nods. "And your mother is?"
+
+"Reyna of Chengue," says \name{}.
+
+"What happened to your father?" asks the guard.
+
+"Died of the Wasting Wail," says \name{}.
+
+"Sorry to hear that," says the guard.
+
+\continue{ep1 guard questions 5}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guard questions 5}{Andrew Russell}
+
+"Last question. What's your business in Avaricum?"
+
+\child{"I'm looking for work. Probably join the Adventurer's Guild."}{ep1 guard questions 5 looking for work}
+
+\child{"I'm just visiting a friend of mine who lives here."}{ep1 guard questions 5 visiting a friend}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guard questions 5 looking for work}{Andrew Russell}
+
+    \keyword{'help\_guard'}
+
+    \keyword{'spoke\_to\_guard'}
+
+The guard nods, as if he expected that answer. "Please try to stay out of trouble. We have enough problems as it is without having to deal with adventurers drunkenly brawling and slinging spells in 
+the streets."
+
+"Of course," says \name{}.
+
+\continue{ep1 guard questions 6}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guard questions 5 visiting a friend}{Andrew Russell}
+
+"And who is your friend?" asks the guard.
+
+\child{"Maria of Chengue."}{ep1 guard friend maria}
+
+\child{Lie: "A woman named Lola."}{ep1 guard friend lie}
+
+\child{"I'm not answering that."}{ep1 not answering}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guard friend maria}{Andrew Russell}
+
+    \keyword{'claimed\_to\_be\_visiting\_Maria'}
+
+    \keyword{'spoke\_to\_guard'}
+
+    "We know of her," says the guard.
+
+    "Really?"
+
+    "She's had business with us before," says the guard.
+
+    \continue{ep1 guard questions 6}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guard friend lie}{Andrew Russell}
+
+"I see," says the guard. "Well, that's the last of my questions."
+
+\continue{ep1 guard questions 6}
+
+\end{childnode}
+
+\begin{childnode}{ep1 not answering}{Andrew Russell}
+
+    "Yes, yes you are," says the guard. "You can answer it here, or at the guardhouse, but you're answering the question."
+
+    \child{"Get buried.}{ep1 guardhouse}
+
+    \child{"Maria of Chengue"}{ep1 guard friend maria}
+
+    \child{Lie: "A woman named Lola."}{ep1 guard friend lie}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guard questions 6}{Andrew Russell}
+
+    "Alright. Welcome to Avaricum. If you see anything suspicious, please report it to us immediately. Lives may depend on it."
+
+    \continue{ep1 begin marias scene}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guardhouse}{Andrew Russell}
+
+    \child{Resist.}{ep1 guardhouse resist}
+
+    \child{Go quietly.}{ep1 guardhouse go quietly}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guardhouse resist}{Andrew Russell}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guardhouse go quietly}{Andrew Russell}
+
+\end{childnode}
+
+\begin{childnode}{ep1 begin marias scene}{Andrew Russell}
 
 \end{childnode}
 
