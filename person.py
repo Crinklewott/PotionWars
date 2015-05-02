@@ -1477,10 +1477,6 @@ class Person(universal.RPGObject):
             equipmentList.extend(["Equipment:", equipment.name, equipment.save()])
         Person.add_data('\n'.join(equipmentList), saveData)
         Person.add_data('\n'.join([str(stat) for stat in self.primaryStats]), saveData)
-        Person.add_data('\n'.join([str(statPoint) for statPoint in self.increaseStatPoints]), 
-                saveData)
-        Person.add_data('\n'.join([str(spellPoint) for spellPoint in self.increaseSpellPoints]),
-                saveData)
         Person.add_data(str(self.tier), saveData)
         Person.add_data(str(self.specialization), saveData)
         Person.add_data('\n'.join([spell.name for spell in self.ignoredSpells]), saveData)
@@ -1530,11 +1526,9 @@ class Person(universal.RPGObject):
         data = data.strip()
         person.spanker = person.spankee = None
         person.grappleDuration = person.originalGrappleDuration = None
-        increaseStatPoints = None
-        increaseSpellPoints = None
         try:
             (_, name, gender, description, statuses, rawName, spellNames, inventory, equipmentList, 
-                    stats, increaseStatPoints, increaseSpellPoints, tier, specialization, 
+                    stats, tier, specialization, 
                     ignoredSpells, combatType, litany, defaultLitany, coins, specialization, 
                     order, quickSpells, printedName, emerits, demerits, hairLength, bodyType, 
                     height, musculature, bumStatus, welts, skinColor, hairColor, eyeColor, 
@@ -1597,22 +1591,29 @@ class Person(universal.RPGObject):
             items.Item.load(equipmentData, universal.state.get_item(name))
             person.equip(universal.state.get_item(name))
         stats = [stat.strip() for stat in stats.split('\n') if stat.strip()] 
+
         try:
             person.primaryStats = [int(stat.strip()) for stat in stats]
         except ValueError:
             person.primaryStats = [int(float(stat.strip())) for stat in stats]
-        try:
-            person.increaseStatPoints  = [int(statPoints.strip()) for statPoints in 
-                increaseStatPoints]
-        except ValueError:
-            person.increaseStatPoints = [int(float(statPoints.strip())) for statPoints in 
+        if increaseStatPoints:
+            increaseStatPoints = [statPoint for statPoint in increaseStatPoints.split('\n') if
+                    statPoint.strip()]
+            try:
+                person.increaseStatPoints  = [int(statPoints.strip()) for statPoints in 
                     increaseStatPoints]
-        try:
-            person.increaseSpellPoints = [int(spellPoints.strip()) for spellPoints in
-                    increaseSpellPoints]
-        except ValueError:
-            person.increaseSpellPoints = [int(float(spellPoints.strip())) for spellPoints in
-                    increaseSpellPoints]
+            except ValueError:
+                person.increaseStatPoints = [int(float(statPoints.strip())) for statPoints in 
+                        increaseStatPoints]
+        if increaseSpellPoints:
+            increaseSpellPoints = [spellPoint for spellPoint in increaseSpellPoints.split('\n')
+                    if spellPoint.strip()]
+            try:
+                person.increaseSpellPoints = [int(spellPoints.strip()) for spellPoints in
+                        increaseSpellPoints]
+            except ValueError:
+                person.increaseSpellPoints = [int(float(spellPoints.strip())) for spellPoints in
+                        increaseSpellPoints]
         person.tier = int(tier.strip())
         person.specialization = int(specialization.strip())
         ignoredSpells = [spellName.strip() for spellName in ignoredSpells if spellName.strip()]
@@ -1663,11 +1664,6 @@ class Person(universal.RPGObject):
         person.hairStyle = hairStyle.strip()
         person.marks = [mark for mark in marks.split('\n') if mark.strip()]
         #This is in a try-except block in order to ensure backwards compatibility with saves from before adding the stat and spell points.
-        try:
-            person.increaseStatPoints = map(int, [point for point in increaseStatPoints.split('\n') if point.strip()])
-            person.increaseSpellPoints = map(int, [point for point in increaseSpellPoints.split('\n') if point.strip()])
-        except UnboundLocalError:
-            pass
 
     def character_sheet_spells(self):
         return '\n'.join(['Name: ' + self.name, 'Order: ' + order_name(self.order),  self.display_stats(), 'Spells: ', self.display_spells()])
