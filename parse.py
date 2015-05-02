@@ -36,20 +36,23 @@ error = parseTree.color("Error", parseTree.bcolors.RED)
 def color_line(lineNum):
     return parseTree.color_line(lineNum)
 
-def open_scene(tokenIterator, parent):
-    """
-        Given an iterable of (token, line number) pairs, constructs the ParseTree associated with the openScene environment (which is raw Python code).
-        Since I don't need to do anything with the code except print it to the file, the full bulk of python code is treated as a single node in the parse tree.
-    """
-    def compute_indent(codeLine):
-        count = 0
-        for char in codeLine:
-            if char == ' ':
-                count += 1
-            else:
-                return count
-        return count
 
+def compute_indent(codeLine):
+    count = 0
+    for char in codeLine:
+        if char == ' ':
+            count += 1
+        else:
+            return count
+    return count
+
+
+def python_code(tokenIterator, envName, endToken):
+    """
+    Given an iterator of tokens, and the name of current environment, iterates through to the end of
+    the environment, and returns the text in the environment as python code. This function only
+    works for environments that are supposed to contain Python code.
+    """
     count = 0
     pythonLine = ''
     pythonCode = []
@@ -57,44 +60,43 @@ def open_scene(tokenIterator, parent):
     startLine = 0
     for token, lineNum in tokenIterator:
         if not startLine:
-            #Note: The first token is the endline at the end of \begin{openScene}, so the environment starts on the same line as the first token in tokenIterator
+            #The first token is the endline at the end of \begin{envName}, so the environment starts on the same line as the first token in tokenIterator
             startLine = lineNum
-        if parseTree.END_OPEN_SCENE == token:
+        if endToken == token:
             pythonCode = [line for line in pythonCode if line.strip()]
             #We use this to figure out what the top level indent is, and strip that away so that Python can parse the code properly.
             topLevelIndent = 1 if pythonCode[0][0] == '\t' else compute_indent(pythonCode[0])
             try:
                 ast.parse(''.join(line[topLevelIndent:] for line in  pythonCode))
             except SyntaxError, e:
-                raise transExceptions.TranslationError(' '.join([parseTree.color("Error:", parseTree.bcolors.RED), 'Error in Python code found in', parseTree.color('openScene',parseTree.bcolors.YELLOW),  
+                raise transExceptions.TranslationError(' '.join([parseTree.color("Error:", parseTree.bcolors.RED), 'Error in Python code found in', parseTree.color(envName,parseTree.bcolors.YELLOW),  
                     'environment. Environment start line:', parseTree.color(str(startLine), parseTree.bcolors.GREEN),  'Python error:\n\n', str(e)]))
             else:
-                tree = parseTree.OpenScene(lineNum=startLine, parent=parent, data=pythonCode)
-                return tree
+                return (startLine, pythonCode)
         else:
             if token.strip(' \t') == '\n':
                 pythonCode.append(pythonLine + token)
                 pythonLine = ''
             else:
                 pythonLine += token
-    raise transExceptions.TranslationError(' '.join([error, color_line(startLine), ":", r"End of environment", parseTree.color("openScene", parseTree.bcolors.YELLOW), "not found."]))
+    else:
+        raise transExceptions.TranslationError(' '.join([error, color_line(startLine), ":", 
+            r"End of environment", parseTree.color(envName, parseTree.bcolors.YELLOW), 
+            "not found."]))
+
+def open_scene(tokenIterator, parent):
+    """
+        Given an iterable of (token, line number) pairs, constructs the ParseTree associated with the openScene environment (which is raw Python code).
+        Since I don't need to do anything with the code except print it to the file, the full bulk of python code is treated as a single node in the parse tree.
+    """
+    startLine, pythonCode = python_code(tokenIterator, 'openScene', parseTree.END_OPEN_SCENE)
+    return parseTree.OpenScene(lineNum=startLine, parent=parent, data=pythonCode)
+    
 
 
 def close_scene(tokenIterator, parent):
-    data = []
-    try:
-        token, startLineNum = next(tokenIterator)
-    except StopIteration:
-        raise transExceptions.TranslationError(' '.join([parseTree.color("Error", parseTree.bcolors.RED), color_line(startLineNum), "End of close scene block not found."]))
-    while token != parseTree.END_CLOSE_SCENE:
-        try:
-            token, startLine = next(tokenIterator)
-        except StopIteration:
-            raise transExceptions.TranslationError(' '.join([parseTree.color("Error", parseTree.bcolors.RED), color_line(startLineNum), "End of close scene block not found."]))
-        else:
-            if token != parseTree.END_CLOSE_SCENE:
-                data.append(token)
-    return parseTree.CloseScene(parent=parent, data=data)
+    startLine, pythonCode = python_code(tokenIterator, 'closeScene', parseTree.END_CLOSE_SCENE)
+    return parseTree.CloseScene(lineNum=startLine, parent=parent, data=pythonCode)
 
 
 

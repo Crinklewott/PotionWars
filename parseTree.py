@@ -309,11 +309,13 @@ class CloseScene(ParseTree):
         self.endToken = END_CLOSE_SCENE
         #Because close scene comes after open scene, the associated scene number for close scene will be one less than what is currently stored (because OpenScene.sceneNum increments every
         #time a new open scene node is created).
-        self.data = [''.join(['def end_scene_', str(OpenScene.sceneNum-1), '_episode_', str(self.episodeNum), '():'])] + ([TAB + line for line in data if line.strip()] if data else [])
+        self.data = [''.join(['def end_scene_', str(OpenScene.sceneNum-1), '_episode_', str(self.episodeNum), '():'])] + (data if data else [])
         
 
     def translate(self):
-        return [line.replace('\n', '') for line in self.data]
+        closeSceneCode = [line.replace('\n', '') for line in self.data]
+        closeSceneCode.extend([TAB + ('\n' + TAB).join(child.translate()) for child in self.children])
+        return closeSceneCode 
 
 class AbstractNode(ParseTree):
 

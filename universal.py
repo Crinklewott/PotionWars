@@ -1203,7 +1203,6 @@ class State(object):
             room.adjacent = None
 
 
-
     def add_item(self, item):
         self.items[item.name] = item
 

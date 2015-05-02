@@ -168,7 +168,6 @@ def to_title_screen_interpreter(keyEvent):
     if keyEvent.key == universal.K_RETURN:
         titleScreen.title_screen()
 
-
 def initialize_basic_rooms():
     """
     Sets up the adjacencies of the basic rooms, whose adjacency lists shouldn't be affected: 
@@ -176,6 +175,26 @@ def initialize_basic_rooms():
     Anne's Smithy, Adventurer's Guild, Slums, Maria's Home, along with the associated
     adjacencies.
     """
+    edge = universal.state.get_room("Edge of Avaricum")
+    square = universal.state.get_room("Avaricum Square")
+    shrine = universal.state.get_room("Shrine")
+    craftmansCorridor = universal.state.get_room("Craftman's Corridor")
+    taylors = universal.state.get_room("Terry's Taylors")
+    smithy = universal.state.get_room("Wesley and Anne's Smithy")
+    guild = universal.state.get_room("Adventurer's Guild")
+    slums = universal.state.get_room("Slums")
+    mariasHome = universal.state.get_room("Maria's Home")
+    kitchen = universal.state.get_room("Kitchen")
+    square.add_adjacent(edge)
+    square.add_adjacent(shrine)
+    square.add_adjacent(craftmansCorridor)
+    craftmansCorridor.add_adjacent(guild)
+    craftmansCorridor.add_adjacent(slums)
+    craftmansCorridor.add_adjacent(smithy)
+    craftmansCorridor.add_adjacent(taylors)
+    guild.add_adjacent(kitchen)
+    if 'boarding_with_Adrian' in pwutilities.keywords():
+        slums.add_adjacent(mariasHome)
 
 #-------------------------------------Music Files----------------------------------------
 CHURCH = music.decrypt(universal.resource_path('POL-apparition-long.wav'), 'church')
