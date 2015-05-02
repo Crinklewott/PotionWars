@@ -169,6 +169,14 @@ def to_title_screen_interpreter(keyEvent):
         titleScreen.title_screen()
 
 
+def initialize_basic_rooms():
+    """
+    Sets up the adjacencies of the basic rooms, whose adjacency lists shouldn't be affected: 
+    Edge of Avaricum, Avaricum Square, Shrine, Craftman's Corridor, Terry's Taylors, Wesley and 
+    Anne's Smithy, Adventurer's Guild, Slums, Maria's Home, along with the associated
+    adjacencies.
+    """
+
 #-------------------------------------Music Files----------------------------------------
 CHURCH = music.decrypt(universal.resource_path('POL-apparition-long.wav'), 'church')
 GUARDS = music.decrypt(universal.resource_path('POL-war-victims-long.wav'), 'guards')

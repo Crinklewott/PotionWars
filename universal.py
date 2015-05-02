@@ -1202,6 +1202,8 @@ class State(object):
         for room in self.rooms.values():
             room.adjacent = None
 
+
+
     def add_item(self, item):
         self.items[item.name] = item
 

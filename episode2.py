@@ -1,5 +1,5 @@
 import universal
-import textCommandsMusic
+import pwutilities
 import person
 import items
 import pwenemies
@@ -29,7 +29,7 @@ def start_scene_1_episode_2(loading=False):
     carrie = universal.state.get_character("Carrie.person")
     adrian = universal.state.get_character("Adrian.person")
     guild = universal.state.get_room("Adventurer's Guild")
-    textCommandsMusic.exitLeft(adrian, guild)
+    pwutilities.exitLeft(adrian, guild)
     kitchen = universal.state.get_room("Kitchen")
     if not guild in kitchen.adjacent:
         kitchen.add_adjacent(guild)
@@ -40,10 +40,10 @@ def start_scene_1_episode_2(loading=False):
         '''and a few blankets. Adrian's''','''obscene''','''wealth continues to boggle the brain.''']) 
     slums = universal.state.get_room("Slums")
     shrine = universal.state.get_room("Shrine")
-    if 'introvert' in textCommandsMusic.keywords() or 'extrovert' in textCommandsMusic.keywords():
-        shrine.description = universal.format_line(['''A brief inquiry with the student cleaning the Shrine sends''', universal.state.player.name, '''into the back of the Church, to Sister Samantha's office.''', ' '.join([textCommandsMusic.name(), '''hesitates outside the office, remembering''',
+    if 'introvert' in pwutilities.keywords() or 'extrovert' in pwutilities.keywords():
+        shrine.description = universal.format_line(['''A brief inquiry with the student cleaning the Shrine sends''', universal.state.player.name, '''into the back of the Church, to Sister Samantha's office.''', ' '.join([pwutilities.name(), '''hesitates outside the office, remembering''',
             '''all too well the last time''', person.heshe(), '''entered this office, and the tender bottom that ensued. But then''', person.heshe(), '''gives''', person.himselfherself(), '''a shake, and knocks.''']) 
-            if 'ep1_spanked_by_Samantha' in textCommandsMusic.keywords() else
+            if 'ep1_spanked_by_Samantha' in pwutilities.keywords() else
         ' '.join([universal.state.player.name, '''knocks.''']), '''"Come in," says Sister Samantha. When''', universal.state.player.name, '''enters''', person.heshe(), '''finds Sister Samantha is sitting at her desk, while Elise writes something on a smooth stretch of wall with some chalk. The two are in the middle of an animated discussion, but are speaking far too fast, and with too much overlap, for''', universal.state.player.name, '''to understand more than a few scattered words.'''])
     mariasHome = universal.state.get_room("Maria's Home")
     mariasHome.description = universal.format_line(['''Maria lives in a dinky little room with barely enough room for two people to lie down comfortably. The''',
@@ -51,39 +51,39 @@ def start_scene_1_episode_2(loading=False):
     '''center, just below a small hole in the ceiling. A small collection of wooden bowls, plates, and  skewers lie next to the pit. A pile of ragged''',
     '''blankets is crumpled up in the corner.'''])
     sofiasClinic = universal.state.get_room("Sofia's Clinic")
-    if 'boarding_with_Maria' in textCommandsMusic.keywords():
+    if 'boarding_with_Maria' in pwutilities.keywords():
         slums.add_adjacent(sofiasClinic)
     else:
         slums.remove_adjacent(sofiasClinic)
-        textCommandsMusic.exitLeft(maria, mariasHome)
+        pwutilities.exitLeft(maria, mariasHome)
     universal.state.player.restores()
     universal.state.player.marks = []
     universal.state.party.remove_member(carrie)
-    if 'flirting_with_Carrie' in textCommandsMusic.keywords():
-        textCommandsMusic.remove_keyword('flirting_with_Carrie')
-        textCommandsMusic.add_keyword('attractedToCarrie')
+    if 'flirting_with_Carrie' in pwutilities.keywords():
+        pwutilities.remove_keyword('flirting_with_Carrie')
+        pwutilities.add_keyword('attractedToCarrie')
     if not loading:
-        textCommandsMusic.enterLeft(sofia, sofiasClinic)
-        textCommandsMusic.enterLeft(ildri, kitchen)
-        textCommandsMusic.enterLeft(alondra, kitchen)
-        textCommandsMusic.enterLeft(deidre, guild)
-        textCommandsMusic.exitLeft(carrie, shrine)
-        if 'introvert' in textCommandsMusic.keywords() or 'extrovert' in textCommandsMusic.keywords():
-            textCommandsMusic.enterLeft(elise, shrine)
+        pwutilities.enterLeft(sofia, sofiasClinic)
+        pwutilities.enterLeft(ildri, kitchen)
+        pwutilities.enterLeft(alondra, kitchen)
+        pwutilities.enterLeft(deidre, guild)
+        pwutilities.exitLeft(carrie, shrine)
+        if 'introvert' in pwutilities.keywords() or 'extrovert' in pwutilities.keywords():
+            pwutilities.enterLeft(elise, shrine)
         else:
-            textCommandsMusic.exitLeft(elise, shrine)
-        if 'boarding_with_Adrian' in textCommandsMusic.keywords():
-            textCommandsMusic.enterLeft(universal.state.player, bedroom)
-        elif 'boarding_with_Maria' in textCommandsMusic.keywords():
-            textCommandsMusic.enterLeft(universal.state.player, mariasHome)
+            pwutilities.exitLeft(elise, shrine)
+        if 'boarding_with_Adrian' in pwutilities.keywords():
+            pwutilities.enterLeft(universal.state.player, bedroom)
+        elif 'boarding_with_Maria' in pwutilities.keywords():
+            pwutilities.enterLeft(universal.state.player, mariasHome)
         else:
-            raise transExceptions.TranslationError("Neither 'boarding_with_Adrian' nor 'boarding_with_Maria' is in the player's keywords. Keywords: " + str(textCommandsMusic.keywords()))
-    if 'boarding_with_Adrian' in textCommandsMusic.keywords():
+            raise transExceptions.TranslationError("Neither 'boarding_with_Adrian' nor 'boarding_with_Maria' is in the player's keywords. Keywords: " + str(pwutilities.keywords()))
+    if 'boarding_with_Adrian' in pwutilities.keywords():
         kitchen.add_adjacent(bedroom)
     else:
         kitchen.remove_adjacent(bedroom)
     def slums_leaving(destination):
-        if 'travelingToSofias' in textCommandsMusic.keywords() and destination != universal.state.get_room("Sofia's Clinic"):
+        if 'travelingToSofias' in pwutilities.keywords() and destination != universal.state.get_room("Sofia's Clinic"):
             maria.litany = conversation.allNodeNames["ep2 wrong way"]
             conversation.converse_with(maria)
             return False
@@ -119,28 +119,28 @@ def init_scene_1_episode_2():
     
     def ep2_wakeup_qf():
         universal.say('\p')
-        if 'flirting_with_Carrie' in textCommandsMusic.keywords():
+        if 'flirting_with_Carrie' in pwutilities.keywords():
             universal.state.player.add_keyword('relationshipWithCarrie')
         ep2_wakeup.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ "A"
  , ' ']), ''.join([ "month"
  , ' ']), ''.join([ "passes..."
  , ' '])], []]), justification=0)
-        if 'boarding_with_Adrian' in textCommandsMusic.keywords():
+        if 'boarding_with_Adrian' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_wakeup, ep2_guild_wake_up)
-        elif 'boarding_with_Maria' in textCommandsMusic.keywords():
+        elif 'boarding_with_Maria' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_wakeup, ep2_marias_wake_up)
     ep2_wakeup.quip_function = ep2_wakeup_qf
     ep2_guild_wake_up = conversation.Node(328, '''ep2 guild wake up''')
     
     
     def ep2_guild_wake_up_qf():
-        universal.say('\m') ; universal.playedMusic.put(textCommandsMusic.ALONDRA)
+        universal.say('\m') ; universal.playedMusic.put(pwutilities.ALONDRA)
         ep2_guild_wake_up.quip = " "
         universal.say(universal.format_text_translate([[], [], []]), justification=0)
-        if 'extrovert' in textCommandsMusic.keywords():
+        if 'extrovert' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_guild_wake_up, ep2_extrovert)
-        elif 'introvert' in textCommandsMusic.keywords():
+        elif 'introvert' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_guild_wake_up, ep2_guild_introvert)
         elif True:
             return conversation.continue_to_node(ep2_guild_wake_up, ep2_guild_no_bar)
@@ -1083,8 +1083,8 @@ def init_scene_1_episode_2():
     
     
     def ep2_extrovert_take_carrie_home_qf():
-        textCommandsMusic.add_keyword('ep2CarrieSex')
-        textCommandsMusic.add_keyword('attractedToCarrie')
+        pwutilities.add_keyword('ep2CarrieSex')
+        pwutilities.add_keyword('attractedToCarrie')
         ep2_extrovert_take_carrie_home.quip = " "
         universal.say(universal.format_text_translate([[], [], [], []]), justification=0)
         if universal.state.player.is_female():
@@ -1281,7 +1281,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ person.HeShe() , ' ']), ''.join([ "guides"
  , ' ']), ''.join([ "Carrie"
  , ' ']), ''.join([ "towards"
- , ' ']), ''.join([ person.hisher() , ' ']), universal.cond('boarding_with_Adrian' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ person.hisher() , ' ']), universal.cond('boarding_with_Adrian' in pwutilities.keywords(), ''.join([""
 , ''.join([ "bed"
  , ' '])]), ''.join([""
 , ''.join([ "blankets"
@@ -1437,9 +1437,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "me!"
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        if 'boarding_with_Adrian' in textCommandsMusic.keywords():
+        if 'boarding_with_Adrian' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_take_carrie_home_female, ep2_take_carrie_home_guild)
-        elif 'boarding_with_Maria' in textCommandsMusic.keywords():
+        elif 'boarding_with_Maria' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_take_carrie_home_female, ep2_take_carrie_home_maria)
     ep2_take_carrie_home_female.quip_function = ep2_take_carrie_home_female_qf
     ep2_take_carrie_home_male = conversation.Node(335, '''ep2 take carrie home male''')
@@ -1474,7 +1474,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "up"
  , ' ']), ''.join([ "at"
  , ' ']), ''.join([ "him."
- , ' ']), ''.join([ universal.cond('taking_Carrie_home' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' ']), ''.join([ universal.cond('taking_Carrie_home' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "I"
  , ' ']), ''.join([ "get"
@@ -1504,7 +1504,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "get"
  , ' ']), ''.join([ "impatient."
  ]), ''.join([ '"'
- , ' '])])) , ' '])], [''.join([ universal.cond('taking_Carrie_home' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])])) , ' '])], [''.join([ universal.cond('taking_Carrie_home' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Oh?"
  , ' ']), ''.join([ "Where"
@@ -1535,7 +1535,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "down"
  , ' ']), ''.join([ "Carrie's"
  , ' ']), ''.join([ "back."
- , ' '])])) , ' '])], [''.join([ universal.cond('taking_Carrie_home' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])])) , ' '])], [''.join([ universal.cond('taking_Carrie_home' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "And"
  , ' ']), ''.join([ "people"
@@ -1590,7 +1590,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "sexy"
  , ' ']), ''.join([ "time."
  ]), ''.join([ '"'
- , ' '])])) , ' '])], [''.join([ universal.cond('taking_Carrie_home' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])])) , ' '])], [''.join([ universal.cond('taking_Carrie_home' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "That's"
  , ' ']), ''.join([ "because"
@@ -1621,7 +1621,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "you"
  , ' ']), ''.join([ "tell?"
  ]), ''.join([ '"'
- , ' '])])) , ' '])], [''.join([ universal.cond('taking_Carrie_home' in textCommandsMusic.keywords(), ''.join([""
+ , ' '])])) , ' '])], [''.join([ universal.cond('taking_Carrie_home' in pwutilities.keywords(), ''.join([""
 , ''.join([ "Carrie"
  , ' ']), ''.join([ "sticks"
  , ' ']), ''.join([ "her"
@@ -1658,7 +1658,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "When"
  , ' ']), ''.join([ "they"
  , ' ']), ''.join([ "reach"
- , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), universal.cond('boarding_with_Adrian' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), universal.cond('boarding_with_Adrian' in pwutilities.keywords(), ''.join([""
 , ''.join([ "bed"
  , ' '])]), ''.join([""
 , ''.join([ "blankets"
@@ -1831,9 +1831,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "right"
  , ' ']), ''.join([ "cheek."
  , ' '])]]), justification=0)
-        if 'boarding_with_Adrian' in textCommandsMusic.keywords():
+        if 'boarding_with_Adrian' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_take_carrie_home_male, ep2_take_carrie_home_guild)
-        elif 'boarding_with_Maria' in textCommandsMusic.keywords():
+        elif 'boarding_with_Maria' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_take_carrie_home_male, ep2_take_carrie_home_maria)
     ep2_take_carrie_home_male.quip_function = ep2_take_carrie_home_male_qf
     ep2_take_carrie_home_guild = conversation.Node(336, '''ep2 take carrie home guild''')
@@ -1873,7 +1873,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "two"
  , ' ']), ''.join([ "have"
  , ' ']), ''.join([ "sex"
- , ' ']), universal.cond('taking_Carrie_home' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), universal.cond('taking_Carrie_home' in pwutilities.keywords(), ''.join([""
 , ''.join([ "again"
  , ' '])]), ''.join([""
 ])), ''.join([ "."
@@ -3182,7 +3182,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_ildri_double_spanking_apologize_qf():
-        textCommandsMusic.add_keyword('alondraSexAgreement')
+        pwutilities.add_keyword('alondraSexAgreement')
         universal.state.player.numSpankingsGiven += 1
         ep2_ildri_double_spanking_apologize.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ '"'
@@ -4190,7 +4190,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Yeah."
  ]), ''.join([ '"'
- , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.player, ''.join([""
+ , ' '])], [''.join([ pwutilities.bummarks(universal.state.player, ''.join([""
 , ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "round,"
  , ' ']), ''.join([ universal.state.player.bum_adj() , ' ']), ''.join([ "cheeks"
  , ' ']), ''.join([ "have"
@@ -4213,7 +4213,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "of"
  , ' ']), ''.join([ "Ildri's"
  , ' ']), ''.join([ "fingertips."
- , ' '])])) , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.get_character( " Alondra.person " ), ''.join([""
+ , ' '])])) , ' '])], [''.join([ pwutilities.bummarks(universal.state.get_character( " Alondra.person " ), ''.join([""
 , ''.join([ "Alondra's"
  , ' ']), ''.join([ "curvy,"
  , ' ']), ''.join([ "bouncy"
@@ -4238,7 +4238,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_ildri_double_spanking_unapologetic_qf():
-        textCommandsMusic.add_keyword('unapologeticToIldri')
+        pwutilities.add_keyword('unapologeticToIldri')
         ep2_ildri_double_spanking_unapologetic.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
  ]), universal.state.player.name, ''.join([ "!"
@@ -4526,7 +4526,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "I"
  , ' ']), ''.join([ "promise."
  ]), ''.join([ '"'
- , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.player, ''.join([""
+ , ' '])], [''.join([ pwutilities.bummarks(universal.state.player, ''.join([""
 , ''.join([ "Every"
  , ' ']), ''.join([ "centimeter"
  , ' ']), ''.join([ "of"
@@ -4571,9 +4571,9 @@ def init_scene_1_episode_2():
     
     
     def ep2_take_carrie_home_alondra_apologize_qf():
-        textCommandsMusic.add_keyword('alondraSexAgreement')
+        pwutilities.add_keyword('alondraSexAgreement')
         ep2_take_carrie_home_alondra_apologize.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ textCommandsMusic.stage_directions(''.join([""
+        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ "Alondra"
  , ' ']), ''.join([ "insists"
  , ' ']), ''.join([ "on"
@@ -5967,7 +5967,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_carrie_extrovert_refuse_spank_sissy_qf():
-        textCommandsMusic.add_keyword('playerIsAWimp')
+        pwutilities.add_keyword('playerIsAWimp')
         ep2_carrie_extrovert_refuse_spank_sissy.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ "A"
  , ' ']), ''.join([ "smirk"
@@ -6028,9 +6028,9 @@ def init_scene_1_episode_2():
  , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "returns"
  , ' ']), ''.join([ "home."
  , ' '])]]), justification=0)
-        if 'boarding_with_Adrian' in textCommandsMusic.keywords():
+        if 'boarding_with_Adrian' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_sissy, ep2_guild_wake_up_no_carrie)
-        elif 'boarding_with_Maria' in textCommandsMusic.keywords():
+        elif 'boarding_with_Maria' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_sissy, ep2_maria_wake_up_no_carrie)
     ep2_carrie_extrovert_refuse_spank_sissy.quip_function = ep2_carrie_extrovert_refuse_spank_sissy_qf
     ep2_carrie_extrovert_refuse_spank_stern = conversation.Node(345, '''ep2 carrie extrovert refuse spank stern''')
@@ -6038,7 +6038,7 @@ def init_scene_1_episode_2():
     
     def ep2_carrie_extrovert_refuse_spank_stern_qf():
         universal.state.player.numSpankingsGiven += 1
-        textCommandsMusic.add_keyword('ep2BeginningSpankedCarrie')
+        pwutilities.add_keyword('ep2BeginningSpankedCarrie')
         ep2_carrie_extrovert_refuse_spank_stern.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ "Carrie"
  , ' ']), ''.join([ "pouts,"
@@ -6103,7 +6103,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "dinky"
  , ' ']), ''.join([ "little"
  , ' ']), ''.join([ "g-string."
- , ' ']), ''.join([ universal.cond('Samantha_saw_Carries_dress' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('Samantha_saw_Carries_dress' in pwutilities.keywords(), ''.join([""
 , ''.join([ universal.state.player.name , ' ']), ''.join([ "shakes"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "head."
  , ' ']), ''.join([ '"'
@@ -6141,7 +6141,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "your"
  , ' ']), ''.join([ "bottom."
  ]), ''.join([ '"'
- , ' '])])) , ' '])], [''.join([ universal.cond('Samantha_saw_Carries_dress' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])])) , ' '])], [''.join([ universal.cond('Samantha_saw_Carries_dress' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "I'm"
  , ' ']), ''.join([ "an"
@@ -7572,7 +7572,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "then"
  , ' ']), ''.join([ "returns"
  , ' ']), ''.join([ "home."
- , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.get_character( " Carrie.person " ), ''.join([""
+ , ' '])], [''.join([ pwutilities.bummarks(universal.state.get_character( " Carrie.person " ), ''.join([""
 , ''.join([ "Carrie's"
  , ' ']), ''.join([ "round"
  , ' ']), ''.join([ "bottom"
@@ -7593,9 +7593,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "looks"
  , ' ']), ''.join([ "carefully."
  , ' '])])) , ' '])], [], [], []]), justification=0)
-        if 'boarding_with_Adrian' in textCommandsMusic.keywords():
+        if 'boarding_with_Adrian' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_stern, ep2_guild_wake_up_no_carrie)
-        elif 'boarding_with_Maria' in textCommandsMusic.keywords():
+        elif 'boarding_with_Maria' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_stern, ep2_maria_wake_up_no_carrie)
     ep2_carrie_extrovert_refuse_spank_stern.quip_function = ep2_carrie_extrovert_refuse_spank_stern_qf
     ep2_extrovert_refuse_Carrie_again = conversation.Node(346, '''ep2 extrovert refuse Carrie again''')
@@ -7743,7 +7743,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_extrovert_refuse_Carrie_adamantly_qf():
-        textCommandsMusic.add_keyword('ep2BeginningLostTemperWithCarrie')
+        pwutilities.add_keyword('ep2BeginningLostTemperWithCarrie')
         ep2_extrovert_refuse_Carrie_adamantly.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ universal.state.player.name , ' ']), ''.join([ "pushes"
  , ' ']), ''.join([ "Carrie"
@@ -7947,17 +7947,17 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "stomps"
  , ' ']), ''.join([ "home."
  , ' '])], []]), justification=0)
-        if 'boarding_with_Adrian' in textCommandsMusic.keywords():
+        if 'boarding_with_Adrian' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_extrovert_refuse_Carrie_adamantly, ep2_guild_wake_up_no_carrie)
-        elif 'boarding_with_Adrian' in textCommandsMusic.keywords():
+        elif 'boarding_with_Adrian' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_extrovert_refuse_Carrie_adamantly, ep2_maria_wake_up_no_carrie)
     ep2_extrovert_refuse_Carrie_adamantly.quip_function = ep2_extrovert_refuse_Carrie_adamantly_qf
     ep2_extrovert_carrie_refuse_not_interested = conversation.Node(348, '''ep2 extrovert carrie refuse not interested''')
     
     
     def ep2_extrovert_carrie_refuse_not_interested_qf():
-        textCommandsMusic.add_keyword('relationshipWithCarrieKilled')
-        textCommandsMusic.remove_keyword('relationshipWithCarrie')
+        pwutilities.add_keyword('relationshipWithCarrieKilled')
+        pwutilities.remove_keyword('relationshipWithCarrie')
         ep2_extrovert_carrie_refuse_not_interested.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [], [], [''.join([ '"'
  ]), ''.join([ "Oh."
@@ -7971,7 +7971,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "swallows."
  , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "shrugs"
  , ' ']), ''.join([ "awkardly."
- , ' '])], [''.join([ universal.cond('taking_Carrie_home' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])], [''.join([ universal.cond('taking_Carrie_home' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "I"
  , ' ']), ''.join([ "thought...you"
@@ -7999,7 +7999,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "her"
  , ' ']), ''.join([ "voice"
  , ' ']), ''.join([ "faltering."
- , ' '])], [''.join([ universal.cond('taking_Carrie_home' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])], [''.join([ universal.cond('taking_Carrie_home' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Yeah,"
  , ' ']), ''.join([ "I"
@@ -8177,9 +8177,9 @@ def init_scene_1_episode_2():
  , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "returns"
  , ' ']), ''.join([ "home."
  , ' '])]]), justification=0)
-        if 'boarding_with_Adrian' in textCommandsMusic.keywords():
+        if 'boarding_with_Adrian' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_extrovert_carrie_refuse_not_interested, ep2_guild_wake_up_no_carrie)
-        elif 'boarding_with_Maria' in textCommandsMusic.keywords():
+        elif 'boarding_with_Maria' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_extrovert_carrie_refuse_not_interested, ep2_maria_wake_up_no_carrie)
     ep2_extrovert_carrie_refuse_not_interested.quip_function = ep2_extrovert_carrie_refuse_not_interested_qf
     ep2_guild_wake_up_no_carrie = conversation.Node(349, '''ep2 guild wake up no carrie''')
@@ -8625,7 +8625,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_alondra_hairbrushing_attracted_qf():
-        textCommandsMusic.add_keyword('attractedToAlondra')
+        pwutilities.add_keyword('attractedToAlondra')
         ep2_alondra_hairbrushing_attracted.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ "Alondra"
  , ' ']), ''.join([ "shifts"
@@ -9302,9 +9302,9 @@ def init_scene_1_episode_2():
     
     
     def ep2_guild_kiss_Alondra_qf():
-        textCommandsMusic.add_keyword('ep2KissedAlondra')
+        pwutilities.add_keyword('ep2KissedAlondra')
         ep2_guild_kiss_Alondra.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ textCommandsMusic.stage_directions(''.join([""
+        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ "Kiss"
  , ' ']), ''.join([ "interrupted"
  , ' ']), ''.join([ "by"
@@ -9555,7 +9555,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_guild_kiss_alondra_wait_qf():
-        textCommandsMusic.add_keyword('ep2KissedAlondraTooLong')
+        pwutilities.add_keyword('ep2KissedAlondraTooLong')
         ep2_guild_kiss_alondra_wait.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ "Alondra"
  , ' ']), ''.join([ "hesitates"
@@ -10896,7 +10896,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "on"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "own"
  , ' ']), ''.join([ "lips."
- , ' '])], [''.join([ universal.cond('lesbian_in_denial' in textCommandsMusic.keywords(), ''.join([""
+ , ' '])], [''.join([ universal.cond('lesbian_in_denial' in pwutilities.keywords(), ''.join([""
 , ''.join([ "As"
  , ' ']), ''.join([ "soon"
  , ' ']), ''.join([ "as"
@@ -11101,7 +11101,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "her"
  , ' ']), ''.join([ "plain"
  , ' ']), ''.join([ "skirt."
- , ' '])], [''.join([ universal.cond('lesbian_in_denial' in textCommandsMusic.keywords(), ''.join([""
+ , ' '])], [''.join([ universal.cond('lesbian_in_denial' in pwutilities.keywords(), ''.join([""
 , ''.join([ universal.state.player.name , ' ']), ''.join([ "shakes"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "head,"
  , ' '])]), ''.join([""
@@ -11658,7 +11658,7 @@ def init_scene_1_episode_2():
     
     def ep2_guild_no_bar_qf():
         ep2_guild_no_bar.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ textCommandsMusic.stage_directions(''.join([""
+        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ universal.state.player.name , ' ']), ''.join([ "enters"
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "guild"
@@ -12540,7 +12540,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_guild_no_bar_tantrum_push_it_qf():
-        textCommandsMusic.add_keyword('ep2AgeRegression')
+        pwutilities.add_keyword('ep2AgeRegression')
         ep2_guild_no_bar_tantrum_push_it.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ "Ildri's"
  , ' ']), ''.join([ "eyes"
@@ -13062,7 +13062,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "last"
  , ' ']), ''.join([ "night."
  ]), ''.join([ '"'
- , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.player, ''.join([""
+ , ' '])], [''.join([ pwutilities.bummarks(universal.state.player, ''.join([""
 , ''.join([ universal.state.player.name, "'s" , ' ']), universal.state.player.muscle_adj(), ''.join([ ","
  , ' ']), ''.join([ universal.state.player.bum_adj() , ' ']), ''.join([ "bottom"
  , ' ']), ''.join([ "has"
@@ -13322,7 +13322,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "sets"
  , ' ']), ''.join([ "of"
  , ' ']), ''.join([ "clothing."
- , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.player, ''.join([""
+ , ' '])], [''.join([ pwutilities.bummarks(universal.state.player, ''.join([""
 , ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "tender"
  , ' ']), ''.join([ "bottom"
  , ' ']), ''.join([ "is"
@@ -13355,7 +13355,7 @@ def init_scene_1_episode_2():
     
     def ep2_guild_no_bar_drink_offer_qf():
         ep2_guild_no_bar_drink_offer.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ textCommandsMusic.stage_directions(''.join([""
+        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ "Ildri"
  , ' ']), ''.join([ "gives"
  , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "another"
@@ -13482,7 +13482,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "feel"
  , ' ']), ''.join([ "better."
  ]), ''.join([ '"'
- , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.player, ''.join([""
+ , ' '])], [''.join([ pwutilities.bummarks(universal.state.player, ''.join([""
 , ''.join([ "A"
  , ' ']), ''.join([ "few"
  , ' ']), ''.join([ "large,"
@@ -14574,7 +14574,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_guild_tantrum_breakfast_qf():
-        textCommandsMusic.add_keyword('metMikeAndAaron')
+        pwutilities.add_keyword('metMikeAndAaron')
         ep2_guild_tantrum_breakfast.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ universal.state.player.name , ' ']), ''.join([ "plops"
  , ' ']), ''.join([ "down,"
@@ -15774,8 +15774,8 @@ def init_scene_1_episode_2():
     
     
     def ep2_guild_no_bar_drink_start_qf():
-        textCommandsMusic.add_keyword('ep2IldriHintsAtAJob')
-        textCommandsMusic.add_keyword('''Maria's_Home''')
+        pwutilities.add_keyword('ep2IldriHintsAtAJob')
+        pwutilities.add_keyword('''Maria's_Home''')
         ep2_guild_no_bar_drink_start.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [], [''.join([ "Ildri"
  , ' ']), ''.join([ "gently"
@@ -16055,7 +16055,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "me,"
  , ' ']), ''.join([ "burning"
  , ' ']), ''.join([ "me,"
- , ' ']), ''.join([ universal.cond('spanked_by_Necia' in textCommandsMusic.keywords() or 'spanked_by_Necia_with_sandal' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('spanked_by_Necia' in pwutilities.keywords() or 'spanked_by_Necia_with_sandal' in pwutilities.keywords(), ''.join([""
 , ''.join([ "spanking"
  , ' ']), ''.join([ "me."
  , ' ']), ''.join([ '"'
@@ -16782,10 +16782,10 @@ def init_scene_1_episode_2():
     
     
     def ep2_marias_wake_up_qf():
-        universal.say('\m') ; universal.playedMusic.put(textCommandsMusic.MARIA)
+        universal.say('\m') ; universal.playedMusic.put(pwutilities.MARIA)
         ep2_marias_wake_up.quip = " "
         universal.say(universal.format_text_translate([[], [], []]), justification=0)
-        if 'extrovert' in textCommandsMusic.keywords():
+        if 'extrovert' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_marias_wake_up, ep2_extrovert)
         elif True:
             return conversation.continue_to_node(ep2_marias_wake_up, ep2_maria_no_bar)
@@ -17085,7 +17085,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_take_carrie_home_maria_fight_qf():
-        textCommandsMusic.add_keyword('ep2CarrieSexSpanking')
+        pwutilities.add_keyword('ep2CarrieSexSpanking')
         ep2_take_carrie_home_maria_fight.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
  ]), ''.join([ "Oh"
@@ -17858,7 +17858,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "closes"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "eyes."
- , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.player, ''.join([""
+ , ' '])], [''.join([ pwutilities.bummarks(universal.state.player, ''.join([""
 , ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.bum_adj() , ' ']), ''.join([ "globes"
  , ' ']), ''.join([ "are"
  , ' ']), ''.join([ "covered"
@@ -17872,7 +17872,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "lower"
  , ' ']), ''.join([ "cheeks."
- , ' '])])) , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.get_character( " Carrie " ), ''.join([""
+ , ' '])])) , ' '])], [''.join([ pwutilities.bummarks(universal.state.get_character( " Carrie " ), ''.join([""
 , ''.join([ "Carrie's"
  , ' ']), ''.join([ "soft,"
  , ' ']), ''.join([ "jutting"
@@ -18173,7 +18173,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "rolls"
  , ' ']), ''.join([ "onto"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "side,"
- , ' ']), ''.join([ universal.cond('ep2CarrieSexSpanking' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('ep2CarrieSexSpanking' in pwutilities.keywords(), ''.join([""
 , ''.join([ "wincing"
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "little"
@@ -18834,7 +18834,7 @@ def init_scene_1_episode_2():
     
     def ep2_maria_no_bar_articulate_qf():
         ep2_maria_no_bar_articulate.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ textCommandsMusic.stage_directions(''.join([""
+        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ "Maria"
  , ' ']), ''.join([ "relents"
  , ' ']), ''.join([ "grudgingly."
@@ -19354,7 +19354,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_maria_no_bar_bratty_qf():
-        textCommandsMusic.add_keyword('forbiddenFromSearchingForCatalin')
+        pwutilities.add_keyword('forbiddenFromSearchingForCatalin')
         ep2_maria_no_bar_bratty.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
  ]), ''.join([ "Don't"
@@ -19622,7 +19622,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "spank"
  , ' ']), ''.join([ "you?"
  ]), ''.join([ '"'
- , ' '])], [''.join([ universal.cond('Maria_spanked_you' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])], [''.join([ universal.cond('Maria_spanked_you' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Of"
  , ' ']), ''.join([ "course."
@@ -19672,7 +19672,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "my"
  , ' ']), ''.join([ "life."
  ]), ''.join([ '"'
- , ' '])])) , ' '])], [''.join([ universal.cond('Maria_spanked_you' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])])) , ' '])], [''.join([ universal.cond('Maria_spanked_you' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "I'm"
  , ' ']), ''.join([ "trying"
@@ -19871,7 +19871,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_maria_no_bar_bratty_spanking_qf():
-        textCommandsMusic.add_keyword('forbiddenFromSearchingForCatalin')
+        pwutilities.add_keyword('forbiddenFromSearchingForCatalin')
         ep2_maria_no_bar_bratty_spanking.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
  ]), ''.join([ "Fine."
@@ -20631,7 +20631,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "to"
  , ' ']), ''.join([ "bed."
  ]), ''.join([ '"'
- , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.player, ''.join([""
+ , ' '])], [''.join([ pwutilities.bummarks(universal.state.player, ''.join([""
 , ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "bottom"
  , ' ']), ''.join([ "is"
  , ' ']), ''.join([ "heavily"
@@ -20666,7 +20666,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_maria_no_bar_cave_qf():
-        textCommandsMusic.add_keyword('forbiddenFromSearchingForCatalin')
+        pwutilities.add_keyword('forbiddenFromSearchingForCatalin')
         ep2_maria_no_bar_cave.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
  ]), ''.join([ "I'm"
@@ -21223,7 +21223,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_maria_to_sofias_qf():
-        textCommandsMusic.add_keyword('travelingToSofias')
+        pwutilities.add_keyword('travelingToSofias')
         universal.state.party.add_member(universal.state.get_character("Maria.person"))
         ep2_maria_to_sofias.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ '"'
@@ -21581,7 +21581,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_wrong_way_qf():
-        textCommandsMusic.add_keyword('ep2WrongWay')
+        pwutilities.add_keyword('ep2WrongWay')
         universal.state.get_room("Slums").leaving = None
         townmode.go(universal.state.get_room(episode2CharRooms.sofiasClinic.name), sayDescription=False)
         ep2_wrong_way.quip = " "
@@ -22299,11 +22299,11 @@ def init_scene_1_episode_2():
         clinic = universal.state.get_room(episode2CharRooms.sofiasClinic.name)
         mariasHome = universal.state.get_room("Maria's Home")
         universal.state.party.remove_member(maria)
-        textCommandsMusic.exitLeft(maria, mariasHome)
-        textCommandsMusic.enterLeft(maria, clinic)
+        pwutilities.exitLeft(maria, mariasHome)
+        pwutilities.enterLeft(maria, clinic)
         maria.litany = None
         sofia.litany = None
-        textCommandsMusic.remove_keyword("travelingToSofias")
+        pwutilities.remove_keyword("travelingToSofias")
         ep2_clinic.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ "As"
  , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "and"
@@ -22584,7 +22584,7 @@ def init_scene_1_episode_2():
  , ' ']), universal.state.player.name, ''.join([ ","
  , ' ']), ''.join([ "smiling"
  , ' ']), ''.join([ "politely."
- , ' ']), ''.join([ universal.cond('met_Paloma' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('met_Paloma' in pwutilities.keywords(), ''.join([""
 , ''.join([ "There's"
  , ' ']), ''.join([ "something"
  , ' ']), ''.join([ "about"
@@ -22686,7 +22686,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "take"
  , ' ']), ''.join([ "it?"
  ]), ''.join([ '"'
- , ' '])], [''.join([ universal.cond('ep2WrongWay' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])], [''.join([ universal.cond('ep2WrongWay' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Just"
  , ' ']), ''.join([ "about,"
@@ -24703,9 +24703,9 @@ def init_scene_1_episode_2():
     def ep2_ildri_chat_qf():
         ep2_ildri_chat.quip = " "
         universal.say(universal.format_text_translate([[], []]), justification=0)
-        if 'risqueScene' not in textCommandsMusic.keywords() and universal.state.player.risque() >= 4 and 'Ildri_no_pants' in textCommandsMusic.keywords():
+        if 'risqueScene' not in pwutilities.keywords() and universal.state.player.risque() >= 4 and 'Ildri_no_pants' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_ildri_chat, ep2_ildri_indecent_no_pants)
-        elif 'risqueScene' not in textCommandsMusic.keywords() and universal.state.player.risque() >= 4:
+        elif 'risqueScene' not in pwutilities.keywords() and universal.state.player.risque() >= 4:
             return conversation.continue_to_node(ep2_ildri_chat, ep2_ildri_indecent)
         elif True:
             return conversation.continue_to_node(ep2_ildri_chat, ep2_ildri_scene_1_chat)
@@ -24714,7 +24714,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_ildri_indecent_no_pants_qf():
-        textCommandsMusic.add_keyword('risqueScene')
+        pwutilities.add_keyword('risqueScene')
         ep2_ildri_indecent_no_pants.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ "Ildri"
  , ' ']), ''.join([ "sighs"
@@ -26539,7 +26539,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "with"
  , ' ']), ''.join([ "mine."
  ]), ''.join([ '"'
- , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.player, ''.join([""
+ , ' '])], [''.join([ pwutilities.bummarks(universal.state.player, ''.join([""
 , ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.bum_adj() , ' ']), ''.join([ "bottom"
  , ' ']), ''.join([ "is"
  , ' ']), ''.join([ "covered"
@@ -26586,7 +26586,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_ildri_indecent_qf():
-        textCommandsMusic.add_keyword('risqueScene')
+        pwutilities.add_keyword('risqueScene')
         ep2_ildri_indecent.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
  ]), ''.join([ "Hey"
@@ -28383,7 +28383,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' ']), ''.join([ "says"
  , ' ']), ''.join([ "Alondra."
- , ' '])], [''.join([ universal.cond('attractedToAlondra' in textCommandsMusic.keywords() and 'lesbian_in_denial' in textCommandsMusic.keywords(), ''.join([""
+ , ' '])], [''.join([ universal.cond('attractedToAlondra' in pwutilities.keywords() and 'lesbian_in_denial' in pwutilities.keywords(), ''.join([""
 , ''.join([ universal.state.player.name , ' ']), ''.join([ "feels"
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "brief"
@@ -28407,7 +28407,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "be"
  , ' ']), ''.join([ "serious."
  , ' '])]), ''.join([""
-])) , ' '])], [''.join([ universal.cond('attractedToAlondra' in textCommandsMusic.keywords() and 'lesbian_in_denial' not in textCommandsMusic.keywords(), ''.join([""
+])) , ' '])], [''.join([ universal.cond('attractedToAlondra' in pwutilities.keywords() and 'lesbian_in_denial' not in pwutilities.keywords(), ''.join([""
 , ''.join([ universal.state.player.name , ' ']), ''.join([ "feels"
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "jolt."
@@ -28493,7 +28493,7 @@ def init_scene_1_episode_2():
     
     def ep2_ildri_sexy_idols_female_qf():
         ep2_ildri_sexy_idols_female.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ universal.cond('ep2KissedAlondra' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+        universal.say(universal.format_text_translate([[], [], [''.join([ universal.cond('ep2KissedAlondra' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "You"
  , ' ']), ''.join([ "know,"
@@ -28531,7 +28531,7 @@ def init_scene_1_episode_2():
  , ' '])]))
         ep2_ildri_sexy_idols_female.add_child(ep2_alondra_appreciate)
         ep2_ildri_sexy_idols_female.add_player_comment(universal.format_line_translate([""
-, ''.join([ universal.cond('ep2KissedAlondra' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+, ''.join([ universal.cond('ep2KissedAlondra' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Better"
  , ' ']), ''.join([ "believe"
@@ -29241,7 +29241,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "counter."
  , ' '])]]), justification=0)
-        if 'ep2IldriSceneTransition' in textCommandsMusic.keywords():
+        if 'ep2IldriSceneTransition' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_ildri_scene_1_chat, ep2_ildri_scene_1_transition_again)
         elif True:
             return conversation.continue_to_node(ep2_ildri_scene_1_chat, ep2_ildri_scene_1_transition)
@@ -29332,7 +29332,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_ildri_scene_1_transition_qf():
-        textCommandsMusic.add_keyword('ep2IldriSceneTransition')
+        pwutilities.add_keyword('ep2IldriSceneTransition')
         ep2_ildri_scene_1_transition.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ universal.cond('ep2IldriHintsAtAJob', ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
@@ -29608,7 +29608,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "as"
  , ' ']), ''.join([ "hungry"
  , ' ']), ''.join([ "adventurers."
- , ' ']), ''.join([ universal.cond('attractedToAlondra' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('attractedToAlondra' in pwutilities.keywords(), ''.join([""
 , ''.join([ "It"
  , ' ']), ''.join([ "didn't"
  , ' ']), ''.join([ "help"
@@ -30293,7 +30293,7 @@ def init_scene_1_episode_2():
     def ep2_peter_qf():
         ep2_peter.quip = " "
         universal.say(universal.format_text_translate([[], []]), justification=0)
-        if 'teaching_Anne' in textCommandsMusic.keywords():
+        if 'teaching_Anne' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_peter, ep2_peter_teaching_anne)
         elif True:
             return conversation.continue_to_node(ep2_peter, ep2_peter_conversation)
@@ -30500,7 +30500,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_peter_crush_qf():
-        textCommandsMusic.add_keyword('attractedToPeter')
+        pwutilities.add_keyword('attractedToPeter')
         ep2_peter_crush.quip = " "
         universal.say(universal.format_text_translate([[], [], []]), justification=0)
         return conversation.continue_to_node(ep2_peter_crush, ep2_peter_teaching_anne_continued, False)
@@ -30510,7 +30510,7 @@ def init_scene_1_episode_2():
     
     def ep2_peter_teaching_anne_continued_qf():
         ep2_peter_teaching_anne_continued.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+        universal.say(universal.format_text_translate([[], [], [''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Worried"
  , ' ']), ''.join([ "I"
@@ -31121,7 +31121,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_anne_prank_qf():
-        textCommandsMusic.add_keyword('ep2AnnePrank')
+        pwutilities.add_keyword('ep2AnnePrank')
         ep2_anne_prank.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ '"'
  ]), ''.join([ "But"
@@ -31208,7 +31208,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_anne_meditation_qf():
-        textCommandsMusic.add_keyword('mothersSong')
+        pwutilities.add_keyword('mothersSong')
         ep2_anne_meditation.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ "Peter"
  , ' ']), ''.join([ "glances"
@@ -31265,7 +31265,7 @@ def init_scene_1_episode_2():
  , ' ']), universal.state.player.name, ''.join([ ","
  , ' ']), ''.join([ "sharing"
  , ' ']), ''.join([ "a"
- , ' ']), ''.join([ universal.cond('ep2AnnePrank' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('ep2AnnePrank' in pwutilities.keywords(), ''.join([""
 , ''.join([ "mischievous"
  , ' ']), ''.join([ "grin"
  , ' '])]), ''.join([""
@@ -31424,7 +31424,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "try"
  , ' ']), ''.join([ "again."
  ]), ''.join([ '"'
- , ' '])], [''.join([ universal.cond('ep2AnnePrank' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])], [''.join([ universal.cond('ep2AnnePrank' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Can"
  , ' ']), ''.join([ "we"
@@ -31455,7 +31455,7 @@ def init_scene_1_episode_2():
  , ' '])], [''.join([ '"'
  ]), ''.join([ "No..."
  ]), ''.join([ '"'
- , ' '])], [''.join([ universal.cond('ep2AnnePrank' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])], [''.join([ universal.cond('ep2AnnePrank' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Then"
  , ' ']), ''.join([ "what"
@@ -31574,7 +31574,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "glance"
  , ' ']), ''.join([ "at"
  , ' ']), ''.join([ "Peter,"
- , ' ']), universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ "admiring"
  , ' ']), ''.join([ "his"
  , ' ']), ''.join([ "muscled,"
@@ -31916,7 +31916,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "twice"
  , ' ']), ''.join([ "more."
  , ' '])]]), justification=0)
-        if 'ep2AnnePrank' in textCommandsMusic.keywords():
+        if 'ep2AnnePrank' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_anne_meditation, ep2_anne_start_prank)
         elif True:
             return conversation.continue_to_node(ep2_anne_meditation, ep2_anne_play)
@@ -32103,7 +32103,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "with"
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "giggle."
- , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+ , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ "blushes."
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Well,"
@@ -32515,7 +32515,7 @@ def init_scene_1_episode_2():
     
     def ep2_peter_run_for_it_qf():
         ep2_peter_run_for_it.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ textCommandsMusic.stage_directions(''.join([""
+        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ universal.state.player.name , ' ']), ''.join([ "tries"
  , ' ']), ''.join([ "to"
  , ' ']), ''.join([ "run"
@@ -33274,7 +33274,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "for"
  , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "to"
  , ' ']), ''.join([ "enter."
- , ' '])], [''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords() and universal.state.player.is_female(), ''.join([''.join([ ""
+ , ' '])], [''.join([ universal.cond('attractedToPeter' in pwutilities.keywords() and universal.state.player.is_female(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Ladies"
  , ' ']), ''.join([ "first?"
@@ -33289,7 +33289,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "scurries"
  , ' ']), ''.join([ "inside."
- , ' '])])) , ' ']), ''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords() and universal.state.player.is_female(), ''.join([""
+ , ' '])])) , ' ']), ''.join([ universal.cond('attractedToPeter' in pwutilities.keywords() and universal.state.player.is_female(), ''.join([""
 , ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "smile"
  , ' ']), ''.join([ "fades"
  , ' ']), ''.join([ "beneath"
@@ -33554,7 +33554,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "same"
  , ' ']), ''.join([ "purposes."
  ]), ''.join([ '"'
- , ' '])], [''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+ , ' '])], [''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ "A"
  , ' ']), ''.join([ "small"
  , ' ']), ''.join([ "feeling"
@@ -33666,7 +33666,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "at"
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "whip."
- , ' '])])) , ' '])], [''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])])) , ' '])], [''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "I'm"
  , ' ']), ''.join([ "sorry,"
@@ -33766,7 +33766,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "his"
  , ' ']), ''.join([ "family."
  ]), ''.join([ '"'
- , ' '])])) , ' '])], [''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])])) , ' '])], [''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Relax,"
  ]), ''.join([ '"'
@@ -33839,7 +33839,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' ']), ''.join([ "says"
  , ' ']), universal.state.player.name, ''.join([ "."
- , ' '])])) , ' '])], [''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+ , ' '])])) , ' '])], [''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ universal.state.player.name , ' ']), ''.join([ "feels"
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "surge"
@@ -33904,7 +33904,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "stool."
  ]), ''.join([ '"'
- , ' '])])) , ' '])], [''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])])) , ' '])], [''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "We'll"
  , ' ']), ''.join([ "see"
@@ -34010,7 +34010,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ universal.state.player.bum_adj() , ' ']), ''.join([ "bottom"
  , ' ']), ''.join([ "towards"
  , ' ']), ''.join([ "Peter."
- , ' ']), ''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ universal.state.player.name , ' ']), ''.join([ "is"
  , ' ']), ''.join([ "surprised"
  , ' ']), ''.join([ "by"
@@ -34338,7 +34338,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ "It's"
  , ' ']), ''.join([ "over."
  ]), ''.join([ '"'
- , ' ']), ''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ "Peter"
  , ' ']), ''.join([ "sets"
  , ' ']), ''.join([ "the"
@@ -34405,7 +34405,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ "Come"
  , ' ']), ''.join([ "on."
  ]), ''.join([ '"'
- , ' '])])) , ' '])], [''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+ , ' '])])) , ' '])], [''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ universal.state.player.name , ' ']), ''.join([ "buries"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "face"
  , ' ']), ''.join([ "in"
@@ -34476,7 +34476,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "after"
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "moment,"
- , ' ']), universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ "gently"
  , ' ']), ''.join([ "patting"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "thigh"
@@ -34506,7 +34506,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "time,"
  , ' ']), ''.join([ "remember."
  ]), ''.join([ '"'
- , ' '])], [''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+ , ' '])], [''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ "With"
  , ' ']), ''.join([ "Peter's"
  , ' ']), ''.join([ "help,"
@@ -34712,7 +34712,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "see"
  , ' ']), ''.join([ "you."
  ]), ''.join([ '"'
- , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.player, ''.join([""
+ , ' '])], [''.join([ pwutilities.bummarks(universal.state.player, ''.join([""
 , ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.bum_adj() , ' ']), ''.join([ "bottom"
  , ' ']), ''.join([ "has"
  , ' ']), ''.join([ "received"
@@ -34981,7 +34981,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "been"
  , ' ']), ''.join([ "so"
  , ' ']), ''.join([ "stupid?"
- , ' ']), ''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ "Peter"
  , ' ']), ''.join([ "probably"
  , ' ']), ''.join([ "hates"
@@ -35255,7 +35255,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])], [''.join([ "Peter"
  , ' ']), ''.join([ "stops."
- , ' ']), ''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ universal.state.player.name , ' ']), ''.join([ "is"
  , ' ']), ''.join([ "bawling"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "eyes"
@@ -35281,7 +35281,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "back"
  , ' ']), ''.join([ "tears."
  , ' '])])) , ' '])]]), justification=0)
-        if 'attractedToPeter' in textCommandsMusic.keywords():
+        if 'attractedToPeter' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_peter_wait, ep2_peter_wait_attracted_to_him)
         elif True:
             return conversation.continue_to_node(ep2_peter_wait, ep2_peter_wait_not_attracted_to_him)
@@ -38532,7 +38532,7 @@ def init_scene_1_episode_2():
 , ''.join([ universal.state.player.name , ' ']), ''.join([ "extinguishes"
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "sparkles."
- , ' '])])) , ' '])], [''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])])) , ' '])], [''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "All"
  , ' ']), ''.join([ "tuckered"
@@ -38577,7 +38577,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "his"
  , ' ']), ''.join([ "daughter"
  , ' ']), ''.join([ "play."
- , ' '])], [''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+ , ' '])], [''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ universal.state.player.name , ' ']), ''.join([ "rubs"
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "top"
@@ -38664,7 +38664,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "her."
  ]), ''.join([ '"'
  , ' '])])) , ' '])]]), justification=0)
-        if 'attractedToPeter' in textCommandsMusic.keywords():
+        if 'attractedToPeter' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_anne_play, ep2_peter_small_conversation)
         elif True:
             return conversation.continue_to_node(ep2_anne_play, ep2_anne_goes_to_grandma)
@@ -40120,7 +40120,7 @@ def init_scene_1_episode_2():
     
     def ep2_peter_shop_mode_qf():
         ep2_peter_shop_mode.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ textCommandsMusic.stage_directions(''.join([""
+        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ "Segue"
  , ' ']), ''.join([ "into"
  , ' ']), ''.join([ "a"
@@ -40317,7 +40317,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "enters."
  , ' '])]]), justification=0)
-        if 'second_hand_tragedy' in textCommandsMusic.keywords():
+        if 'second_hand_tragedy' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_elise_prologue, ep2_elise_second_hand_tragedy)
         elif True:
             return conversation.continue_to_node(ep2_elise_prologue, ep2_elise_greeting)
@@ -40710,7 +40710,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha_qf():
-        textCommandsMusic.remove_keyword('second_hand_tragedy')
+        pwutilities.remove_keyword('second_hand_tragedy')
         ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [], [''.join([ '"'
  ]), ''.join([ "Great."
@@ -40925,7 +40925,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha_qf():
-        textCommandsMusic.add_keyword('ep2EliseAnnoyedAtPlayersStubbornness')
+        pwutilities.add_keyword('ep2EliseAnnoyedAtPlayersStubbornness')
         ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ "Elise"
  , ' ']), ''.join([ "turns"
@@ -40996,7 +40996,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_elise_second_hand_tragedy_make_up_qf():
-        textCommandsMusic.remove_keyword('second_hand_tragedy')
+        pwutilities.remove_keyword('second_hand_tragedy')
         ep2_elise_second_hand_tragedy_make_up.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [], [''.join([ "Sister"
  , ' ']), ''.join([ "Samantha"
@@ -41089,7 +41089,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_elise_gripe_qf():
-        textCommandsMusic.enterLeft(universal.state.get_character("Carrie.person"), universal.state.get_room("Shrine"))
+        pwutilities.enterLeft(universal.state.get_character("Carrie.person"), universal.state.get_room("Shrine"))
         ep2_elise_gripe.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ '"'
  ]), ''.join([ "Well"
@@ -41854,7 +41854,7 @@ def init_scene_1_episode_2():
     def ep2_carrie_qf():
         ep2_carrie.quip = " "
         universal.say(universal.format_text_translate([[], []]), justification=0)
-        if 'ep2BeginningLostTemperWithCarrie' in textCommandsMusic.keywords():
+        if 'ep2BeginningLostTemperWithCarrie' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_carrie, ep2_carrie_lost_temper_apologize)
         elif True:
             return conversation.continue_to_node(ep2_carrie, ep2_carrie_subplot_begin)
@@ -41863,7 +41863,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_carrie_lost_temper_apologize_qf():
-        textCommandsMusic.remove_keyword('ep2BeginningLostTemperWithCarrie')
+        pwutilities.remove_keyword('ep2BeginningLostTemperWithCarrie')
         ep2_carrie_lost_temper_apologize.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [], [''.join([ universal.state.player.name , ' ']), ''.join([ "paces"
  , ' ']), ''.join([ "anxiously"
@@ -42386,7 +42386,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "squirms"
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "little,"
- , ' ']), ''.join([ universal.cond('attractedToCarrie' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('attractedToCarrie' in pwutilities.keywords(), ''.join([""
 , ''.join([ "setting"
  , ' ']), ''.join([ "off"
  , ' ']), ''.join([ "a"
@@ -42836,7 +42836,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "her"
  , ' ']), ''.join([ "watery"
  , ' ']), ''.join([ "gaze."
- , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ universal.cond('attractedToCarrie' in textCommandsMusic.keywords() and 'lesbian_in_denial' not in textCommandsMusic.keywords(), ''.join([""
+ , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ universal.cond('attractedToCarrie' in pwutilities.keywords() and 'lesbian_in_denial' not in pwutilities.keywords(), ''.join([""
 , ''.join([ "pulls"
  , ' ']), ''.join([ "Carrie"
  , ' ']), ''.join([ "into"
@@ -43002,9 +43002,9 @@ def init_scene_1_episode_2():
     
     
     def ep2_carrie_subplot_begin_qf():
-        universal.say('\m') ; universal.playedMusic.put(textCommandsMusic.CARRIE)
+        universal.say('\m') ; universal.playedMusic.put(pwutilities.CARRIE)
         ep2_carrie_subplot_begin.quip = " "
-        universal.say(universal.format_text_translate([[], [], [], [''.join([ textCommandsMusic.stage_directions(''.join([""
+        universal.say(universal.format_text_translate([[], [], [], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ "Crazy"
  , ' ']), ''.join([ "shenanigans"
  , ' ']), ''.join([ "with"
@@ -43217,7 +43217,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "gives"
  , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "quick"
- , ' ']), ''.join([ universal.cond('relationshipWithCarrie' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('relationshipWithCarrie' in pwutilities.keywords(), ''.join([""
 , ''.join([ "hug,"
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "kiss."
@@ -43251,7 +43251,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' ']), ''.join([ "asks"
  , ' ']), universal.state.player.name, ''.join([ ","
- , ' ']), ''.join([ universal.cond('relationshipWithCarrie' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('relationshipWithCarrie' in pwutilities.keywords(), ''.join([""
 , ''.join([ "giving"
  , ' ']), ''.join([ "Carrie's"
  , ' ']), ''.join([ "shoulders"
@@ -43539,7 +43539,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_carrie_outside_qf():
-        universal.say('\m') ; universal.playedMusic.put(textCommandsMusic.CARRIE)
+        universal.say('\m') ; universal.playedMusic.put(pwutilities.CARRIE)
         ep2_carrie_outside.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ "As"
  , ' ']), ''.join([ "the"
@@ -44133,7 +44133,7 @@ def init_scene_1_episode_2():
     
     def ep2_carrie_illegal_qf():
         ep2_carrie_illegal.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ textCommandsMusic.stage_directions(''.join([""
+        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ "Carrie"
  , ' ']), ''.join([ "reveals"
  , ' ']), ''.join([ "that"
@@ -44810,7 +44810,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "lives"
  , ' ']), ''.join([ "meaning."
  ]), ''.join([ '"'
- , ' '])], [''.join([ universal.cond('relationshipWithCarrie' in textCommandsMusic.keywords(), ''.join([""
+ , ' '])], [''.join([ universal.cond('relationshipWithCarrie' in pwutilities.keywords(), ''.join([""
 , ''.join([ "Carrie"
  , ' ']), ''.join([ "pouts"
  , ' ']), ''.join([ "for"
@@ -44874,7 +44874,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "care."
  , ' ']), ''.join([ "Jerk."
  ]), ''.join([ '"'
- , ' '])])) , ' '])], [''.join([ universal.cond('relationshipWithCarrie' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])])) , ' '])], [''.join([ universal.cond('relationshipWithCarrie' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Trust"
  , ' ']), ''.join([ "me,"
@@ -45019,8 +45019,8 @@ def init_scene_1_episode_2():
     
     
     def ep2_carrie_ignore_qf():
-        textCommandsMusic.add_keyword('ignoredCarrie')
-        textCommandsMusic.add_keyword('didnotHelpCarrie')
+        pwutilities.add_keyword('ignoredCarrie')
+        pwutilities.add_keyword('didnotHelpCarrie')
         ep2_carrie_ignore.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [], [''.join([ universal.state.player.name , ' ']), ''.join([ "leans"
  , ' ']), ''.join([ "against"
@@ -45367,10 +45367,10 @@ def init_scene_1_episode_2():
     
     
     def ep2_carrie_subplot_spanking_qf():
-        textCommandsMusic.add_keyword('ep2SpankedCarrieInsteadOfHelping')
-        textCommandsMusic.add_keyword('didnotHelpCarrie')
+        pwutilities.add_keyword('ep2SpankedCarrieInsteadOfHelping')
+        pwutilities.add_keyword('didnotHelpCarrie')
         ep2_carrie_subplot_spanking.quip = " "
-        universal.say(universal.format_text_translate([[], [], [], [], [''.join([ textCommandsMusic.stage_directions(''.join([""
+        universal.say(universal.format_text_translate([[], [], [], [], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ "The"
  , ' ']), ''.join([ "player"
  , ' ']), ''.join([ "spanks"
@@ -45456,7 +45456,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "hard,"
  , ' ']), ''.join([ "callused"
  , ' ']), ''.join([ "hand."
- , ' '])], [''.join([ universal.cond('ep2BeginningSpankedCarrie' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])], [''.join([ universal.cond('ep2BeginningSpankedCarrie' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Come"
  , ' ']), ''.join([ "on"
@@ -45499,7 +45499,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "to"
  , ' ']), ''.join([ "evade"
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "hand."
- , ' '])], [''.join([ universal.cond('ep2BeginningSpankedCarrie' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])], [''.join([ universal.cond('ep2BeginningSpankedCarrie' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "I'm"
  , ' ']), ''.join([ "not"
@@ -45583,7 +45583,7 @@ def init_scene_1_episode_2():
  , ' '])], [''.join([ '"'
  ]), ''.join([ "I'm"
  , ' ']), ''.join([ "your"
- , ' ']), universal.cond('ep2CarrieSex' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), universal.cond('ep2CarrieSex' in pwutilities.keywords(), ''.join([""
 , ''.join([ "lover"
  , ' '])]), ''.join([""
 , ''.join([ "friend"
@@ -46143,7 +46143,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "extra"
  , ' ']), ''.join([ "vigorous"
  , ' ']), ''.join([ "rubbing."
- , ' '])], [''.join([ universal.cond('ep2BeginningSpankedCarrie' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])], [''.join([ universal.cond('ep2BeginningSpankedCarrie' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "I'd"
  , ' ']), ''.join([ "be"
@@ -46175,7 +46175,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "what"
  , ' ']), ''.join([ "now?"
  ]), ''.join([ '"'
- , ' '])])) , ' '])], [''.join([ universal.cond('ep2BeginningSpankedCarrie' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])])) , ' '])], [''.join([ universal.cond('ep2BeginningSpankedCarrie' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Hey,"
  , ' ']), ''.join([ "that's"
@@ -46243,7 +46243,7 @@ def init_scene_1_episode_2():
     
     def ep2_carrie_distraction_qf():
         ep2_carrie_distraction.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ textCommandsMusic.stage_directions(''.join([""
+        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ "The"
  , ' ']), ''.join([ "two"
  , ' ']), ''.join([ "head"
@@ -46588,7 +46588,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "of"
  , ' ']), ''.join([ "lingerie"
  , ' ']), ''.join([ "shopping."
- , ' ']), ''.join([ universal.cond('attractedToAlondra'in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('attractedToAlondra'in pwutilities.keywords(), ''.join([""
 , ''.join([ "Maybe"
  , ' ']), ''.join([ "there's"
  , ' ']), ''.join([ "something"
@@ -46597,7 +46597,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "would"
  , ' ']), ''.join([ "enjoy..."
  , ' '])]), ''.join([""
-, ''.join([ universal.cond('attractedToPeter' in textCommandsMusic.keywords(), ''.join([""
+, ''.join([ universal.cond('attractedToPeter' in pwutilities.keywords(), ''.join([""
 , ''.join([ "Maybe"
  , ' ']), ''.join([ "there's"
  , ' ']), ''.join([ "something"
@@ -48766,7 +48766,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_carrie_agree_qf():
-        textCommandsMusic.add_keyword('ep2spankedHelpingCarrie')
+        pwutilities.add_keyword('ep2spankedHelpingCarrie')
         ep2_carrie_agree.quip = " "
         universal.say(universal.format_text_translate([[], [], [''.join([ "Carrie"
  , ' ']), ''.join([ "goes"
@@ -50631,7 +50631,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' ']), ''.join([ "says"
  , ' ']), universal.state.player.name, ''.join([ "."
- , ' ']), ''.join([ universal.cond('boarding_with_Adrian' not in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' ']), ''.join([ universal.cond('boarding_with_Adrian' not in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Hey"
  , ' ']), ''.join([ "Adrian,"
@@ -50660,7 +50660,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Carrie"
  , ' ']), ''.join([ "into"
  , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "room."
- , ' '])])) , ' '])], [''.join([ universal.cond('boarding_with_Maria' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+ , ' '])])) , ' '])], [''.join([ universal.cond('boarding_with_Maria' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Your"
  , ' ']), ''.join([ "clothes"
@@ -50684,7 +50684,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "writing"
  , ' ']), ''.join([ "on."
  , ' '])]), ''.join([""
-])) , ' '])], [''.join([ universal.cond('boarding_with_Maria' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+])) , ' '])], [''.join([ universal.cond('boarding_with_Maria' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Well,"
  , ' ']), ''.join([ "my"
@@ -50692,7 +50692,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "will."
  ]), ''.join([ '"'
  , ' '])]), ''.join([""
-])) , ' '])], [''.join([ universal.cond('boarding_with_Maria' in textCommandsMusic.keywords(), ''.join([''.join([ ""
+])) , ' '])], [''.join([ universal.cond('boarding_with_Maria' in pwutilities.keywords(), ''.join([''.join([ ""
  , ' ']), ''.join([ '"'
  ]), ''.join([ "That'll"
  , ' ']), ''.join([ "work."
@@ -50762,7 +50762,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "begins"
  , ' ']), ''.join([ "slapping"
  , ' ']), ''.join([ "her"
- , ' ']), ''.join([ universal.cond('ep2BeginningSpankedCarrie' in textCommandsMusic.keywords(), ''.join([""
+ , ' ']), ''.join([ universal.cond('ep2BeginningSpankedCarrie' in pwutilities.keywords(), ''.join([""
 , ''.join([ "bottom"
  , ' ']), ''.join([ "through"
  , ' ']), ''.join([ "a"
@@ -51386,7 +51386,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "to"
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "corridor."
- , ' '])], [''.join([ textCommandsMusic.stage_directions(''.join([""
+ , ' '])], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ "The"
  , ' ']), ''.join([ "player"
  , ' ']), ''.join([ "starts"
@@ -51412,7 +51412,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "reaction."
  , ' ']), ''.join([ "Spankings"
  , ' ']), ''.join([ "ensue."
- , ' '])])) , ' '])], [''.join([ textCommandsMusic.bummarks(universal.state.player, ''.join([""
+ , ' '])])) , ' '])], [''.join([ pwutilities.bummarks(universal.state.player, ''.join([""
 , ''.join([ universal.state.player.name, "'s" , ' ']), universal.state.player.bum_adj(), ''.join([ ","
  , ' ']), ''.join([ universal.state.player.muscle_adj() , ' ']), ''.join([ "bottom"
  , ' ']), ''.join([ "is"
@@ -51443,7 +51443,7 @@ def init_scene_1_episode_2():
     
     
     def ep2_carrie_subplot_end_qf():
-        textCommandsMusic.add_keyword('ep2HelpedCarrie')
+        pwutilities.add_keyword('ep2HelpedCarrie')
         ep2_carrie_subplot_end.quip = " "
         universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
  ]), ''.join([ "So"
@@ -51556,7 +51556,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ "See"
  , ' ']), ''.join([ "you!"
  ]), ''.join([ '"'
- , ' '])], [''.join([ textCommandsMusic.stage_directions(''.join([""
+ , ' '])], [''.join([ pwutilities.stage_directions(''.join([""
 , ''.join([ "The"
  , ' ']), ''.join([ "two"
  , ' ']), ''.join([ "figure"
@@ -51604,6 +51604,6 @@ def end_scene_1_episode_2():
 
 
 episode2Scene1 = episode.Scene("Episode 2 Scene 1", start_scene_1_episode_2, end_scene_1_episode_2)
-episode2 = episode.Episode(2, '''Back Alleys''', scenes=[episode2Scene1], titleTheme=textCommandsMusic.CARLITA)
+episode2 = episode.Episode(2, '''Back Alleys''', scenes=[episode2Scene1], titleTheme=pwutilities.CARLITA)
 episode2.nextEpisode = episode2CharRooms.episode3
 episode2.init = init_episode_2

@@ -88,8 +88,8 @@ class Episode(universal.RPGObject):
             if self.scenes[self.currentSceneIndex].init_scene:
                 self.scenes[self.currentSceneIndex].init_scene()
         except IndexError:
-           import textCommandsMusic
-           textCommandsMusic.exitLeft(universal.state.player, universal.state.location)
+           import pwutilities
+           pwutilities.exitLeft(universal.state.player, universal.state.location)
            end_content_mode()
         else:
             if startingSceneArgs is ():

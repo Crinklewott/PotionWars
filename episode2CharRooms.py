@@ -19,7 +19,7 @@ import dungeonmode
 import episode
 import items
 import itemspotionwars
-import textCommandsMusic
+import pwutilities
 import music
 import person
 import spells_PotionWars
@@ -118,7 +118,7 @@ except KeyError:
         "stools. A pair of massive hearths sit at the far end, a pair of turnspit dogs are lying next to the hearth. Their heads come up, and their tails thump against the ground as the Taironan", 
         "enters. There is a large hole in the south wall. The hole has been braced with several hastily carved timbers, and a few thick furs have been draped over it, so that",
         "customers can't peer directly into the back of the guild. A pair of high windows sit on the western wall on either side of the hearth."]), [universal.state.get_room("Adventurer's Guild")],
-        None, None, textCommandsMusic.LIGHT_HEARTED, "textCommandsMusic.LIGHT_HEARTED", None)
+        None, None, pwutilities.LIGHT_HEARTED, "pwutilities.LIGHT_HEARTED", None)
 
 try:
     sofiasClinic = universal.state.get_room("Sofia's Clinic")
@@ -126,7 +126,7 @@ except KeyError:
     sofiasClinic = townmode.Room("Sofia's Clinic", ' '.join(["The 'clinic' is nothing more than a long, dark, low-ceilinged room crammed with piles of ragged blankets. Immersed in the piles of",
         "blankets are dozens of Taironans, all in different states of duress. Most of them are shivering quietly, or sleeping fitfully. Some are moaning, and shifting. A few are crying, and shaking",
         "violently. There is even one man who is being wrestled back into his blankets, while screaming incoherently in an unrecognizable dialect. No more than",
-        "half a dozen helpers, mostly women, are moving amongst the clinic's patients."]), [], None, None, textCommandsMusic.TAIRONAN, "textCommandsMusic.TAIRONAN", 
+        "half a dozen helpers, mostly women, are moving amongst the clinic's patients."]), [], None, None, pwutilities.TAIRONAN, "pwutilities.TAIRONAN", 
         None)
 
 try:
@@ -134,7 +134,7 @@ try:
 except KeyError:
     adriansOffice = townmode.Room("Adrian's Office", ' '.join(["A spartan place consisting only of a large desk, and several chairs. A long, whippy cane hangs on the wall above Adrian's chair.",
         "Despite being his 'office,' Adrian rarely uses it. He generally prefers to be out in the main room working behind the counter. He only uses his office when he wants to have a private",
-        "conversation, typically while negotiating with clients."]), [], None, None, textCommandsMusic.LIGHT_HEARTED, "textCommandsMusic.LIGHT_HEARTED", None)
+        "conversation, typically while negotiating with clients."]), [], None, None, pwutilities.LIGHT_HEARTED, "pwutilities.LIGHT_HEARTED", None)
 
 
     #               0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19
@@ -187,16 +187,16 @@ slumsLevel1Events = (
                  )
 
 slumEvents = [slumsLevel1Events]
-allegriasDomain = dungeonmode.Dungeon("Allegria's Slums", [slumsLevel1Map], slumEvents, bgMusic=textCommandsMusic.TAIRONAN,
+allegriasDomain = dungeonmode.Dungeon("Allegria's Slums", [slumsLevel1Map], slumEvents, bgMusic=pwutilities.TAIRONAN,
         enemies=None)
 
 def start_scene_1_episode_3(loading=False): 
     universal.say("Next Time on Pandemonium Cycle: The Potion Wars")
     music.play_music(music.THEME)
-    universal.say(["Roland and Elise are getting married, and", textCommandsMusic.name(), "is asked to escort Elise to the Lowen Monastery for the wedding. But things get a little bit complicated when an old enemy of Roland's",
+    universal.say(["Roland and Elise are getting married, and", pwutilities.name(), "is asked to escort Elise to the Lowen Monastery for the wedding. But things get a little bit complicated when an old enemy of Roland's",
     "ambushes them!"])
     universal.set_commands("Press Enter t osave")
-    universal.set_command_interpreter(textCommandsMusic.end_content_interpreter)
+    universal.set_command_interpreter(pwutilities.end_content_interpreter)
 
 def end_scene_1_episode3():
         pass
@@ -205,7 +205,7 @@ def end_scene_1_episode3():
 def start_scene_2_episode_2(loading=False):
     universal.say("You've reached the end of the current content. Hope you've enjoyed playing it. If you have any comments or criticisms, please either post on my website spankingrpgs.com, or send me an e-mail at sprpgs@gmail.com. Once the next scene is posted, you'll be able to enjoy by loading a save from just before this scene. Thanks!", justification=0)
     universal.set_commands('Press Enter to go back to the title screen')
-    universal.set_command_interpreter(textCommandsMusic.to_title_screen_interpreter)
+    universal.set_command_interpreter(pwutilities.to_title_screen_interpreter)
 episode2Scene2 = episode.Scene('Episode 2 Scene 2', start_scene_2_episode_2, None)
 
 episode3Scene1 = episode.Scene("Episode 3 Scene 1", start_scene_1_episode_3, end_scene_1_episode3)

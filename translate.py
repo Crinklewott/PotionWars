@@ -41,7 +41,7 @@ import parseTree
 import transExceptions
 
 
-IMPORTS = ['import universal', 'import textCommandsMusic', 'import person', 'import items', 'import pwenemies', 'import dungeonmode', 'import itemspotionwars', 'import random', 'import conversation',
+IMPORTS = ['import universal', 'import pwutilities', 'import person', 'import items', 'import pwenemies', 'import dungeonmode', 'import itemspotionwars', 'import random', 'import conversation',
         'import episode', 'import townmode','import episode', 'import music', 'import transExceptions']
 
 
@@ -91,7 +91,7 @@ DEBUG = True
 if DEBUG:
     import os
     try:
-        pyCode = translate(os.path.join('transcripts', 'episode2.tex'), 'Back Alleys', 2, "textCommandsMusic.CARLITA", startingNodeNum=327, imports=IMPORTS, charRooms='episode2CharRooms')
+        pyCode = translate(os.path.join('transcripts', 'episode2.tex'), 'Back Alleys', 2, "pwutilities.CARLITA", startingNodeNum=327, imports=IMPORTS, charRooms='episode2CharRooms')
     except transExceptions.TranslationError, e:
         print(str(e)) 
     else:

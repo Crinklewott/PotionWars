@@ -59,7 +59,7 @@ END = 'r\end'
 nodeNum = 0
 
 codeCommands = {
-        r'\keyword':('''textCommandsMusic.add_keyword(''', 1),
+        r'\keyword':('''pwutilities.add_keyword(''', 1),
         r'\music':("universal.say('\m') ; universal.playedMusic.put(", 1)
         }
 
@@ -149,7 +149,7 @@ inlineCommandsPlayer = {
     r'\pwearingshirt':("items.wearing_shirt(universal.state.player, ", 3),
     r'\pwearingdress':("items.wearing_dress(universal.state.player, ", 3),
     r'\isfemale':("person.is_female_msg(universal.state.player, ", 2),
-    r'\stageDirections':("textCommandsMusic.stage_directions(", 1),
+    r'\stageDirections':("pwutilities.stage_directions(", 1),
     r'\ppajamatype':("items.pajama_type_msg(universal.state.player,", 3),
     }
 
@@ -215,7 +215,7 @@ inlineCommands = {
     r'\oisloweredlifted':("items.loweredlifted_based_msg(", 3),
     r'\oisliftedlowered':("items.liftlowered_based_msg(", 3),
     r'\cond':("universal.cond(", 3),
-    r'\bummarks':("textCommandsMusic.bummarks(", 2),
+    r'\bummarks':("pwutilities.bummarks(", 2),
     r'\opajamatype':("items.pajama_type_msg(", 4),
     r'\itthem':("items.itthem(", 1)
     }
