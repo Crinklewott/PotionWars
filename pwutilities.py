@@ -171,7 +171,7 @@ def to_title_screen_interpreter(keyEvent):
 def initialize_basic_rooms():
     """
     Sets up the adjacencies of the basic rooms, whose adjacency lists shouldn't be affected: 
-    Edge of Avaricum, Avaricum Square, Shrine, Craftman's Corridor, Terry's Taylors, Wesley and 
+    Edge of Avaricum, Avaricum Square, Shrine, Craftman's Corridor, Terry's Tailors, Wesley and 
     Anne's Smithy, Adventurer's Guild, Slums, Maria's Home, along with the associated
     adjacencies.
     """
@@ -179,7 +179,7 @@ def initialize_basic_rooms():
     square = universal.state.get_room("Avaricum Square")
     shrine = universal.state.get_room("Shrine")
     craftmansCorridor = universal.state.get_room("Craftman's Corridor")
-    taylors = universal.state.get_room("Terry's Taylors")
+    taylors = universal.state.get_room("Terry's Tailors")
     smithy = universal.state.get_room("Wesley and Anne's Smithy")
     guild = universal.state.get_room("Adventurer's Guild")
     slums = universal.state.get_room("Slums")
