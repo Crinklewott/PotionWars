@@ -62,9 +62,17 @@
             southGuard = universal.state.get_character('Guard.person')
             southGuard.litany = guard_greeting_1_1.index
             conversation.converse_with(southGuard, townmode.town_mode)
+            return False
         else:
-            townmode.town_mode()
-    square.after_arrival = south_guard_scene
+            return True
+
+    square.before_arrival = south_guard_scene
+
+    def begin_maria_conversation():
+        maria.litany = ep1_begin_marias_scene
+        conversation.converse_with(maria, townmode.town_mode)
+
+    square.after_arrival(begin_maria_conversation)
 
 \end{openScene}
 
@@ -195,7 +203,7 @@
 
 \end{childnode}
 
-\begin{node}{ep1 guard greeting}{southGuard}{Andrew Russell}
+\begin{node}{ep1 guard greeting}{Edge of Avaricum}{southGuard}{Andrew Russell}
 
 The guard on the south side of the road blocks \names{} path with an arm. 
     He is a broad-shouldered, heavily muscled brute of a man. At over six feet tall, he towers over just about everyone else on the road. The large, steel-tipped
@@ -207,9 +215,9 @@ The guard on the south side of the road blocks \names{} path with an arm.
 
 \child{"I don't have to answer that."}{ep2 guard refuse answer name}
 
-\child{\name{}}{ep2 guard respond name}
+\child{"\name{}"}{ep2 guard respond name}
 
-\child{\fakename{}}{ep2 guard fake name}
+\child{"\fakename{}"}{ep2 guard fake name}
 
 \end{node}
 
@@ -219,9 +227,9 @@ The guard on the south side of the road blocks \names{} path with an arm.
 
 \name{} grimaces. Although, there's nothing stopping \himher{} from giving a fake name...
 
-\child{\name{}}{ep2 guard respond name}
+\child{"\name{}"}{ep2 guard respond name}
 
-\child{\fakename{}}{ep2 guard fake name}
+\child{"\fakename{}"}{ep2 guard fake name}
 
 \end{childnode}
 
@@ -253,7 +261,7 @@ The guard on the south side of the road blocks \names{} path with an arm.
 
 \begin{childnode}{ep1 question 2 sarcasm}{Andrew Russell}
 
-The guard scowls. "Your sarcasm is not appreciated \mistermiss{} . It's just protocol."
+The guard scowls. "Your sarcasm is not appreciated \mistermiss{}. It's just protocol."
 
 \continue{ep1 guard questions 3}
 
@@ -434,11 +442,15 @@ the streets."
 
     "Alright. Welcome to Avaricum. If you see anything suspicious, please report it to us immediately. Lives may depend on it."
 
-    \continue{ep1 begin marias scene}
-
 \end{childnode}
 
 \begin{childnode}{ep1 guardhouse}{Andrew Russell}
+
+    \keyword{'resist\_guard'}
+    
+    \keyword{'spoke\_to\_guard'}
+
+    "Fine." The guard grabs \name{} by the scruff of \hisher{} neck and spins \himher{} around. \name{} glances over \hisher{} shoulder and sees the guard reach for a thick loop of rope at his belt.
 
     \child{Resist.}{ep1 guardhouse resist}
 
@@ -448,9 +460,132 @@ the streets."
 
 \begin{childnode}{ep1 guardhouse resist}{Andrew Russell}
 
+    \name{} rams \hisher{} elbow into the guard's gut, then pushes him to the ground. \HeShe{} makes a break for the city proper, hoping to lose \himselfherself{} in the crowds.
+
+However, the other guard has cut \himher{} off.  \name{} scrambles to change direction, when something hard and heavy slams into \himher{} from behind, throwing \himher{} to the ground. \HeShe{} looks over \hisher{} shoulder, and sees the first guard 
+straddling \hisher{} prone form.
+
+The guard grabs \names{} wrists, and binds them tightly together behind \hisher{} back.
+    Then, he gives \name{} a quick pat down, taking \hisher{} weapon in the process. Finally, the guard pulls \himher{} to \hisher{} feet.
+
+    \continue{guardhouse 1}
+
 \end{childnode}
 
 \begin{childnode}{ep1 guardhouse go quietly}{Andrew Russell}
+
+\name{} stands quietly while the guard gives \himher{} a brief, professional patdown, taking \hisher{} dagger in the process. Then he ties \names{} hands behind \hisher{} back, and pushes \himher{} towards the guardhouse.
+    "Let's go," he says. "Don't want to hold up the line any more than you already have." 
+
+    \continue{guardhouse 1}
+
+\end{childnode}
+
+\begin{childnode}{guardhouse 1}{Andrew Russell}
+
+    \keyword{'spoke\_to\_guard'}
+
+    \name{} is led across the street and into a small stone building sitting just off the road. The 
+    inside of the guardhouse is a single large room. There is an uncomfortable looking armless 
+    chair in the center, and a small desk and chair pushed against the northeast corner. Sitting at 
+    the desk, hunched over some paperwork, is a woman wearing a slender black dress with red trim. 
+    Frizzy blond hair sticks out from underneath a black beret. Sewn onto the beret is a patch. 
+    The background of the patch is a pair of crossed shepherd's crooks, juxtaposed on top of which 
+    is a female string puppet.
+This woman is a puppeteer who studied at Stasia University, the preeminent University in the known 
+world.
+The woman looks up impatiently. Her cold blue eyes sweep over both \name{} 
+and the guard. \name{} represses a shiver. "Another one?"
+
+"Er, yes ma'am," says the guard, nervously fidgeting with his weapon.
+
+The woman returns to her paperwork. "So beat \himher{} until \heshe{} tells you what you want to 
+know. I've got work to do."
+
+"But the commander's orders," stammers the guard. "He said to-"
+
+"I know what Sir Roland said," snaps the woman. She glares at the man, and he takes a step back. 
+She flicks her quill at \name{}. "I see \himher{}. \HeShe{} is definitely a Taironan. Now lock
+\himher{} in the stocks or something, and stop bothering me."
+
+"And if Sir Roland finds out you didn't, er, deal with \himher{}?" asks the guard.
+
+The woman shifts in her seat. She glares at the guard a second time, though this time the guard 
+doesn't back up. "And you'd report me of course."
+
+"I have a job to do," says the guard. He sets his jaw, and matches the woman's stare. "And so do 
+you."
+
+The woman sighs, and rubs her eyes. "Fine, fine, fine. Go on back to your post like a good little 
+soldier. I'll take care of little \mistermiss{} dumbass, here."
+
+\child{"Watch who you're insulting you overeducated tramp."}{ep1 guardhouse rude}
+
+\child{Say nothing.}{ep1 guardhouse say nothing}
+
+\child{"That was uncalled for."}{ep1 guardhouse polite}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guardhouse rude}{Andrew Russell}
+
+The woman raises an eyebrow. "We've got a feisty one here."
+
+"You have no idea," growls \name{}.
+
+The woman smirks. "Never have I met so terrifying a \manwoman{}. Why, if it wasn't for the fact 
+that you're unarmed and have your hands tied behind your back, I don't know what I'd do."
+
+\continue{ep1 charmed}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guardhouse say nothing}{Andrew Russell}
+
+    \keyword{'didn\'t\_respond\_to\_Deidre'}
+
+    \continue{ep1 charmed}
+
+\end{childnode}
+
+\begin{childnode}{ep1 guardhouse polite}{Andrew Russell}
+
+    \keyword{'protested\_peacefully\_to\_Deidre'}
+
+The woman throws \name{} a surprised glance. "Thought you said \heshe{} was being uncooperative."
+
+"Maybe you've scared \himher{}," says the guard.
+
+The woman shrugs. "Whatever. Let's get this over with."
+
+\continue{ep1 charmed}
+
+\end{childnode}
+
+\begin{childnode}{ep1 charmed}{Andrew Russell}
+
+The woman stands. She's rather tall, close to six feet. She stands with her back straight and her 
+shoulders back. As she steps around the desk, a pair of (silk!) slippers peek out from underneath 
+her near floor-length dress.
+The guard hands the woman \names{} \weapon{}, then salutes and leaves.
+The woman \cond{universal.state.player.weapon().weaponType != items.Spear.weaponType()}{puts the \weapon{} on the desk,}{rests the 
+spear against the wall,} and approaches \name{}. She grabs 
+\names{} chin in an iron grip. "Look deeply into my eyes."
+    Her voice has taken on a soothing, melodic tone. Her pupils fill her eyes. Then they open into 
+a bottomless pit, and \name{} starts to fall.
+    '"You and I are the greatest of friends." The voice reverberates throughout the universe. It 
+makes \names{} skin tingle, and \hisher{} hair stand on end. "You trust me with everything."
+
+    \keyword{'charmed\_by\_Deidre'}
+
+\continue{ep1 back at edge}
+
+\end{childnode}
+
+\begin{childnode}{ep1 back at edge}{Andrew Russell}
+
+    \name{} is standing just past the guards, at the edge of Avaricum Square. \HeShe{} sways
+    a little bit, and rubs \hisher{} aching forehead.
 
 \end{childnode}
 
