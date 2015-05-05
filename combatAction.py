@@ -91,9 +91,10 @@ class CombatAction(universal.RPGObject):
         self.secondaryStat = secondaryStat
 
     def __repr__(self):
+        result = []
         if self.attacker:
             result.append("%%%%%%%%%%%")
-        result = ["\n---------------", self.__class__.__name__, "-------------"]
+        result.extend(["\n---------------", self.__class__.__name__, "-------------"])
         for variable, value in vars(self).iteritems():
             if type(value) != 'instancemethod':
                 result.append(variable + ": " + repr(value))

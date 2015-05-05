@@ -23,6 +23,7 @@ import pygame
 import episode1
 import episode2CharRooms
 import episode2
+import os.path
 
 universal.set_author('Andrew Russell')
 universal.set_programmer('Andrew Russell')
@@ -38,7 +39,26 @@ titleScreen.set_title_image(universal.resource_path('PotionWarsTitleScreen'), 'p
 
 #Clears out errors.log every time the game begins. If I didn't do this, then the errors.log
 #file would eventually become absurdly huge, since it's logging all the battle data.
-open('errors.log', 'w').close()
+open('errors.log', 'a').close()
+for i in range(4, 0, -1):
+    open('errors_' + str(i) + '.log', 'a').close()
+for i in range(4, 0, -1):
+    try:
+        with open(''.join(["errors_", str(i), ".log"]), 'r') as errorI:
+            with open(''.join(["errors_", str(i+1), ".log"]), 'w') as errorIPlusOne:
+                for line in errorI:
+                    errorIPlusOne.write(line)
+    except IOError:
+        pass
+
+try:
+    with open("errors.log", 'r') as f:
+        with open("errors_1.log", 'w') as g:
+            for line in f:
+                g.write(line)
+except IOError:
+    pass
+
 logging.basicConfig(format='%(asctime)s %(message)s')
 logging.warning('is when this event was logged')
 errorLog = logging.getLogger("errors")
@@ -51,7 +71,7 @@ errorLog.setLevel(logging.NOTSET)
 episode1.episode1.nextEpisode = episode2.episode2
 episode2.episode2.scenes.append(episode2CharRooms.episode2Scene2)
 episode2.episode2.nextEpisode = episode2CharRooms.episode3
-with open("errors.log", 'a') as f:
+with open("errors.log", 'w') as f:
     pass
 errorLog.addHandler(logging.FileHandler("errors.log"))
 if __name__ == '__main__':
