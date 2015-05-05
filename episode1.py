@@ -11943,7 +11943,7 @@ def maria_no_problems_function(node):
     conversation.allNodes[node.index].children = [ep1_maria_live, ep1_maria_dont_live]
     return quip
 
-def maria_no_problems_qf(node):
+def maria_no_problems_qf():
         quip = universal.format_text([['''"Hey,''', name() + ",", '''says Maria, smiling broadly. She glances at''', names(), '''companions: Carrie, gnawing anxiously on a strand''',
             '''of hair, Elise anxiously twisting her skirts while Roland keeps a firm grip on her arms, and Roland's grim expression. "I see you three had fun."'''],
             ['''"Oh yes," says Roland flatly. "A wonderful night filled to bursting with irreverent songs, lewd dancing, and stable references."'''],
