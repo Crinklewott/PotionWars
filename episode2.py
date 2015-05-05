@@ -92,6 +92,8 @@ def start_scene_1_episode_2(loading=False):
         else:
             return True
     slums.leaving = slums_leaving
+    if not 'ep2TalkedToAirell' in pwutilities.keywords():
+        airell.litany = conversation.allNodeNames['ep2 airell']
     if not loading:
         universal.state.player.litany = conversation.allNodes[327]
         conversation.converse_with(universal.state.player, townmode.town_mode)
@@ -51608,8 +51610,9 @@ def init_scene_1_episode_2():
     
     
     def ep2_airell_qf():
+        pwutilities.add_keyword('ep2TalkedToAirell')
         ep2_airell.quip = " "
-        universal.say(universal.format_text_translate([[], []]), justification=0)
+        universal.say(universal.format_text_translate([[], [], []]), justification=0)
         if 'punched_Airell' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_airell, ep2_airell_face_punch)
         elif 'talk_with_Airell' in pwutilities.keywords():
