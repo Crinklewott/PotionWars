@@ -84,7 +84,7 @@ def bedroom_actions_interpreter(keyEvent):
 def style_character():
         universal.say_title('Whose hair should be styled?')
         universal.say(universal.numbered_list([member.printedName for member in universal.state.party.members]), justification=0)
-        set_command_interpreter(universal.SELECT_NUMBER_BACK_COMMAND)
+        set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
         set_command_interpreter(style_character_interpreter)
 chosenPerson = None
 def style_character_interpreter(keyEvent):
