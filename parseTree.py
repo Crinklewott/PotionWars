@@ -361,8 +361,12 @@ class Node(AbstractNode):
         nodeNum += 1
         conversationPartner = self.data[2]
         ancestor = parent
-        while ancestor.startToken != BEGIN_OPEN_SCENE:
-            ancestor = ancestor.parent
+        try:
+            while ancestor.startToken != BEGIN_OPEN_SCENE:
+                ancestor = ancestor.parent
+        except AttributeError:
+            raise TranslationError(' '.join([errorMsg, color_line(self.lineNum), "Node exists outside of a Scene. Either you've forgotten an open scene environment before this node, or you are including a node after the last close scene environment."]))
+
         #data[2] is the character with whom the player is speaking.
         if conversationPartner.lower() == 'self':
             ancestor.data.append(TAB + 'if not loading:')
