@@ -22,14 +22,14 @@ from combatAction import GRAPPLER_ONLY, ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY, ONLY_W
 import conversation
 import copy
 import episode
-import inspect
 import items
 import math
 import operator
 import random
 import statusEffects
-import universal
 import spanking
+import types
+import universal
 from universal import *
 
 checkWillpower = True
@@ -376,9 +376,10 @@ class Person(universal.RPGObject):
         self.implement = spanking.hand
 
     def __repr__(self):
-        result = self.name
-        for var, value in vars(self):
-            result.append(var + ": " + repr(value))
+        result = ["\n-----------------", self.name, "------------------"]
+        for variable, value in vars(self).iteritems():
+            if variable != 'order' and variable != 'spankingFunctions':
+                result.append(variable + ": " + repr(value))
         return '\n'.join(result)
 
     def __getstate__(self):

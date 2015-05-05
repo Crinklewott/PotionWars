@@ -110,10 +110,6 @@ def begin_game(episode):
                 textRect.height = textRect.height - 2 * titleFont.get_linesize()
                 universal.display_text(universal.get_text_to_display(), textRect, displayPosition, isTitle=False)
                 universal.clear_text_to_display()
-                #if DEBUG:
-                    #pygame.draw.rect(background, (250, 250, 250), textpos, 5)
-                #background.blit(text, textpos)
-                #screen.blit(background, (0, 0))
         #The following is a bit of command position fiddling to make everything look nice and balanced.
         universal.display_commands()
         pygame.draw.rect(screen, universal.LIGHT_GREY, pygame.Rect(commandView.topleft, commandView.size), universal.COMMAND_VIEW_LINE_WIDTH)
@@ -133,7 +129,6 @@ def begin_game(episode):
         #Wine doesn't play nice with the dirty rects approach, so if we are running under Wine, then we update everything forever.
         if universal.playOnMac:
             pygame.display.flip()
-            dirtyRects = []
         elif dirtyRects:
             pygame.display.update(newDirtyRects)
         dirtyRects = []

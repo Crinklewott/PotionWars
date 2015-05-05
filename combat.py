@@ -37,7 +37,7 @@ import townmode
 import dungeonmode
 import statusEffects
 import math
-import logger
+import logging
 
 """
 Note: The interpreters all assume that you will only ever face up to 9 enemies at 

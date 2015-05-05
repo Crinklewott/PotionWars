@@ -428,10 +428,6 @@ class Dungeon(townmode.Room):
 
     def draw_horizontal_door(self, startPos, horizontalLineLength, verticalLineLength, horizontalGap, mapSurface, width=1):
         #Could probably generalize this into a "draw door" function, but I'm lazy.
-        print(startPos)  #(134, 602)
-        print(horizontalLineLength) #86
-        print(verticalLineLength) #35
-        print(horizontalGap) #14
         endPos = (startPos[0]+(horizontalLineLength // 2) - horizontalGap, startPos[1])
         pygame.draw.line(mapSurface, universal.LIGHT_GREY, startPos, endPos, width)
         #Draw little vertical dashes to mark doors

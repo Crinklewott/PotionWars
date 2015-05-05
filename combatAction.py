@@ -16,16 +16,17 @@ You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 from __future__ import division
-import universal
-from universal import *
+import abc
 import spanking
 import statusEffects
-import abc
 import random
 import person
 import math
 import positions
 from random import randrange
+import types
+import universal
+from universal import *
 
 GRAPPLER_ONLY = 0
 ONLY_WHEN_GRAPPLED = 1
@@ -90,9 +91,14 @@ class CombatAction(universal.RPGObject):
         self.secondaryStat = secondaryStat
 
     def __repr__(self):
-        result = [self.class.__name__]
-        for variable, value in vars(self):
-            result.append(variable + ": " repr(value))
+        if self.attacker:
+            result.append("%%%%%%%%%%%")
+        result = ["\n---------------", self.__class__.__name__, "-------------"]
+        for variable, value in vars(self).iteritems():
+            if type(value) != 'instancemethod':
+                result.append(variable + ": " + repr(value))
+        if self.attacker:
+            result.append("%%%%%%%%%%")
         return '\n'.join(result)
 
     def __eq__(self, other):
@@ -220,7 +226,7 @@ class AttackAction(CombatAction):
         if defender.is_grappling() and not attacker.is_grappling(defender):
             opponents.remove(defender)
             if opponents:
-                return AttackAction(attacker, [opponentsCopy[random.randrange(len(opponentsCopy))]]).effect(inCombat, allies, enemies)
+                return AttackAction(attacker, [opponents[random.randrange(len(opponents))]]).effect(inCombat, allies, enemies)
             else:
                 return DefendAction(attacker, [attacker]).effect(inCombat, allies, enemies)
         opponents = enemies if self.attacker in allies else allies

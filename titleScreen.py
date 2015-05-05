@@ -87,8 +87,8 @@ def display_acknowledgments():
     universal.get_screen().blit(universal.get_background(), universal.get_world_view().topleft)
     universal.say(format_text([['Code, Story, Concept: Andrew Russell'], 
         ['Editor: Emily'],
-        ['Support Writers: Emily the Eccentric Emu, Bonemouth the Boxfish, Ken the Kookaburra'],
-        ['Beta Testers: Uninventive the Umbrellabird, Johny741 the Jackal, Bonemouth the Boxfish, Emily the Eccentric Emu'],
+        ['Support Writers: Emily the Eccentric Emu, Bonemouth the Boxfish, Ken the Kookaburra, Skyblaster the Sardine'],
+        ['Beta Testers: Uninventive the Umbrellabird, Johny741 the Jackal, Bonemouth the Boxfish, Emily the Eccentric Emu, Ken the Kookaburra, Skyblaster the Sardine'],
         ['Images:'],
         ['  title screen image: Rak'],
         #['  Episode 1 titlecard: Lys'],
