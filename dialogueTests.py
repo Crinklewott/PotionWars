@@ -23,7 +23,6 @@ class TestNodes(unittest.TestCase):
     """
 
     def setUp(self):
-        episode2.init_scene_1_episode_2()
         #Used so that the litanies don't crash if they refer to the player.
         dummy = person.PlayerCharacter("Juliana", 0)
         dummy.bodyType = person.BODY_TYPES[0]
@@ -41,10 +40,20 @@ class TestNodes(unittest.TestCase):
             pass
         episode.allEpisodes[0] = DummyEpisode()
 
-    def test_dialogue(self):
+    def test_dialogue_episode_1(self):
+        for nodeNum, node in conversation.allNodes.iteritems():
+            if node:
+                print("Testing " + str(nodeNum))
+                node.quip_function()
+
+    def execute_nodes_by_name(self):
         for nodeName, node in conversation.allNodeNames.iteritems():
             print("Testing " + nodeName)
             node.quip_function()
+
+    def test_dialogue_episode_2(self):
+        episode2.init_scene_1_episode_2()
+        self.execute_nodes_by_name()
 
 dialogueSuite = unittest.TestLoader().loadTestsFromTestCase(TestNodes)
 

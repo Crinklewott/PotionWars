@@ -174,12 +174,14 @@ def converse_with_interpreter(keyEvent):
 allNodes = {}
 #A mapping from the name of each litany to the actual litany.
 allNodeNames = {}
+def empty_quip_function():
+    pass
 class Node(universal.RPGObject):
     def __init__(self, index, name=''):
         self.quip = ''
         self.children = []
         self.playerComments = []
-        self.quip_function = None
+        self.quip_function = empty_quip_function
         self.comment = None
         self.index = index
         self.music = None
@@ -221,4 +223,5 @@ class Node(universal.RPGObject):
 
 emptyLitany = Node(0)
 emptyLitany.quip = '''There is nothing more to be said.'''
+emptyLitany.quip_function = empty_quip_function 
 
