@@ -43,6 +43,7 @@ class TestNodes(unittest.TestCase):
 
     def test_dialogue(self):
         for nodeName, node in conversation.allNodeNames.iteritems():
+            print("Testing " + nodeName)
             node.quip_function()
 
 dialogueSuite = unittest.TestLoader().loadTestsFromTestCase(TestNodes)
