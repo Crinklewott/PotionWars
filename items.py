@@ -38,6 +38,9 @@ class Enchantment(universal.RPGObject):
         self.stat = stat
         self.bonus = bonus
 
+    def apply_enchantment(self):
+        pass
+
     @staticmethod
     def add_data(data, saveData):
         saveData.extend(["Enchantment Data:", data])
@@ -64,7 +67,11 @@ class AttackEnchantment(Enchantment):
     """
     Grants a +1 damage bonus to weapons, and a +1 defense bonus to clothing.
     """
-    pass
+    def __init__(self)
+        super(AttackEnchantment, self).__init__(cost=1, bonus=1)
+
+    def apply_enchantment(self):
+        return self.bonus
 
 class MaxEnchantmentError(Exception):
     pass
@@ -137,13 +144,16 @@ class Item(universal.RPGObject):
 
     def add_enchantment(self, enchantment):
         if self.enchantment_level() + max(1, 2 * enchantment.cost // 3) <= self.maxEnchantment:
-            enchantment.cost = max(1, 2 * enchantment.cost // 3)
-            enchantment.bonus = max(1, 2 * enchantment.bonus // 3)
+            enchantment.cost = enchantment.cost #max(1, 2 * enchantment.cost // 3)
+            enchantment.bonus = enchantment.bonus #max(1, 2 * enchantment.bonus // 3)
             self.enchantments.append(enchantment)
         else:
             raise MaxEnchantmentError()
     def remove_enchantment(self, enchantment):
         self.enchantments.remove(enchantment)
+
+    def defense_bonus(self):
+        return 0
 
     def _save(self):
         raise NotImplementedError()
@@ -188,10 +198,11 @@ class Gem(Item):
         """
         name - name of the Gem
         description - Gem's description in text
-        enchantment - The Enchantment class associated with this gem. This should be the enchantment that the gem imbues the desired weapon or clothing with. 
+        enchantmentType - The Enchantment class associated with this gem. This should be the 
+        enchantment that the gem imbues the desired weapon or clothing with. 
         """
         super(Gem, self).__init__(name, description)
-        self.enchantment = enchantment
+        self.enchantmentType = enchantmentType
 
     '''
     def save(self):
@@ -226,6 +237,14 @@ class Armor(Item):
         saveData = [super(Armor, self).save(), "Item Data:", "Armor Only:"]
         Armor.add_data(str(self.risque), saveData)
         return '\n'.join(saveData)
+
+    def defense_bonus(self):
+        enchantmentBonus = 0
+        for enchantment in self.enchantments():
+            enchantmentEffect = enchantment.apply_enchantment()
+            if enchantmentEffect:
+                enchantmentBonus += enchantmentEffect
+        return enchantmentEffect
 
     def liftlower(self):
         return "lower"
@@ -547,6 +566,16 @@ class Weapon(Item):
 
     def damage_multiplier(self, grappling):
         return ((self.grappleBonus if grappling else self.armslengthBonus) + self.genericBonus) / 10
+
+    def damage_bonus(self):
+        enchantmentBonus = 0
+        for enchantment in self.enchantments:
+            enchantmentEffect = enchantment.apply_enchantment()
+            if enchantmentEffect:
+                enchantmentBonus += enchantmentEffect
+        return enchantmentBonus
+
+
 
 
 PENALTY = -2

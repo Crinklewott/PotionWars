@@ -494,7 +494,8 @@ class Person(universal.RPGObject):
         elif self.bodyType == 'voluptuous':
             adjList = ['ample', 'curvaceous', 'large', 'shapely', 'curvy']
         elif self.bodyType == 'heavyset':
-            adjList = ['fleshy', 'wide', 'expansive', 'corpulent', 'sizeable', 'generous']
+            adjList = ['fleshy', 'wide', 'expansive', 'corpulent', 'sizeable', 'generous', 
+                    'bulbous']
         return random.choice(adjList)
 
     def quiver(self):
@@ -1347,10 +1348,10 @@ class Person(universal.RPGObject):
         return max(0, self.magic() + self.magic_defense_bonus() + (self.magic_penalty() if rawMagic else 0))
 
     def attack(self):
-        return self.attack_bonus() + int(math.trunc(self.weapon().damage_multiplier(self.is_grappling()) * self.warfare()))
+        return self.attack_bonus() + int(math.trunc(self.weapon().damage_multiplier(self.is_grappling()) * self.warfare())) + self.weapon().damage_bonus()
 
     def defense(self):
-        return self.defense_bonus() + int(math.trunc(self.weapon().damage_multiplier(self.is_grappling()) * self.warfare()))
+        return self.defense_bonus() + int(math.trunc(self.weapon().damage_multiplier(self.is_grappling()) * self.warfare())) + sum([equipment.defense_bonus() for equipment in self.equipmentList])
 
     def magic_penalty(self, rawMagic=True):
         return self.weapon().castingPenalty + self.shirt().castingPenalty + self.lower_clothing().castingPenalty + self.underwear().castingPenalty
@@ -1710,6 +1711,9 @@ class Person(universal.RPGObject):
         else:
             return '\n'.join(['', 'Inventory:', ' '.join(str(n) + '. ' + item.name for 
                 (n, item) in zip([i for i in range(len(self.equipmentList) + 1, len(self.inventory) + len(self.equipmentList) + 1)], self.inventory))])
+
+    def get_inventory(self):
+        return self.inventory + self.equipmentList
 
     def display_tiers(self, interpreter=None):
         universal.say('Tiers: ' + ', '.join(str(i) for i in range(self.tier + 1)))

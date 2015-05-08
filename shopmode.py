@@ -349,3 +349,141 @@ def confirm_sell_interpreter(keyEvent):
         acknowledge(window_sell_person_chosen, ())
     elif keyEvent.key == K_n:
         window_sell_person_chosen()
+
+gemList = []
+def select_gem(shopkeeperIn=None, doneShoppingLitany=None):
+    universal.say_title("Select Enhancement Gem")
+    global gemList, litany, shopkeeper
+    shopkeeper = shopkeeperIn
+    litany = doneShoppingLitany
+    gemList = []
+    for person in universal.state.party:
+        gemList.extend([(person, item) for item in person.get_inventory() if 
+            hasattr(item, "enchantmentType")])
+    gemStrings = ['\n'.join(map(lambda x : ''.join([person.printedName, ": ", x.name]), inventory)) 
+        for person, inventory in gemList]
+    universal.say('\n'.join(gemStrings))
+    universal.set_commands(["(#) Select Gem: " + str(partialNum) + '_', "<==Back"])
+    universal.set_command_interpreter(select_gem_interpreter)
+    global partialNum
+    partialNum = ''
+        
+
+chosenPersonGem = None
+def select_gem_interpreter(keyEvent):
+    global partialNum, chosenPersonGem
+    if keyEvent.key in NUMBER_KEYS:
+        if len(playerGoods) < 10:
+            num = int(pygame.key.name(keyEvent.key)) - 1
+            if 0 <= num and num < len(playerGoods):
+                global chosenPersonGem
+                chosenPersonGem = gemList[num]
+                select_equipment()
+        else:
+            partialNum += pygame.key.name(keyEvent.key)
+            set_commands(['(#) Select Gem:' + str(partialNum) + '_', '<==Back'])
+    elif keyEvent.key == K_BACKSPACE:
+        if len(playerGoods) >= 10 and partialNum != '':
+            partialNum = partialNum[:-1]
+        elif litnay is None:
+            townmode.town_mode()
+        else:
+            shopkeeper.litany = litany
+            conversation.converse_with(shopkeeper, townmode.town_mode)
+    elif keyEvent.key == K_RETURN:
+        try:
+            chosenPersonGem = gemList[int(partialNum)-1]
+        except IndexError:
+            return
+        else:
+            select_equipment()
+
+equipmentList = []
+def select_equipment():
+    universal.say_title("Select Equipment to Enchant:")
+    global equipmentList
+    global partialNum
+    partialNum = ''
+    for person in universal.state.party:
+        equipmentList.extend([(person, equipment) for equipment in person.equipmentList])
+    personEquipmentStrings = [''.join([person.printedName, ": ", equipment.name]) for
+            person, equipment in equipmentList]
+    universal.say('\n'.join(universal.numbered_list(personEquipmentStrings)))
+    universal.set_commands(["(#) Select Equipment: " + str(partialNum) + '_', "<==Back"])
+    universal.set_command_interpreter(select_equipment_interpreter)
+
+chosenEquipment = None
+def select_equipment_interpreter(keyEvent):
+    global partialNum, chosenEquipment
+    if keyEvent.key in NUMBER_KEYS:
+        if len(playerGoods) < 10:
+            num = int(pygame.key.name(keyEvent.key)) - 1
+            if 0 <= num and num < len(playerGoods):
+                global chosenEquipment
+                chosenEquipment = equipmentList[num][1]
+                gem = chosenPersonGem[1]
+                maxEnchantment = chosenEquipment.maxEnchantment
+                enchantmentLevel = chosenEquipment.enchantment_level()
+                if maxEnchantment - enchantmentLevel < gem.cost:
+                    universal.say(' '.join(["Cannot enchant", chosenEquipment.name, "with", 
+                        gem.name + ".", gem.name, "requires", str(gem.cost), "enchantment points,",
+                        "but", chosenEquipment.name, "only has", str(maxEnchantment - 
+                            enchantmentLevel), "points available."]))
+                    universal.acknowledge(select_equipment, ())
+                else:
+                    confirm_enchantment()
+        else:
+            partialNum += pygame.key.name(keyEvent.key)
+            set_commands(['(#) Select Equipment:' + str(partialNum) + '_', '<==Back'])
+    elif keyEvent.key == K_BACKSPACE:
+        if len(playerGoods) >= 10 and partialNum != '':
+            partialNum = partialNum[:-1]
+        elif litnay is None:
+            townmode.town_mode()
+        else:
+            shopkeeper.litany = litany
+            conversation.converse_with(shopkeeper, townmode.town_mode)
+    elif keyEvent.key == K_RETURN:
+        try:
+            chosenEquipment = equipmentList[int(partialNum)-1][1]
+        except IndexError:
+            return
+        else:
+            gem = chosenPersonGem[1]
+            maxEnchantment = chosenEquipment.maxEnchantment
+            enchantmentLevel = chosenEquipment.enchantment_level()
+            if maxEnchantment - enchantmentLevel < gem.cost:
+                universal.say(' '.join(["Cannot enchant", chosenEquipment.name, "with", 
+                    gem.name + ".", gem.name, "requires", str(gem.cost), "enchantment points,",
+                    "but", chosenEquipment.name, "only has", str(maxEnchantment - 
+                        enchantmentLevel), "points available."]))
+                universal.acknowledge(select_equipment, ())
+            else:
+                confirm_enchantment()
+
+def confirm_enchantment():
+    universal.say_title("Confirm:")
+    universal.say(' '.join(["Enchant", chosenEquipment.name, "with", 
+        chosenPersonGem[1].name + "?"]))
+    set_commands(["(Enter) Enchant", "<==Back", "(Esc) Cancel"])
+    set_command_interpreter(confirm_enchantment_interpreter)
+
+def confirm_enchantment_interpreter(keyEvent):
+    if keyEvent.key == K_y:
+        enchant_equipment()
+    elif keyEvent.key == K_ESCAPE:
+        select_gem()
+    else:
+        select_equipment()
+
+def enchant_equipment():
+    gem = chosenPersonGem[1]
+    enchantment = gem.enchantmentType()
+    chosenEquipment.add_enchantment(enchantment)
+    chosenPersonGem[0].drop_item(gem)
+    universal.say( ' '.join([chosenEquipment.name, "has been enchanted with", gem.name + "."]))
+    universal.acknowledge(select_gem, (shopkeeper, litany))
+
+
+
+
