@@ -963,6 +963,15 @@ class State(object):
         #A list of triples containing the coordinates of one-time encounters that have been cleared. This is automatically emptied at the end of each episode.
         self.clearedSquares = []
         self.enemiesCanSpank = True
+        self.itemStore = {}
+
+    def store_item(self, item):
+        """
+        The state's item store is used to remember equipment that is made temporarily unavailable,
+        but needs to be made available again.
+        The item is stored based on the item's name.
+        """
+        self.itemStore[item.name] = item
 
     def save(self, saveFile):
         saveData = []
@@ -995,6 +1004,8 @@ class State(object):
             saveData.append(name)
             saveData.append(item.save())
         saveData.append("State Data:")
+        saveData.extend(self.itemStore.keys())
+        saveData.append("State Data:")
         saveData.append(str(self.difficulty))
         saveData.append("State Data:")
         for coordinate in self.clearedSquares:
@@ -1010,14 +1021,25 @@ class State(object):
         fileData = '\n'.join(fileData)
         #Note: The first entry in the list is just the empty string.
         try:
-            _, enemiesCanSpank, player, characters, rooms, bedroom, party, location, itemList, difficulty, clearedSquares = fileData.split('State Data:')
+            (_, enemiesCanSpank, player, characters, rooms, bedroom, party, location, itemList,  
+                    itemStore, difficulty, clearedSquares) = fileData.split('State Data:')
         except ValueError:
+            itemStore = []
             try:
-                _, player, characters, rooms, bedroom, party, location, itemList, difficulty, clearedSquares = fileData.split('State Data:')
+            (_, enemiesCanSpank, player, characters, rooms, bedroom, party, location, itemList,  
+                    difficulty, clearedSquares) = fileData.split('State Data:')
             except ValueError:
-                _, player, characters, rooms, bedroom, party, location, itemList, difficulty = fileData.split('State Data:')
-                clearedSquares = ''
-            enemiesCanSpank = "True"
+                try:
+                    (_, player, characters, rooms, bedroom, party, location, itemList, difficulty, 
+                        clearedSquares) = fileData.split('State Data:')
+                except ValueError:
+                    (_, player, characters, rooms, bedroom, party, location, itemList, difficulty) = 
+                    fileData.split('State Data:')
+                    clearedSquares = ''
+                enemiesCanSpank = "True"
+        else:
+            itemStore = [itemName.strip() for itemName in itemStore.split('\n') if 
+                    itemName.strip()]
         self.enemiesCanSpank = enemiesCanSpank.lower() == "true"
         person.PlayerCharacter.load(player, self.player)   
         rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
@@ -1053,6 +1075,8 @@ class State(object):
                 items.Item.load(itemData, self.items[name.strip()])
             except KeyError:
                 self._backwards_compatibility_items(name.strip())
+        self.itemList = itemList
+        self.itemStore = {itemName:self.itemList[itemName] for itemName in itemStore}
         try:
             self.difficulty = int(difficulty.strip())
         except ValueError:
