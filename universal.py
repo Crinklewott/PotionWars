@@ -973,6 +973,12 @@ class State(object):
         """
         self.itemStore[item.name] = item
 
+    def remove_item_from_store(self, item):
+        try:
+            del self.itemStore[item.name]
+        except KeyError:
+            pass
+
     def save(self, saveFile):
         saveData = []
         saveData.append("State Data:")
