@@ -665,7 +665,7 @@ def save(previousModeIn):
     previousMode = previousModeIn
     try:
         saveFiles = [f for f in os.listdir('save') if f[0] != '.']
-    except FileNotFoundError:
+    except OSError:
         os.mkdir('save')
         saveFiles = [f for f in os.listdir('save') if f[0] != '.']
     universal.clear_world_view()
