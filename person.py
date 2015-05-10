@@ -377,9 +377,17 @@ class Person(universal.RPGObject):
 
     def __repr__(self):
         result = ["\n-----------------", self.name, "------------------"]
-        for variable, value in vars(self).iteritems():
-            if variable != 'order' and variable != 'spankingFunctions':
-                result.append(variable + ": " + repr(value))
+        result.append(' '.join(["spanker:", str(self.spanker.name) if self.spanker else "None"]))
+        result.append(' '.join(["spankee:", str(self.spankee.name) if self.spankee else "None"]))
+        result.append(' '.join(["position:", str(self.position.name) if self.position else "None"]))
+        result.append(' '.join(["enduring:", str(self.enduring)]))
+        result.append(' '.join(["struggling:", str(self.struggling)]))
+        result.append(' '.join(["spankingEnded:", str(self.spankingEnded)]))
+        result.append(' '.join(["spankeeAlreadyHumiliated:", str(self.spankeeAlreadyHumiliated)]))
+        result.append(' '.join(["implement:", str(self.implement)]))
+        result.append(' '.join(["grappleDuration:", str(self.grappleDuration)])) 
+        result.append(' '.join(["originalGrappleDuration:", str(self.originalGrappleDuration)]))
+        result.append(' '.join(["stats:\n", '\n'.join([str(stat) for stat in self.primaryStats]), '\n']))
         return '\n'.join(result)
 
     def __getstate__(self):
