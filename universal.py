@@ -964,6 +964,8 @@ class State(object):
         self.clearedSquares = []
         self.enemiesCanSpank = True
         self.itemStore = {}
+        self.ENCHANTMENT_COST = 30
+        self.enchantmentFreebies = 0
 
     def store_item(self, item):
         """
@@ -1014,6 +1016,8 @@ class State(object):
         saveData.append("State Data:")
         saveData.append(str(self.difficulty))
         saveData.append("State Data:")
+        saveData.append(str(self.enchantmentFreebies))
+        saveData.append("State Data:")
         for coordinate in self.clearedSquares:
             saveData.append("Square:")
             saveData.append(str(coordinate))
@@ -1026,26 +1030,44 @@ class State(object):
             fileData.append(line.replace("textCommandsMusic", "pwutilities"))
         fileData = '\n'.join(fileData)
         #Note: The first entry in the list is just the empty string.
-        try:
-            (_, enemiesCanSpank, player, characters, rooms, bedroom, party, location, itemList,  
-                    itemStore, difficulty, clearedSquares) = fileData.split('State Data:')
-        except ValueError:
-            itemStore = []
-            try:
-                (_, enemiesCanSpank, player, characters, rooms, bedroom, party, location, itemList,  
-                    difficulty, clearedSquares) = fileData.split('State Data:')
-            except ValueError:
-                try:
-                    (_, player, characters, rooms, bedroom, party, location, itemList, difficulty, 
-                        clearedSquares) = fileData.split('State Data:')
-                except ValueError:
-                    (_, player, characters, rooms, bedroom, party, location, itemList, 
-                            difficulty) = fileData.split('State Data:')
-                    clearedSquares = ''
-                enemiesCanSpank = "True"
+        data = fileData.split("State Data:")
+        index = 1
+        if data[index].strip() == "True" or data[index].strip() == "False":
+            enemiesCanSpank = data[index]
+            index += 1
         else:
-            itemStore = [itemName.strip() for itemName in itemStore.split('\n') if 
-                    itemName.strip()]
+            enemiesCanSpank = "True"
+        data[index] = player 
+        index += 1
+        characters = data[index]
+        index += 1
+        rooms = data[index]
+        index += 1
+        bedroom = data[index]
+        index += 1
+        party = data[index]
+        index += 1
+        location = data[index]
+        itemList = data[index]
+        try:
+            int(data[index])
+        except ValueError:
+            itemStore = data[index]
+            index += 1
+        else:
+            itemStore = []
+        difficulty = data[index]
+        index += 1
+        try:
+            self.enchantmentFreebies = int(data[index])
+        except ValueError:
+            self.enchantmentFreebies = 0
+        else:
+            index += 1
+        try:
+            clearedSquares = data[index]
+        except IndexError:
+            clearedSquares = ''
         self.enemiesCanSpank = enemiesCanSpank.lower() == "true"
         person.PlayerCharacter.load(player, self.player)   
         rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
