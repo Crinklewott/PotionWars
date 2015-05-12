@@ -1032,15 +1032,15 @@ class State(object):
         except ValueError:
             itemStore = []
             try:
-            (_, enemiesCanSpank, player, characters, rooms, bedroom, party, location, itemList,  
+                (_, enemiesCanSpank, player, characters, rooms, bedroom, party, location, itemList,  
                     difficulty, clearedSquares) = fileData.split('State Data:')
             except ValueError:
                 try:
                     (_, player, characters, rooms, bedroom, party, location, itemList, difficulty, 
                         clearedSquares) = fileData.split('State Data:')
                 except ValueError:
-                    (_, player, characters, rooms, bedroom, party, location, itemList, difficulty) = 
-                    fileData.split('State Data:')
+                    (_, player, characters, rooms, bedroom, party, location, itemList, 
+                            difficulty) = fileData.split('State Data:')
                     clearedSquares = ''
                 enemiesCanSpank = "True"
         else:

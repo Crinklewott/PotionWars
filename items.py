@@ -67,7 +67,7 @@ class AttackEnchantment(Enchantment):
     """
     Grants a +1 damage bonus to weapons, and a +1 defense bonus to clothing.
     """
-    def __init__(self)
+    def __init__(self):
         super(AttackEnchantment, self).__init__(cost=1, bonus=1)
 
     def apply_enchantment(self):
@@ -194,7 +194,7 @@ class Gem(Item):
     """
     Special gems used to imbue weapons and clothing with enchantments.
     """
-    def __init__(self, name, description, enchantment):
+    def __init__(self, name, description, enchantmentType):
         """
         name - name of the Gem
         description - Gem's description in text
@@ -240,11 +240,11 @@ class Armor(Item):
 
     def defense_bonus(self):
         enchantmentBonus = 0
-        for enchantment in self.enchantments():
+        for enchantment in self.enchantments:
             enchantmentEffect = enchantment.apply_enchantment()
             if enchantmentEffect:
                 enchantmentBonus += enchantmentEffect
-        return enchantmentEffect
+        return enchantmentBonus
 
     def liftlower(self):
         return "lower"
