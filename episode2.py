@@ -9,10 +9,11 @@ import random
 import conversation
 import episode
 import townmode
-import episode
 import music
 import transExceptions
+import shopmode
 import episode2CharRooms
+import episode2dungeon
 def init_episode_2():
     episode2CharRooms.build_chars()
     episode2CharRooms.build_rooms()
@@ -111,13 +112,13 @@ def start_scene_1_episode_2(loading=False):
         peter.litany = conversation.allNodes[425]
     if not loading:
         elise = universal.state.get_character('''Elise.person''')
-        elise.litany = conversation.allNodes[446]
+        elise.litany = conversation.allNodes[454]
     if not loading:
         carrie = universal.state.get_character('''Carrie.person''')
-        carrie.litany = conversation.allNodes[454]
+        carrie.litany = conversation.allNodes[462]
     if not loading:
         airell = universal.state.get_character('''Airell.person''')
-        airell.litany = conversation.allNodes[470]
+        airell.litany = conversation.allNodes[478]
 
 
 def init_scene_1_episode_2():
@@ -39448,7 +39449,7 @@ def init_scene_1_episode_2():
         peter = universal.state.get_character("Peter.person")
         peter.defaultLitany = peter.litany = ep2_peter_conversation.index
         ep2_peter_buckles_canceled.quip = " "
-        universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
+        universal.say(universal.format_text_translate([[], [], [''.join([ '"'
  ]), ''.join([ "Is"
  , ' ']), ''.join([ "something"
  , ' ']), ''.join([ "wrong?"
@@ -39495,8 +39496,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "says"
  , ' ']), ''.join([ "Peter."
  , ' ']), ''.join([ '"'
- ]), ''.join([ "Dan,"
- , ' ']), ''.join([ "why?"
+ ]), ''.join([ "Why?"
  ]), ''.join([ '"'
  , ' '])], [''.join([ "Dan"
  , ' ']), ''.join([ "shrugs."
@@ -39510,42 +39510,30 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "know"
  , ' ']), ''.join([ "Jake"
  , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "herder,"
+ , ' ']), ''.join([ "merchant,"
  , ' ']), ''.join([ "right?"
- , ' ']), ''.join([ "Got"
- , ' ']), ''.join([ "that"
- , ' ']), ''.join([ "big"
- , ' ']), ''.join([ "herd"
- , ' ']), ''.join([ "of"
- , ' ']), ''.join([ "sheep"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "goats"
- , ' ']), ''.join([ "he"
- , ' ']), ''.join([ "migrates"
- , ' ']), ''.join([ "between"
- , ' ']), ''.join([ "here"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "some"
- , ' ']), ''.join([ "kingdom"
- , ' ']), ''.join([ "farther"
- , ' ']), ''.join([ "north?"
- , ' ']), ''.join([ "You"
- , ' ']), ''.join([ "know,"
- , ' ']), ''.join([ "keeps"
- , ' ']), ''.join([ "them"
- , ' ']), ''.join([ "there"
- , ' ']), ''.join([ "during"
+ , ' ']), ''.join([ "Tends"
+ , ' ']), ''.join([ "to"
+ , ' ']), ''.join([ "circle"
+ , ' ']), ''.join([ "through"
  , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "winter,"
- , ' ']), ''.join([ "brings"
- , ' ']), ''.join([ "them"
- , ' ']), ''.join([ "down"
- , ' ']), ''.join([ "here"
+ , ' ']), ''.join([ "Thousin"
+ , ' ']), ''.join([ "in"
+ , ' ']), ''.join([ "the"
+ , ' ']), ''.join([ "spring,"
+ , ' ']), ''.join([ "summer"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "fall?"
+ , ' ']), ''.join([ "Spends"
+ , ' ']), ''.join([ "his"
+ , ' ']), ''.join([ "winters"
+ , ' ']), ''.join([ "farther"
+ , ' ']), ''.join([ "north"
  , ' ']), ''.join([ "to"
  , ' ']), ''.join([ "escape"
  , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "summer"
- , ' ']), ''.join([ "heat?"
+ , ' ']), ''.join([ "winter"
+ , ' ']), ''.join([ "night?"
  ]), ''.join([ '"'
  , ' '])], [''.join([ '"'
  ]), ''.join([ "Yeah,"
@@ -39584,25 +39572,6 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "unstable"
  , ' ']), ''.join([ "he"
  , ' ']), ''.join([ "says."
- , ' ']), ''.join([ "Too"
- , ' ']), ''.join([ "close"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "Bonda."
- , ' ']), ''.join([ "Got"
- , ' ']), ''.join([ "himself"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "deal"
- , ' ']), ''.join([ "worked"
- , ' ']), ''.join([ "out"
- , ' ']), ''.join([ "with"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "city"
- , ' ']), ''.join([ "of"
- , ' ']), ''.join([ "Alesia"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "summer"
- , ' ']), ''.join([ "there"
- , ' ']), ''.join([ "instead."
  ]), ''.join([ '"'
  , ' '])], [''.join([ "Peter"
  , ' ']), ''.join([ "takes"
@@ -40127,19 +40096,18 @@ def init_scene_1_episode_2():
     
     def ep2_peter_shop_mode_qf():
         ep2_peter_shop_mode.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
-, ''.join([ "Segue"
- , ' ']), ''.join([ "into"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "menu"
- , ' ']), ''.join([ "for"
- , ' ']), ''.join([ "enchanting"
- , ' ']), ''.join([ "equipment"
- , ' ']), ''.join([ "with"
- , ' ']), ''.join([ "an"
- , ' ']), ''.join([ "enchant"
- , ' ']), ''.join([ "gem."
- , ' '])])) , ' ']), ''.join([ "Peter"
+        universal.say(universal.format_text_translate([[], []]), justification=0)
+        if 'enchantmentDeal' in pwutilities.keywords():
+            return conversation.continue_to_node(ep2_peter_shop_mode, ep2_enchantment_shopping)
+        elif True:
+            return conversation.continue_to_node(ep2_peter_shop_mode, ep2_enchantment_barter)
+    ep2_peter_shop_mode.quip_function = ep2_peter_shop_mode_qf
+    ep2_enchantment_barter = conversation.Node(444, '''ep2 enchantment barter''')
+    
+    
+    def ep2_enchantment_barter_qf():
+        ep2_enchantment_barter.quip = " "
+        universal.say(universal.format_text_translate([[], [], [''.join([ "Peter"
  , ' ']), ''.join([ "cocks"
  , ' ']), ''.join([ "his"
  , ' ']), ''.join([ "head"
@@ -40179,61 +40147,479 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "camp"
  , ' ']), ''.join([ "follower."
- , ' ']), ''.join([ "Only"
- , ' ']), ''.join([ "thing"
+ , ' ']), ''.join([ "Brings"
+ , ' ']), ''.join([ "back"
+ , ' ']), ''.join([ "memories."
+ , ' ']), ''.join([ "Most"
+ , ' ']), ''.join([ "of"
+ , ' ']), ''.join([ "them"
+ , ' ']), ''.join([ "unpleasant."
+ , ' ']), ''.join([ "Still,"
  , ' ']), ''.join([ "I"
- , ' ']), ''.join([ "remember"
- , ' ']), ''.join([ "clearly"
- , ' ']), ''.join([ "is"
- , ' ']), ''.join([ "that"
- , ' ']), ''.join([ "it's"
+ , ' ']), ''.join([ "suppose"
+ , ' ']), ''.join([ "I"
+ , ' ']), ''.join([ "can"
+ , ' ']), ''.join([ "help"
+ , ' ']), ''.join([ "you."
+ , ' ']), ''.join([ "Thirty"
+ , ' ']), ''.join([ "matrons"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "gem."
+ ]), ''.join([ '"'
+ , ' '])], [''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "eyes"
+ , ' ']), ''.join([ "bug"
+ , ' ']), ''.join([ "out"
+ , ' ']), ''.join([ "of"
+ , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "head."
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "Thirty--Are"
+ , ' ']), ''.join([ "you"
+ , ' ']), ''.join([ "kidding?"
+ , ' ']), ''.join([ "I"
+ , ' ']), ''.join([ "can"
+ , ' ']), ''.join([ "live"
+ , ' ']), ''.join([ "over"
+ , ' ']), ''.join([ "ten"
+ , ' ']), ''.join([ "days"
+ , ' ']), ''.join([ "on"
+ , ' ']), ''.join([ "that!"
+ ]), ''.join([ '"'
+ , ' '])], [''.join([ '"'
+ ]), ''.join([ "Only"
+ , ' ']), ''.join([ "when"
+ , ' ']), ''.join([ "times"
+ , ' ']), ''.join([ "are"
+ , ' ']), ''.join([ "good,"
+ ]), ''.join([ '"'
+ , ' ']), ''.join([ "says"
+ , ' ']), ''.join([ "Peter"
+ , ' ']), ''.join([ "sardonically."
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "Look,"
+ , ' ']), ''.join([ "enchantments"
+ , ' ']), ''.join([ "are"
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "tricky"
- , ' ']), ''.join([ "process."
- , ' ']), ''.join([ "Could"
- , ' ']), ''.join([ "ruin"
- , ' ']), ''.join([ "your"
- , ' ']), ''.join([ "weapon,"
- , ' ']), ''.join([ "if"
- , ' ']), ''.join([ "I'm"
- , ' ']), ''.join([ "not"
- , ' ']), ''.join([ "careful."
- , ' ']), ''.join([ "So,"
- , ' ']), ''.join([ "give"
- , ' ']), ''.join([ "me"
- , ' ']), ''.join([ "some"
- , ' ']), ''.join([ "time"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "refresh"
- , ' ']), ''.join([ "my"
- , ' ']), ''.join([ "memory"
- , ' ']), ''.join([ "alright?"
- , ' ']), ''.join([ "Maybe"
+ , ' ']), ''.join([ "thing,"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "they"
+ , ' ']), ''.join([ "take"
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "few"
- , ' ']), ''.join([ "days."
- ]), ''.join([ '"'
- , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "nods,"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "tucks"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "gem"
- , ' ']), ''.join([ "back"
- , ' ']), ''.join([ "into"
+ , ' ']), ''.join([ "days"
+ , ' ']), ''.join([ "of"
+ , ' ']), ''.join([ "very"
+ , ' ']), ''.join([ "careful,"
+ , ' ']), ''.join([ "painstaking"
+ , ' ']), ''.join([ "work."
+ , ' ']), ''.join([ "Plus,"
+ , ' ']), ''.join([ "gems"
+ , ' ']), ''.join([ "can"
+ , ' ']), ''.join([ "be"
+ , ' ']), ''.join([ "dangerous."
+ , ' ']), ''.join([ "They've"
+ , ' ']), ''.join([ "got"
+ , ' ']), ''.join([ "quite"
  , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "small"
- , ' ']), ''.join([ "pouch"
- , ' ']), ''.join([ "on"
- , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "belt."
- , ' ']), ''.join([ '"'
- ]), ''.join([ "Ok."
- , ' ']), ''.join([ "See"
+ , ' ']), ''.join([ "bit"
+ , ' ']), ''.join([ "of"
+ , ' ']), ''.join([ "power"
+ , ' ']), ''.join([ "stored"
+ , ' ']), ''.join([ "up"
+ , ' ']), ''.join([ "in"
+ , ' ']), ''.join([ "them,"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "if"
+ , ' ']), ''.join([ "you're"
+ , ' ']), ''.join([ "not"
+ , ' ']), ''.join([ "careful"
  , ' ']), ''.join([ "you"
- , ' ']), ''.join([ "around."
+ , ' ']), ''.join([ "could"
+ , ' ']), ''.join([ "find"
+ , ' ']), ''.join([ "your"
+ , ' ']), ''.join([ "home"
+ , ' ']), ''.join([ "burning"
+ , ' ']), ''.join([ "down"
+ , ' ']), ''.join([ "around"
+ , ' ']), ''.join([ "your"
+ , ' ']), ''.join([ "ears."
+ , ' ']), ''.join([ "If"
+ , ' ']), ''.join([ "you're"
+ , ' ']), ''.join([ "lucky."
+ , ' ']), ''.join([ "Thirty"
+ , ' ']), ''.join([ "is"
+ , ' ']), ''.join([ "beyond"
+ , ' ']), ''.join([ "reasonable."
+ , ' ']), ''.join([ "No"
+ , ' ']), ''.join([ "one"
+ , ' ']), ''.join([ "else"
+ , ' ']), ''.join([ "would"
+ , ' ']), ''.join([ "do"
+ , ' ']), ''.join([ "it"
+ , ' ']), ''.join([ "for"
+ , ' ']), ''.join([ "less"
+ , ' ']), ''.join([ "than"
+ , ' ']), ''.join([ "fifty,"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "you'd"
+ , ' ']), ''.join([ "be"
+ , ' ']), ''.join([ "lucky"
+ , ' ']), ''.join([ "to"
+ , ' ']), ''.join([ "find"
+ , ' ']), ''.join([ "someone"
+ , ' ']), ''.join([ "willing"
+ , ' ']), ''.join([ "to"
+ , ' ']), ''.join([ "do"
+ , ' ']), ''.join([ "it"
+ , ' ']), ''.join([ "for"
+ , ' ']), ''.join([ "less"
+ , ' ']), ''.join([ "than"
+ , ' ']), ''.join([ "seventy-five."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-    ep2_peter_shop_mode.quip_function = ep2_peter_shop_mode_qf
-    ep2_peter_leave = conversation.Node(444, '''ep2 peter leave''')
+        if 'teaching_Anne' in pwutilities.keywords():
+            return conversation.continue_to_node(ep2_enchantment_barter, ep2_peter_enchantment_teaching_anne)
+        elif True:
+            return conversation.continue_to_node(ep2_enchantment_barter, ep2_peter_enchantment_agree)
+    ep2_enchantment_barter.quip_function = ep2_enchantment_barter_qf
+    ep2_peter_enchantment_teaching_anne = conversation.Node(445, '''ep2 peter enchantment teaching anne''')
+    
+    
+    def ep2_peter_enchantment_teaching_anne_qf():
+        ep2_peter_enchantment_teaching_anne.quip = " "
+        universal.say(universal.format_text_translate([[], [], [''.join([ '"'
+ ]), ''.join([ "Look,"
+ , ' ']), ''.join([ "can't"
+ , ' ']), ''.join([ "we"
+ , ' ']), ''.join([ "work"
+ , ' ']), ''.join([ "out"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "deal?"
+ , ' ']), ''.join([ "Considering"
+ , ' ']), ''.join([ "all"
+ , ' ']), ''.join([ "the"
+ , ' ']), ''.join([ "hours"
+ , ' ']), ''.join([ "I've"
+ , ' ']), ''.join([ "put"
+ , ' ']), ''.join([ "into"
+ , ' ']), ''.join([ "teaching"
+ , ' ']), ''.join([ "Anne?"
+ ]), ''.join([ '"'
+ , ' ']), ''.join([ "says"
+ , ' ']), universal.state.player.name, ''.join([ "."
+ , ' '])], [''.join([ '"'
+ ]), ''.join([ "Which"
+ , ' ']), ''.join([ "you've"
+ , ' ']), ''.join([ "already"
+ , ' ']), ''.join([ "been"
+ , ' ']), ''.join([ "paid"
+ , ' ']), ''.join([ "for,"
+ ]), ''.join([ '"'
+ , ' ']), ''.join([ "says"
+ , ' ']), ''.join([ "Peter."
+ , ' ']), ''.join([ "He"
+ , ' ']), ''.join([ "strokes"
+ , ' ']), ''.join([ "his"
+ , ' ']), ''.join([ "beard"
+ , ' ']), ''.join([ "thoughtfully."
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "Still,"
+ , ' ']), ''.join([ "if"
+ , ' ']), ''.join([ "you'd"
+ , ' ']), ''.join([ "like"
+ , ' ']), ''.join([ "we"
+ , ' ']), ''.join([ "could"
+ , ' ']), ''.join([ "probably"
+ , ' ']), ''.join([ "work"
+ , ' ']), ''.join([ "out"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "deal."
+ , ' ']), ''.join([ "How"
+ , ' ']), ''.join([ "about"
+ , ' ']), ''.join([ "this."
+ , ' ']), ''.join([ "Either"
+ , ' ']), ''.join([ "I"
+ , ' ']), ''.join([ "pay"
+ , ' ']), ''.join([ "you"
+ , ' ']), ''.join([ "the"
+ , ' ']), ''.join([ "35"
+ , ' ']), ''.join([ "coins"
+ , ' ']), ''.join([ "we"
+ , ' ']), ''.join([ "agreed"
+ , ' ']), ''.join([ "on"
+ , ' ']), ''.join([ "per"
+ , ' ']), ''.join([ "month,"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "you"
+ , ' ']), ''.join([ "pay"
+ , ' ']), ''.join([ "for"
+ , ' ']), ''.join([ "all"
+ , ' ']), ''.join([ "your"
+ , ' ']), ''.join([ "enchantments,"
+ , ' ']), ''.join([ "or"
+ , ' ']), ''.join([ "I"
+ , ' ']), ''.join([ "pay"
+ , ' ']), ''.join([ "you"
+ , ' ']), ''.join([ "15"
+ , ' ']), ''.join([ "coins,"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "you"
+ , ' ']), ''.join([ "get"
+ , ' ']), ''.join([ "one"
+ , ' ']), ''.join([ "free"
+ , ' ']), ''.join([ "enchantment"
+ , ' ']), ''.join([ "per"
+ , ' ']), ''.join([ "month,"
+ , ' ']), ''.join([ "or"
+ , ' ']), ''.join([ "I"
+ , ' ']), ''.join([ "don't"
+ , ' ']), ''.join([ "pay"
+ , ' ']), ''.join([ "you"
+ , ' ']), ''.join([ "anything,"
+ , ' ']), ''.join([ "but"
+ , ' ']), ''.join([ "you"
+ , ' ']), ''.join([ "get"
+ , ' ']), ''.join([ "two"
+ , ' ']), ''.join([ "free"
+ , ' ']), ''.join([ "enchantments"
+ , ' ']), ''.join([ "per"
+ , ' ']), ''.join([ "month."
+ ]), ''.join([ '"'
+ , ' '])]]), justification=0)
+        ep2_peter_enchantment_teaching_anne.add_child(ep2_thirty_five_coins_per_month)
+        ep2_peter_enchantment_teaching_anne.add_player_comment(universal.format_line_translate([''.join([ ""
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "I'll"
+ , ' ']), ''.join([ "just"
+ , ' ']), ''.join([ "take"
+ , ' ']), ''.join([ "the"
+ , ' ']), ''.join([ "35"
+ , ' ']), ''.join([ "coins"
+ , ' ']), ''.join([ "per"
+ , ' ']), ''.join([ "month."
+ ]), ''.join([ '"'
+ , ' '])]))
+        ep2_peter_enchantment_teaching_anne.add_child(ep2_fifteen_coins_per_month)
+        ep2_peter_enchantment_teaching_anne.add_player_comment(universal.format_line_translate([''.join([ ""
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "15"
+ , ' ']), ''.join([ "coins"
+ , ' ']), ''.join([ "per"
+ , ' ']), ''.join([ "month,"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "one"
+ , ' ']), ''.join([ "enchantment."
+ ]), ''.join([ '"'
+ , ' '])]))
+        ep2_peter_enchantment_teaching_anne.add_child(ep2_peter_two_enchantments)
+        ep2_peter_enchantment_teaching_anne.add_player_comment(universal.format_line_translate([''.join([ ""
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "Two"
+ , ' ']), ''.join([ "enchantments."
+ ]), ''.join([ '"'
+ , ' '])]))
+    ep2_peter_enchantment_teaching_anne.quip_function = ep2_peter_enchantment_teaching_anne_qf
+    ep2_thirty_five_coins_per_month = conversation.Node(446, '''ep2 thirty five coins per month''')
+    
+    
+    def ep2_thirty_five_coins_per_month_qf():
+        pwutilities.add_keyword('enchantmentDeal')
+        ep2_thirty_five_coins_per_month.quip = " "
+        universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
+ ]), ''.join([ "Alright"
+ , ' ']), ''.join([ "then,"
+ ]), ''.join([ '"'
+ , ' ']), ''.join([ "says"
+ , ' ']), ''.join([ "Peter."
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "Thirty"
+ , ' ']), ''.join([ "five"
+ , ' ']), ''.join([ "coins"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "month,"
+ , ' ']), ''.join([ "you"
+ , ' ']), ''.join([ "pay"
+ , ' ']), ''.join([ "for"
+ , ' ']), ''.join([ "all"
+ , ' ']), ''.join([ "your"
+ , ' ']), ''.join([ "enchantments."
+ , ' ']), ''.join([ "Shall"
+ , ' ']), ''.join([ "we"
+ , ' ']), ''.join([ "look"
+ , ' ']), ''.join([ "at"
+ , ' ']), ''.join([ "your"
+ , ' ']), ''.join([ "equipment?"
+ ]), ''.join([ '"'
+ , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "nods,"
+ , ' ']), ''.join([ "though"
+ , ' ']), ''.join([ person.heshe() , ' ']), ''.join([ "can't"
+ , ' ']), ''.join([ "quite"
+ , ' ']), ''.join([ "help"
+ , ' ']), ''.join([ "but"
+ , ' ']), ''.join([ "make"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "face."
+ , ' '])]]), justification=0)
+        return conversation.continue_to_node(ep2_thirty_five_coins_per_month, ep2_peter_begin_enchantment_shopping, False)
+    ep2_thirty_five_coins_per_month.quip_function = ep2_thirty_five_coins_per_month_qf
+    ep2_fifteen_coins_per_month = conversation.Node(447, '''ep2 fifteen coins per month''')
+    
+    
+    def ep2_fifteen_coins_per_month_qf():
+        pwutilities.add_keyword('fifteenCoinsPerMonth')
+        pwutilities.add_keyword('enchantmentDeal')
+        universal.state.enchantmentFreebies += 1
+        ep2_fifteen_coins_per_month.quip = " "
+        universal.say(universal.format_text_translate([[], [], [], [], [], [], [''.join([ '"'
+ ]), ''.join([ "Alright"
+ , ' ']), ''.join([ "then,"
+ ]), ''.join([ '"'
+ , ' ']), ''.join([ "says"
+ , ' ']), ''.join([ "Peter."
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "You"
+ , ' ']), ''.join([ "get"
+ , ' ']), ''.join([ "one"
+ , ' ']), ''.join([ "free"
+ , ' ']), ''.join([ "enchantment,"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "fifteen"
+ , ' ']), ''.join([ "coins"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "month"
+ , ' ']), ''.join([ "for"
+ , ' ']), ''.join([ "teaching"
+ , ' ']), ''.join([ "Anne."
+ , ' ']), ''.join([ "Shall"
+ , ' ']), ''.join([ "we"
+ , ' ']), ''.join([ "look"
+ , ' ']), ''.join([ "at"
+ , ' ']), ''.join([ "your"
+ , ' ']), ''.join([ "equipment?"
+ ]), ''.join([ '"'
+ , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "nods,"
+ , ' ']), ''.join([ "though"
+ , ' ']), ''.join([ person.heshe() , ' ']), ''.join([ "can't"
+ , ' ']), ''.join([ "quite"
+ , ' ']), ''.join([ "help"
+ , ' ']), ''.join([ "but"
+ , ' ']), ''.join([ "make"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "face."
+ , ' '])]]), justification=0)
+        return conversation.continue_to_node(ep2_fifteen_coins_per_month, ep2_peter_begin_enchantment_shopping, False)
+    ep2_fifteen_coins_per_month.quip_function = ep2_fifteen_coins_per_month_qf
+    ep2_peter_two_enchantments = conversation.Node(448, '''ep2 peter two enchantments''')
+    
+    
+    def ep2_peter_two_enchantments_qf():
+        pwutilities.add_keyword('twoEnchantments')
+        pwutilities.add_keyword('enchantmentDeal')
+        universal.state.enchantmentFreebies += 2
+        ep2_peter_two_enchantments.quip = " "
+        universal.say(universal.format_text_translate([[], [], [], [], [], [], [''.join([ '"'
+ ]), ''.join([ "Alright"
+ , ' ']), ''.join([ "then,"
+ ]), ''.join([ '"'
+ , ' ']), ''.join([ "says"
+ , ' ']), ''.join([ "Peter."
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "You"
+ , ' ']), ''.join([ "get"
+ , ' ']), ''.join([ "two"
+ , ' ']), ''.join([ "free"
+ , ' ']), ''.join([ "enchantments"
+ , ' ']), ''.join([ "per"
+ , ' ']), ''.join([ "month"
+ , ' ']), ''.join([ "in"
+ , ' ']), ''.join([ "exchange"
+ , ' ']), ''.join([ "for"
+ , ' ']), ''.join([ "teaching"
+ , ' ']), ''.join([ "Anne."
+ , ' ']), ''.join([ "Shall"
+ , ' ']), ''.join([ "we"
+ , ' ']), ''.join([ "look"
+ , ' ']), ''.join([ "at"
+ , ' ']), ''.join([ "your"
+ , ' ']), ''.join([ "equipment"
+ , ' ']), ''.join([ "now?"
+ ]), ''.join([ '"'
+ , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "nods,"
+ , ' ']), ''.join([ "though"
+ , ' ']), ''.join([ person.heshe() , ' ']), ''.join([ "can't"
+ , ' ']), ''.join([ "quite"
+ , ' ']), ''.join([ "help"
+ , ' ']), ''.join([ "but"
+ , ' ']), ''.join([ "make"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "face."
+ , ' '])]]), justification=0)
+        return conversation.continue_to_node(ep2_peter_two_enchantments, ep2_peter_begin_enchantment_shopping, False)
+    ep2_peter_two_enchantments.quip_function = ep2_peter_two_enchantments_qf
+    ep2_peter_enchantment_agree = conversation.Node(449, '''ep2 peter enchantment agree''')
+    
+    
+    def ep2_peter_enchantment_agree_qf():
+        pwutilities.add_keyword('enchantmentDeal')
+        ep2_peter_enchantment_agree.quip = " "
+        universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
+ ]), ''.join([ "Oh"
+ , ' ']), ''.join([ "alright,"
+ ]), ''.join([ '"'
+ , ' ']), ''.join([ "says"
+ , ' ']), ''.join([ universal.state.player.name , ' ']), ''.join([ "grumpily."
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "Bandit."
+ ]), ''.join([ '"'
+ , ' '])], [''.join([ "Peter"
+ , ' ']), ''.join([ "grins."
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "Hey,"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "guy's"
+ , ' ']), ''.join([ "gotta"
+ , ' ']), ''.join([ "eat."
+ ]), ''.join([ '"'
+ , ' '])]]), justification=0)
+        return conversation.continue_to_node(ep2_peter_enchantment_agree, ep2_peter_begin_enchantment_shopping, False)
+    ep2_peter_enchantment_agree.quip_function = ep2_peter_enchantment_agree_qf
+    ep2_peter_begin_enchantment_shopping = conversation.Node(450, '''ep2 peter begin enchantment shopping''')
+    
+    
+    def ep2_peter_begin_enchantment_shopping_qf():
+        return (universal.acknowledge, [shopmode.select_gem,             (universal.state.get_character("Peter.person"),)])
+        ep2_peter_begin_enchantment_shopping.quip = " "
+        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
+, ''.join([ "Asks"
+ , ' ']), ''.join([ "the"
+ , ' ']), ''.join([ "player"
+ , ' ']), ''.join([ "to"
+ , ' ']), ''.join([ "hit"
+ , ' ']), ''.join([ "enter"
+ , ' ']), ''.join([ "before"
+ , ' ']), ''.join([ "entering"
+ , ' ']), ''.join([ "the"
+ , ' ']), ''.join([ "enchantment"
+ , ' ']), ''.join([ "shopping"
+ , ' ']), ''.join([ "menu."
+ , ' '])])) , ' '])], [], []]), justification=0)
+    ep2_peter_begin_enchantment_shopping.quip_function = ep2_peter_begin_enchantment_shopping_qf
+    ep2_enchantment_shopping = conversation.Node(451, '''ep2 enchantment shopping''')
+    
+    
+    def ep2_enchantment_shopping_qf():
+        shopmode.select_gem(universal.state.get_character("Peter.person"))
+        ep2_enchantment_shopping.quip = " "
+        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
+, ''.join([ "Enter"
+ , ' ']), ''.join([ "into"
+ , ' ']), ''.join([ "the"
+ , ' ']), ''.join([ "enchantment"
+ , ' ']), ''.join([ "shopping"
+ , ' ']), ''.join([ "mode."
+ , ' '])])) , ' '])], []]), justification=0)
+    ep2_enchantment_shopping.quip_function = ep2_enchantment_shopping_qf
+    ep2_peter_leave = conversation.Node(452, '''ep2 peter leave''')
     
     
     def ep2_peter_leave_qf():
@@ -40252,7 +40638,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "things."
  , ' '])]]), justification=0)
     ep2_peter_leave.quip_function = ep2_peter_leave_qf
-    ep2_dont_help_repair_guild = conversation.Node(445, '''ep2 dont help repair guild''')
+    ep2_dont_help_repair_guild = conversation.Node(453, '''ep2 dont help repair guild''')
     
     
     def ep2_dont_help_repair_guild_qf():
@@ -40269,7 +40655,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Ildri."
  , ' '])], [], []]), justification=0)
     ep2_dont_help_repair_guild.quip_function = ep2_dont_help_repair_guild_qf
-    ep2_elise_prologue = conversation.Node(446, '''ep2 elise prologue''')
+    ep2_elise_prologue = conversation.Node(454, '''ep2 elise prologue''')
     
     
     def ep2_elise_prologue_qf():
@@ -40329,7 +40715,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_elise_prologue, ep2_elise_greeting)
     ep2_elise_prologue.quip_function = ep2_elise_prologue_qf
-    ep2_elise_second_hand_tragedy = conversation.Node(447, '''ep2 elise second hand tragedy''')
+    ep2_elise_second_hand_tragedy = conversation.Node(455, '''ep2 elise second hand tragedy''')
     
     
     def ep2_elise_second_hand_tragedy_qf():
@@ -40447,7 +40833,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_elise_second_hand_tragedy.quip_function = ep2_elise_second_hand_tragedy_qf
-    ep2_elise_second_hand_tragedy_still_annoyed = conversation.Node(448, '''ep2 elise second hand tragedy still annoyed''')
+    ep2_elise_second_hand_tragedy_still_annoyed = conversation.Node(456, '''ep2 elise second hand tragedy still annoyed''')
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_qf():
@@ -40713,7 +41099,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_elise_second_hand_tragedy_still_annoyed.quip_function = ep2_elise_second_hand_tragedy_still_annoyed_qf
-    ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha = conversation.Node(449, '''ep2 elise second hand tragedy still annoyed forgive Samantha''')
+    ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha = conversation.Node(457, '''ep2 elise second hand tragedy still annoyed forgive Samantha''')
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha_qf():
@@ -40928,7 +41314,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha, ep2_elise_gripe, False)
     ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha.quip_function = ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha_qf
-    ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha = conversation.Node(450, '''ep2 elise second hand tragedy still annoyed dont forgive Samantha''')
+    ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha = conversation.Node(458, '''ep2 elise second hand tragedy still annoyed dont forgive Samantha''')
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha_qf():
@@ -40999,7 +41385,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ person.heshe() , ' ']), ''.join([ "leaves."
  , ' '])]]), justification=0)
     ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha.quip_function = ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha_qf
-    ep2_elise_second_hand_tragedy_make_up = conversation.Node(451, '''ep2 elise second hand tragedy make up''')
+    ep2_elise_second_hand_tragedy_make_up = conversation.Node(459, '''ep2 elise second hand tragedy make up''')
     
     
     def ep2_elise_second_hand_tragedy_make_up_qf():
@@ -41049,7 +41435,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_elise_second_hand_tragedy_make_up, ep2_elise_gripe, False)
     ep2_elise_second_hand_tragedy_make_up.quip_function = ep2_elise_second_hand_tragedy_make_up_qf
-    ep2_elise_greeting = conversation.Node(452, '''ep2 elise greeting''')
+    ep2_elise_greeting = conversation.Node(460, '''ep2 elise greeting''')
     
     
     def ep2_elise_greeting_qf():
@@ -41092,7 +41478,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_elise_greeting, ep2_elise_gripe, False)
     ep2_elise_greeting.quip_function = ep2_elise_greeting_qf
-    ep2_elise_gripe = conversation.Node(453, '''ep2 elise gripe''')
+    ep2_elise_gripe = conversation.Node(461, '''ep2 elise gripe''')
     
     
     def ep2_elise_gripe_qf():
@@ -41855,7 +42241,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Carrie."
  , ' '])], [], []]), justification=0)
     ep2_elise_gripe.quip_function = ep2_elise_gripe_qf
-    ep2_carrie = conversation.Node(454, '''ep2 carrie''')
+    ep2_carrie = conversation.Node(462, '''ep2 carrie''')
     
     
     def ep2_carrie_qf():
@@ -41866,7 +42252,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_carrie, ep2_carrie_subplot_begin)
     ep2_carrie.quip_function = ep2_carrie_qf
-    ep2_carrie_lost_temper_apologize = conversation.Node(455, '''ep2 carrie lost temper apologize''')
+    ep2_carrie_lost_temper_apologize = conversation.Node(463, '''ep2 carrie lost temper apologize''')
     
     
     def ep2_carrie_lost_temper_apologize_qf():
@@ -42101,7 +42487,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_lost_temper_apologize.quip_function = ep2_carrie_lost_temper_apologize_qf
-    ep2_carrie_lost_temper_double_apology = conversation.Node(456, '''ep2 carrie lost temper double apology''')
+    ep2_carrie_lost_temper_double_apology = conversation.Node(464, '''ep2 carrie lost temper double apology''')
     
     
     def ep2_carrie_lost_temper_double_apology_qf():
@@ -42190,7 +42576,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_lost_temper_double_apology.quip_function = ep2_carrie_lost_temper_double_apology_qf
-    ep2_carrie_lost_temper_chastise = conversation.Node(457, '''ep2 carrie lost temper chastise''')
+    ep2_carrie_lost_temper_chastise = conversation.Node(465, '''ep2 carrie lost temper chastise''')
     
     
     def ep2_carrie_lost_temper_chastise_qf():
@@ -42312,7 +42698,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_lost_temper_chastise, ep2_carrie_lost_temper_paddle, False)
     ep2_carrie_lost_temper_chastise.quip_function = ep2_carrie_lost_temper_chastise_qf
-    ep2_carrie_lost_temper_paddle = conversation.Node(458, '''ep2 carrie lost temper paddle''')
+    ep2_carrie_lost_temper_paddle = conversation.Node(466, '''ep2 carrie lost temper paddle''')
     
     
     def ep2_carrie_lost_temper_paddle_qf():
@@ -42819,7 +43205,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_lost_temper_paddle, ep2_carrie_outside, False)
     ep2_carrie_lost_temper_paddle.quip_function = ep2_carrie_lost_temper_paddle_qf
-    ep2_carrie_lost_temper_refuse_to_spank = conversation.Node(459, '''ep2 carrie lost temper refuse to spank''')
+    ep2_carrie_lost_temper_refuse_to_spank = conversation.Node(467, '''ep2 carrie lost temper refuse to spank''')
     
     
     def ep2_carrie_lost_temper_refuse_to_spank_qf():
@@ -43005,7 +43391,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_lost_temper_refuse_to_spank, ep2_carrie_outside, False)
     ep2_carrie_lost_temper_refuse_to_spank.quip_function = ep2_carrie_lost_temper_refuse_to_spank_qf
-    ep2_carrie_subplot_begin = conversation.Node(460, '''ep2 carrie subplot begin''')
+    ep2_carrie_subplot_begin = conversation.Node(468, '''ep2 carrie subplot begin''')
     
     
     def ep2_carrie_subplot_begin_qf():
@@ -43542,7 +43928,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_subplot_begin, ep2_carrie_outside, False)
     ep2_carrie_subplot_begin.quip_function = ep2_carrie_subplot_begin_qf
-    ep2_carrie_outside = conversation.Node(461, '''ep2 carrie outside''')
+    ep2_carrie_outside = conversation.Node(469, '''ep2 carrie outside''')
     
     
     def ep2_carrie_outside_qf():
@@ -44135,7 +44521,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_outside.quip_function = ep2_carrie_outside_qf
-    ep2_carrie_illegal = conversation.Node(462, '''ep2 carrie illegal''')
+    ep2_carrie_illegal = conversation.Node(470, '''ep2 carrie illegal''')
     
     
     def ep2_carrie_illegal_qf():
@@ -44578,7 +44964,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_illegal.quip_function = ep2_carrie_illegal_qf
-    ep2_carrie_refuse = conversation.Node(463, '''ep2 carrie refuse''')
+    ep2_carrie_refuse = conversation.Node(471, '''ep2 carrie refuse''')
     
     
     def ep2_carrie_refuse_qf():
@@ -45022,7 +45408,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "her."
  , ' '])]))
     ep2_carrie_refuse.quip_function = ep2_carrie_refuse_qf
-    ep2_carrie_ignore = conversation.Node(464, '''ep2 carrie ignore''')
+    ep2_carrie_ignore = conversation.Node(472, '''ep2 carrie ignore''')
     
     
     def ep2_carrie_ignore_qf():
@@ -45158,7 +45544,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_ignore, ep2_practice_spectral_magic, False)
     ep2_carrie_ignore.quip_function = ep2_carrie_ignore_qf
-    ep2_practice_spectral_magic = conversation.Node(465, '''ep2 practice spectral magic''')
+    ep2_practice_spectral_magic = conversation.Node(473, '''ep2 practice spectral magic''')
     
     
     def ep2_practice_spectral_magic_qf():
@@ -45370,7 +45756,7 @@ def init_scene_1_episode_2():
  , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "chuckles."
  , ' '])]]), justification=0)
     ep2_practice_spectral_magic.quip_function = ep2_practice_spectral_magic_qf
-    ep2_carrie_subplot_spanking = conversation.Node(466, '''ep2 carrie subplot spanking''')
+    ep2_carrie_subplot_spanking = conversation.Node(474, '''ep2 carrie subplot spanking''')
     
     
     def ep2_carrie_subplot_spanking_qf():
@@ -46245,7 +46631,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_subplot_spanking, ep2_practice_spectral_magic, False)
     ep2_carrie_subplot_spanking.quip_function = ep2_carrie_subplot_spanking_qf
-    ep2_carrie_distraction = conversation.Node(467, '''ep2 carrie distraction''')
+    ep2_carrie_distraction = conversation.Node(475, '''ep2 carrie distraction''')
     
     
     def ep2_carrie_distraction_qf():
@@ -48769,7 +49155,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_distraction, ep2_carrie_subplot_end, False)
     ep2_carrie_distraction.quip_function = ep2_carrie_distraction_qf
-    ep2_carrie_agree = conversation.Node(468, '''ep2 carrie agree''')
+    ep2_carrie_agree = conversation.Node(476, '''ep2 carrie agree''')
     
     
     def ep2_carrie_agree_qf():
@@ -51446,7 +51832,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])], [], []]), justification=0)
         return conversation.continue_to_node(ep2_carrie_agree, ep2_carrie_subplot_end, False)
     ep2_carrie_agree.quip_function = ep2_carrie_agree_qf
-    ep2_carrie_subplot_end = conversation.Node(469, '''ep2 carrie subplot end''')
+    ep2_carrie_subplot_end = conversation.Node(477, '''ep2 carrie subplot end''')
     
     
     def ep2_carrie_subplot_end_qf():
@@ -51606,7 +51992,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "thing."
  , ' '])])) , ' '])]]), justification=0)
     ep2_carrie_subplot_end.quip_function = ep2_carrie_subplot_end_qf
-    ep2_airell = conversation.Node(470, '''ep2 airell''')
+    ep2_airell = conversation.Node(478, '''ep2 airell''')
     
     
     def ep2_airell_qf():
@@ -51620,7 +52006,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_airell, ep2_airell_busy)
     ep2_airell.quip_function = ep2_airell_qf
-    ep2_airell_face_punch = conversation.Node(471, '''ep2 airell face punch''')
+    ep2_airell_face_punch = conversation.Node(479, '''ep2 airell face punch''')
     
     
     def ep2_airell_face_punch_qf():
@@ -51762,7 +52148,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Airell."
  , ' '])]))
     ep2_airell_face_punch.quip_function = ep2_airell_face_punch_qf
-    ep2_airell_wait = conversation.Node(472, '''ep2 airell wait''')
+    ep2_airell_wait = conversation.Node(480, '''ep2 airell wait''')
     
     
     def ep2_airell_wait_qf():
@@ -52235,7 +52621,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_airell_wait, ep2_remember_what_morey_was_trying_to_teach, False)
     ep2_airell_wait.quip_function = ep2_airell_wait_qf
-    ep2_airell_dont_wait = conversation.Node(473, '''ep2 airell dont wait''')
+    ep2_airell_dont_wait = conversation.Node(481, '''ep2 airell dont wait''')
     
     
     def ep2_airell_dont_wait_qf():
@@ -53982,7 +54368,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_airell_dont_wait, ep2_remember_what_morey_was_trying_to_teach, False)
     ep2_airell_dont_wait.quip_function = ep2_airell_dont_wait_qf
-    ep2_remember_what_morey_was_trying_to_teach = conversation.Node(474, '''ep2 remember what morey was trying to teach''')
+    ep2_remember_what_morey_was_trying_to_teach = conversation.Node(482, '''ep2 remember what morey was trying to teach''')
     
     
     def ep2_remember_what_morey_was_trying_to_teach_qf():
@@ -54041,7 +54427,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_remember_what_morey_was_trying_to_teach.quip_function = ep2_remember_what_morey_was_trying_to_teach_qf
-    ep2_airell_recall_moreys_lesson = conversation.Node(475, '''ep2 airell recall moreys lesson''')
+    ep2_airell_recall_moreys_lesson = conversation.Node(483, '''ep2 airell recall moreys lesson''')
     
     
     def ep2_airell_recall_moreys_lesson_qf():
@@ -54415,7 +54801,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_airell_recall_moreys_lesson, ep2_airell_finish, False)
     ep2_airell_recall_moreys_lesson.quip_function = ep2_airell_recall_moreys_lesson_qf
-    ep2_airell_moreys_lesson_bratty = conversation.Node(476, '''ep2 airell moreys lesson bratty''')
+    ep2_airell_moreys_lesson_bratty = conversation.Node(484, '''ep2 airell moreys lesson bratty''')
     
     
     def ep2_airell_moreys_lesson_bratty_qf():
@@ -54939,7 +55325,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "marks."
  , ' '])])) , ' '])], [], []]), justification=0)
     ep2_airell_moreys_lesson_bratty.quip_function = ep2_airell_moreys_lesson_bratty_qf
-    ep2_airell_talk = conversation.Node(477, '''ep2 airell talk''')
+    ep2_airell_talk = conversation.Node(485, '''ep2 airell talk''')
     
     
     def ep2_airell_talk_qf():
@@ -55169,7 +55555,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_airell_talk, ep2_airell_finish, False)
     ep2_airell_talk.quip_function = ep2_airell_talk_qf
-    ep2_airell_finish = conversation.Node(478, '''ep2 airell finish''')
+    ep2_airell_finish = conversation.Node(486, '''ep2 airell finish''')
     
     
     def ep2_airell_finish_qf():
@@ -55194,7 +55580,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_airell_finish.quip_function = ep2_airell_finish_qf
-    ep2_airell_finish_cooperative = conversation.Node(479, '''ep2 airell finish cooperative''')
+    ep2_airell_finish_cooperative = conversation.Node(487, '''ep2 airell finish cooperative''')
     
     
     def ep2_airell_finish_cooperative_qf():
@@ -55734,7 +56120,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "marks."
  , ' '])])) , ' '])], [], [], []]), justification=0)
     ep2_airell_finish_cooperative.quip_function = ep2_airell_finish_cooperative_qf
-    ep2_airell_finish_combative = conversation.Node(480, '''ep2 airell finish combative''')
+    ep2_airell_finish_combative = conversation.Node(488, '''ep2 airell finish combative''')
     
     
     def ep2_airell_finish_combative_qf():
@@ -56345,7 +56731,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "red."
  , ' '])])) , ' '])], [], []]), justification=0)
     ep2_airell_finish_combative.quip_function = ep2_airell_finish_combative_qf
-    ep2_airell_busy = conversation.Node(481, '''ep2 airell busy''')
+    ep2_airell_busy = conversation.Node(489, '''ep2 airell busy''')
     
     
     def ep2_airell_busy_qf():

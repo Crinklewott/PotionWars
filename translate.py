@@ -42,7 +42,7 @@ import transExceptions
 
 
 IMPORTS = ['import universal', 'import pwutilities', 'import person', 'import items', 'import pwenemies', 'import dungeonmode', 'import itemspotionwars', 'import random', 'import conversation',
-        'import episode', 'import townmode','import episode', 'import music', 'import transExceptions']
+        'import episode', 'import townmode', 'import music', 'import transExceptions', 'import shopmode']
 
 
                           #Removes comments | split around newlines and save the newlines | splits around spaces, and save the spacing | split around commands that begin an environment | split around 
@@ -50,7 +50,7 @@ IMPORTS = ['import universal', 'import pwutilities', 'import person', 'import it
 tokenizer = re.compile(r'%.*|(\n)|(\s+)|(\\begin\{\w+\})|(\\end\{\w+\})|(\{)|(\})|(\\\w+$)|(")')
 
 
-def translate(fileName,  episodeName, episodeNum, titleCardTheme, startingNodeNum=1, imports=None, teaser='', charRooms=''):
+def translate(fileName,  episodeName, episodeNum, titleCardTheme, startingNodeNum=1, imports=None, teaser='', charRooms='', dungeon=''):
     """
         Takes the name of a file containing LaTeX source, the node number at which we should begin numbering (defaults to 1), the name of the episode, and the number of the 
         episode, the theme song for the title card, and any imports that should be included in the generated python script.
@@ -60,6 +60,7 @@ def translate(fileName,  episodeName, episodeNum, titleCardTheme, startingNodeNu
     if imports is None:
         imports = []
     imports.append('import ' + charRooms)    
+    imports.append('import ' + dungeon)
     tokens = []
     firstSceneFound = False
     lineNum = 1
@@ -91,7 +92,8 @@ DEBUG = True
 if DEBUG:
     import os
     try:
-        pyCode = translate(os.path.join('transcripts', 'episode2.tex'), 'Back Alleys', 2, "pwutilities.CARLITA", startingNodeNum=327, imports=IMPORTS, charRooms='episode2CharRooms')
+        pyCode = translate(os.path.join('transcripts', 'episode2.tex'), 'Back Alleys', 2, "pwutilities.CARLITA", startingNodeNum=327, imports=IMPORTS, charRooms='episode2CharRooms',
+                dungeon='episode2dungeon')
     except transExceptions.TranslationError, e:
         print(str(e)) 
     else:

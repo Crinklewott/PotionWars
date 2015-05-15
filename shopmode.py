@@ -375,7 +375,7 @@ def select_gem(shopkeeperIn=None, doneShoppingLitany=None):
         gemList.extend([(person, item) for item in person.get_inventory() if 
             hasattr(item, "enchantmentType")])
         gemStrings = [''.join([person.name, ": ", item.name]) for person, item in gemList]
-    universal.say('\n'.join(gemStrings))
+    universal.say(universal.numbered_list(gemStrings))
     universal.set_commands(["(#) Select Gem: " + str(partialNum) + '_', "<==Back"])
     universal.set_command_interpreter(select_gem_interpreter)
     partialNum = ''
@@ -385,9 +385,9 @@ chosenPersonGem = None
 def select_gem_interpreter(keyEvent, testing=False):
     global partialNum, chosenPersonGem
     if keyEvent.key in NUMBER_KEYS:
-        if len(playerGoods) < 10:
+        if len(gemList) < 10:
             num = int(pygame.key.name(keyEvent.key)) - 1
-            if 0 <= num and num < len(playerGoods):
+            if 0 <= num and num < len(gemList):
                 global chosenPersonGem
                 chosenPersonGem = gemList[num]
                 if not testing:
@@ -396,7 +396,7 @@ def select_gem_interpreter(keyEvent, testing=False):
             partialNum += pygame.key.name(keyEvent.key)
             set_commands(['(#) Select Gem:' + str(partialNum) + '_', '<==Back'])
     elif keyEvent.key == K_BACKSPACE:
-        if len(playerGoods) >= 10 and partialNum != '':
+        if len(gemList) >= 10 and partialNum != '':
             partialNum = partialNum[:-1]
         elif litany is None:
             townmode.town_mode()
@@ -404,7 +404,7 @@ def select_gem_interpreter(keyEvent, testing=False):
             shopkeeper.litany = litany
             conversation.converse_with(shopkeeper, townmode.town_mode)
     elif keyEvent.key == K_RETURN:
-        if len(playerGoods) >= 10 and partialNum:
+        if len(gemList) >= 10 and partialNum:
             try:
                 chosenPersonGem = gemList[int(partialNum)-1]
             except IndexError:
@@ -434,9 +434,9 @@ chosenEquipment = None
 def select_equipment_interpreter(keyEvent, testing=False):
     global partialNum, chosenEquipment
     if keyEvent.key in NUMBER_KEYS:
-        if len(playerGoods) < 10:
+        if len(equipmentList) < 10:
             num = int(pygame.key.name(keyEvent.key)) - 1
-            if 0 <= num and num < len(playerGoods):
+            if 0 <= num and num < len(equipmentList):
                 global chosenEquipment
                 chosenEquipment = equipmentList[num][1]
                 gem = chosenPersonGem[1]
@@ -455,7 +455,7 @@ def select_equipment_interpreter(keyEvent, testing=False):
             partialNum += pygame.key.name(keyEvent.key)
             set_commands(['(#) Select Equipment:' + str(partialNum) + '_', '<==Back'])
     elif keyEvent.key == K_BACKSPACE:
-        if len(playerGoods) >= 10 and partialNum != '':
+        if len(equipmentList) >= 10 and partialNum != '':
             partialNum = partialNum[:-1]
         elif litany is None:
             townmode.town_mode()
@@ -463,7 +463,7 @@ def select_equipment_interpreter(keyEvent, testing=False):
             shopkeeper.litany = litany
             conversation.converse_with(shopkeeper, townmode.town_mode)
     elif keyEvent.key == K_RETURN:
-        if len(playerGoods) < 10 and partialNum:
+        if len(equipmentList) < 10 and partialNum:
             try:
                 chosenEquipment = equipmentList[int(partialNum)-1][1]
             except IndexError:
@@ -519,7 +519,6 @@ def enchant_equipment():
             continue
     universal.state.party.restores()
     universal.acknowledge(select_gem, (shopkeeper, litany))
-    universal.state.days_pass(3)
     if universal.state.enchantmentFreebies > 0:
         universal.state.enchantmentFreebies -= 1
     else:
@@ -533,6 +532,7 @@ def enchant_equipment():
                 if person.coins >= cost:
                     person.coins -= cost
                     totalToPay -= cost
+    universal.state.days_pass(3)
         
             
 

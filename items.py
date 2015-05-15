@@ -123,7 +123,7 @@ class Item(universal.RPGObject):
         except ValueError:
             _, name, description, attackPenalty, attackDefense, castingPenalty, magicDefense, enchantments, maxEnchantment = itemData.split("Item Data:")
         item.name = name.strip()
-        item.description = description.replace('\n', ' ')
+        item.description = description.replace('\n', ' ').strip()
         item.attackPenalty = int(attackPenalty.strip())
         item.attackDefense = int(attackDefense.strip())
         item.castingPenalty = int(castingPenalty.strip())
@@ -206,6 +206,8 @@ class Gem(Item):
         """
         super(Gem, self).__init__(name, description)
         self.enchantmentType = enchantmentType
+        self.cost = enchantmentType().cost
+        self.bonus = enchantmentType().bonus
 
     '''
     def save(self):
