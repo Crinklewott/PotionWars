@@ -31,7 +31,7 @@ import os
 import math
 import ast
 
-DEBUG = False
+DEBUG = True
 playOnMac = False
 SAVE_DELIMITER = '%%%'
 
@@ -1064,7 +1064,7 @@ class State(object):
             index += 1
         else:
             enemiesCanSpank = "True"
-        data[index] = player 
+        player = data[index] 
         index += 1
         characters = data[index]
         index += 1
@@ -1075,11 +1075,13 @@ class State(object):
         party = data[index]
         index += 1
         location = data[index]
+        index += 1
         itemList = data[index]
+        index += 1
         try:
             int(data[index])
         except ValueError:
-            itemStore = data[index]
+            itemStore = data[index].split('\n')
             index += 1
         else:
             itemStore = []
@@ -1143,7 +1145,8 @@ class State(object):
             except KeyError:
                 self._backwards_compatibility_items(name.strip())
         self.itemList = itemList
-        self.itemStore = {itemName:self.itemList[itemName] for itemName in itemStore}
+        itemStore = [itemName.strip() for itemName in itemStore]
+        self.itemStore = {itemName:self.items[itemName] for itemName in itemStore if itemName}
         try:
             self.difficulty = int(difficulty.strip())
         except ValueError:
