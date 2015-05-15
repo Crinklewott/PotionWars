@@ -1497,8 +1497,14 @@ class Person(universal.RPGObject):
         Person.add_data('\n'.join([spell.name for spell in self.ignoredSpells]), saveData)
         Person.add_data(str(self.combatType), saveData) 
         try:
-            Person.add_data(str(self.litany.index), saveData)
+            self.litany = self.litany.index
         except AttributeError:
+            pass
+        if self.litany is None:
+            Person.add_data(str(self.litany), saveData)
+        elif conversation.allNodes[self.litany].name:
+            Person.add_data(conversation.allNodes[self.litany].name, saveData)
+        else:
             Person.add_data(str(self.litany), saveData)
         try:
             Person.add_data(str(self.defaultLitany.index), saveData)
@@ -1541,6 +1547,8 @@ class Person(universal.RPGObject):
         data = data.strip()
         person.spanker = person.spankee = None
         person.grappleDuration = person.originalGrappleDuration = None
+        increaseStatPoints = ''
+        increaseSpellPoints = ''
         try:
             (_, name, gender, description, statuses, rawName, spellNames, inventory, equipmentList, 
                     stats, tier, specialization, 
@@ -1640,7 +1648,10 @@ class Person(universal.RPGObject):
         if litany.strip() == "None":
             person.litany = None
         else:
-            person.litany = int(litany.strip())
+            try:
+                person.litany = int(litany.strip())
+            except ValueError:
+                person.litany = conversation.allNodeNames[litany.strip()].index
         person.defaultLitany = None
         try:
             person.coins = int(coins.strip())
