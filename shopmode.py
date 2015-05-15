@@ -502,8 +502,24 @@ def enchant_equipment():
     enchantment = gem.enchantmentType()
     chosenEquipment.add_enchantment(enchantment)
     chosenPersonGem[0].drop_item(gem)
-    universal.say( ' '.join([chosenEquipment.name, "has been enchanted with", gem.name + "."]))
+    universal.say( ' '.join([chosenEquipment.name, "has been enchanted with", gem.name + ".",
+        "It took 3 days."]))
+    for char in universal.state.party:
+        try:
+            char.marks.pop(0)
+        except IndexError:
+            continue
+        try:
+            char.marks.pop(0)
+        except IndexError:
+            continue
+        try:
+            char.marks.pop(0)
+        except IndexError:
+            continue
+    universal.state.party.restores()
     universal.acknowledge(select_gem, (shopkeeper, litany))
+    universal.state.player.coins -= (universal.state.costPerDay * 3)
     if universal.state.enchantmentFreebies > 0:
         universal.state.enchantmentFreebies -= 1
     else:

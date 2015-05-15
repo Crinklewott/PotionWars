@@ -2184,6 +2184,9 @@ class Party(universal.RPGObject):
         except ValueError:
             pass
 
+    def restores(self):
+        for char in self.members:
+            char.restores()
 
     def add_member(self, member):
         if not member in self.members:

@@ -973,6 +973,7 @@ class State(object):
         self.ENCHANTMENT_COST = 30
         self.enchantmentFreebies = 0
         self.testing = False
+        self.costPerDay = 3
 
     def store_item(self, item):
         """
@@ -1025,6 +1026,8 @@ class State(object):
         saveData.append("State Data:")
         saveData.append(str(self.enchantmentFreebies))
         saveData.append("State Data:")
+        saveData.append(str(self.costPerDay))
+        saveData.append("State Data:")
         for coordinate in self.clearedSquares:
             saveData.append("Square:")
             saveData.append(str(coordinate))
@@ -1069,6 +1072,12 @@ class State(object):
             self.enchantmentFreebies = int(data[index])
         except ValueError:
             self.enchantmentFreebies = 0
+        else:
+            index += 1
+        try:
+            self.costPerDay = int(data[index])
+        except ValueError:
+            self.costPerDay = 3
         else:
             index += 1
         try:
