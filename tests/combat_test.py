@@ -8,10 +8,10 @@ import statusEffects
 import unittest
 import universal
 
-class TestPerson(pwenemies.Enemy):
+class TestEnemy(pwenemies.Enemy):
 
     def __init__(self, name):
-        super(TestPerson, self).__init__(name, person.FEMALE, None, None)
+        super(TestEnemy, self).__init__(name, person.FEMALE, None, None)
         self.printedName = name
 
     def spank_text(self, top, bottom, position_name):
@@ -63,13 +63,13 @@ class TestCombatActions(unittest.TestCase):
         self.set_up_spells()
 
     def set_up_actors(self):
-        self.attacker = TestPerson('attacker') 
+        self.attacker = TestEnemy('attacker') 
         self.attacker.equip(itemspotionwars.familySword)
         self.attacker.set_all_stats(0, 0, 0, 0, 0, 0, 0)
-        self.defender = TestPerson('defender') 
+        self.defender = TestEnemy('defender') 
         self.defender.equip(itemspotionwars.familySword)
         self.defender.set_all_stats(0, 0, 0, 0, 0, 0, 0)
-        self.guardian = TestPerson('guardian')
+        self.guardian = TestEnemy('guardian')
         self.guardian.set_all_stats(0, 0, 0, 0, 0, 0, 0)
         self.guardian.equip(itemspotionwars.familySword)
 

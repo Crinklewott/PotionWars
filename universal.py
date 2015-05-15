@@ -292,7 +292,7 @@ def say(text, columnNum=1, justification=1, fontSize=36, italic=False, bold=Fals
     assert type(numColumns) == int, "%s" % traceback.print_stack()
     numColumns = columnNum
     if state.testing:
-        print(' '.join(text))
+        print(text)
         return
     if type(text) is list:
         textToDisplay += ' '.join(text) 
@@ -379,8 +379,8 @@ def say_title(text, surface=None):
     Similar to say, except uses a larger font, and draws a line around the text rectangle to set it apart from the in-game text.
     """
     global titleText, chosenSurface
-    if universal.state.testing:
-        print(' '.join(text))
+    if state.testing:
+        print(text)
         return
     if surface is not None:
         chosenSurface = surface

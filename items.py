@@ -39,7 +39,7 @@ class Enchantment(universal.RPGObject):
         self.bonus = bonus
 
     def apply_enchantment(self):
-        pass
+        raise NotImplementedError()
 
     @staticmethod
     def add_data(data, saveData):
@@ -61,7 +61,7 @@ class Enchantment(universal.RPGObject):
 
 
     def display(self):
-        return ''.join(['+', str(self.bonus), ' ', universal.stat_name(self.stat)])
+        raise NotImplementedError()
 
 class AttackEnchantment(Enchantment):
     """
@@ -72,6 +72,9 @@ class AttackEnchantment(Enchantment):
 
     def apply_enchantment(self):
         return self.bonus
+
+    def display(self):
+        return ''.join(['+', str(self.bonus), ' damage'])
 
 class MaxEnchantmentError(Exception):
     pass
@@ -241,9 +244,13 @@ class Armor(Item):
     def defense_bonus(self):
         enchantmentBonus = 0
         for enchantment in self.enchantments:
-            enchantmentEffect = enchantment.apply_enchantment()
-            if enchantmentEffect:
-                enchantmentBonus += enchantmentEffect
+            try:
+                enchantmentEffect = enchantment.apply_enchantment()
+            except NotImplementedError:
+                continue
+            else:
+                if enchantmentEffect:
+                    enchantmentBonus += enchantmentEffect
         return enchantmentBonus
 
     def liftlower(self):
@@ -570,9 +577,13 @@ class Weapon(Item):
     def damage_bonus(self):
         enchantmentBonus = 0
         for enchantment in self.enchantments:
-            enchantmentEffect = enchantment.apply_enchantment()
-            if enchantmentEffect:
-                enchantmentBonus += enchantmentEffect
+            try:
+                enchantmentEffect = enchantment.apply_enchantment()
+            except NotImplementedError:
+                continue
+            else:
+                if enchantmentEffect:
+                    enchantmentBonus += enchantmentEffect
         return enchantmentBonus
 
 
@@ -919,4 +930,14 @@ def wearing_dress(person, wearingDress, notWearingDress='', noOuterClothing=''):
 def baring_underwear(underwear, baringMsg, notBaringMsg, notWearingUnderwearMsg=''):
     return notWearingUnderwearMsg if underwear == emptyUnderwear else universal.msg_selector(underwear.baring, {True:baringMsg, False:notBaringMsg})
 
+
+def is_empty_item(item):
+    return (item.name == emptyUnderwear.name or  item.name == emptyLowerArmor.name or 
+            item.name == emptyUpperArmor.name or item.name == emptyWeapon.name)
+
+def is_pajamas(item):
+    try:
+        return 'pajama' in item.armorType
+    except AttributeError:
+        return False
 
