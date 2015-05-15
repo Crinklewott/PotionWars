@@ -1,10 +1,11 @@
 import sys
 import unittest
-import enemytests
-import combatTests
-import dialogueTests
+import tests.enemy_test
+import tests.combat_test
+import tests.dialogue_test
 
-pwSuite = unittest.TestSuite([combatTests.combatSuite, enemytests.enemyTestSuite, dialogueTests.dialogueSuite])
+pwSuite = unittest.TestSuite([tests.combat_test.combatSuite, tests.enemy_test.enemyTestSuite, 
+    tests.dialogue_test.dialogueSuite])
 
 if __name__ == '__main__':
     unittest.TextTestRunner(verbosity=2).run(pwSuite)
