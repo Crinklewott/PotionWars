@@ -291,6 +291,9 @@ def say(text, columnNum=1, justification=1, fontSize=36, italic=False, bold=Fals
     textJustification = justification
     assert type(numColumns) == int, "%s" % traceback.print_stack()
     numColumns = columnNum
+    if state.testing:
+        print(' '.join(text))
+        return
     if type(text) is list:
         textToDisplay += ' '.join(text) 
     else:
@@ -376,6 +379,9 @@ def say_title(text, surface=None):
     Similar to say, except uses a larger font, and draws a line around the text rectangle to set it apart from the in-game text.
     """
     global titleText, chosenSurface
+    if universal.state.testing:
+        print(' '.join(text))
+        return
     if surface is not None:
         chosenSurface = surface
     else:
@@ -966,6 +972,7 @@ class State(object):
         self.itemStore = {}
         self.ENCHANTMENT_COST = 30
         self.enchantmentFreebies = 0
+        self.testing = False
 
     def store_item(self, item):
         """
@@ -1374,10 +1381,6 @@ def set_state(stateIn):
 def set_initial_room(room):
     global state
     state.location = room
-
-def set_state(stateIn):
-    global state
-    state = stateIn
 
 def cond(condition, ifTrue, ifFalse=''):
     return ifTrue if condition else ifFalse
