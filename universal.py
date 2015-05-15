@@ -974,6 +974,21 @@ class State(object):
         self.enchantmentFreebies = 0
         self.testing = False
         self.costPerDay = 3
+        self.days = 0
+
+    def days_pass(self, numDays):
+        """
+        Increments the days value, and decrements the player's coins by costPerDay * numDays.
+        For now, the coins bottom out at zero. However, I think I want to introduce some sort
+        of penalty to the player's health to represent her growing health deterioration from lack
+        of food.
+
+        pre: numDays >= 0
+        post: self.player.coins >= 0
+        """
+        assert numDays >= 0
+        self.days += numDays 
+        self.player.coins = max(0, self.player.coins - numDays * self.costPerDay)
 
     def store_item(self, item):
         """
@@ -1028,6 +1043,8 @@ class State(object):
         saveData.append("State Data:")
         saveData.append(str(self.costPerDay))
         saveData.append("State Data:")
+        saveData.append(str(self.days))
+        saveData.append("State Data:")
         for coordinate in self.clearedSquares:
             saveData.append("Square:")
             saveData.append(str(coordinate))
@@ -1078,6 +1095,12 @@ class State(object):
             self.costPerDay = int(data[index])
         except ValueError:
             self.costPerDay = 3
+        else:
+            index += 1
+        try:
+            self.days = int(data[index])
+        except ValueError:
+            self.days = 0
         else:
             index += 1
         try:

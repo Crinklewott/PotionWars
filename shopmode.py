@@ -519,7 +519,7 @@ def enchant_equipment():
             continue
     universal.state.party.restores()
     universal.acknowledge(select_gem, (shopkeeper, litany))
-    universal.state.player.coins -= (universal.state.costPerDay * 3)
+    universal.state.days_pass(3)
     if universal.state.enchantmentFreebies > 0:
         universal.state.enchantmentFreebies -= 1
     else:

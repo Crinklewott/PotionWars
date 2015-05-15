@@ -199,7 +199,7 @@ def opening_crawl():
     delay()
     if not skip:
         music.play_music(OPENING_CRAWL, fadeoutTime=0, wait=True)
-    universal.say_replace(["Along the coast of the Medios Sea is a region rife with bickering city-states, known collectively as the 1024. The city-states are inhabited by two broad cultures: the bronze-skinned "
+    universal.say_replace(["Along the coast of the Medios Sea is a region rife with bickering city-states, known collectively as the Thousin Cities. The city-states are inhabited by two broad cultures: the bronze-skinned "
         "Taironans, and the much paler Carnutians."])
     display_crawl()
     delay()
