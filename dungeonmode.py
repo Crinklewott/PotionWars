@@ -982,8 +982,12 @@ def dungeon_interpreter(keyEvent):
     elif keyEvent.key == K_g:
         dungeon.go()
     elif keyEvent.key == K_e and has_char('s', dungeon[floor][row][column]):
-        universal.clear_screen()
-        townmode.go(dungeon.adjacent[0])
+        try:
+            townmode.go(dungeon.adjacent[0])
+        except IndexError:
+            pass
+        else:
+            universal.clear_screen()
     return dirtyRects
 
 def select_character_interpreter(keyEvent):
