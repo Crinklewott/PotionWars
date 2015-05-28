@@ -225,7 +225,7 @@ whiteRibbon = items.Item('White Ribbon', 'A simple, yet elegant white silk ribbo
 
 #----------------------------------Pajamas-----------------------------------------
 oldShirt = items.PajamaTop('old shirt', 'An old, but comfortable t-shirt, just perfect for sleeping in.', 0)
-comfyShorts = items.PajamaBottom('comfy shorts', 'A pair of soft, comfy short shorts just perfect for sleeping in.', 0)
+comfyShorts = items.PajamaPants('comfy shorts', 'A pair of soft, comfy short shorts just perfect for sleeping in.', 0)
 
 
 largeShirt = items.FullPajamas('large shirt', 'A comfortable shirt that reaches about halfway down your thighs. Great for sleeping in.', 3)
