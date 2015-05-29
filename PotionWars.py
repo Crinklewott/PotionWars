@@ -23,7 +23,14 @@ import pygame
 import episode1
 import episode2CharRooms
 import episode2
+import os
 import os.path
+import sys
+
+#The following three lines are needed by the Mac OS X script to execute properly.
+abspath = os.path.abspath(sys.argv[0])
+dname = os.path.dirname(abspath)
+os.chdir(dname)
 
 universal.set_author('Andrew Russell')
 universal.set_programmer('Andrew Russell')
