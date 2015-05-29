@@ -196,16 +196,16 @@ inlineCommands = {
     r'\olowerlift': ("items.lowerlift(", 1),
     r'\oliftslowers': ("items.liftslowers(", 1),
     r'\olowerslifts': ("items.lowerslifts(", 1),
-    r'\ounderwear':("items.underwear_name(", 1),
-    r'\otrousers': ("items.lower_clothing_name(", 1),
-    r'\opajamabottoms': ("items.pajama_bottom_name(", 1),
-    r'\ospeed': ("person.speed(", 1),
-    r'\owarfare': ("person.warfare(", 1),
-    r'\omagic': ("person.magic(", 1),
-    r'\ograpple': ("person.grapple(", 1),
-    r'\oresilience': ("person.resilience(", 1),
-    r'\owaistbandhem': ("items.waistband_hem(", 1),
-    r'\ohemwaistband': ("items.hem_waistband(", 1),
+    r'\npcunderwear':("items.underwear_name(", 1),
+    r'\npctrousers': ("items.lower_clothing_name(", 1),
+    r'\npcpajamabottoms': ("items.pajama_bottom_name(", 1),
+    r'\npcspeed': ("person.speed(", 1),
+    r'\npcwarfare': ("person.warfare(", 1),
+    r'\npcmagic': ("person.magic(", 1),
+    r'\npcgrapple': ("person.grapple(", 1),
+    r'\npcresilience': ("person.resilience(", 1),
+    r'\npcwaistbandhem': ("items.waistband_hem(", 1),
+    r'\npchemwaistband': ("items.hem_waistband(", 1),
     r'\oheight':("person.height_based_msg(", 5),
     r'\obodyType':("person.bodytype_based_msg(",5),
     r'\omusculature':("person.musculature_based_msg(",4),
@@ -217,7 +217,10 @@ inlineCommands = {
     r'\cond':("universal.cond(", 3),
     r'\bummarks':("pwutilities.bummarks(", 2),
     r'\opajamatype':("items.pajama_type_msg(", 4),
-    r'\itthem':("items.itthem(", 1)
+    r'\itthem':("items.itthem(", 1),
+    r'\otrousers':("items.wearing_trousers(", 4),
+    r'\odress':("items.wearing_dress(", 4),
+    r'\owearingunderwear':("items.wearing_underwear(", 3)
     }
 
 
