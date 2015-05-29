@@ -24,7 +24,7 @@ import person
 
 
 #-----------------------------------Upper Armor----------------------------
-lamellarArmor = items.UpperArmor('laminar armor', 'A sequence of thick rawhide leather plates tied together with thick strings. ' +  
+lamellarArmor = items.UpperArmor('lamellar armor', 'A sequence of thick rawhide leather plates tied together with thick strings. ' +  
 'It is fairly flexible, but much thicker and heavier than clothing leather. However, because it does not contain much (if any) iron, it does not interfere with spellcasting.', attackDefense=6,
 attackPenalty=1, price=400)
 
@@ -83,6 +83,8 @@ flowerPrintTrousers = items.Pants('yellow trousers', "A small pair of dark yello
 powderBlueTrousers = items.Pants('powder blue trousers', "A pair of soft, powder blue trousers spun from fine cotton without any trim.", price=25, tightness=items.LOOSE)
 blueShorts = items.Shorts('blue shorts', 'A pair of blue shorts cut in a style similar to what young boys wear in the middle and upper classes.', price=10, tightness=items.LOOSE)
 
+cutoffShorts = items.Shorts('cut off shorts', "A pair of cut-off leather shorts that barely cover one's bottom.", price=0, risque=4, tightness=items.TIGHT)
+
 #---------------------------------------items.Skirts------------------------------------
 combatSkirt = items.Skirt('combat skirt', 'A skirt that extends down to just shy of the knees. There is the faintest hint of magic. Not much, but enough that the skirt likely provides some limited combat protection.', price=5, attackDefense=2, tightness=items.LOOSE)
 
@@ -97,7 +99,6 @@ pencilSkirt = items.Skirt('pencil skirt', 'A narrow, black skirt that extends ju
 
 alondrasSkirt = items.Skirt("Alondra's Skirt", "A plain wool skirt belonging to Alondra", price=0, risque=0, tightness=items.LOOSE)
 
-cutoffShorts = items.Shorts('cut off shorts', "A pair of cut-off leather shorts that barely cover one's bottom.", price=0, risque=4, tightness=items.TIGHT)
 
 #------------------------------------items.Underwear-------------------------------------
 modestUnderwear = items.Underwear("underwear", universal.format_line(['A plain, modest pair of underwear that', 'covers the entire bottom.']), price=3)

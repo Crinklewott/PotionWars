@@ -408,7 +408,7 @@ class SpectralPush(p.Spectral):
         3. This action
         """
         super(SpectralPush, self).effect(inCombat)
-        spankingEffect = self.is_spanking()
+        spankingEffect = self.being_spanked()
         if spankingEffect:
             return spankingEffect
         attacker = self.attacker
@@ -504,7 +504,7 @@ class SpectralPull(p.Spectral):
         3. This action
         """
         super(SpectralPull, self).effect(inCombat)
-        spankingEffect = self.is_spanking()
+        spankingEffect = self.being_spanked()
         if spankingEffect:
             return spankingEffect
         attacker  = self.attacker
@@ -594,7 +594,7 @@ class SpectralShove(p.Spectral):
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(SpectralShove, self).effect(inCombat)
-        spankingEffect = self.is_spanking()
+        spankingEffect = self.being_spanked()
         if spankingEffect:
             return spankingEffect
         attacker = self.attacker
@@ -1022,7 +1022,7 @@ class SuperShield(p.Buff):
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(SuperShield, self).effect(inCombat)
-        spankingEffect = self.is_spanking()
+        spankingEffect = self.being_spanked()
         if spankingEffect:
             return spankingEffect
         recipient = self.defenders[0]
@@ -1090,32 +1090,21 @@ class SpectralStrapping(p.SpectralSpanking):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        self.effectStatements = [[A, 'holds up', p.hisher(attacker), 'hands. A ghostly shape that vaguely resembles a hand and a shape that resembles a strap form above',
-            p.himher(attacker), '.', 
-            p.HeShe(attacker), 'throws out', p.hisher(attacker), 'hands in the direction of', D, '. Noticing this,', D, 
-            'backs up rapidly and tries to find a way to avoid the spectral hand and strap. Then,', A, 
-            '\'s left hand snaps down and closes into a fist. The ghostly hand snaps down and grabs the back of', D + '\'s', defender.lower_clothing()]]
+        self.effectStatements = [[A, 'flings', p.hisher(attacker), 'hand out at', D + ".", 'A faintly glowing rope flies from', p.hisher(attacker), 'palm and wraps itself',
+            'around', D + ".", A, 'snaps', p.hisher(attacker), 'arm back, spinning', D, 'around so that', D, 'is facing away from', A + "."]] 
         return super(SpectralStrapping, self).effect_statement(defender)    
     
-    def immune_statement(self, defender):
-        return ['The hand dissipates as soon as it touches', defender.printedName]
-
     def success_statement(self, defender):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        return [A, 'lifts', p.hisher(attacker), 'into the air, and the spectral hand lifts', D, 'off the ground.', D, 'struggles desperately.', A, 'draws back', p.hisher(attacker), 
-                'right hand, and then snaps it forward. In perfect sync, the strap draws back, and then cracks against', defender.clad_bottom(), '.', D, 
-                'yelps as a fiery sting spreads through', p.hisher(defender), 'bottom.'] 
+        return [A, 'snaps the cord taught, smirking as', p.heshe(attacker), 'watches', D, 'squirm.', p.HeShe(attacker), 'draws', p.hisher(attacker), 'free hand back.', 
+                'A long, spectral strap forms in', p.hisher(attacker), 'hand.', A, 'swings', 
+                p.hisher(attacker), 'arm through the air and snaps the strap against', D + "'s", 
+                defender.bum_adj(), 'bottom.', D, 
+                'stiffens and squeaks as a sharp sting spreads across', p.hisher(defender), 
+                defender.quivering(), 'bottom.'] 
 
-    def end_statement(self, defender):
-        attacker = self.attacker
-        A = attacker.printedName
-        D = defender.printedName
-        resultStatement = ' '.join(['\nEventually, the strap fades.', A, 'raises', p.hisher(attacker), 
-                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', p.himher(defender), 'into the ground.'])
-        return resultStatement
-    
     def round_statement(self, defender):     
         attacker = self.attacker
         resultStatement = ' '.join(["The spectral strap snaps repeatedly against", defender.printedName + "'s", defender.quivering() + ",", "rapidly reddening bottom.", defender.HeShe(), 
@@ -1124,7 +1113,7 @@ class SpectralStrapping(p.SpectralSpanking):
             attacker.decrease_stat(universal.CURRENT_MANA, 2)
             return resultStatement
         else:
-            return '\n\n'.join([resultStatement, self.end_statement()])
+            return '\n\n'.join([resultStatement, self.end_statement(defender)])
 
         
 class SpectralCaning(p.SpectralSpanking):
@@ -1163,34 +1152,17 @@ class SpectralCaning(p.SpectralSpanking):
     def effect(self, inCombat=True, allies=None, enemies=None):
         return super(SpectralCaning, self).effect(inCombat, allies, enemies)
 
-    def effect_statement(self, defender):
-        attacker = self.attacker
-        A = attacker.printedName
-        D = defender.printedName
-        self.effectStatements = [[A, 'holds up', p.hisher(attacker), 'hands. A ghostly shape that vaguely resembles a hand and a shape that resembles a cane form above',
-            p.himher(attacker), '.', 
-            p.HeShe(attacker), 'throws out', p.hisher(attacker), 'hands in the direction of', D, '. Noticing this,', D, 
-            'backs up rapidly and tries to find a way to avoid the spectral hand and cane. Then,', A, 
-            '\'s left hand snaps down and closes into a fist. The ghostly hand snaps down and grabs the back of', D + '\'s', defender.lower_clothing()]]
-        return super(SpectralCaning, self).effect_statement(defender)    
-    
-    def immune_statement(self, defender):
-        return ['The hand dissipates as soon as it touches', defender.printedName]
-
     def success_statement(self, defender):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        return [A, 'lifts', p.hisher(attacker), 'into the air, and the spectral hand lifts', D, 'off the ground.', D, 'struggles desperately.', A, 'draws back', p.hisher(attacker), 
-                'right hand, and then snaps it forward. In perfect sync, the cane draws back, and then cracks against', defender.clad_bottom(), '.', D, 
-                'howls as a thin, deep sting burns through', p.hisher(defender), 'bottom.'] 
-
-    def end_statement(self, defender):
-        attacker = self.attacker
-        A = attacker.printedName
-        D = defender.printedName
-        return ' '.join(['\nEventually, the cane fades.', A, 'raises', p.hisher(attacker), 
-                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', p.himher(defender), 'into the ground.']) 
+        return [A, 'snaps the cord taught, smirking as', p.heshe(attacker), 'watches', D, 'squirm.', 
+                p.HeShe(attacker), 'draws', p.hisher(attacker), 'free hand back.', 
+                'A long, thin, whippy cane forms in', p.hisher(attacker), 'hand.', A, 'whips', 
+                p.hisher(attacker), 'arm through the air and cuts the cane against', D + "'s", 
+                defender.bum_adj(), 'bottom.', D, 
+                'squeals as a deep line of fire spreads across', p.hisher(defender), 
+                defender.quivering(), 'bottom.'] 
 
     def round_statement(self, defender):
         attacker = self.attacker
@@ -1201,7 +1173,7 @@ class SpectralCaning(p.SpectralSpanking):
             attacker.decrease_stat(universal.CURRENT_MANA, 3)
             return resultStatement
         else:
-            return '\n\n'.join([resultStatement, self.end_statement()])
+            return '\n\n'.join([resultStatement, self.end_statement(defender)])
 
         
 spectralSpanking = p.SpectralSpanking(None, None) 

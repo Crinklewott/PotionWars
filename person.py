@@ -1160,7 +1160,7 @@ class Person(universal.RPGObject):
         return self.lower_clothing().name == items.emptyLowerArmor.name
 
     def is_shirtless(self):
-        return self.upper_clothing().name == items.emptyUpperArmor.name
+        return self.shirt().name == items.emptyUpperArmor.name
 
     def worn_lower_clothing(self):
         return self.lower_clothing().name if self.lower_clothing() != items.emptyLowerArmor else self.underwear().name
@@ -2960,9 +2960,9 @@ class SpectralSpanking(Spectral):
         attacker = self.attacker
         defender = defender
         resultStatement = universal.format_text([[attacker.printedName, "swishes", attacker.hisher(), 
-            "hand back and forth through the air. The giant, ghostly hand arcs in sync with", 
-                "the motion, cracking repeatedly against", defender.printedName + "'s", defender.quivering(), "bottom.", defender.printedName, 
-                "yelps and kicks with every heavy blow."]])
+            "hand back and forth through the air, sending wave after wave of spectral energy cracking against", 
+            defender.printedName + "'s", defender.quivering(), "bottom.", defender.printedName, 
+                "yelps and wiggles", hisher(defender), defender.quivering(), "bottom with every heavy blow."]])
         if attacker.current_mana():
             attacker.decrease_stat(universal.CURRENT_MANA, 1)
             return resultStatement
@@ -2976,40 +2976,37 @@ class SpectralSpanking(Spectral):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        self.effectStatements = [[A, 'holds up', hisher(attacker), 'hands. Giant ghostly shapes that vaguely resemble hands form above', himher(attacker), '.', 
-            HeShe(attacker), 'throws out', hisher(attacker), 'hands in the direction of', D, '. Noticing this,', D, 
-            'backs up rapidly and tries to find a way to avoid the spectral hands. Then,', A, 
-            '\'s left hand snaps down and closes into a fist. The left ghostly hand snaps down and grabs at the back of', D,'\'s', defender.lower_clothing().name + "."]]
+        self.effectStatements = [[A, 'flings', hisher(attacker), 'hand out at', D + ".", 'A faintly glowing rope flies from', hisher(attacker), 'palm and wraps itself',
+            'around', D + ".", A, 'snaps', hisher(attacker), 'arm back, spinning', D, 'around so that', D, 'is facing away from', A + "."]] 
         return super(SpectralSpanking, self).effect_statement(defender) 
     
     def immune_statement(self, defender):
-        return ['The hand dissipates as soon as it touches', defender.printedName]
+        return ['The cord dissipates as soon as it touches', defender.printedName]
 
     def failure_statement(self, defender):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        return [D, 'just barely manages to slip through the hand\'s fingers.', A, 'tries to catch', D, ', but', heshe(defender), 'manages to stay one step ahead of the',
-                'ghostly fingers until the hand finally fades.'] if not attacker.is_grappling(defender) else [D, '''pivots, forcing''', A, '''around so that''', A,
-                        '''is between''', D, '''and the hand.''', A, '''tries to bring the hand around to grab''', D + ",", '''but''', D, '''manages to keep''', A, 
-                        '''in the way until the hand fades.''']
+        return [D, 'just barely manages to slip around the spectral rope.', A, 'tries to catch', D, ', but', heshe(defender), 'manages to stay one step ahead of the',
+                'snapping cord until the cord finally fades.'] if not attacker.is_grappling(defender) else [D, '''pivots rapidly around''', A, '''so that''', A,
+                        '''can't wrap the cord around''', D + '''.''']
 
     def success_statement(self, defender):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
-        return [A, 'lifts', hisher(attacker), 'hand into the air, and the spectral hand lifts', D, 'off the ground.', D, 'struggles desperately.', A, 'draws back', 
-                hisher(attacker), 
-                'right hand, and then snaps it forward. In perfect sync, the right spectral hand draws back, and then cracks against', defender.clad_bottom(), '.', D, 
-                'yelps as a fiery sting spreads through', hisher(defender), 'bottom.'] 
+        return [A, 'snaps the cord taught, smirking as', heshe(attacker), 'watches', D, 'squirm.', HeShe(attacker), 'draws', hisher(attacker), 'free hand back,', 
+                'then snaps it forward. A faint current of spectral energy arcs through the air and smacks against', D + "'s", defender.bum_adj(), 'bottom.', D, 
+                'stiffens as a vicious and humiliating sting spreads across', hisher(defender), defender.quivering(), 'bottom.'] 
 
     def end_statement(self, defender):
         attacker = self.attacker
         A = attacker.printedName
         D = defender.printedName
         defender.receives_damage(self.damage)
-        return ' '.join(['The right hand fades.', A, 'raises', hisher(attacker), 
-                'left hand, and then snaps it down. In response, the left spectral hand raises', D, 'into the air, and then flings', himher(defender), 'into the ground.\n\n',
+        return ' '.join([A, 'draws', hisher(attacker), 
+                'cord hand back, then slams it forward and releases the spectral rope. The rope snaps through the air and smashes into', D, 
+                'unleashing a shock of energy into', hisher(defender), 'body before fading.\n\n',
                 D, 'receives', str(self.damage) + " damage!"]) 
 
 #---------------------------------------Gender-specific functions---------------------------
