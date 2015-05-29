@@ -625,6 +625,31 @@ class Person(universal.RPGObject):
     def shorter_than(self, char):
         return - (HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 1
 
+    #BODY_TYPES = ['slim', 'average', 'voluptuous', 'heavyset']
+    def is_slim(self):
+        return self.bodyType == BODY_TYPES[0]
+
+    def is_average(self):
+        return self.bodyType == BODY_TYPES[1]
+
+    def is_voluptuous(self):
+        return self.bodyType == BODY_TYPES[2]
+
+    def is_heavyset(self):
+        return self.bodyType == BODY_TYPES[3]
+
+    def is_average_or_thinner(self):
+        return self.is_slim() or self.is_average()
+
+    def is_average_or_fatter(self):
+        return not self.is_slim()
+
+    def is_voluptuous_or_thinner(self):
+        return self.is_voluptuous() or self.is_average_or_thinner()
+
+    def is_voluptuous_or_fatter(self):
+        return self.is_voluptuous() or self.is_heavyset()
+
     #HAIR_LENGTH = ['short', 'shoulder-length', 'back-length', 'butt-length']
     def short_hair(self):
         return self.hairLength == 'short'
@@ -1152,6 +1177,9 @@ class Person(universal.RPGObject):
         return self.equipmentList[SHIRT]
     def lower_clothing(self):
         return self.equipmentList[LOWER_CLOTHING]
+
+    def bottom_is_bare(self):
+        return self.lower_clothing().baring and self.underwear().baring
 
     def is_naked(self):
         return self.is_pantsless() and not self.wearing_underwear()
