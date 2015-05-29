@@ -1715,7 +1715,7 @@ def improve_characters(victorious, afterCombatEvent=None):
                     gain += 1
                     ally.improve_stat(i, 1)
                     if i == universal.TALENT:
-                        manaGain += int(math.ceil(ally.mana() * MANA_MULTIPLIER))
+                        manaGain += 3
                         ally.improve_stat(person.MANA, manaGain)
                     ally.increaseStatPoints[i] -= stat 
                 statPoints = ally.increaseStatPoints[i]
