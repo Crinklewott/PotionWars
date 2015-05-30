@@ -411,10 +411,18 @@ class Bedroom(Room):
                     episode1.ep1_catalin()
             else:
                 self.clean_check()
-                universal.say(universal.format_text([[person.get_PC().name, '''plops down in''', person.hisher(), '''nice bed, and sleeps the night away.''']]), justification=0)
-        person.get_PC().restores()
+                universal.say(universal.format_text([[person.get_PC().name, '''plops down in''', 
+                    person.hisher(), '''nice bed, and sleeps the night away.''']]), 
+                    justification=0)
+                #TODO: Need to figure out a way to implement the health penalties.
+                for char in universal.state.party:
+                    if char.coins >= universal.state.livingExpenses:
+                        char.coins -= 3
+                    else:
+                        char.coins = 0
+                    char.restores()
         self.dayNum += 1
-        self.dirtiness += 1
+        #self.dirtiness += 1
         
     def clean_check(self):
         pass
