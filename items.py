@@ -66,6 +66,13 @@ class AttackEnchantment(Enchantment):
     """
     pass
 
+class SpeedEnchantment(Enchantment):
+    """
+    Grants a +1 bonus to Alertness 
+    """
+    def __init__(self, cost=3, stat=universal.ALERTNESS, bonus=1):
+        super(SpeedEnchantment, self).__init__(cost, stat, bonus)
+
 class MaxEnchantmentError(Exception):
     pass
 
