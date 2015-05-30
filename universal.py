@@ -963,6 +963,8 @@ class State(object):
         #A list of triples containing the coordinates of one-time encounters that have been cleared. This is automatically emptied at the end of each episode.
         self.clearedSquares = []
         self.enemiesCanSpank = True
+        self.defeatedAllies = []
+        self.defeatedEnemies = []
 
     def save(self, saveFile):
         saveData = []
