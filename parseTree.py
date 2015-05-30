@@ -217,7 +217,8 @@ inlineCommands = {
     r'\cond':("universal.cond(", 3),
     r'\bummarks':("pwutilities.bummarks(", 2),
     r'\opajamatype':("items.pajama_type_msg(", 4),
-    r'\itthem':("items.itthem(", 1)
+    r'\itthem':("items.itthem(", 1),
+    r'\oshirt':("items.shirt_name(", 1)
     }
 
 

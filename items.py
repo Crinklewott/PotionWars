@@ -932,6 +932,8 @@ def wearing_dress(person, wearingDress, notWearingDress='', noOuterClothing=''):
 def baring_underwear(underwear, baringMsg, notBaringMsg, notWearingUnderwearMsg=''):
     return notWearingUnderwearMsg if underwear == emptyUnderwear else universal.msg_selector(underwear.baring, {True:baringMsg, False:notBaringMsg})
 
+def shirt_name(character):
+    return character.shirt().name
 
 def is_empty_item(item):
     return (item.name == emptyUnderwear.name or  item.name == emptyLowerArmor.name or 
