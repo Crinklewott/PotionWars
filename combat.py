@@ -1685,6 +1685,7 @@ def specialization_bonus(ally, i):
 HIGH_STAT_PENALTY = .1
 HEALTH_MULTIPLIER = .05
 MANA_MULTIPLIER = .2
+
 def improve_characters(victorious, afterCombatEvent=None):
     """
     Takes as argument the function that should be invoked after leveling up is complete.
@@ -1724,13 +1725,7 @@ def improve_characters(victorious, afterCombatEvent=None):
                 universal.say(format_line([ally.name, 'has gained', str(gain), person.primary_stat_name(i) + '.\n']))
             if manaGain:
                 universal.say(format_line([ally.name, 'has gained', str(manaGain), 'Mana.\n']))
-        for i in range(len(ally.increaseSpellPoints)): 
-            #Note: This is much MUCH simpler than what we will actually allow. This simply checks if the player has 5 spell points, and then has the player learn the advanced spell if the player 
-            #doesn't already know it.
-            #This is only a stop-gap measure. The actual learning spell mechanic will be much more complicated, but I don't want to implement that until I've built a proper GUI.
-            if ally.increaseSpellPoints[i] >= (ally.tier*universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS) and not ally.knows_spell(person.allSpells[0][i][1]):
-                learn_spell(ally, i+universal.COMBAT_MAGIC)
-                ally.increaseSpellPoints[i] -= ally.tier*universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
+        process_spell_points(ally)
         #Now that we're done increasing stats, we can reinflict any lingering statuses
         for statusName in allyStatuses:
             status = allyStatuses[statusName][0]
@@ -1741,34 +1736,53 @@ def improve_characters(victorious, afterCombatEvent=None):
     else:
         acknowledge(previousMode)
 
+def process_spell_points(ally):
+    if ally.tier:
+        spellThreshold = ally.tier * universal.STAT_GROWTH_RATE_MULTIPLIER
+    else:
+        spellThreshold = person.TIER_0_SPELL_POINTS
+    for i in range(len(ally.increaseSpellPoints)): 
+        while ally.increaseSpellPoints[i] >= spellThreshold:
+            try:
+                learn_spell(ally, i+universal.COMBAT_MAGIC)
+            except AllSpellsLearned:
+                break
+            else:
+                ally.increaseSpellPoints -= spellThreshold
+
+
+class AllSpellsLearned(Exception):
+    pass
+
 def learn_spell(ally, spellSchool):
     """
-    TODO: Currently, the spells learned are random within a given school. However, this needs to be modified to give the player a choice. I'll implement for a choice as a part of episode 3, when I rework the GUI. Don't want to add too much more to the
-    GUI until I've reworked it.
+    Learns the next spell in the list. 
+    Spells are learned in the following order: basic, advanced, expert (if the ally is specialized
+    in that type of spell), next tier.
     """
     spellIndex = person.get_spell_index(spellSchool)
     unknownSpells = []
+    newSpell = None
     for i in range(0, ally.tier+1):
-        #Need to learn basic before you can learn advanced before you can learn specialized. Can only learn specialized if you are specialized in this particular type of
-        #magic.
-        try:
-            if not ally.knows_spell(person.allSpells[i][spellIndex][0]):
-                #We weight the spells based on their tier level. Spells that have tier 0 have 1 weight, spells of tier 1 have 2 weight and so on. This increases the chances
-                #of a character learning a more powerful spell sooner.
-                unknownSpells.append(person.allSpells[i][spellIndex][0])    
-            elif not ally.knows_spell(person.allSpells[i][spellIndex][1]):
-                unknownSpells.append(person.allSpells[i][spellIndex][1])    
-            elif ally.specialization == spellSchool and not ally.knows_spell(person.allSpells[i][spellIndex][2]):
-                unknownSpells.append(person.allSpells[i][spellIndex][2])    
-        except TypeError:
-            continue
-    if len(unknownSpells) > 0:
-        learnedSpell = unknownSpells[random.randint(0, len(unknownSpells)-1)]
-        ally.learn_spell(learnedSpell)
-        ally.add_quick_spell(learnedSpell)
-        universal.say(format_line([ally.name, 'has learned the spell', learnedSpell.name + '!\n']))
+        #Need to learn basic before you can learn advanced before you can learn specialized. Can 
+        #only learn specialized if you are specialized in this particular type of magic.
+        basicSpell = person.allSpells[i][spellIndex][0]
+        advancedSpell = person.allSpells[i][spellIndex][1]
+        expertSpell = person.allSpells[i][spellIndex][2]
+        if not ally.knows_spell(basicSpell):
+            newSpell = basicSpell
+            break
+        elif not ally.knows_spell(advancedSpell):
+            newSpell = advancedSpell
+            break
+        elif ally.specialization == spellSchool and not ally.knows_spell(expertSpell):
+            newSpell = expertSpell
+            break
+    if newSpell:
+        ally.learn_spell(newSpell)
+        universal.say(' '.join([ally.printedName, 'has learned the spell', newSpell.name + "!"]))
     else:
-        ally.increaseSpellPoints[i-universal.COMBAT_MAGIC] = ally.tier * universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
+        raise AllSpellsLearned()
         
 
 """ 
