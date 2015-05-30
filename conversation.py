@@ -62,14 +62,12 @@ def say_node(litanyIndex):
     """
     litanyIndex is a terrible argument name and should be changed. It can be either the natural number that is the node's index, or it can be the node itself.
     """
+    #import traceback
+    #traceback.print_stack()
+    global previousMode
     #This may appear redundant, but it's possible for a node's quip_function to immediately invoke a different node, without going through the player. In that case,
     #we need to make sure that the current litany of the conversationPartner is properly updated.
-    import traceback
-    traceback.print_stack()
-    global previousMode
     conversationPartner.litany = litanyIndex
-    print("current litany index:")
-    print(litanyIndex)
     try:
         litany = allNodes[litanyIndex]
     except KeyError:
@@ -94,7 +92,6 @@ def say_node(litanyIndex):
                 executeImmediately = result[2]
             except IndexError:
                 pass
-    print(litany.children)
     if litany.quip == '':
         if args is not None and function is not None:
             function(*args)
