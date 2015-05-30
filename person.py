@@ -58,7 +58,7 @@ GRAPPLING = 5
 BALANCED = 6
 """
 
-TALENT_PER_TIER = 10
+TALENT_PER_TIER = 5
 
 allStats = [universal.WARFARE, universal.MAGIC, universal.RESILIENCE, universal.GRAPPLE, universal.SPEED, universal.HEALTH, universal.MANA, universal.CURRENT_HEALTH, 
         universal.CURRENT_MANA]
