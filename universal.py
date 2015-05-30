@@ -702,6 +702,11 @@ def init_game():
 postAcknowledgeFunction = None
 postAcknowledgeArgs = None
 def acknowledge(function, *args):
+    """
+    Allows us to delay an action until the player hits enter. Takes two arguments:
+    1. function - The function to be executed when the player hits enter.
+    2. args = The arguments to be applied to that function
+    """
     global postAcknowledgeFunction
     global postAcknowledgeArgs
     postAcknowledgeFunction = function
@@ -965,6 +970,7 @@ class State(object):
         self.enemiesCanSpank = True
         self.defeatedAllies = []
         self.defeatedEnemies = []
+        self.livingExpenses = 3
 
     def save(self, saveFile):
         saveData = []
