@@ -990,13 +990,15 @@ class State(object):
         self.days += numDays 
         self.player.coins = max(0, self.player.coins - numDays * self.costPerDay)
 
-    def store_item(self, item):
+    def store_item(self, item, key=None):
         """
         The state's item store is used to remember equipment that is made temporarily unavailable,
         but needs to be made available again.
-        The item is stored based on the item's name.
+        If a key to store the item under is not provided, then it uses the item's name.
         """
-        self.itemStore[item.name] = item
+        if key is None:
+            key = item.name
+        self.itemStore[key] = item
 
     def remove_item_from_store(self, item):
         try:
@@ -1035,7 +1037,7 @@ class State(object):
             saveData.append(name)
             saveData.append(item.save())
         saveData.append("State Data:")
-        saveData.extend(self.itemStore.keys())
+        saveData.extend(str((key, item.name)) for key, item in self.itemStore.iteritems())
         saveData.append("State Data:")
         saveData.append(str(self.difficulty))
         saveData.append("State Data:")
@@ -1145,8 +1147,8 @@ class State(object):
             except KeyError:
                 self._backwards_compatibility_items(name.strip())
         self.itemList = itemList
-        itemStore = [itemName.strip() for itemName in itemStore]
-        self.itemStore = {itemName:self.items[itemName] for itemName in itemStore if itemName}
+        itemStore = [itemTuple.strip() for itemName in itemStore if itemTuple.strip()]
+        self.itemStore = {key:self.items[itemName] for key, itemName in itemStore}
         try:
             self.difficulty = int(difficulty.strip())
         except ValueError:
