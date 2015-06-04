@@ -625,6 +625,20 @@ class Person(universal.RPGObject):
     def shorter_than(self, char):
         return - (HEIGHTS.index(self.height) - HEIGHTS.index(char.height)) >= 1
 
+    def height_modifier(self):
+        """
+        Returns a numeric modifier based on the height of the character. Taller heights yield
+        larger modifiers
+        """
+        if self.is_short():
+            return 1
+        elif self.is_tall():
+            return 3
+        elif self.is_huge():
+            return 4
+        else:
+            return 2
+
     #BODY_TYPES = ['slim', 'average', 'voluptuous', 'heavyset']
     def is_slim(self):
         return self.bodyType == BODY_TYPES[0]
