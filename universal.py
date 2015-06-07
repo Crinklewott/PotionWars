@@ -1216,7 +1216,7 @@ class State(object):
     def get_item(self, itemName):
         #NOTE: This is here for backwards compatibility
         try:
-            return self.items[itemName]
+            return self.items[itemName.strip()]
         except KeyError:
             if itemName == "loincloth of stealth":
                 return self.items["loincloth of speed"]
