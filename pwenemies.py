@@ -32,7 +32,7 @@ class Enemy(person.Person):
     ROUND_INDEX = 1
     enemy = True
     count = 0
-    def __init__(self, name, gender, defaultLitany, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3, musculature='', 
+    def __init__(self, name, gender, defaultLitany=None, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3, musculature='', 
             bodyType='', height='', hairLength='', hairStyle='', eyeColor='', skinColor='', order=person.zeroth_order, identifier=None, litany=None):
         """
         Drop chance determines the chances that this character will drop a piece of equipment.
@@ -800,3 +800,27 @@ class VengadorScout(Enemy):
         
     #abstractmethod
 
+
+class Thumper(Enemy):
+    """
+    These guys and gals are the shocktroops of the various street gangs that run the streets of the slums (with Tristana the Potion Lady's permission of course). Their job is simple: They collect a "toll" from anyone trying to use their gang's streets, and they work as the muscle when one of their bosses tries to intimidate someone into doing something for their gang. They also work as cannon fodder in fights with other gangs, and with the city guard. They carry heavy cudgels into battle, about the same length as a sword. Their name comes from their tendency to hammer their cudgels against the nearest wall to scare their victim. They're of average height and build, maybe a little on the thin side from not eating very well (being at the bottom of the pecking order and all that). Still, they have a certain wiry strength about them, and are equally dangerous both at armslength, and in a grapple. Note: Thumper is actually a derogatory name that people call them (not to their face).
+    """
+    pass
+
+class Crackler(Enemy):
+    """
+    Big and muscular, these guys and gals think that their size gives them a right to other people's food, money, and potions. They'll first try to intimidate their victims into giving up their valuables. If their victims refuse, they like to get in close, and use their vicious wooden knuckles to pummel their opponents. As a result, they are skilled grapplers, and have a very high health. Their name is a derogatory nickname that comes from their tendency to crack their knuckles when trying to intimidate someone.
+    """
+    pass
+
+class Sparkler(Enemy):
+    """
+    Mostly self-taught warslingers, these guys and gals know (and aren't afraid to use) the basic combat and healing spells. Their name, like Thumper is actually a derogatory name given them by the people of the Slums. The name comes from their tendency to roll sparks across their fingertips as a warning of what they're capable of.  They don't use any weapon, relying solely on their magic. Their magic grants them a lot of respect amongst the lower echelons of criminal society, so they tend to be better fed. As a result, they tend to be a little bit fleshier than most, and they're a little on the tall side of average.
+    """
+    pass
+
+class Stomper(Enemy):
+    """
+    Fighters of average build and height, these guys rely on large, thick quarterstaffs in combat (and they're quite good at using them too, both offensively and defensively). While Thumpers bang their cudgels against the walls, Stompers bang their staffs against the ground. In addition to their skill with staffs, Stompers also have some basic talent in Status spells.
+    """
+    pass
