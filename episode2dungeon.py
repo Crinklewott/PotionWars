@@ -13,6 +13,8 @@ You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import pwutilities
+
 
     #               0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19
 slumsLevel1Map = (
@@ -39,6 +41,14 @@ slumsLevel1Map = (
                  ("|s__","___","___","___","___","___","___","___","___",";__","___","___","|__","___","___","___","___","___","___","___","|" )  #0
                  )
 
+def e1_0_0():
+    if 'ep2Toll' in pwutilities.keywords():
+        return False
+    else:
+        pwutilities.add_keyword('ep2Toll')
+        pwutilities.trigger_event("ep2 dungeon toll")
+        return True
+
 slumsLevel1Events = (
                    #0    1    2   3     4   5    6    7     8   9    10   11   12   13  14    15   16   17   18   19
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #19
@@ -60,7 +70,7 @@ slumsLevel1Events = (
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #3
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #2
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #1
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #0
+                 (e1_0_0,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #0
                  )
 
 slumEvents = [slumsLevel1Events]
