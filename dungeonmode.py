@@ -359,6 +359,7 @@ class Dungeon(townmode.Room):
             bgMusic=None, enemies=None, maxEnemies=None, ambushChance=None, encounterRates=None):
         super(Dungeon, self).__init__(name, description, adjacent, characters, after_arrival, bgMusic)
         self.direction = direction
+        #(floor, ycoordinate, xcoordinate)
         self.coordinates = (-1, -1, -1)
         self.dungeonMap = {}
         count = 0
