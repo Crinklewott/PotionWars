@@ -3299,6 +3299,16 @@ def HeroHeroine(person=None):
         person = universal.state.player
     return choose_string(person, 'Hero', 'Heroine')
 
+def guygirl(person=None):
+    if person is None:
+        person = universal.state.player
+    return choose_string(person, 'guy', 'girl')
+
+def GuyGirl(person=None):
+    if person is None:
+        person = universal.state.player
+    return choose_string(person, 'Guy', 'Girl')
+
 #The following functions are used to simplify the LaTeX to Python translation. 
 
 def muscle_adj(personName):
@@ -3312,6 +3322,7 @@ def quiver(personName):
 
 def quivering(personName):
     return universal.state.player.get_character(personName).quivering()
+
 
 
 def speed(personName):
