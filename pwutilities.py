@@ -248,13 +248,15 @@ titleScreen.set_opening_crawl(CHURCH)
 #A dummy character who exists solely to give us someone to talk to for arbitrary conversations. Conversations are incorporated into the dungeons as follows:
 maze = person.Person("maze", person.FEMALE, None, None)
 
-def begin_maze_event(node, eventTitle):
+def trigger_event(nodeName, eventTitle):
     """
-    Given a conversation node, and the title of the desired dungeon event, begins the dungeon event.
+    Given the name of a conversation node, and the title of the desired dungeon event, begins the
+    dungeon event.
     This should be called in every event function that needs to display automatically generated conversation nodes.
     """
+    node = conversation.allNodeNames["ep2 marketplace"]
     global maze
     maze.name = eventTitle
     maze.litany = node.index
-    conversation.converse_with(maze)
+    conversation.converse_with(maze, dungeonmode.dungeon_mode)
 
