@@ -857,6 +857,18 @@ def pajama_type_msg(person, dropSeatMsg, pantsMsg, dressMsg):
     else:
         return dressMsg
 
+def weapon_msg(person, daggerMsg, swordMsg, spearMsg):
+    weaponType = person.weapon().weaponType
+    if weaponType == Knife.weaponType:
+        return daggerMsg
+    elif weaponType == Sword.weaponType:
+        return swordMsg
+    elif weaponType == Spear.weaponType:
+        return spearMsg
+    else:
+        raise ValueError("Weapon Msg expects the character to be wielding a dagger,"
+                + "sword, or spear. Character: " + person.name() + "is wielding: " + weaponType)
+
 def is_tight(clothing):
     try:
         return clothing.tightness == 'tight'

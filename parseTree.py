@@ -151,6 +151,7 @@ inlineCommandsPlayer = {
     r'\isfemale':("person.is_female_msg(universal.state.player, ", 2),
     r'\stageDirections':("pwutilities.stage_directions(", 1),
     r'\ppajamatype':("items.pajama_type_msg(universal.state.player,", 3),
+    r'\pwielding':("items.weapon_msg(universal.state.player,", 3)
     }
 
 #The first line of all these commands is code: the person to apply the function to.
@@ -220,7 +221,8 @@ inlineCommands = {
     r'\itthem':("items.itthem(", 1),
     r'\otrousers':("items.wearing_trousers(", 4),
     r'\odress':("items.wearing_dress(", 4),
-    r'\owearingunderwear':("items.wearing_underwear(", 3)
+    r'\owearingunderwear':("items.wearing_underwear(", 3),
+    r'\owielding':("items.weapon_msg(", 4)
     }
 
 
@@ -322,6 +324,13 @@ class CloseScene(ParseTree):
 
 class AbstractNode(ParseTree):
 
+    def __init__(self, episodeNum, lineNum=-1, children=None, parent=None, data=None):
+        super(AbstractNode, self).__init__(episodeNum, lineNum=lineNum, children=children, 
+                parent=parent, data=data)
+        global nodeNum
+        self.nodeNum = nodeNum
+        nodeNum += 1
+
     def translate(self):
         nodeName = self.data[0].replace(' ', '_')
         if not re.match(re.compile(r'^\w+$'), nodeName):
@@ -359,16 +368,16 @@ class Node(AbstractNode):
         super(Node, self).__init__(parent.episodeNum, lineNum=lineNum, children=children, parent=parent, data=data)
         self.startToken = BEGIN_NODE
         self.endToken = END_NODE
-        global nodeNum
-        self.nodeNum = nodeNum
-        nodeNum += 1
         conversationPartner = self.data[2]
         ancestor = parent
         try:
             while ancestor.startToken != BEGIN_OPEN_SCENE:
                 ancestor = ancestor.parent
         except AttributeError:
-            raise TranslationError(' '.join([errorMsg, color_line(self.lineNum), "Node exists outside of a Scene. Either you've forgotten an open scene environment before this node, or you are including a node after the last close scene environment."]))
+            raise transExceptions.TranslationError(' '.join([errorMsg, color_line(self.lineNum), 
+                "Node exists outside of a Scene. Either you've forgotten an open scene environment",
+                "before this node, or you are including a node after the last close scene",
+                "environment."]))
 
         #data[2] is the character with whom the player is speaking.
         if conversationPartner.lower() == 'self':
