@@ -987,6 +987,9 @@ def dungeon_interpreter(keyEvent):
             pass
         else:
             universal.clear_screen()
+            room = dungeon.adjacent[0]
+            universal.say_title(room.name)
+            universal.say_replace(room.get_description())
     return dirtyRects
 
 def select_character_interpreter(keyEvent):
