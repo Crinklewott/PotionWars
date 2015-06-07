@@ -83,6 +83,8 @@ inlineCommandsPlayer = {
     r'\HisHers':("person.HisHers()",),  
     r'\boygirl':("person.boygirl()",),  
     r'\BoyGirl':("person.BoyGirl()",),  
+    r'\guygirl':("person.guygirl()",),  
+    r'\GuyGirl':("person.GuyGirl()",),  
     r'\manlady':("person.manlady()",),  
     r'\ManLady':("person.ManLady()",),  
     r'\kingqueen':("person.kingqueen()",),  
