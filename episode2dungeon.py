@@ -50,6 +50,25 @@ def e1_0_0():
         pwutilities.trigger_event("ep2 dungeon toll", "Thugs")
         return True
 
+def e1_10_6():
+    if 'ep2Marketplace' in pwutilities.keywords():
+        return False
+    else:
+        pwutilities.add_keyword('ep2Marketplace')
+        pwutilities.trigger_event("ep2 marketplace", "Marketplace")
+        return True
+
+def e1_16_11():
+    if 'ep2ChaseEditaEvent1' in pwutilities.keywords():
+        return False
+    elif 'ep2ChasingEdita' in pwutilities.keywords():
+        pwutilities.add_keyword('ep2ChaseEditaEvent1')
+        pwutilities.trigger_event('ep2 chase edita event 1', "Two Girls")
+        return True
+    else:
+        return False
+
+
 slumsLevel1Events = (
                    #0    1    2   3     4   5    6    7     8   9    10   11   12   13  14    15   16   17   18   19
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #19
@@ -60,12 +79,12 @@ slumsLevel1Events = (
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #14
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #13
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #12
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #11
+                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,e1_16_11,None,None,None), #11
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #10
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #9
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #8
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #7
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #6
+                 (None,None,None,None,None,None,None,None,None,None,e1_10_6,None,None,None,None,None,None,None,None,None), #6
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #5
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #4
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #3
