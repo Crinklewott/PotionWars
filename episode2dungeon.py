@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import dungeonmode
 import pwutilities
 
 
@@ -46,7 +47,7 @@ def e1_0_0():
         return False
     else:
         pwutilities.add_keyword('ep2Toll')
-        pwutilities.trigger_event("ep2 dungeon toll")
+        pwutilities.trigger_event("ep2 dungeon toll", "Thugs")
         return True
 
 slumsLevel1Events = (
