@@ -286,8 +286,6 @@ def go_error_interpreter(keyEvent):
         universal.set_commands([''.join(["Coordinates to travel to:", ', '.join(moveTo)]), '(Esc) Cancel', '<==Back'])  
         universal.set_command_interpreter(go_interpreter)
 
-
-
 class Dungeon(townmode.Room):
     """
     A dungeon, D. D[i][j][k] corresponds to coordinate (j,k) on floor i.
