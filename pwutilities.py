@@ -16,12 +16,13 @@ You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 import conversation
+import dungeonmode
 import episode
 import music
+import person
 import titleScreen
 import townmode
 import universal
-import person
 
 
 def enterLeft(character, room):
@@ -246,7 +247,7 @@ music.set_victory(universal.resource_path('POL-the-challenge-long.wav'))
 titleScreen.set_opening_crawl(CHURCH)
 
 #A dummy character who exists solely to give us someone to talk to for arbitrary conversations. Conversations are incorporated into the dungeons as follows:
-maze = person.Person("maze", person.FEMALE, None, None)
+maze = person.Person("Maze", person.FEMALE, None, None)
 
 def trigger_event(nodeName, eventTitle):
     """
@@ -254,9 +255,9 @@ def trigger_event(nodeName, eventTitle):
     dungeon event.
     This should be called in every event function that needs to display automatically generated conversation nodes.
     """
-    node = conversation.allNodeNames["ep2 marketplace"]
+    node = conversation.allNodeNames[nodeName]
     global maze
-    maze.name = eventTitle
+    maze.printedName = eventTitle
     maze.litany = node.index
     conversation.converse_with(maze, dungeonmode.dungeon_mode)
 
