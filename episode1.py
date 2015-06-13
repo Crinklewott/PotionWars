@@ -7408,7 +7408,7 @@ def mai_speed_thong_interpreter(keyEvent):
             add_keyword('talk_with_Mai')
             universal.say(universal.format_text([['''"This will be useful, I'm sure," says''', name() + ".", '''"However, I've decided that it's not enough."'''],
                 ['''"What?" says Mai in a flat voice.'''],
-                ['''"I think you still need to be spanked," says''', name() + ".", '''The Taironan lunges for the elf. The elf ducks''', names(), '''lung, and trips''',
+                ['''"I think you still need to be spanked," says''', name() + ".", '''The Taironan lunges for the elf. The elf ducks''', names(), '''lunge, and trips''',
                     '''the young Taironan.''', name(), '''falls hard on''', hisher(), '''hands and knees.'''],
                 ['''The elf stripes''', name(), '''three times with her switch.''', name(), '''crawls frantically away, yelping in pain, and nearly falling several''',
                     '''times.'''],
