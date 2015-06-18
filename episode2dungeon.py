@@ -20,7 +20,7 @@ import pwutilities
     #               0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19
 slumsLevel1Map = (
                  ( "___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___", "_"),
-                 ("|   ","___","___","   ","___"," .,","   ","___","___","___",".,", "___","___","___","___","___","___","___","___","   ","|" ), #19
+                 ("|   ","___","___","   ","___"," .,","   ","___","___","___",".,", "___","___"," .,","___"," .,","___"," .,"," .,","   ","|" ), #19
                  ("|   ","|.,",";.,","|  ","|.,",";__","|  ","|__",";  ","___","   ","___","   ",";__","|.,",";.,",";.,",";__","|.,","|  ","|" ), #18
                  ("|   ","|.,",";.,","|  ","|__","|.,","   ","|__",";  ",";__","|  ",";__","|  ",";__","|.,",";__",";__","|  ","|__",";  ","|" ), #17
                  ("|   ","|.,",";.,","|  ",";__","|__","|  ","|__",";__",";__","|.,",";__","|__",";__","|__","___","   ","___","   ","___","|" ), #16 
@@ -68,11 +68,21 @@ def e1_16_11():
     else:
         return False
 
+def e1_18_18():
+    if 'ep2ChasingEditaEvent2' in pwutilities.keywords():
+        return False
+    elif 'ep2ChasingEdita' in pwutilities.keywords():
+        pwutilities.add_keyword('ep2ChasingEditaEvent2')
+        pwutilities.trigger_event('ep2 chase edita event 2', "Busy Street")
+        return True
+    else:
+        return False
+
 
 slumsLevel1Events = (
                    #0    1    2   3     4   5    6    7     8   9    10   11   12   13  14    15   16   17   18   19
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #19
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #18
+                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,e1_18_18,None), #18
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #17
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #16
                  (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #15
