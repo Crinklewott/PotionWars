@@ -59,6 +59,7 @@ def start_scene_1_episode_2(loading=False):
         pwutilities.exitLeft(maria, mariasHome)
     universal.state.player.restores()
     universal.state.player.marks = []
+    universal.state.player.bumStatus = 0
     universal.state.party.remove_member(carrie)
     if 'flirting_with_Carrie' in pwutilities.keywords():
         pwutilities.remove_keyword('flirting_with_Carrie')
@@ -99,25 +100,25 @@ def start_scene_1_episode_2(loading=False):
         conversation.converse_with(universal.state.player, townmode.town_mode)
     if not loading:
         maria = universal.state.get_character('''Maria.person''')
-        maria.litany = conversation.allNodes[396]
+        maria.litany = conversation.allNodes[464]
     if not loading:
         sofia = universal.state.get_character('''Sofia.person''')
-        sofia.litany = conversation.allNodes[397]
+        sofia.litany = conversation.allNodes[465]
     if not loading:
         ildri = universal.state.get_character('''Ildri.person''')
-        ildri.litany = conversation.allNodes[398]
+        ildri.litany = conversation.allNodes[466]
     if not loading:
         peter = universal.state.get_character('''Peter.person''')
-        peter.litany = conversation.allNodes[425]
+        peter.litany = conversation.allNodes[519]
     if not loading:
         elise = universal.state.get_character('''Elise.person''')
-        elise.litany = conversation.allNodes[446]
+        elise.litany = conversation.allNodes[560]
     if not loading:
         carrie = universal.state.get_character('''Carrie.person''')
-        carrie.litany = conversation.allNodes[454]
+        carrie.litany = conversation.allNodes[575]
     if not loading:
         airell = universal.state.get_character('''Airell.person''')
-        airell.litany = conversation.allNodes[470]
+        airell.litany = conversation.allNodes[606]
 
 
 def init_scene_1_episode_2():
@@ -138,7 +139,7 @@ def init_scene_1_episode_2():
         elif 'boarding_with_Maria' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_wakeup, ep2_marias_wake_up)
     ep2_wakeup.quip_function = ep2_wakeup_qf
-    ep2_guild_wake_up = conversation.Node(328, '''ep2 guild wake up''')
+    ep2_guild_wake_up = conversation.Node(329, '''ep2 guild wake up''')
     
     
     def ep2_guild_wake_up_qf():
@@ -152,7 +153,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_guild_wake_up, ep2_guild_no_bar)
     ep2_guild_wake_up.quip_function = ep2_guild_wake_up_qf
-    ep2_extrovert = conversation.Node(329, '''ep2 extrovert''')
+    ep2_extrovert = conversation.Node(331, '''ep2 extrovert''')
     
     
     def ep2_extrovert_qf():
@@ -614,7 +615,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_extrovert, ep2_carrie_no_denial)
     ep2_extrovert.quip_function = ep2_extrovert_qf
-    ep2_carrie_in_denial = conversation.Node(330, '''ep2 carrie in denial''')
+    ep2_carrie_in_denial = conversation.Node(333, '''ep2 carrie in denial''')
     
     
     def ep2_carrie_in_denial_qf():
@@ -686,7 +687,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_in_denial.quip_function = ep2_carrie_in_denial_qf
-    ep2_extrovert_carrie_desire_denial = conversation.Node(331, '''ep2 extrovert carrie desire denial''')
+    ep2_extrovert_carrie_desire_denial = conversation.Node(335, '''ep2 extrovert carrie desire denial''')
     
     
     def ep2_extrovert_carrie_desire_denial_qf():
@@ -1030,7 +1031,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_extrovert_carrie_desire_denial.quip_function = ep2_extrovert_carrie_desire_denial_qf
-    ep2_carrie_no_denial = conversation.Node(332, '''ep2 carrie no denial''')
+    ep2_carrie_no_denial = conversation.Node(337, '''ep2 carrie no denial''')
     
     
     def ep2_carrie_no_denial_qf():
@@ -1086,7 +1087,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_no_denial.quip_function = ep2_carrie_no_denial_qf
-    ep2_extrovert_take_carrie_home = conversation.Node(333, '''ep2 extrovert take carrie home''')
+    ep2_extrovert_take_carrie_home = conversation.Node(339, '''ep2 extrovert take carrie home''')
     
     
     def ep2_extrovert_take_carrie_home_qf():
@@ -1099,7 +1100,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_extrovert_take_carrie_home, ep2_take_carrie_home_male)
     ep2_extrovert_take_carrie_home.quip_function = ep2_extrovert_take_carrie_home_qf
-    ep2_take_carrie_home_female = conversation.Node(334, '''ep2 take carrie home female''')
+    ep2_take_carrie_home_female = conversation.Node(341, '''ep2 take carrie home female''')
     
     
     def ep2_take_carrie_home_female_qf():
@@ -1449,7 +1450,7 @@ def init_scene_1_episode_2():
         elif 'boarding_with_Maria' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_take_carrie_home_female, ep2_take_carrie_home_maria)
     ep2_take_carrie_home_female.quip_function = ep2_take_carrie_home_female_qf
-    ep2_take_carrie_home_male = conversation.Node(335, '''ep2 take carrie home male''')
+    ep2_take_carrie_home_male = conversation.Node(343, '''ep2 take carrie home male''')
     
     
     def ep2_take_carrie_home_male_qf():
@@ -1843,7 +1844,7 @@ def init_scene_1_episode_2():
         elif 'boarding_with_Maria' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_take_carrie_home_male, ep2_take_carrie_home_maria)
     ep2_take_carrie_home_male.quip_function = ep2_take_carrie_home_male_qf
-    ep2_take_carrie_home_guild = conversation.Node(336, '''ep2 take carrie home guild''')
+    ep2_take_carrie_home_guild = conversation.Node(345, '''ep2 take carrie home guild''')
     
     
     def ep2_take_carrie_home_guild_qf():
@@ -2123,7 +2124,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_take_carrie_home_guild.quip_function = ep2_take_carrie_home_guild_qf
-    ep2_take_carrie_home_alondra_fight = conversation.Node(337, '''ep2 take carrie home alondra fight''')
+    ep2_take_carrie_home_alondra_fight = conversation.Node(347, '''ep2 take carrie home alondra fight''')
     
     
     def ep2_take_carrie_home_alondra_fight_qf():
@@ -3185,7 +3186,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_take_carrie_home_alondra_fight.quip_function = ep2_take_carrie_home_alondra_fight_qf
-    ep2_ildri_double_spanking_apologize = conversation.Node(338, '''ep2 ildri double spanking apologize''')
+    ep2_ildri_double_spanking_apologize = conversation.Node(349, '''ep2 ildri double spanking apologize''')
     
     
     def ep2_ildri_double_spanking_apologize_qf():
@@ -4241,7 +4242,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])], [], [], []]), justification=0)
         return conversation.continue_to_node(ep2_ildri_double_spanking_apologize, ep2_carrie_guild_wake_up, False)
     ep2_ildri_double_spanking_apologize.quip_function = ep2_ildri_double_spanking_apologize_qf
-    ep2_ildri_double_spanking_unapologetic = conversation.Node(339, '''ep2 ildri double spanking unapologetic''')
+    ep2_ildri_double_spanking_unapologetic = conversation.Node(351, '''ep2 ildri double spanking unapologetic''')
     
     
     def ep2_ildri_double_spanking_unapologetic_qf():
@@ -4574,7 +4575,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_ildri_double_spanking_unapologetic, ep2_ildri_double_spanking_apologize, False)
     ep2_ildri_double_spanking_unapologetic.quip_function = ep2_ildri_double_spanking_unapologetic_qf
-    ep2_take_carrie_home_alondra_apologize = conversation.Node(340, '''ep2 take carrie home alondra apologize''')
+    ep2_take_carrie_home_alondra_apologize = conversation.Node(353, '''ep2 take carrie home alondra apologize''')
     
     
     def ep2_take_carrie_home_alondra_apologize_qf():
@@ -5026,7 +5027,7 @@ def init_scene_1_episode_2():
  , ' '])], []]), justification=0)
         return conversation.continue_to_node(ep2_take_carrie_home_alondra_apologize, ep2_carrie_guild_wake_up, False)
     ep2_take_carrie_home_alondra_apologize.quip_function = ep2_take_carrie_home_alondra_apologize_qf
-    ep2_carrie_guild_wake_up = conversation.Node(341, '''ep2 carrie guild wake up''')
+    ep2_carrie_guild_wake_up = conversation.Node(355, '''ep2 carrie guild wake up''')
     
     
     def ep2_carrie_guild_wake_up_qf():
@@ -5185,7 +5186,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "bed."
  , ' '])]]), justification=0)
     ep2_carrie_guild_wake_up.quip_function = ep2_carrie_guild_wake_up_qf
-    ep2_carrie_refusal_but_interested = conversation.Node(342, '''ep2 carrie refusal but interested''')
+    ep2_carrie_refusal_but_interested = conversation.Node(357, '''ep2 carrie refusal but interested''')
     
     
     def ep2_carrie_refusal_but_interested_qf():
@@ -5401,7 +5402,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_refusal_but_interested.quip_function = ep2_carrie_refusal_but_interested_qf
-    ep2_carrie_extrovert_refuse_spank = conversation.Node(343, '''ep2 carrie extrovert refuse spank''')
+    ep2_carrie_extrovert_refuse_spank = conversation.Node(359, '''ep2 carrie extrovert refuse spank''')
     
     
     def ep2_carrie_extrovert_refuse_spank_qf():
@@ -5970,7 +5971,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_extrovert_refuse_spank.quip_function = ep2_carrie_extrovert_refuse_spank_qf
-    ep2_carrie_extrovert_refuse_spank_sissy = conversation.Node(344, '''ep2 carrie extrovert refuse spank sissy''')
+    ep2_carrie_extrovert_refuse_spank_sissy = conversation.Node(361, '''ep2 carrie extrovert refuse spank sissy''')
     
     
     def ep2_carrie_extrovert_refuse_spank_sissy_qf():
@@ -6040,7 +6041,7 @@ def init_scene_1_episode_2():
         elif 'boarding_with_Maria' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_sissy, ep2_maria_wake_up_no_carrie)
     ep2_carrie_extrovert_refuse_spank_sissy.quip_function = ep2_carrie_extrovert_refuse_spank_sissy_qf
-    ep2_carrie_extrovert_refuse_spank_stern = conversation.Node(345, '''ep2 carrie extrovert refuse spank stern''')
+    ep2_carrie_extrovert_refuse_spank_stern = conversation.Node(363, '''ep2 carrie extrovert refuse spank stern''')
     
     
     def ep2_carrie_extrovert_refuse_spank_stern_qf():
@@ -7605,7 +7606,7 @@ def init_scene_1_episode_2():
         elif 'boarding_with_Maria' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_carrie_extrovert_refuse_spank_stern, ep2_maria_wake_up_no_carrie)
     ep2_carrie_extrovert_refuse_spank_stern.quip_function = ep2_carrie_extrovert_refuse_spank_stern_qf
-    ep2_extrovert_refuse_Carrie_again = conversation.Node(346, '''ep2 extrovert refuse Carrie again''')
+    ep2_extrovert_refuse_Carrie_again = conversation.Node(365, '''ep2 extrovert refuse Carrie again''')
     
     
     def ep2_extrovert_refuse_Carrie_again_qf():
@@ -7746,7 +7747,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_extrovert_refuse_Carrie_again.quip_function = ep2_extrovert_refuse_Carrie_again_qf
-    ep2_extrovert_refuse_Carrie_adamantly = conversation.Node(347, '''ep2 extrovert refuse Carrie adamantly''')
+    ep2_extrovert_refuse_Carrie_adamantly = conversation.Node(367, '''ep2 extrovert refuse Carrie adamantly''')
     
     
     def ep2_extrovert_refuse_Carrie_adamantly_qf():
@@ -7959,7 +7960,7 @@ def init_scene_1_episode_2():
         elif 'boarding_with_Adrian' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_extrovert_refuse_Carrie_adamantly, ep2_maria_wake_up_no_carrie)
     ep2_extrovert_refuse_Carrie_adamantly.quip_function = ep2_extrovert_refuse_Carrie_adamantly_qf
-    ep2_extrovert_carrie_refuse_not_interested = conversation.Node(348, '''ep2 extrovert carrie refuse not interested''')
+    ep2_extrovert_carrie_refuse_not_interested = conversation.Node(369, '''ep2 extrovert carrie refuse not interested''')
     
     
     def ep2_extrovert_carrie_refuse_not_interested_qf():
@@ -8189,7 +8190,7 @@ def init_scene_1_episode_2():
         elif 'boarding_with_Maria' in pwutilities.keywords():
             return conversation.continue_to_node(ep2_extrovert_carrie_refuse_not_interested, ep2_maria_wake_up_no_carrie)
     ep2_extrovert_carrie_refuse_not_interested.quip_function = ep2_extrovert_carrie_refuse_not_interested_qf
-    ep2_guild_wake_up_no_carrie = conversation.Node(349, '''ep2 guild wake up no carrie''')
+    ep2_guild_wake_up_no_carrie = conversation.Node(371, '''ep2 guild wake up no carrie''')
     
     
     def ep2_guild_wake_up_no_carrie_qf():
@@ -8259,7 +8260,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "excitement."
  , ' '])]]), justification=0)
     ep2_guild_wake_up_no_carrie.quip_function = ep2_guild_wake_up_no_carrie_qf
-    ep2_guild_introvert = conversation.Node(350, '''ep2 guild introvert''')
+    ep2_guild_introvert = conversation.Node(373, '''ep2 guild introvert''')
     
     
     def ep2_guild_introvert_qf():
@@ -8385,7 +8386,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_guild_introvert, ep2_alondra_borrow_brush, False)
     ep2_guild_introvert.quip_function = ep2_guild_introvert_qf
-    ep2_alondra_borrow_brush = conversation.Node(351, '''ep2 alondra borrow brush''')
+    ep2_alondra_borrow_brush = conversation.Node(375, '''ep2 alondra borrow brush''')
     
     
     def ep2_alondra_borrow_brush_qf():
@@ -8481,7 +8482,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_alondra_borrow_brush, ep2_alondra_brush_hair, False)
     ep2_alondra_borrow_brush.quip_function = ep2_alondra_borrow_brush_qf
-    ep2_alondra_brush_hair = conversation.Node(352, '''ep2 alondra brush hair''')
+    ep2_alondra_brush_hair = conversation.Node(377, '''ep2 alondra brush hair''')
     
     
     def ep2_alondra_brush_hair_qf():
@@ -8534,7 +8535,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_alondra_brush_hair.quip_function = ep2_alondra_brush_hair_qf
-    ep2_guild_alondra_hairbrushing = conversation.Node(353, '''ep2 guild alondra hairbrushing''')
+    ep2_guild_alondra_hairbrushing = conversation.Node(379, '''ep2 guild alondra hairbrushing''')
     
     
     def ep2_guild_alondra_hairbrushing_qf():
@@ -8628,7 +8629,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "contact."
  , ' '])]))
     ep2_guild_alondra_hairbrushing.quip_function = ep2_guild_alondra_hairbrushing_qf
-    ep2_alondra_hairbrushing_attracted = conversation.Node(354, '''ep2 alondra hairbrushing attracted''')
+    ep2_alondra_hairbrushing_attracted = conversation.Node(381, '''ep2 alondra hairbrushing attracted''')
     
     
     def ep2_alondra_hairbrushing_attracted_qf():
@@ -9305,7 +9306,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "away."
  , ' '])]))
     ep2_alondra_hairbrushing_attracted.quip_function = ep2_alondra_hairbrushing_attracted_qf
-    ep2_guild_kiss_Alondra = conversation.Node(355, '''ep2 guild kiss Alondra''')
+    ep2_guild_kiss_Alondra = conversation.Node(383, '''ep2 guild kiss Alondra''')
     
     
     def ep2_guild_kiss_Alondra_qf():
@@ -9558,7 +9559,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "go"
  , ' '])]))
     ep2_guild_kiss_Alondra.quip_function = ep2_guild_kiss_Alondra_qf
-    ep2_guild_kiss_alondra_wait = conversation.Node(356, '''ep2 guild kiss alondra wait''')
+    ep2_guild_kiss_alondra_wait = conversation.Node(385, '''ep2 guild kiss alondra wait''')
     
     
     def ep2_guild_kiss_alondra_wait_qf():
@@ -9681,7 +9682,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_guild_kiss_alondra_wait, ep2_Alondra_kiss_unpleasant_turn, True)
     ep2_guild_kiss_alondra_wait.quip_function = ep2_guild_kiss_alondra_wait_qf
-    ep2_Alondra_kiss_unpleasant_turn = conversation.Node(357, '''ep2 Alondra kiss unpleasant turn''')
+    ep2_Alondra_kiss_unpleasant_turn = conversation.Node(387, '''ep2 Alondra kiss unpleasant turn''')
     
     
     def ep2_Alondra_kiss_unpleasant_turn_qf():
@@ -9773,7 +9774,7 @@ def init_scene_1_episode_2():
         elif universal.state.player.is_male():
             return conversation.continue_to_node(ep2_Alondra_kiss_unpleasant_turn, ep2_guild_kiss_alondra_wait_male)
     ep2_Alondra_kiss_unpleasant_turn.quip_function = ep2_Alondra_kiss_unpleasant_turn_qf
-    ep2_guild_kiss_alondra_wait_female = conversation.Node(358, '''ep2 guild kiss alondra wait female''')
+    ep2_guild_kiss_alondra_wait_female = conversation.Node(389, '''ep2 guild kiss alondra wait female''')
     
     
     def ep2_guild_kiss_alondra_wait_female_qf():
@@ -10043,7 +10044,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_guild_kiss_alondra_wait_female.quip_function = ep2_guild_kiss_alondra_wait_female_qf
-    ep2_guild_kiss_alondra_argue = conversation.Node(359, '''ep2 guild kiss alondra argue''')
+    ep2_guild_kiss_alondra_argue = conversation.Node(391, '''ep2 guild kiss alondra argue''')
     
     
     def ep2_guild_kiss_alondra_argue_qf():
@@ -10286,7 +10287,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_guild_kiss_alondra_argue, ep2_guild_kiss_alondra_spanking, False)
     ep2_guild_kiss_alondra_argue.quip_function = ep2_guild_kiss_alondra_argue_qf
-    ep2_guild_kiss_alondra_wait_male = conversation.Node(360, '''ep2 guild kiss alondra wait male''')
+    ep2_guild_kiss_alondra_wait_male = conversation.Node(393, '''ep2 guild kiss alondra wait male''')
     
     
     def ep2_guild_kiss_alondra_wait_male_qf():
@@ -10409,7 +10410,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_guild_kiss_alondra_wait_male.quip_function = ep2_guild_kiss_alondra_wait_male_qf
-    ep2_guild_kiss_alondra_spanking_prep = conversation.Node(361, '''ep2 guild kiss alondra spanking prep''')
+    ep2_guild_kiss_alondra_spanking_prep = conversation.Node(395, '''ep2 guild kiss alondra spanking prep''')
     
     
     def ep2_guild_kiss_alondra_spanking_prep_qf():
@@ -10437,7 +10438,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_guild_kiss_alondra_spanking_prep, ep2_guild_kiss_alondra_spanking, False)
     ep2_guild_kiss_alondra_spanking_prep.quip_function = ep2_guild_kiss_alondra_spanking_prep_qf
-    ep2_guild_kiss_alondra_spanking = conversation.Node(362, '''ep2 guild kiss alondra spanking''')
+    ep2_guild_kiss_alondra_spanking = conversation.Node(397, '''ep2 guild kiss alondra spanking''')
     
     
     def ep2_guild_kiss_alondra_spanking_qf():
@@ -10966,7 +10967,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "no."
  , ' '])])) , ' '])]]), justification=0)
     ep2_guild_kiss_alondra_spanking.quip_function = ep2_guild_kiss_alondra_spanking_qf
-    ep2_guild_kiss_alondra_let_her_go = conversation.Node(363, '''ep2 guild kiss alondra let her go''')
+    ep2_guild_kiss_alondra_let_her_go = conversation.Node(399, '''ep2 guild kiss alondra let her go''')
     
     
     def ep2_guild_kiss_alondra_let_her_go_qf():
@@ -11027,7 +11028,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "usual."
  , ' '])]]), justification=0)
     ep2_guild_kiss_alondra_let_her_go.quip_function = ep2_guild_kiss_alondra_let_her_go_qf
-    ep2_guild_pull_away_Alondra = conversation.Node(364, '''ep2 guild pull away Alondra''')
+    ep2_guild_pull_away_Alondra = conversation.Node(401, '''ep2 guild pull away Alondra''')
     
     
     def ep2_guild_pull_away_Alondra_qf():
@@ -11122,7 +11123,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "changed."
  , ' '])]]), justification=0)
     ep2_guild_pull_away_Alondra.quip_function = ep2_guild_pull_away_Alondra_qf
-    ep2_alondra_hairbrushing_not_attracted = conversation.Node(365, '''ep2 alondra hairbrushing not attracted''')
+    ep2_alondra_hairbrushing_not_attracted = conversation.Node(403, '''ep2 alondra hairbrushing not attracted''')
     
     
     def ep2_alondra_hairbrushing_not_attracted_qf():
@@ -11601,7 +11602,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "day."
  , ' '])]]), justification=0)
     ep2_alondra_hairbrushing_not_attracted.quip_function = ep2_alondra_hairbrushing_not_attracted_qf
-    ep2_guild_alondra_refuse_hairbrushing = conversation.Node(366, '''ep2 guild alondra refuse hairbrushing''')
+    ep2_guild_alondra_refuse_hairbrushing = conversation.Node(405, '''ep2 guild alondra refuse hairbrushing''')
     
     
     def ep2_guild_alondra_refuse_hairbrushing_qf():
@@ -11660,7 +11661,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "breakfast."
  , ' '])]]), justification=0)
     ep2_guild_alondra_refuse_hairbrushing.quip_function = ep2_guild_alondra_refuse_hairbrushing_qf
-    ep2_guild_no_bar = conversation.Node(367, '''ep2 guild no bar''')
+    ep2_guild_no_bar = conversation.Node(407, '''ep2 guild no bar''')
     
     
     def ep2_guild_no_bar_qf():
@@ -11891,7 +11892,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "drink."
  , ' '])]))
     ep2_guild_no_bar.quip_function = ep2_guild_no_bar_qf
-    ep2_guild_no_bar_tantrum = conversation.Node(368, '''ep2 guild no bar tantrum''')
+    ep2_guild_no_bar_tantrum = conversation.Node(409, '''ep2 guild no bar tantrum''')
     
     
     def ep2_guild_no_bar_tantrum_qf():
@@ -12543,7 +12544,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_guild_no_bar_tantrum.quip_function = ep2_guild_no_bar_tantrum_qf
-    ep2_guild_no_bar_tantrum_push_it = conversation.Node(369, '''ep2 guild no bar tantrum push it''')
+    ep2_guild_no_bar_tantrum_push_it = conversation.Node(411, '''ep2 guild no bar tantrum push it''')
     
     
     def ep2_guild_no_bar_tantrum_push_it_qf():
@@ -13088,7 +13089,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_guild_no_bar_tantrum_push_it, ep2_ildri_start_age_regression, False)
     ep2_guild_no_bar_tantrum_push_it.quip_function = ep2_guild_no_bar_tantrum_push_it_qf
-    ep2_ildri_start_age_regression = conversation.Node(370, '''ep2 ildri start age regression''')
+    ep2_ildri_start_age_regression = conversation.Node(413, '''ep2 ildri start age regression''')
     
     
     def ep2_ildri_start_age_regression_qf():
@@ -13357,7 +13358,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_ildri_start_age_regression, ep2_ildri_child_male)
     ep2_ildri_start_age_regression.quip_function = ep2_ildri_start_age_regression_qf
-    ep2_guild_no_bar_drink_offer = conversation.Node(371, '''ep2 guild no bar drink offer''')
+    ep2_guild_no_bar_drink_offer = conversation.Node(415, '''ep2 guild no bar drink offer''')
     
     
     def ep2_guild_no_bar_drink_offer_qf():
@@ -13505,7 +13506,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_guild_no_bar_drink_offer, ep2_guild_no_bar_drink_start, False)
     ep2_guild_no_bar_drink_offer.quip_function = ep2_guild_no_bar_drink_offer_qf
-    ep2_ildri_child_female = conversation.Node(372, '''ep2 ildri child female''')
+    ep2_ildri_child_female = conversation.Node(417, '''ep2 ildri child female''')
     
     
     def ep2_ildri_child_female_qf():
@@ -13570,7 +13571,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_ildri_child_female, ep2_ildri_put_on_dress)
     ep2_ildri_child_female.quip_function = ep2_ildri_child_female_qf
-    ep2_ildri_remove_shirt = conversation.Node(373, '''ep2 ildri remove shirt''')
+    ep2_ildri_remove_shirt = conversation.Node(419, '''ep2 ildri remove shirt''')
     
     
     def ep2_ildri_remove_shirt_qf():
@@ -13666,7 +13667,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_ildri_remove_shirt, ep2_ildri_put_on_shorts)
     ep2_ildri_remove_shirt.quip_function = ep2_ildri_remove_shirt_qf
-    ep2_ildri_put_on_dress = conversation.Node(374, '''ep2 ildri put on dress''')
+    ep2_ildri_put_on_dress = conversation.Node(421, '''ep2 ildri put on dress''')
     
     
     def ep2_ildri_put_on_dress_qf():
@@ -13717,7 +13718,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_ildri_put_on_dress, ep2_ildri_female_done)
     ep2_ildri_put_on_dress.quip_function = ep2_ildri_put_on_dress_qf
-    ep2_ildri_put_in_bows = conversation.Node(375, '''ep2 ildri put in bows''')
+    ep2_ildri_put_in_bows = conversation.Node(423, '''ep2 ildri put in bows''')
     
     
     def ep2_ildri_put_in_bows_qf():
@@ -13745,7 +13746,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_ildri_put_in_bows, ep2_ildri_female_done, False)
     ep2_ildri_put_in_bows.quip_function = ep2_ildri_put_in_bows_qf
-    ep2_ildri_female_done = conversation.Node(376, '''ep2 ildri female done''')
+    ep2_ildri_female_done = conversation.Node(425, '''ep2 ildri female done''')
     
     
     def ep2_ildri_female_done_qf():
@@ -14118,7 +14119,7 @@ def init_scene_1_episode_2():
  , ' '])], [], [], []]), justification=0)
         return conversation.continue_to_node(ep2_ildri_female_done, ep2_guild_tantrum_breakfast, False)
     ep2_ildri_female_done.quip_function = ep2_ildri_female_done_qf
-    ep2_ildri_child_male = conversation.Node(377, '''ep2 ildri child male''')
+    ep2_ildri_child_male = conversation.Node(427, '''ep2 ildri child male''')
     
     
     def ep2_ildri_child_male_qf():
@@ -14185,7 +14186,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_ildri_child_male, ep2_ildri_put_on_shorts)
     ep2_ildri_child_male.quip_function = ep2_ildri_child_male_qf
-    ep2_ildri_put_on_shorts = conversation.Node(378, '''ep2 ildri put on shorts''')
+    ep2_ildri_put_on_shorts = conversation.Node(429, '''ep2 ildri put on shorts''')
     
     
     def ep2_ildri_put_on_shorts_qf():
@@ -14245,7 +14246,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_ildri_put_on_shorts, ep2_ildri_male_done, False)
     ep2_ildri_put_on_shorts.quip_function = ep2_ildri_put_on_shorts_qf
-    ep2_ildri_male_done = conversation.Node(379, '''ep2 ildri male done''')
+    ep2_ildri_male_done = conversation.Node(431, '''ep2 ildri male done''')
     
     
     def ep2_ildri_male_done_qf():
@@ -14577,7 +14578,7 @@ def init_scene_1_episode_2():
  , ' '])], [], []]), justification=0)
         return conversation.continue_to_node(ep2_ildri_male_done, ep2_guild_tantrum_breakfast, False)
     ep2_ildri_male_done.quip_function = ep2_ildri_male_done_qf
-    ep2_guild_tantrum_breakfast = conversation.Node(380, '''ep2 guild tantrum breakfast''')
+    ep2_guild_tantrum_breakfast = conversation.Node(433, '''ep2 guild tantrum breakfast''')
     
     
     def ep2_guild_tantrum_breakfast_qf():
@@ -15561,7 +15562,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "to."
  , ' '])]]), justification=0)
     ep2_guild_tantrum_breakfast.quip_function = ep2_guild_tantrum_breakfast_qf
-    ep2_guild_no_bar_drink = conversation.Node(381, '''ep2 guild no bar drink''')
+    ep2_guild_no_bar_drink = conversation.Node(435, '''ep2 guild no bar drink''')
     
     
     def ep2_guild_no_bar_drink_qf():
@@ -15777,7 +15778,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_guild_no_bar_drink, ep2_guild_no_bar_drink_start, False)
     ep2_guild_no_bar_drink.quip_function = ep2_guild_no_bar_drink_qf
-    ep2_guild_no_bar_drink_start = conversation.Node(382, '''ep2 guild no bar drink start''')
+    ep2_guild_no_bar_drink_start = conversation.Node(437, '''ep2 guild no bar drink start''')
     
     
     def ep2_guild_no_bar_drink_start_qf():
@@ -16785,7 +16786,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "window."
  , ' '])]]), justification=0)
     ep2_guild_no_bar_drink_start.quip_function = ep2_guild_no_bar_drink_start_qf
-    ep2_marias_wake_up = conversation.Node(383, '''ep2 marias wake up''')
+    ep2_marias_wake_up = conversation.Node(439, '''ep2 marias wake up''')
     
     
     def ep2_marias_wake_up_qf():
@@ -16797,7 +16798,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_marias_wake_up, ep2_maria_no_bar)
     ep2_marias_wake_up.quip_function = ep2_marias_wake_up_qf
-    ep2_take_carrie_home_maria = conversation.Node(384, '''ep2 take carrie home maria''')
+    ep2_take_carrie_home_maria = conversation.Node(441, '''ep2 take carrie home maria''')
     
     
     def ep2_take_carrie_home_maria_qf():
@@ -17088,7 +17089,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_take_carrie_home_maria.quip_function = ep2_take_carrie_home_maria_qf
-    ep2_take_carrie_home_maria_fight = conversation.Node(385, '''ep2 take carrie home maria fight''')
+    ep2_take_carrie_home_maria_fight = conversation.Node(443, '''ep2 take carrie home maria fight''')
     
     
     def ep2_take_carrie_home_maria_fight_qf():
@@ -17895,7 +17896,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_take_carrie_home_maria_fight, ep2_maria_to_sofias_carrie_leaves, False)
     ep2_take_carrie_home_maria_fight.quip_function = ep2_take_carrie_home_maria_fight_qf
-    ep2_take_carrie_home_maria_apologize = conversation.Node(386, '''ep2 take carrie home maria apologize''')
+    ep2_take_carrie_home_maria_apologize = conversation.Node(445, '''ep2 take carrie home maria apologize''')
     
     
     def ep2_take_carrie_home_maria_apologize_qf():
@@ -18157,7 +18158,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_take_carrie_home_maria_apologize, ep2_maria_to_sofias_carrie_leaves, False)
     ep2_take_carrie_home_maria_apologize.quip_function = ep2_take_carrie_home_maria_apologize_qf
-    ep2_maria_to_sofias_carrie_leaves = conversation.Node(387, '''ep2 maria to sofias carrie leaves''')
+    ep2_maria_to_sofias_carrie_leaves = conversation.Node(447, '''ep2 maria to sofias carrie leaves''')
     
     
     def ep2_maria_to_sofias_carrie_leaves_qf():
@@ -18305,7 +18306,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_maria_to_sofias_carrie_leaves, ep2_maria_to_sofias, False)
     ep2_maria_to_sofias_carrie_leaves.quip_function = ep2_maria_to_sofias_carrie_leaves_qf
-    ep2_maria_wake_up_no_carrie = conversation.Node(388, '''ep2 maria wake up no carrie''')
+    ep2_maria_wake_up_no_carrie = conversation.Node(449, '''ep2 maria wake up no carrie''')
     
     
     def ep2_maria_wake_up_no_carrie_qf():
@@ -18369,7 +18370,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_maria_wake_up_no_carrie, ep2_maria_to_sofias, False)
     ep2_maria_wake_up_no_carrie.quip_function = ep2_maria_wake_up_no_carrie_qf
-    ep2_maria_no_bar = conversation.Node(389, '''ep2 maria no bar''')
+    ep2_maria_no_bar = conversation.Node(451, '''ep2 maria no bar''')
     
     
     def ep2_maria_no_bar_qf():
@@ -18836,7 +18837,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_maria_no_bar.quip_function = ep2_maria_no_bar_qf
-    ep2_maria_no_bar_articulate = conversation.Node(390, '''ep2 maria no bar articulate''')
+    ep2_maria_no_bar_articulate = conversation.Node(453, '''ep2 maria no bar articulate''')
     
     
     def ep2_maria_no_bar_articulate_qf():
@@ -19357,7 +19358,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_maria_no_bar_articulate, ep2_maria_no_bar_next_morning, False)
     ep2_maria_no_bar_articulate.quip_function = ep2_maria_no_bar_articulate_qf
-    ep2_maria_no_bar_bratty = conversation.Node(391, '''ep2 maria no bar bratty''')
+    ep2_maria_no_bar_bratty = conversation.Node(455, '''ep2 maria no bar bratty''')
     
     
     def ep2_maria_no_bar_bratty_qf():
@@ -19874,7 +19875,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_maria_no_bar_bratty.quip_function = ep2_maria_no_bar_bratty_qf
-    ep2_maria_no_bar_bratty_spanking = conversation.Node(392, '''ep2 maria no bar bratty spanking''')
+    ep2_maria_no_bar_bratty_spanking = conversation.Node(457, '''ep2 maria no bar bratty spanking''')
     
     
     def ep2_maria_no_bar_bratty_spanking_qf():
@@ -20669,7 +20670,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_maria_no_bar_bratty_spanking, ep2_maria_no_bar_next_morning, False)
     ep2_maria_no_bar_bratty_spanking.quip_function = ep2_maria_no_bar_bratty_spanking_qf
-    ep2_maria_no_bar_cave = conversation.Node(393, '''ep2 maria no bar cave''')
+    ep2_maria_no_bar_cave = conversation.Node(459, '''ep2 maria no bar cave''')
     
     
     def ep2_maria_no_bar_cave_qf():
@@ -20798,7 +20799,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_maria_no_bar_cave, ep2_maria_no_bar_next_morning, False)
     ep2_maria_no_bar_cave.quip_function = ep2_maria_no_bar_cave_qf
-    ep2_maria_no_bar_next_morning = conversation.Node(394, '''ep2 maria no bar next morning''')
+    ep2_maria_no_bar_next_morning = conversation.Node(461, '''ep2 maria no bar next morning''')
     
     
     def ep2_maria_no_bar_next_morning_qf():
@@ -21226,7 +21227,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_maria_no_bar_next_morning, ep2_maria_to_sofias, False)
     ep2_maria_no_bar_next_morning.quip_function = ep2_maria_no_bar_next_morning_qf
-    ep2_maria_to_sofias = conversation.Node(395, '''ep2 maria to sofias''')
+    ep2_maria_to_sofias = conversation.Node(463, '''ep2 maria to sofias''')
     
     
     def ep2_maria_to_sofias_qf():
@@ -21584,7 +21585,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Maria."
  , ' '])], [], [], []]), justification=0)
     ep2_maria_to_sofias.quip_function = ep2_maria_to_sofias_qf
-    ep2_wrong_way = conversation.Node(396, '''ep2 wrong way''')
+    ep2_wrong_way = conversation.Node(464, '''ep2 wrong way''')
     
     
     def ep2_wrong_way_qf():
@@ -22296,7 +22297,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])], [], []]), justification=0)
     ep2_wrong_way.quip_function = ep2_wrong_way_qf
-    ep2_clinic = conversation.Node(397, '''ep2 clinic''')
+    ep2_clinic = conversation.Node(465, '''ep2 clinic''')
     
     
     def ep2_clinic_qf():
@@ -24704,7 +24705,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])], [], []]), justification=0)
     ep2_clinic.quip_function = ep2_clinic_qf
-    ep2_ildri_chat = conversation.Node(398, '''ep2 ildri chat''')
+    ep2_ildri_chat = conversation.Node(466, '''ep2 ildri chat''')
     
     
     def ep2_ildri_chat_qf():
@@ -24717,7 +24718,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_ildri_chat, ep2_ildri_scene_1_chat)
     ep2_ildri_chat.quip_function = ep2_ildri_chat_qf
-    ep2_ildri_indecent_no_pants = conversation.Node(399, '''ep2 ildri indecent no pants''')
+    ep2_ildri_indecent_no_pants = conversation.Node(468, '''ep2 ildri indecent no pants''')
     
     
     def ep2_ildri_indecent_no_pants_qf():
@@ -26563,7 +26564,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_ildri_indecent_no_pants, ep2_equip_clothing, False)
     ep2_ildri_indecent_no_pants.quip_function = ep2_ildri_indecent_no_pants_qf
-    ep2_equip_clothing = conversation.Node(400, '''ep2 equip clothing''')
+    ep2_equip_clothing = conversation.Node(470, '''ep2 equip clothing''')
     
     
     def ep2_equip_clothing_qf():
@@ -26589,7 +26590,7 @@ def init_scene_1_episode_2():
         ep2_equip_clothing.quip = " "
         universal.say(universal.format_text_translate([[], [], []]), justification=0)
     ep2_equip_clothing.quip_function = ep2_equip_clothing_qf
-    ep2_ildri_indecent = conversation.Node(401, '''ep2 ildri indecent''')
+    ep2_ildri_indecent = conversation.Node(472, '''ep2 ildri indecent''')
     
     
     def ep2_ildri_indecent_qf():
@@ -26690,7 +26691,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_ildri_indecent, ep2_no_pants, False)
     ep2_ildri_indecent.quip_function = ep2_ildri_indecent_qf
-    ep2_no_pants = conversation.Node(402, '''ep2 no pants''')
+    ep2_no_pants = conversation.Node(474, '''ep2 no pants''')
     
     
     def ep2_no_pants_qf():
@@ -26787,7 +26788,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_no_pants.quip_function = ep2_no_pants_qf
-    ep2_ildri_bare_backpedal = conversation.Node(403, '''ep2 ildri bare backpedal''')
+    ep2_ildri_bare_backpedal = conversation.Node(476, '''ep2 ildri bare backpedal''')
     
     
     def ep2_ildri_bare_backpedal_qf():
@@ -26828,7 +26829,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_ildri_bare_backpedal, ep2_acceptable_clothing)
     ep2_ildri_bare_backpedal.quip_function = ep2_ildri_bare_backpedal_qf
-    ep2_no_acceptable_clothing = conversation.Node(404, '''ep2 no acceptable clothing''')
+    ep2_no_acceptable_clothing = conversation.Node(478, '''ep2 no acceptable clothing''')
     
     
     def ep2_no_acceptable_clothing_qf():
@@ -27079,7 +27080,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "mind."
  , ' '])]))
     ep2_no_acceptable_clothing.quip_function = ep2_no_acceptable_clothing_qf
-    ep2_bedsheet = conversation.Node(405, '''ep2 bedsheet''')
+    ep2_bedsheet = conversation.Node(480, '''ep2 bedsheet''')
     
     
     def ep2_bedsheet_qf():
@@ -27530,7 +27531,7 @@ def init_scene_1_episode_2():
  , ' ']), universal.state.player.name, ''.join([ "."
  , ' '])], [], [], [], []]), justification=0)
     ep2_bedsheet.quip_function = ep2_bedsheet_qf
-    ep2_salvage_trousers = conversation.Node(406, '''ep2 salvage trousers''')
+    ep2_salvage_trousers = conversation.Node(482, '''ep2 salvage trousers''')
     
     
     def ep2_salvage_trousers_qf():
@@ -27753,7 +27754,7 @@ def init_scene_1_episode_2():
  ])]]), justification=0)
         return conversation.continue_to_node(ep2_salvage_trousers, ep2_alondra_stares, False)
     ep2_salvage_trousers.quip_function = ep2_salvage_trousers_qf
-    ep2_alondra_stares = conversation.Node(407, '''ep2 alondra stares''')
+    ep2_alondra_stares = conversation.Node(484, '''ep2 alondra stares''')
     
     
     def ep2_alondra_stares_qf():
@@ -27929,7 +27930,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_alondra_stares, ep2_ildri_scene_1_transition, False)
     ep2_alondra_stares.quip_function = ep2_alondra_stares_qf
-    ep2_borrow_skirt = conversation.Node(408, '''ep2 borrow skirt''')
+    ep2_borrow_skirt = conversation.Node(486, '''ep2 borrow skirt''')
     
     
     def ep2_borrow_skirt_qf():
@@ -28296,7 +28297,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_borrow_skirt, ep2_ildri_scene_1_transition, False)
     ep2_borrow_skirt.quip_function = ep2_borrow_skirt_qf
-    ep2_acceptable_clothing = conversation.Node(409, '''ep2 acceptable clothing''')
+    ep2_acceptable_clothing = conversation.Node(488, '''ep2 acceptable clothing''')
     
     
     def ep2_acceptable_clothing_qf():
@@ -28337,7 +28338,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_acceptable_clothing, ep2_ildri_scene_1_transition, False)
     ep2_acceptable_clothing.quip_function = ep2_acceptable_clothing_qf
-    ep2_ildri_bare = conversation.Node(410, '''ep2 ildri bare''')
+    ep2_ildri_bare = conversation.Node(490, '''ep2 ildri bare''')
     
     
     def ep2_ildri_bare_qf():
@@ -28380,7 +28381,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_ildri_bare.quip_function = ep2_ildri_bare_qf
-    ep2_ildri_hate_sewing = conversation.Node(411, '''ep2 ildri hate sewing''')
+    ep2_ildri_hate_sewing = conversation.Node(492, '''ep2 ildri hate sewing''')
     
     
     def ep2_ildri_hate_sewing_qf():
@@ -28484,7 +28485,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_ildri_hate_sewing, ep2_ildri_sexy_idols_cover_ass, False)
     ep2_ildri_hate_sewing.quip_function = ep2_ildri_hate_sewing_qf
-    ep2_ildri_sexy_idols = conversation.Node(412, '''ep2 ildri sexy idols''')
+    ep2_ildri_sexy_idols = conversation.Node(494, '''ep2 ildri sexy idols''')
     
     
     def ep2_ildri_sexy_idols_qf():
@@ -28495,7 +28496,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_ildri_sexy_idols, ep2_ildri_sexy_idols_male)
     ep2_ildri_sexy_idols.quip_function = ep2_ildri_sexy_idols_qf
-    ep2_ildri_sexy_idols_female = conversation.Node(413, '''ep2 ildri sexy idols female''')
+    ep2_ildri_sexy_idols_female = conversation.Node(496, '''ep2 ildri sexy idols female''')
     
     
     def ep2_ildri_sexy_idols_female_qf():
@@ -28605,7 +28606,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_ildri_sexy_idols_female.quip_function = ep2_ildri_sexy_idols_female_qf
-    ep2_ildri_sexy_idols_male = conversation.Node(414, '''ep2 ildri sexy idols male''')
+    ep2_ildri_sexy_idols_male = conversation.Node(498, '''ep2 ildri sexy idols male''')
     
     
     def ep2_ildri_sexy_idols_male_qf():
@@ -28722,7 +28723,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_ildri_sexy_idols_male, ep2_ildri_sexy_idols_cover_ass, False)
     ep2_ildri_sexy_idols_male.quip_function = ep2_ildri_sexy_idols_male_qf
-    ep2_alondra_sexy_compliment = conversation.Node(415, '''ep2 alondra sexy compliment''')
+    ep2_alondra_sexy_compliment = conversation.Node(500, '''ep2 alondra sexy compliment''')
     
     
     def ep2_alondra_sexy_compliment_qf():
@@ -28813,7 +28814,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_alondra_sexy_compliment, ep2_ildri_sexy_idols_cover_ass_bounce, False)
     ep2_alondra_sexy_compliment.quip_function = ep2_alondra_sexy_compliment_qf
-    ep2_ildri_sexy_idols_cover_ass_bounce = conversation.Node(416, '''ep2 ildri sexy idols cover ass bounce''')
+    ep2_ildri_sexy_idols_cover_ass_bounce = conversation.Node(502, '''ep2 ildri sexy idols cover ass bounce''')
     
     
     def ep2_ildri_sexy_idols_cover_ass_bounce_qf():
@@ -28883,7 +28884,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_ildri_sexy_idols_cover_ass_bounce, ep2_ildri_sexy_idols_cover_ass, False)
     ep2_ildri_sexy_idols_cover_ass_bounce.quip_function = ep2_ildri_sexy_idols_cover_ass_bounce_qf
-    ep2_alondra_appreciate = conversation.Node(417, '''ep2 alondra appreciate''')
+    ep2_alondra_appreciate = conversation.Node(504, '''ep2 alondra appreciate''')
     
     
     def ep2_alondra_appreciate_qf():
@@ -28948,7 +28949,7 @@ def init_scene_1_episode_2():
  , ' '])], []]), justification=0)
         return conversation.continue_to_node(ep2_alondra_appreciate, ep2_ildri_sexy_idols_cover_ass, False)
     ep2_alondra_appreciate.quip_function = ep2_alondra_appreciate_qf
-    ep2_ildri_sexy_idols_cover_ass = conversation.Node(418, '''ep2 ildri sexy idols cover ass''')
+    ep2_ildri_sexy_idols_cover_ass = conversation.Node(506, '''ep2 ildri sexy idols cover ass''')
     
     
     def ep2_ildri_sexy_idols_cover_ass_qf():
@@ -28976,7 +28977,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_ildri_sexy_idols_cover_ass, ep2_acceptable_clothing)
     ep2_ildri_sexy_idols_cover_ass.quip_function = ep2_ildri_sexy_idols_cover_ass_qf
-    ep2_ildri_sexy_idols_cover_ass_no_clothing = conversation.Node(419, '''ep2 ildri sexy idols cover ass no clothing''')
+    ep2_ildri_sexy_idols_cover_ass_no_clothing = conversation.Node(508, '''ep2 ildri sexy idols cover ass no clothing''')
     
     
     def ep2_ildri_sexy_idols_cover_ass_no_clothing_qf():
@@ -29163,7 +29164,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "mind."
  , ' '])]))
     ep2_ildri_sexy_idols_cover_ass_no_clothing.quip_function = ep2_ildri_sexy_idols_cover_ass_no_clothing_qf
-    ep2_ildri_scene_1_chat = conversation.Node(420, '''ep2 ildri scene 1 chat''')
+    ep2_ildri_scene_1_chat = conversation.Node(510, '''ep2 ildri scene 1 chat''')
     
     
     def ep2_ildri_scene_1_chat_qf():
@@ -29253,7 +29254,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_ildri_scene_1_chat, ep2_ildri_scene_1_transition)
     ep2_ildri_scene_1_chat.quip_function = ep2_ildri_scene_1_chat_qf
-    ep2_ildri_scene_1_transition_again = conversation.Node(421, '''ep2 ildri scene 1 transition again''')
+    ep2_ildri_scene_1_transition_again = conversation.Node(512, '''ep2 ildri scene 1 transition again''')
     
     
     def ep2_ildri_scene_1_transition_again_qf():
@@ -29335,7 +29336,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_ildri_scene_1_transition_again.quip_function = ep2_ildri_scene_1_transition_again_qf
-    ep2_ildri_scene_1_transition = conversation.Node(422, '''ep2 ildri scene 1 transition''')
+    ep2_ildri_scene_1_transition = conversation.Node(514, '''ep2 ildri scene 1 transition''')
     
     
     def ep2_ildri_scene_1_transition_qf():
@@ -29770,7 +29771,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_ildri_scene_1_transition.quip_function = ep2_ildri_scene_1_transition_qf
-    ep2_help_repair_guild = conversation.Node(423, '''ep2 help repair guild''')
+    ep2_help_repair_guild = conversation.Node(516, '''ep2 help repair guild''')
     
     
     def ep2_help_repair_guild_qf():
@@ -30285,7 +30286,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_help_repair_guild, ep2_end_scene_1, False)
     ep2_help_repair_guild.quip_function = ep2_help_repair_guild_qf
-    ep2_end_scene_1 = conversation.Node(424, '''ep2 end scene 1''')
+    ep2_end_scene_1 = conversation.Node(518, '''ep2 end scene 1''')
     
     
     def ep2_end_scene_1_qf():
@@ -30294,7 +30295,7 @@ def init_scene_1_episode_2():
         ep2_end_scene_1.quip = " "
         universal.say(universal.format_text_translate([[], [], [], []]), justification=0)
     ep2_end_scene_1.quip_function = ep2_end_scene_1_qf
-    ep2_peter = conversation.Node(425, '''ep2 peter''')
+    ep2_peter = conversation.Node(519, '''ep2 peter''')
     
     
     def ep2_peter_qf():
@@ -30305,7 +30306,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_peter, ep2_peter_conversation)
     ep2_peter.quip_function = ep2_peter_qf
-    ep2_peter_teaching_anne = conversation.Node(426, '''ep2 peter teaching anne''')
+    ep2_peter_teaching_anne = conversation.Node(521, '''ep2 peter teaching anne''')
     
     
     def ep2_peter_teaching_anne_qf():
@@ -30475,7 +30476,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_peter_teaching_anne, ep2_peter_teaching_anne_continued)
     ep2_peter_teaching_anne.quip_function = ep2_peter_teaching_anne_qf
-    ep2_peter_attracted_or_not = conversation.Node(427, '''ep2 peter attracted or not''')
+    ep2_peter_attracted_or_not = conversation.Node(523, '''ep2 peter attracted or not''')
     
     
     def ep2_peter_attracted_or_not_qf():
@@ -30503,7 +30504,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Peter."
  , ' '])]))
     ep2_peter_attracted_or_not.quip_function = ep2_peter_attracted_or_not_qf
-    ep2_peter_crush = conversation.Node(428, '''ep2 peter crush''')
+    ep2_peter_crush = conversation.Node(525, '''ep2 peter crush''')
     
     
     def ep2_peter_crush_qf():
@@ -30512,7 +30513,7 @@ def init_scene_1_episode_2():
         universal.say(universal.format_text_translate([[], [], []]), justification=0)
         return conversation.continue_to_node(ep2_peter_crush, ep2_peter_teaching_anne_continued, False)
     ep2_peter_crush.quip_function = ep2_peter_crush_qf
-    ep2_peter_teaching_anne_continued = conversation.Node(429, '''ep2 peter teaching anne continued''')
+    ep2_peter_teaching_anne_continued = conversation.Node(527, '''ep2 peter teaching anne continued''')
     
     
     def ep2_peter_teaching_anne_continued_qf():
@@ -31124,7 +31125,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_peter_teaching_anne_continued.quip_function = ep2_peter_teaching_anne_continued_qf
-    ep2_anne_prank = conversation.Node(430, '''ep2 anne prank''')
+    ep2_anne_prank = conversation.Node(529, '''ep2 anne prank''')
     
     
     def ep2_anne_prank_qf():
@@ -31211,7 +31212,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_anne_prank, ep2_anne_meditation, False)
     ep2_anne_prank.quip_function = ep2_anne_prank_qf
-    ep2_anne_meditation = conversation.Node(431, '''ep2 anne meditation''')
+    ep2_anne_meditation = conversation.Node(531, '''ep2 anne meditation''')
     
     
     def ep2_anne_meditation_qf():
@@ -31928,7 +31929,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_anne_meditation, ep2_anne_play)
     ep2_anne_meditation.quip_function = ep2_anne_meditation_qf
-    ep2_anne_start_prank = conversation.Node(432, '''ep2 anne start prank''')
+    ep2_anne_start_prank = conversation.Node(533, '''ep2 anne start prank''')
     
     
     def ep2_anne_start_prank_qf():
@@ -32517,7 +32518,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "return."
  , ' '])]))
     ep2_anne_start_prank.quip_function = ep2_anne_start_prank_qf
-    ep2_peter_run_for_it = conversation.Node(433, '''ep2 peter run for it''')
+    ep2_peter_run_for_it = conversation.Node(535, '''ep2 peter run for it''')
     
     
     def ep2_peter_run_for_it_qf():
@@ -34743,7 +34744,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_peter_run_for_it, ep2_peter_buckles_canceled, False)
     ep2_peter_run_for_it.quip_function = ep2_peter_run_for_it_qf
-    ep2_peter_wait = conversation.Node(434, '''ep2 peter wait''')
+    ep2_peter_wait = conversation.Node(537, '''ep2 peter wait''')
     
     
     def ep2_peter_wait_qf():
@@ -35293,7 +35294,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_peter_wait, ep2_peter_wait_not_attracted_to_him)
     ep2_peter_wait.quip_function = ep2_peter_wait_qf
-    ep2_peter_wait_attracted_to_him = conversation.Node(435, '''ep2 peter wait attracted to him''')
+    ep2_peter_wait_attracted_to_him = conversation.Node(539, '''ep2 peter wait attracted to him''')
     
     
     def ep2_peter_wait_attracted_to_him_qf():
@@ -36826,7 +36827,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_peter_wait_attracted_to_him, ep2_peter_buckles_canceled, False)
     ep2_peter_wait_attracted_to_him.quip_function = ep2_peter_wait_attracted_to_him_qf
-    ep2_peter_wait_not_attracted_to_him = conversation.Node(436, '''ep2 peter wait not attracted to him''')
+    ep2_peter_wait_not_attracted_to_him = conversation.Node(541, '''ep2 peter wait not attracted to him''')
     
     
     def ep2_peter_wait_not_attracted_to_him_qf():
@@ -38066,7 +38067,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_peter_wait_not_attracted_to_him, ep2_peter_buckles_canceled, False)
     ep2_peter_wait_not_attracted_to_him.quip_function = ep2_peter_wait_not_attracted_to_him_qf
-    ep2_anne_carrot = conversation.Node(437, '''ep2 anne carrot''')
+    ep2_anne_carrot = conversation.Node(543, '''ep2 anne carrot''')
     
     
     def ep2_anne_carrot_qf():
@@ -38100,7 +38101,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_anne_carrot, ep2_anne_meditation, False)
     ep2_anne_carrot.quip_function = ep2_anne_carrot_qf
-    ep2_anne_play = conversation.Node(438, '''ep2 anne play''')
+    ep2_anne_play = conversation.Node(545, '''ep2 anne play''')
     
     
     def ep2_anne_play_qf():
@@ -38676,7 +38677,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_anne_play, ep2_anne_goes_to_grandma)
     ep2_anne_play.quip_function = ep2_anne_play_qf
-    ep2_peter_small_conversation = conversation.Node(439, '''ep2 peter small conversation''')
+    ep2_peter_small_conversation = conversation.Node(547, '''ep2 peter small conversation''')
     
     
     def ep2_peter_small_conversation_qf():
@@ -39240,7 +39241,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_peter_small_conversation, ep2_peter_buckles_canceled, False)
     ep2_peter_small_conversation.quip_function = ep2_peter_small_conversation_qf
-    ep2_anne_goes_to_grandma = conversation.Node(440, '''ep2 anne goes to grandma''')
+    ep2_anne_goes_to_grandma = conversation.Node(549, '''ep2 anne goes to grandma''')
     
     
     def ep2_anne_goes_to_grandma_qf():
@@ -39441,14 +39442,14 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_anne_goes_to_grandma, ep2_peter_buckles_canceled, False)
     ep2_anne_goes_to_grandma.quip_function = ep2_anne_goes_to_grandma_qf
-    ep2_peter_buckles_canceled = conversation.Node(441, '''ep2 peter buckles canceled''')
+    ep2_peter_buckles_canceled = conversation.Node(551, '''ep2 peter buckles canceled''')
     
     
     def ep2_peter_buckles_canceled_qf():
         peter = universal.state.get_character("Peter.person")
         peter.defaultLitany = peter.litany = ep2_peter_conversation.index
         ep2_peter_buckles_canceled.quip = " "
-        universal.say(universal.format_text_translate([[], [], [], [''.join([ '"'
+        universal.say(universal.format_text_translate([[], [], [''.join([ '"'
  ]), ''.join([ "Is"
  , ' ']), ''.join([ "something"
  , ' ']), ''.join([ "wrong?"
@@ -39495,8 +39496,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "says"
  , ' ']), ''.join([ "Peter."
  , ' ']), ''.join([ '"'
- ]), ''.join([ "Dan,"
- , ' ']), ''.join([ "why?"
+ ]), ''.join([ "Why?"
  ]), ''.join([ '"'
  , ' '])], [''.join([ "Dan"
  , ' ']), ''.join([ "shrugs."
@@ -39510,42 +39510,30 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "know"
  , ' ']), ''.join([ "Jake"
  , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "herder,"
+ , ' ']), ''.join([ "merchant,"
  , ' ']), ''.join([ "right?"
- , ' ']), ''.join([ "Got"
- , ' ']), ''.join([ "that"
- , ' ']), ''.join([ "big"
- , ' ']), ''.join([ "herd"
- , ' ']), ''.join([ "of"
- , ' ']), ''.join([ "sheep"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "goats"
- , ' ']), ''.join([ "he"
- , ' ']), ''.join([ "migrates"
- , ' ']), ''.join([ "between"
- , ' ']), ''.join([ "here"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "some"
- , ' ']), ''.join([ "kingdom"
- , ' ']), ''.join([ "farther"
- , ' ']), ''.join([ "north?"
- , ' ']), ''.join([ "You"
- , ' ']), ''.join([ "know,"
- , ' ']), ''.join([ "keeps"
- , ' ']), ''.join([ "them"
- , ' ']), ''.join([ "there"
- , ' ']), ''.join([ "during"
+ , ' ']), ''.join([ "Tends"
+ , ' ']), ''.join([ "to"
+ , ' ']), ''.join([ "circle"
+ , ' ']), ''.join([ "through"
  , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "winter,"
- , ' ']), ''.join([ "brings"
- , ' ']), ''.join([ "them"
- , ' ']), ''.join([ "down"
- , ' ']), ''.join([ "here"
+ , ' ']), ''.join([ "Thousin"
+ , ' ']), ''.join([ "in"
+ , ' ']), ''.join([ "the"
+ , ' ']), ''.join([ "spring,"
+ , ' ']), ''.join([ "summer"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "fall?"
+ , ' ']), ''.join([ "Spends"
+ , ' ']), ''.join([ "his"
+ , ' ']), ''.join([ "winters"
+ , ' ']), ''.join([ "farther"
+ , ' ']), ''.join([ "north"
  , ' ']), ''.join([ "to"
  , ' ']), ''.join([ "escape"
  , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "summer"
- , ' ']), ''.join([ "heat?"
+ , ' ']), ''.join([ "winter"
+ , ' ']), ''.join([ "night?"
  ]), ''.join([ '"'
  , ' '])], [''.join([ '"'
  ]), ''.join([ "Yeah,"
@@ -39584,25 +39572,6 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "unstable"
  , ' ']), ''.join([ "he"
  , ' ']), ''.join([ "says."
- , ' ']), ''.join([ "Too"
- , ' ']), ''.join([ "close"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "Bonda."
- , ' ']), ''.join([ "Got"
- , ' ']), ''.join([ "himself"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "deal"
- , ' ']), ''.join([ "worked"
- , ' ']), ''.join([ "out"
- , ' ']), ''.join([ "with"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "city"
- , ' ']), ''.join([ "of"
- , ' ']), ''.join([ "Alesia"
- , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "summer"
- , ' ']), ''.join([ "there"
- , ' ']), ''.join([ "instead."
  ]), ''.join([ '"'
  , ' '])], [''.join([ "Peter"
  , ' ']), ''.join([ "takes"
@@ -40041,7 +40010,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])], [], []]), justification=0)
     ep2_peter_buckles_canceled.quip_function = ep2_peter_buckles_canceled_qf
-    ep2_peter_conversation = conversation.Node(442, '''ep2 peter conversation''')
+    ep2_peter_conversation = conversation.Node(553, '''ep2 peter conversation''')
     
     
     def ep2_peter_conversation_qf():
@@ -40122,118 +40091,76 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_peter_conversation.quip_function = ep2_peter_conversation_qf
-    ep2_peter_shop_mode = conversation.Node(443, '''ep2 peter shop mode''')
+    ep2_peter_shop_mode = conversation.Node(555, '''ep2 peter shop mode''')
     
     
     def ep2_peter_shop_mode_qf():
         ep2_peter_shop_mode.quip = " "
-        universal.say(universal.format_text_translate([[], [], [''.join([ pwutilities.stage_directions(''.join([""
-, ''.join([ "Segue"
- , ' ']), ''.join([ "into"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "menu"
- , ' ']), ''.join([ "for"
- , ' ']), ''.join([ "enchanting"
- , ' ']), ''.join([ "equipment"
- , ' ']), ''.join([ "with"
- , ' ']), ''.join([ "an"
- , ' ']), ''.join([ "enchant"
- , ' ']), ''.join([ "gem."
- , ' '])])) , ' ']), ''.join([ "Peter"
- , ' ']), ''.join([ "cocks"
- , ' ']), ''.join([ "his"
- , ' ']), ''.join([ "head"
- , ' ']), ''.join([ "thoughtfully."
- , ' ']), ''.join([ "He"
- , ' ']), ''.join([ "takes"
- , ' ']), ''.join([ "the"
- , ' ']), ''.join([ "small"
- , ' ']), ''.join([ "green"
- , ' ']), ''.join([ "gem"
+        universal.say(universal.format_text_translate([[], [], [''.join([ "Peter"
+ , ' ']), ''.join([ "frowns,"
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "studies"
- , ' ']), ''.join([ "it"
+ , ' ']), ''.join([ "the"
+ , ' ']), ''.join([ "gem"
  , ' ']), ''.join([ "for"
  , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "moment,"
- , ' ']), ''.join([ "before"
- , ' ']), ''.join([ "handing"
- , ' ']), ''.join([ "it"
- , ' ']), ''.join([ "back"
- , ' ']), ''.join([ "to"
- , ' ']), universal.state.player.name, ''.join([ "."
+ , ' ']), ''.join([ "moment."
  , ' ']), ''.join([ '"'
- ]), ''.join([ "You"
- , ' ']), ''.join([ "know,"
- , ' ']), ''.join([ "I"
- , ' ']), ''.join([ "haven't"
- , ' ']), ''.join([ "enchanted"
- , ' ']), ''.join([ "something"
- , ' ']), ''.join([ "in"
- , ' ']), ''.join([ "years."
+ ]), ''.join([ "It's"
+ , ' ']), ''.join([ "been"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "long"
+ , ' ']), ''.join([ "time"
+ , ' ']), ''.join([ "since"
+ , ' ']), ''.join([ "I've"
+ , ' ']), ''.join([ "seen"
+ , ' ']), ''.join([ "one"
+ , ' ']), ''.join([ "of"
+ , ' ']), ''.join([ "these."
  , ' ']), ''.join([ "Not"
  , ' ']), ''.join([ "since"
- , ' ']), ''.join([ "my"
- , ' ']), ''.join([ "days"
- , ' ']), ''.join([ "as"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "camp"
- , ' ']), ''.join([ "follower."
- , ' ']), ''.join([ "Only"
- , ' ']), ''.join([ "thing"
- , ' ']), ''.join([ "I"
- , ' ']), ''.join([ "remember"
- , ' ']), ''.join([ "clearly"
- , ' ']), ''.join([ "is"
- , ' ']), ''.join([ "that"
- , ' ']), ''.join([ "it's"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "tricky"
- , ' ']), ''.join([ "process."
- , ' ']), ''.join([ "Could"
- , ' ']), ''.join([ "ruin"
- , ' ']), ''.join([ "your"
- , ' ']), ''.join([ "weapon,"
- , ' ']), ''.join([ "if"
- , ' ']), ''.join([ "I'm"
- , ' ']), ''.join([ "not"
- , ' ']), ''.join([ "careful."
- , ' ']), ''.join([ "So,"
- , ' ']), ''.join([ "give"
- , ' ']), ''.join([ "me"
- , ' ']), ''.join([ "some"
- , ' ']), ''.join([ "time"
+ , ' ']), ''.join([ "the"
+ , ' ']), ''.join([ "campaign."
+ , ' ']), ''.join([ "I'll"
+ , ' ']), ''.join([ "need"
  , ' ']), ''.join([ "to"
- , ' ']), ''.join([ "refresh"
- , ' ']), ''.join([ "my"
- , ' ']), ''.join([ "memory"
- , ' ']), ''.join([ "alright?"
- , ' ']), ''.join([ "Maybe"
+ , ' ']), ''.join([ "do"
  , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "few"
- , ' ']), ''.join([ "days."
+ , ' ']), ''.join([ "bit"
+ , ' ']), ''.join([ "of"
+ , ' ']), ''.join([ "research,"
+ , ' ']), ''.join([ "refresh"
+ , ' ']), ''.join([ "how"
+ , ' ']), ''.join([ "to"
+ , ' ']), ''.join([ "enchant"
+ , ' ']), ''.join([ "equipment,"
+ , ' ']), ''.join([ "alright?"
+ , ' ']), ''.join([ "I"
+ , ' ']), ''.join([ "don't"
+ , ' ']), ''.join([ "want"
+ , ' ']), ''.join([ "to"
+ , ' ']), ''.join([ "break"
+ , ' ']), ''.join([ "anything."
  ]), ''.join([ '"'
- , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "nods,"
- , ' ']), ''.join([ "and"
- , ' ']), ''.join([ "tucks"
+ , ' '])], [''.join([ '"'
+ ]), ''.join([ "OK,"
+ ]), ''.join([ '"'
+ , ' ']), ''.join([ "says"
+ , ' ']), universal.state.player.name, ''.join([ ","
+ , ' ']), ''.join([ "slipping"
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "gem"
  , ' ']), ''.join([ "back"
  , ' ']), ''.join([ "into"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "small"
- , ' ']), ''.join([ "pouch"
- , ' ']), ''.join([ "on"
- , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "belt."
+ , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "bag."
  , ' ']), ''.join([ '"'
- ]), ''.join([ "Ok."
- , ' ']), ''.join([ "See"
+ ]), ''.join([ "See"
  , ' ']), ''.join([ "you"
  , ' ']), ''.join([ "around."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
     ep2_peter_shop_mode.quip_function = ep2_peter_shop_mode_qf
-    ep2_peter_leave = conversation.Node(444, '''ep2 peter leave''')
+    ep2_peter_leave = conversation.Node(557, '''ep2 peter leave''')
     
     
     def ep2_peter_leave_qf():
@@ -40252,7 +40179,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "things."
  , ' '])]]), justification=0)
     ep2_peter_leave.quip_function = ep2_peter_leave_qf
-    ep2_dont_help_repair_guild = conversation.Node(445, '''ep2 dont help repair guild''')
+    ep2_dont_help_repair_guild = conversation.Node(559, '''ep2 dont help repair guild''')
     
     
     def ep2_dont_help_repair_guild_qf():
@@ -40269,7 +40196,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Ildri."
  , ' '])], [], []]), justification=0)
     ep2_dont_help_repair_guild.quip_function = ep2_dont_help_repair_guild_qf
-    ep2_elise_prologue = conversation.Node(446, '''ep2 elise prologue''')
+    ep2_elise_prologue = conversation.Node(560, '''ep2 elise prologue''')
     
     
     def ep2_elise_prologue_qf():
@@ -40329,7 +40256,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_elise_prologue, ep2_elise_greeting)
     ep2_elise_prologue.quip_function = ep2_elise_prologue_qf
-    ep2_elise_second_hand_tragedy = conversation.Node(447, '''ep2 elise second hand tragedy''')
+    ep2_elise_second_hand_tragedy = conversation.Node(562, '''ep2 elise second hand tragedy''')
     
     
     def ep2_elise_second_hand_tragedy_qf():
@@ -40447,7 +40374,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_elise_second_hand_tragedy.quip_function = ep2_elise_second_hand_tragedy_qf
-    ep2_elise_second_hand_tragedy_still_annoyed = conversation.Node(448, '''ep2 elise second hand tragedy still annoyed''')
+    ep2_elise_second_hand_tragedy_still_annoyed = conversation.Node(564, '''ep2 elise second hand tragedy still annoyed''')
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_qf():
@@ -40713,7 +40640,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_elise_second_hand_tragedy_still_annoyed.quip_function = ep2_elise_second_hand_tragedy_still_annoyed_qf
-    ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha = conversation.Node(449, '''ep2 elise second hand tragedy still annoyed forgive Samantha''')
+    ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha = conversation.Node(566, '''ep2 elise second hand tragedy still annoyed forgive Samantha''')
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha_qf():
@@ -40928,7 +40855,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha, ep2_elise_gripe, False)
     ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha.quip_function = ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha_qf
-    ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha = conversation.Node(450, '''ep2 elise second hand tragedy still annoyed dont forgive Samantha''')
+    ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha = conversation.Node(568, '''ep2 elise second hand tragedy still annoyed dont forgive Samantha''')
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha_qf():
@@ -40999,7 +40926,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ person.heshe() , ' ']), ''.join([ "leaves."
  , ' '])]]), justification=0)
     ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha.quip_function = ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha_qf
-    ep2_elise_second_hand_tragedy_make_up = conversation.Node(451, '''ep2 elise second hand tragedy make up''')
+    ep2_elise_second_hand_tragedy_make_up = conversation.Node(570, '''ep2 elise second hand tragedy make up''')
     
     
     def ep2_elise_second_hand_tragedy_make_up_qf():
@@ -41049,7 +40976,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_elise_second_hand_tragedy_make_up, ep2_elise_gripe, False)
     ep2_elise_second_hand_tragedy_make_up.quip_function = ep2_elise_second_hand_tragedy_make_up_qf
-    ep2_elise_greeting = conversation.Node(452, '''ep2 elise greeting''')
+    ep2_elise_greeting = conversation.Node(572, '''ep2 elise greeting''')
     
     
     def ep2_elise_greeting_qf():
@@ -41092,7 +41019,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_elise_greeting, ep2_elise_gripe, False)
     ep2_elise_greeting.quip_function = ep2_elise_greeting_qf
-    ep2_elise_gripe = conversation.Node(453, '''ep2 elise gripe''')
+    ep2_elise_gripe = conversation.Node(574, '''ep2 elise gripe''')
     
     
     def ep2_elise_gripe_qf():
@@ -41855,7 +41782,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Carrie."
  , ' '])], [], []]), justification=0)
     ep2_elise_gripe.quip_function = ep2_elise_gripe_qf
-    ep2_carrie = conversation.Node(454, '''ep2 carrie''')
+    ep2_carrie = conversation.Node(575, '''ep2 carrie''')
     
     
     def ep2_carrie_qf():
@@ -41866,7 +41793,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_carrie, ep2_carrie_subplot_begin)
     ep2_carrie.quip_function = ep2_carrie_qf
-    ep2_carrie_lost_temper_apologize = conversation.Node(455, '''ep2 carrie lost temper apologize''')
+    ep2_carrie_lost_temper_apologize = conversation.Node(577, '''ep2 carrie lost temper apologize''')
     
     
     def ep2_carrie_lost_temper_apologize_qf():
@@ -42101,7 +42028,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_lost_temper_apologize.quip_function = ep2_carrie_lost_temper_apologize_qf
-    ep2_carrie_lost_temper_double_apology = conversation.Node(456, '''ep2 carrie lost temper double apology''')
+    ep2_carrie_lost_temper_double_apology = conversation.Node(579, '''ep2 carrie lost temper double apology''')
     
     
     def ep2_carrie_lost_temper_double_apology_qf():
@@ -42190,7 +42117,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_lost_temper_double_apology.quip_function = ep2_carrie_lost_temper_double_apology_qf
-    ep2_carrie_lost_temper_chastise = conversation.Node(457, '''ep2 carrie lost temper chastise''')
+    ep2_carrie_lost_temper_chastise = conversation.Node(581, '''ep2 carrie lost temper chastise''')
     
     
     def ep2_carrie_lost_temper_chastise_qf():
@@ -42312,7 +42239,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_lost_temper_chastise, ep2_carrie_lost_temper_paddle, False)
     ep2_carrie_lost_temper_chastise.quip_function = ep2_carrie_lost_temper_chastise_qf
-    ep2_carrie_lost_temper_paddle = conversation.Node(458, '''ep2 carrie lost temper paddle''')
+    ep2_carrie_lost_temper_paddle = conversation.Node(583, '''ep2 carrie lost temper paddle''')
     
     
     def ep2_carrie_lost_temper_paddle_qf():
@@ -42819,7 +42746,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_lost_temper_paddle, ep2_carrie_outside, False)
     ep2_carrie_lost_temper_paddle.quip_function = ep2_carrie_lost_temper_paddle_qf
-    ep2_carrie_lost_temper_refuse_to_spank = conversation.Node(459, '''ep2 carrie lost temper refuse to spank''')
+    ep2_carrie_lost_temper_refuse_to_spank = conversation.Node(585, '''ep2 carrie lost temper refuse to spank''')
     
     
     def ep2_carrie_lost_temper_refuse_to_spank_qf():
@@ -43005,7 +42932,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_lost_temper_refuse_to_spank, ep2_carrie_outside, False)
     ep2_carrie_lost_temper_refuse_to_spank.quip_function = ep2_carrie_lost_temper_refuse_to_spank_qf
-    ep2_carrie_subplot_begin = conversation.Node(460, '''ep2 carrie subplot begin''')
+    ep2_carrie_subplot_begin = conversation.Node(587, '''ep2 carrie subplot begin''')
     
     
     def ep2_carrie_subplot_begin_qf():
@@ -43542,7 +43469,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_subplot_begin, ep2_carrie_outside, False)
     ep2_carrie_subplot_begin.quip_function = ep2_carrie_subplot_begin_qf
-    ep2_carrie_outside = conversation.Node(461, '''ep2 carrie outside''')
+    ep2_carrie_outside = conversation.Node(589, '''ep2 carrie outside''')
     
     
     def ep2_carrie_outside_qf():
@@ -44135,7 +44062,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_outside.quip_function = ep2_carrie_outside_qf
-    ep2_carrie_illegal = conversation.Node(462, '''ep2 carrie illegal''')
+    ep2_carrie_illegal = conversation.Node(591, '''ep2 carrie illegal''')
     
     
     def ep2_carrie_illegal_qf():
@@ -44578,7 +44505,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_illegal.quip_function = ep2_carrie_illegal_qf
-    ep2_carrie_refuse = conversation.Node(463, '''ep2 carrie refuse''')
+    ep2_carrie_refuse = conversation.Node(593, '''ep2 carrie refuse''')
     
     
     def ep2_carrie_refuse_qf():
@@ -45022,7 +44949,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "her."
  , ' '])]))
     ep2_carrie_refuse.quip_function = ep2_carrie_refuse_qf
-    ep2_carrie_ignore = conversation.Node(464, '''ep2 carrie ignore''')
+    ep2_carrie_ignore = conversation.Node(595, '''ep2 carrie ignore''')
     
     
     def ep2_carrie_ignore_qf():
@@ -45158,7 +45085,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_ignore, ep2_practice_spectral_magic, False)
     ep2_carrie_ignore.quip_function = ep2_carrie_ignore_qf
-    ep2_practice_spectral_magic = conversation.Node(465, '''ep2 practice spectral magic''')
+    ep2_practice_spectral_magic = conversation.Node(597, '''ep2 practice spectral magic''')
     
     
     def ep2_practice_spectral_magic_qf():
@@ -45370,7 +45297,7 @@ def init_scene_1_episode_2():
  , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "chuckles."
  , ' '])]]), justification=0)
     ep2_practice_spectral_magic.quip_function = ep2_practice_spectral_magic_qf
-    ep2_carrie_subplot_spanking = conversation.Node(466, '''ep2 carrie subplot spanking''')
+    ep2_carrie_subplot_spanking = conversation.Node(599, '''ep2 carrie subplot spanking''')
     
     
     def ep2_carrie_subplot_spanking_qf():
@@ -46245,7 +46172,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_subplot_spanking, ep2_practice_spectral_magic, False)
     ep2_carrie_subplot_spanking.quip_function = ep2_carrie_subplot_spanking_qf
-    ep2_carrie_distraction = conversation.Node(467, '''ep2 carrie distraction''')
+    ep2_carrie_distraction = conversation.Node(601, '''ep2 carrie distraction''')
     
     
     def ep2_carrie_distraction_qf():
@@ -48769,7 +48696,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_distraction, ep2_carrie_subplot_end, False)
     ep2_carrie_distraction.quip_function = ep2_carrie_distraction_qf
-    ep2_carrie_agree = conversation.Node(468, '''ep2 carrie agree''')
+    ep2_carrie_agree = conversation.Node(603, '''ep2 carrie agree''')
     
     
     def ep2_carrie_agree_qf():
@@ -51446,7 +51373,7 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])], [], []]), justification=0)
         return conversation.continue_to_node(ep2_carrie_agree, ep2_carrie_subplot_end, False)
     ep2_carrie_agree.quip_function = ep2_carrie_agree_qf
-    ep2_carrie_subplot_end = conversation.Node(469, '''ep2 carrie subplot end''')
+    ep2_carrie_subplot_end = conversation.Node(605, '''ep2 carrie subplot end''')
     
     
     def ep2_carrie_subplot_end_qf():
@@ -51606,7 +51533,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "thing."
  , ' '])])) , ' '])]]), justification=0)
     ep2_carrie_subplot_end.quip_function = ep2_carrie_subplot_end_qf
-    ep2_airell = conversation.Node(470, '''ep2 airell''')
+    ep2_airell = conversation.Node(606, '''ep2 airell''')
     
     
     def ep2_airell_qf():
@@ -51620,7 +51547,7 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_airell, ep2_airell_busy)
     ep2_airell.quip_function = ep2_airell_qf
-    ep2_airell_face_punch = conversation.Node(471, '''ep2 airell face punch''')
+    ep2_airell_face_punch = conversation.Node(608, '''ep2 airell face punch''')
     
     
     def ep2_airell_face_punch_qf():
@@ -51762,7 +51689,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Airell."
  , ' '])]))
     ep2_airell_face_punch.quip_function = ep2_airell_face_punch_qf
-    ep2_airell_wait = conversation.Node(472, '''ep2 airell wait''')
+    ep2_airell_wait = conversation.Node(610, '''ep2 airell wait''')
     
     
     def ep2_airell_wait_qf():
@@ -52235,7 +52162,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_airell_wait, ep2_remember_what_morey_was_trying_to_teach, False)
     ep2_airell_wait.quip_function = ep2_airell_wait_qf
-    ep2_airell_dont_wait = conversation.Node(473, '''ep2 airell dont wait''')
+    ep2_airell_dont_wait = conversation.Node(612, '''ep2 airell dont wait''')
     
     
     def ep2_airell_dont_wait_qf():
@@ -53982,7 +53909,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_airell_dont_wait, ep2_remember_what_morey_was_trying_to_teach, False)
     ep2_airell_dont_wait.quip_function = ep2_airell_dont_wait_qf
-    ep2_remember_what_morey_was_trying_to_teach = conversation.Node(474, '''ep2 remember what morey was trying to teach''')
+    ep2_remember_what_morey_was_trying_to_teach = conversation.Node(614, '''ep2 remember what morey was trying to teach''')
     
     
     def ep2_remember_what_morey_was_trying_to_teach_qf():
@@ -54041,7 +53968,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_remember_what_morey_was_trying_to_teach.quip_function = ep2_remember_what_morey_was_trying_to_teach_qf
-    ep2_airell_recall_moreys_lesson = conversation.Node(475, '''ep2 airell recall moreys lesson''')
+    ep2_airell_recall_moreys_lesson = conversation.Node(616, '''ep2 airell recall moreys lesson''')
     
     
     def ep2_airell_recall_moreys_lesson_qf():
@@ -54415,7 +54342,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_airell_recall_moreys_lesson, ep2_airell_finish, False)
     ep2_airell_recall_moreys_lesson.quip_function = ep2_airell_recall_moreys_lesson_qf
-    ep2_airell_moreys_lesson_bratty = conversation.Node(476, '''ep2 airell moreys lesson bratty''')
+    ep2_airell_moreys_lesson_bratty = conversation.Node(618, '''ep2 airell moreys lesson bratty''')
     
     
     def ep2_airell_moreys_lesson_bratty_qf():
@@ -54550,10 +54477,15 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "swats,"
  , ' ']), ''.join([ "he"
  , ' ']), ''.join([ "tugs"
- , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ items.wearing_underwear(universal.state.player, ''.join([""
+ , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ items.wearing_dress(universal.state.player, ''.join([""
+, ''.join([ "up,"
+ , ' '])]), ''.join([""
+, ''.join([ "down,"
+ , ' '])]), ''.join([""
 , ''.join([ "and"
- , ' ']), ''.join([ person.underwearpanties() , ' '])]), ''.join([""
-])) , ' ']), ''.join([ "down"
+ , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ person.underwearpanties() , ' '])])) , ' ']), ''.join([ "{"
+ , ' ']), ''.join([ "}"
+ , ' ']), ''.join([ "down"
  , ' ']), ''.join([ "with"
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "vengeance"
@@ -54939,7 +54871,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "marks."
  , ' '])])) , ' '])], [], []]), justification=0)
     ep2_airell_moreys_lesson_bratty.quip_function = ep2_airell_moreys_lesson_bratty_qf
-    ep2_airell_talk = conversation.Node(477, '''ep2 airell talk''')
+    ep2_airell_talk = conversation.Node(620, '''ep2 airell talk''')
     
     
     def ep2_airell_talk_qf():
@@ -55169,7 +55101,7 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_airell_talk, ep2_airell_finish, False)
     ep2_airell_talk.quip_function = ep2_airell_talk_qf
-    ep2_airell_finish = conversation.Node(478, '''ep2 airell finish''')
+    ep2_airell_finish = conversation.Node(622, '''ep2 airell finish''')
     
     
     def ep2_airell_finish_qf():
@@ -55194,7 +55126,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_airell_finish.quip_function = ep2_airell_finish_qf
-    ep2_airell_finish_cooperative = conversation.Node(479, '''ep2 airell finish cooperative''')
+    ep2_airell_finish_cooperative = conversation.Node(624, '''ep2 airell finish cooperative''')
     
     
     def ep2_airell_finish_cooperative_qf():
@@ -55734,7 +55666,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "marks."
  , ' '])])) , ' '])], [], [], []]), justification=0)
     ep2_airell_finish_cooperative.quip_function = ep2_airell_finish_cooperative_qf
-    ep2_airell_finish_combative = conversation.Node(480, '''ep2 airell finish combative''')
+    ep2_airell_finish_combative = conversation.Node(626, '''ep2 airell finish combative''')
     
     
     def ep2_airell_finish_combative_qf():
@@ -56345,7 +56277,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "red."
  , ' '])])) , ' '])], [], []]), justification=0)
     ep2_airell_finish_combative.quip_function = ep2_airell_finish_combative_qf
-    ep2_airell_busy = conversation.Node(481, '''ep2 airell busy''')
+    ep2_airell_busy = conversation.Node(628, '''ep2 airell busy''')
     
     
     def ep2_airell_busy_qf():

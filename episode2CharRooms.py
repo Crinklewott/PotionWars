@@ -81,7 +81,7 @@ except KeyError:
     alondra = person.Person('Alondra', person.FEMALE, None, None, ''.join(['''Alondra is a Taironan woman with rich, dark caramel skin, . She is a little on the short side of average.''',
         '''She has shoulder-length hair black hair, and relatively small, dark brown eyes. In contrast to her height, her breasts are a little on the large side of average.''',
         '''She has a round, protruding bottom that rolls enticingly when she walks.''']), specialization=universal.SPEED, order=person.second_order, skinColor="caramel", eyeColor="brown",
-        hairColor="black", coins=90 hairLength="shoulder-length", hairStyle="down", height="average", bodyType="voluptuous", musculature="soft")
+        hairColor="black", coins=90, hairLength="shoulder-length", hairStyle="down", height="average", bodyType="voluptuous", musculature="soft")
     alondra.set_all_stats(strength=2, willpower=2, talent=3, dexterity=1, alertness=4, health=23, mana=18)
 
 if alondra.is_naked():
