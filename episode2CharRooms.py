@@ -109,6 +109,11 @@ except KeyError:
     airell = person.Person("Airell", person.MALE, None, None, ''.join(['''A slouching,''',
                 '''exceptionally pale man with out of control red hair and a big bushy red''',
                 '''beard that extends all the way down to his chest.''']))
+try:
+    cosima = universal.state.get_character("Cosima.person")
+except KeyError:
+    cosima = person.Person("Cosima", person.FEMALE, None, None, ''.join(['''A tall, lanky,''',
+    '''middle-aged, woman with olive-skin, dark hair and matching eyes.''']))
 
 
 

@@ -25,6 +25,7 @@ import os
 import episode
 import items
 import itemspotionwars
+import episode1CharRooms
 import copy
 
 """ Note: This file will have to be modified if we ever decide to have multiple universal.state.player's. Not quite sure what the best way of handling the case of multiple universal.state.player's is. We'll have
@@ -578,8 +579,8 @@ chosenShirt = None
 def select_shirt():
     global shirtList
     universal.say_title('Select Shirt')
-    shirtList = [itemspotionwars.vNeckTunic, itemspotionwars.tunic, itemspotionwars.blouse, itemspotionwars.bra, itemspotionwars.blackDress, itemspotionwars.sunDress,
-            itemspotionwars.robe, items.emptyUpperArmor]
+    shirtList = [item for item in episode1CharRooms.carolInventory if item.armorType == 
+            items.Shirt.armorType]
     universal.say('\n'.join(universal.numbered_list([shirt.name for shirt in shirtList])), justification=0)
     set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(select_shirt_interpreter)
@@ -620,8 +621,8 @@ def select_lower_clothing():
         select_underwear()
     else:
         universal.say_title('Select Lower Clothing')
-        pantsList = [itemspotionwars.trousers, itemspotionwars.shorts, itemspotionwars.shortShorts, itemspotionwars.plainSkirt, itemspotionwars.miniSkirt, itemspotionwars.pencilSkirt,
-                items.emptyLowerArmor]
+        pantsList = [item for item in episode1CharRooms.carolInventory if 
+                items.is_lower_clothing(item)]
         universal.say('\n'.join(universal.numbered_list([pants.name for pants in pantsList])), justification=0)
         set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
         set_command_interpreter(select_lower_clothing_interpreter)
@@ -655,8 +656,7 @@ chosenUnderwear = None
 
 def select_underwear():
     global underwearList
-    underwearList = [itemspotionwars.thong, itemspotionwars.lacyUnderwear, itemspotionwars.boyShorts, itemspotionwars.underShorts, itemspotionwars.modestUnderwear,
-            items.emptyUnderwear]
+    underwearList = [item for item in episode1CharRooms.carolInventory if items.is_underwear(item)]
     if universal.state.player.lower_clothing() == items.emptyLowerArmor:
         underwearList.remove(items.emptyUnderwear)
     universal.say_title('Select Underwear')        

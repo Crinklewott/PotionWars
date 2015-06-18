@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
+import episode1CharRooms
 from pygame.locals import *
 from universal import *
 import sp_rpg_engine as eng
@@ -381,10 +382,7 @@ def carol_leave_quip_function():
 
 carol_leave.quip_function = carol_leave_quip_function
 
-carol.inventory = [itemspotionwars.thong, itemspotionwars.lacyUnderwear, itemspotionwars.boyShorts, itemspotionwars.underShorts, itemspotionwars.shorts, 
-    itemspotionwars.shortShorts, itemspotionwars.plainSkirt, itemspotionwars.miniSkirt, itemspotionwars.blackDress, itemspotionwars.sunDress, itemspotionwars.vNeckTunic, 
-    itemspotionwars.pencilSkirt, itemspotionwars.blouse, itemspotionwars.largeShirt, itemspotionwars.pinkPajamaShirt, itemspotionwars.pinkPajamaPants, 
-    itemspotionwars.bluePajamaShirt, itemspotionwars.bluePajamaPants]
+carol.inventory = episode1CharRooms.carolInventory
 
 
 restfulRoad = Room("Restful Road", "Place holder")

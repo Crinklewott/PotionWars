@@ -831,6 +831,12 @@ def is_lower_clothing(item):
     except AttributeError:
         return False
 
+def is_underwear(item):
+    try:
+        return item.armorType == Underwear.armorType or item.armorType == Thong.armorType
+    except AttributeError:
+        return False
+
 def waistband_hem(lowerClothing):
     return lowerClothing.waistband_hem()
 
