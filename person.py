@@ -489,12 +489,12 @@ class Person(universal.RPGObject):
     def bum_adj(self):
         if self.bodyType == 'slim':
             adjList = ['small', 'petite', 'heart-shaped', 'lithe', 'svelt', 'combact', 'narrow', 'willowy']
-        elif self.bodyType == 'average':
-            adjList = ['plump', 'round', 'curved', 'rotund']
         elif self.bodyType == 'voluptuous':
             adjList = ['ample', 'curvaceous', 'large', 'shapely', 'curvy']
         elif self.bodyType == 'heavyset':
             adjList = ['fleshy', 'wide', 'expansive', 'corpulent', 'sizeable', 'generous']
+        else:
+            adjList = ['plump', 'round', 'curved', 'rotund']
         return random.choice(adjList)
 
     def quiver(self):
@@ -527,10 +527,10 @@ class Person(universal.RPGObject):
     def muscle_adj(self):
         if self.musculature == 'soft':
             adjList = ['jiggly', 'wobbly', 'pillowy', 'cushioned']
-        elif self.musculature == 'fit':
-            adjList = ['firm', 'toned', 'bouncy', 'well-developed', 'well-defined', 'tight']
         elif self.musculature == 'muscular':
             adjList = ['hard', 'solid', 'muscular', 'dense', 'sinewy', 'brawny']
+        else:
+            adjList = ['firm', 'toned', 'bouncy', 'well-developed', 'well-defined', 'tight']
         return random.choice(adjList)
 
     def is_fit(self):
