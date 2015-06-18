@@ -1683,8 +1683,7 @@ def specialization_bonus(ally, i):
     return bonus
 
 HIGH_STAT_PENALTY = .1
-HEALTH_MULTIPLIER = .05
-MANA_MULTIPLIER = .2
+BASE_HEALTH_INCREASE = 8
 def improve_characters(victorious, afterCombatEvent=None):
     """
     Takes as argument the function that should be invoked after leveling up is complete.
@@ -1706,9 +1705,10 @@ def improve_characters(victorious, afterCombatEvent=None):
                 specialtyModifier = 2
             gain = 0
             manaGain = 0
-            while int(math.floor(stat * specialtyModifier)) <= statPoints:
+            threshhold = int(math.floor(stat * specialtyModifier))
+            while threshhold <= statPoints:
                 if i == universal.HEALTH:
-                    gain += int(math.ceil(stat * HEALTH_MULTIPLIER))
+                    gain += BASE_HEALTH_INCREASE + (statPoints - threshhold)
                     ally.improve_stat(i, gain)
                     ally.increaseStatPoints[i] = 0
                 else:
