@@ -893,6 +893,23 @@ def is_loose(clothing):
 def loose_msg(person, looseMsg, tightMsg):
     return universal.msg_selector(person.lower_clothing().tightness == LOOSE, {True:looseMsg, False:tightMsg})
 
+def lower_clothing_msg(person, pantsMsg, shortsMsg, skirtMsg, dressMsg, noPantsMsg):
+    pantsType = person.lower_clothing().armorType
+    if pants == Pants.armorType 
+        return pantsMsg
+    elif pantsType == Shorts.armorType:
+        return shortsMsg
+    elif pantsType == Skirt.armorType:
+        return skirtMsg
+    elif pantsType == Dress.armorType:
+        return dressMsg
+    elif is_underwear(person.lower_clothing()):
+        return noPantsMsg
+    else:
+        raise ValueError(' '.join([pantsType, "is not a valid lower clothing type."]))
+
+
+
 def wearing_trousers(person, wearingTrousers, notWearingTrousers='', noLowerClothing=''):
     if person.lower_clothing() == emptyLowerArmor:
         return noLowerClothing
