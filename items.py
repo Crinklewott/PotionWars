@@ -895,7 +895,7 @@ def loose_msg(person, looseMsg, tightMsg):
 
 def lower_clothing_msg(person, pantsMsg, shortsMsg, skirtMsg, dressMsg, noPantsMsg):
     pantsType = person.lower_clothing().armorType
-    if pants == Pants.armorType 
+    if pants == Pants.armorType:
         return pantsMsg
     elif pantsType == Shorts.armorType:
         return shortsMsg
