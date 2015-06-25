@@ -283,9 +283,30 @@ class Person(universal.RPGObject):
         NOTE: defaultLitany doesn't actually do anything. Including it was a terrible, terrible mistake.
     """
     enemy = False
-    def __init__(self, name, gender, defaultLitany, litany, description="", printedName=None, 
-            coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle='', marks=None,
-            musculature='', hairLength='', height='', bodyType='', identifier=None, weaknesses=None): 
+    def __init__(
+            self, 
+            name, 
+            gender, 
+            defaultLitany, 
+            litany, 
+            description="", 
+            printedName=None, 
+            coins=20, 
+            specialization=universal.BALANCED, 
+            order=zeroth_order, 
+            dropChance=0, 
+            rawName=None,
+            skinColor='', 
+            eyeColor='', 
+            hairColor='', 
+            hairStyle='', 
+            marks=None,
+            musculature='', 
+            hairLength='', 
+            height='', 
+            bodyType='', 
+            identifier=None, 
+            weaknesses=None):
         self.name = name
         self.gender = gender
         self.previousTarget = 0
@@ -318,7 +339,9 @@ class Person(universal.RPGObject):
         self.tier = 0
         self.experience = 0
         self.spellPoints = 3
-        self.ignoredSpells = []
+        #ignoredSpells is a mapping from spell name to the number of times a character can ignore
+        #the spell. If the number of times hits zero, it gets removed.
+        self.ignoredSpells = {}
         self.positions = []
         self.combatType = None
         self.litany = litany
@@ -811,11 +834,11 @@ class Person(universal.RPGObject):
     def set_spanking_positions(self, positions):
         self.positions = positions
 
-    def ignores_spells(self, ignoredSpells):
-        self.ignoredSpells = ignoredSpells
-
     def set_ignored_spells(self, ignoredSpells):
         self.ignoredSpells = ignoredSpells
+
+    def add_ignored_spell(self, spell, numTimesIgnored):
+        self.ignoredSpells[spell.name] = numTimesIgnored
 
     def _set_spell_points(self, spellPoints):
         """
@@ -926,6 +949,7 @@ class Person(universal.RPGObject):
                 self.inventory.remove(equipment)
             except ValueError:
                 pass
+            equipment.apply_stat_bonuses(self)
 
 
     def unequip(self, equipment, couldBeNaked=True):
@@ -942,6 +966,8 @@ class Person(universal.RPGObject):
                         heshe(self), '''will be naked from the waist down.''', HeShe(self), '''decides not to removes''', equipment.name + "."]]), justification=0)
                 acknowledge(Person.character_sheet, self)
                 raise items.NakedError()
+            else:
+                equipment.remove_stat_bonuses(self)
 
 
     def display_equipment(self, slot):
@@ -957,7 +983,13 @@ class Person(universal.RPGObject):
         return self.gender == FEMALE
 
     def ignores_spell(self, spell):
-        return spell in self.ignoredSpells
+        if spell.name in self.ignoredSpells:
+            self.ignoredSpells[spell.name] -= 1
+            if not self.ignoredSpells[spell.name]:
+                del self.ignoredSpells[spell.name]
+            return True
+        else:
+            return False
 
     def is_specialized_in_spell_type(self, spellType):
         return self.is_magic_specialist() and self.specialization_type() == spellType
@@ -1204,10 +1236,13 @@ class Person(universal.RPGObject):
     def display_main_stats(self):
         assert self.mainStatDisplay < 3
         if self.mainStatDisplay == 0:
-            statList = [': '.join([universal.primary_stat_name(stat), str(statValue)]) for (stat, statValue) in 
+            statList = [': '.join([universal.primary_stat_name(stat), str(statValue)]) for 
+                    (stat, statValue) in 
                     zip([i for i in range(0, len(self.primaryStats[:-4]))], self.primaryStats)] 
-            statList.append('Health: ' + str(self.primaryStats[-2]) + '/' + str(self.primaryStats[-4]))
-            statList.append('Mana: '   + str(self.primaryStats[-1]) + '/' + str(self.primaryStats[-3]))
+            statList.append('Health: ' + str(self.primaryStats[-2]) + '/' + 
+                    str(self.primaryStats[-4]))
+            statList.append('Mana: '   + str(self.primaryStats[-1]) + '/' + 
+                    str(self.primaryStats[-3]))
         elif self.mainStatDisplay == 1:
             statList = []
             statList.append(' '.join(['grapple:', str(self.grapple())]))
@@ -1215,12 +1250,17 @@ class Person(universal.RPGObject):
             statList.append(' '.join(['resilience:', str(self.resilience())]))
             statList.append(' '.join(['magic:', str(self.magic())]))
             statList.append(' '.join(['speed:', str(self.speed())]))
-            statList.append('Health: ' + str(self.primaryStats[-2]) + '/' + str(self.primaryStats[-4]))
-            statList.append('Mana: '   + str(self.primaryStats[-1]) + '/' + str(self.primaryStats[-3]))
+            statList.append('Health: ' + str(self.primaryStats[-2]) + '/' + 
+                    str(self.primaryStats[-4]))
+            statList.append('Mana: '   + str(self.primaryStats[-1]) + '/' + 
+                    str(self.primaryStats[-3]))
         elif self.mainStatDisplay == 2:
             spellCategoryNames = {0:'combat', 1:'status', 2:'buff', 3:'spectral'}
-            statList = [': '.join([universal.primary_stat_name(stat) if stat < len(self.primaryStats[:-3]) else spellCategoryNames[stat-len(self.primaryStats[:-3])], pointStatus]) for 
-                    (stat, pointStatus) in zip([i for i in range(0, len(self.primaryStats[:-3]) + NUM_SPELL_CATEGORIES)], self.compute_point_status())]
+            statList = [': '.join([universal.primary_stat_name(stat) if 
+                stat < len(self.primaryStats[:-3]) else 
+                spellCategoryNames[stat-len(self.primaryStats[:-3])], pointStatus]) for 
+                    (stat, pointStatus) in zip([i for i in range(0, len(self.primaryStats[:-3]) + 
+                        NUM_SPELL_CATEGORIES)], self.compute_point_status())]
         return '\n'.join(statList)
 
     def compute_point_status(self):
@@ -1348,10 +1388,21 @@ class Person(universal.RPGObject):
         return max(0, self.magic() + self.magic_defense_bonus() + (self.magic_penalty() if rawMagic else 0))
 
     def attack(self):
-        return self.attack_bonus() + int(math.trunc(self.weapon().damage_multiplier(self.is_grappling()) * self.warfare())) + self.weapon().damage_bonus()
+        return self.attack_bonus() + int(math.trunc(self.weapon().damage_multiplier(
+            self.is_grappling()) * self.warfare())) + self.weapon().damage_bonus()
+
+    def apply_offensive_enchantments(self, target):
+        return self.weapon().apply_offensive_enchantments(target)
+
+    def apply_defensive_enchantments(self):
+        for armor in [self.shirt(), self.lower_clothing(), self.underwear()]:
+            armor.apply_defensive_enchantments(self)
 
     def defense(self):
-        return self.defense_bonus() + int(math.trunc(self.weapon().damage_multiplier(self.is_grappling()) * self.warfare())) + sum([equipment.defense_bonus() for equipment in self.equipmentList])
+        return self.defense_bonus() + int(math.trunc(self.weapon().damage_multiplier(
+            self.is_grappling()) * self.warfare())) + sum(
+                    [equipment.defense_bonus() for equipment in self.equipmentList])
+            
 
     def magic_penalty(self, rawMagic=True):
         return self.weapon().castingPenalty + self.shirt().castingPenalty + self.lower_clothing().castingPenalty + self.underwear().castingPenalty

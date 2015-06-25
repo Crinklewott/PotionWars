@@ -216,7 +216,8 @@ class AttackAction(CombatAction):
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
-        Returns a triple: A string indicating what happened, the damage inflicted by the action, and this action.
+        Returns a triple: A string indicating what happened, the damage inflicted by the action, 
+        and this action.
         """
         spankingEffect = self.being_spanked()
         if spankingEffect:
@@ -227,30 +228,39 @@ class AttackAction(CombatAction):
         if defender.is_grappling() and not attacker.is_grappling(defender):
             opponents.remove(defender)
             if opponents:
-                return AttackAction(attacker, [opponents[random.randrange(len(opponents))]]).effect(inCombat, allies, enemies)
+                return AttackAction(attacker, [opponents[random.randrange(
+                    len(opponents))]]).effect(inCombat, allies, enemies)
             else:
                 return DefendAction(attacker, [attacker]).effect(inCombat, allies, enemies)
         opponents = enemies if self.attacker in allies else allies
         if not defender in opponents:
-            return AttackAction(attacker, opponents[randrange(0, len(opponents))]).effect(inCombat, allies, enemies)
+            return AttackAction(attacker, opponents[randrange(0, len(opponents))]).effect(inCombat, 
+                    allies, enemies)
         resultString = ''
-        defender.guardians = [guardian for guardian in defender.guardians if guardian.current_health() > 0]
+        defender.guardians = [guardian for guardian in defender.guardians if 
+                guardian.current_health() > 0]
         if defender.guardians:
-            #If the defender is being guarded, then we use the first guardians instead of the current defender. 
+            #If the defender is being guarded, then we use the first guardian instead of the current defender. 
             guardian = defender.guardians.pop()
             self.defenders = [guardian]
             attackEffect = self.effect(inCombat, allies, enemies)
-            return ('\n'.join([' '.join([guardian.printedName, 'defends', defender.printedName, 'from', attacker.printedName + '!']), attackEffect[0]]), 
+            return ('\n'.join([' '.join([guardian.printedName, 'defends', defender.printedName, 
+                'from', attacker.printedName + '!']), attackEffect[0]]), 
                     attackEffect[1], attackEffect[2]) 
         else:
             attacker = self.attacker
-            dam = compute_damage(attacker.warfare(), attacker.warfare() + attacker.attack() - (defender.warfare() + defender.defense())) 
+            dam = compute_damage(attacker.warfare(), attacker.warfare() + attacker.attack() - 
+                    (defender.warfare() + defender.defense())) 
             defender.receives_damage(dam) 
-            damageString = ' '.join([attacker.printedName, 'hits', defender.printedName, 'for', str(dam), 'damage!'])
+            resultString = '\n'.join([resultString, 
+                attacker.apply_offensive_enchantments(defender)])
+            damageString = ' '.join([attacker.printedName, 'hits', defender.printedName, 'for', 
+                str(dam), 'damage!'])
             resultString = '\n'.join([resultString, damageString]) if resultString != '' else damageString
             if defender.current_health() <= 0:
-                resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
-            return (resultString, [dam], self)
+                resultString = '\n'.join([resultString, ' '.join([defender.printedName, 
+                    'collapses!'])])
+            return (resultString.strip(), [dam], self)
 
 
 MINIMUM_NEGATIVE_DAMAGE = -5

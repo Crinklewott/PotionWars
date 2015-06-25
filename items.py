@@ -17,10 +17,12 @@ You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 from __future__ import division
+import abc
+import enchantments
+import random
+import statusEffects
 import universal
 from universal import *
-import abc
-import random
 
 allItems = {}
 
@@ -32,56 +34,19 @@ class NakedError(Exception):
 
 
 
-class Enchantment(universal.RPGObject):
-    def __init__(self, cost=0, stat=None, bonus=0):
-        self.cost = cost
-        self.stat = stat
-        self.bonus = bonus
-
-    def apply_enchantment(self):
-        raise NotImplementedError()
-
-    @staticmethod
-    def add_data(data, saveData):
-        saveData.extend(["Enchantment Data:", data])
-
-    def save(self):
-        saveData = []
-        Enchantment.add_data(str(self.cost), saveData)
-        Enchantment.add_data(str(self.stat), saveData)
-        Enchantment.add_data(str(self.bonus), saveData)
-        return '\n'.join(saveData)
-
-    @staticmethod
-    def load(enchantmentData, enchantment):
-        _, cost, stat, bonus = enchantmentData.split("Enchantment Data:")
-        enchantment.cost = int(cost.strip())
-        enchantment.stat = int(stat.strip()) 
-        enchantment.bonus = int(bonus.strip())
-
-
-    def display(self):
-        raise NotImplementedError()
-
-class AttackEnchantment(Enchantment):
-    """
-    Grants a +1 damage bonus to weapons, and a +1 defense bonus to clothing.
-    """
-    def __init__(self):
-        super(AttackEnchantment, self).__init__(cost=1, bonus=1)
-
-    def apply_enchantment(self):
-        return self.bonus
-
-    def display(self):
-        return ''.join(['+', str(self.bonus), ' damage'])
-
-class MaxEnchantmentError(Exception):
-    pass
 
 class Item(universal.RPGObject):
-    def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, 
-            enchantments=None, maxEnchantment=0):
+    def __init__(
+            self, 
+            name, 
+            description, 
+            price=0, 
+            attackDefense=0, 
+            attackPenalty=0,
+            castingPenalty=0, 
+            magicDefense=0, 
+            enchantments=None, 
+            maxEnchantment=0):
         self.name = name
         self.description = description
         self.price = price
@@ -132,7 +97,7 @@ class Item(universal.RPGObject):
             enchantments = enchantments.split("Enchantment:")
             item.enchantments = [Enchantment() for enchantment in enchantments]
             for enchantment, enchantmentData in zip(item.enchantments, enchantments):
-                Enchantment.load(enchantmentData, enchantment)
+                enchantments.Enchantment.load(enchantmentData, enchantment)
         #&&& Need to handle the loading of subclasses.
         if rest:
             if "Armor Only:" in rest:
@@ -207,7 +172,6 @@ class Gem(Item):
         super(Gem, self).__init__(name, description)
         self.enchantmentType = enchantmentType
         self.cost = enchantmentType().cost
-        self.bonus = enchantmentType().bonus
 
     '''
     def save(self):
@@ -228,7 +192,24 @@ class Gem(Item):
     '''
 
 
-class Armor(Item):
+class Equippable(Item):
+
+    def apply_stat_bonuses(self, target):
+        for enchantment in self.enchantments:
+            try:
+                enchantment.apply_stat_bonuses(self, target)
+            except AttributeError:
+                pass
+
+    def remove_stat_bonuses(self, target):
+        for enchantment in self.enchantments:
+            try:
+                enchantment.remove_stat_bonus(self, target)
+            except AttributeError:
+                pass
+
+
+class Armor(Equippable):
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6, risque=0):
         super(Armor, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment)
         self.armorType = 'armor'
@@ -244,16 +225,26 @@ class Armor(Item):
         return '\n'.join(saveData)
 
     def defense_bonus(self):
-        enchantmentBonus = 0
+        defenseBonus = 0
         for enchantment in self.enchantments:
             try:
-                enchantmentEffect = enchantment.apply_enchantment()
-            except NotImplementedError:
-                continue
-            else:
-                if enchantmentEffect:
-                    enchantmentBonus += enchantmentEffect
-        return enchantmentBonus
+                defenseBonus += enchantment.damage_bonus()
+            except AttributeError:
+                pass
+        return defenseBonus
+
+    def apply_defensive_enchantments(self, target):
+        for enchantment in self.enchantments:
+            try:
+                enchantments.apply_defensive_enchantment(target)
+            except AttributeError:
+                pass
+
+    def print_enchantments(self):
+        enchantmentText = '\n'.join('\t' + enchantment.display_for_armor() for enchantment in 
+                self.enchantments)
+        return enchantmentText if enchantmentText else 'None'
+
 
     def liftlower(self):
         return "lower"
@@ -282,6 +273,7 @@ class Armor(Item):
 
     def hem_waistband(self):
         return self.waistband_hem()
+
 
     @staticmethod
     def load(armorData, armor):
@@ -495,11 +487,24 @@ class Thong(Underwear):
                 risque) 
         self.armorType = armorType
 
-class Weapon(Item):
+class Weapon(Equippable):
     weaponType = 'weapon'   
-    def __init__(self, name, description, price=0, minDamage=0, maxDamage=0, grappleAttempt=0, grappleAttemptDefense=0, grappleBonus=0, armslengthBonus=0, genericBonus=0,
-            enchantments=None, maxEnchantment=4):
-        super(Weapon, self).__init__(name, description, price, enchantments=enchantments, maxEnchantment=maxEnchantment)
+    def __init__(
+            self, 
+            name, 
+            description, 
+            price=0, 
+            minDamage=0, 
+            maxDamage=0, 
+            grappleAttempt=0, 
+            grappleAttemptDefense=0, 
+            grappleBonus=0, 
+            armslengthBonus=0, 
+            genericBonus=0,
+            enchantments=None, 
+            maxEnchantment=4):
+        super(Weapon, self).__init__(name, description, price, enchantments=enchantments, 
+                maxEnchantment=maxEnchantment)
         self.minDamage = minDamage
         self.maxDamage = maxDamage
         self.grappleAttempt = grappleAttempt
@@ -577,16 +582,25 @@ class Weapon(Item):
         return ((self.grappleBonus if grappling else self.armslengthBonus) + self.genericBonus) / 10
 
     def damage_bonus(self):
-        enchantmentBonus = 0
+        damageBonus = 0
         for enchantment in self.enchantments:
             try:
-                enchantmentEffect = enchantment.apply_enchantment()
-            except NotImplementedError:
-                continue
-            else:
-                if enchantmentEffect:
-                    enchantmentBonus += enchantmentEffect
-        return enchantmentBonus
+                damageBonus += enchantment.damage_bonus()
+            except AttributeError:
+                pass
+        return damageBonus
+
+    def apply_offensive_enchantments(self, target):
+        resultString = ''
+        for enchantment in self.enchantments:
+            resultString = '\n'.join([resultString, 
+                enchantment.apply_offensive_enchantment(target)])
+        return resultString.strip()
+
+    def print_enchantments(self):
+        enchantmentText = '\n'.join('\t' + enchantment.display_for_weapon() for enchantment in 
+                self.enchantments)
+        return enchantmentText if enchantmentText else "None"
 
 
 
@@ -643,7 +657,7 @@ class Spear(Weapon):
 
 #----------------------------------------------------Pajamas---------------------------------------
 
-class Pajamas(Item):
+class Pajamas(Equippable):
     armorType = 'pajamas'
     def __init__(self, name, description, price, risque=0):
         super(Pajamas, self).__init__(name, description, price)

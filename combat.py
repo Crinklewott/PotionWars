@@ -104,22 +104,36 @@ def end_fight():
     activeAlly = None
     chosenActions = []
 
-def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon_mode, runnableIn=True, bossFight=False, optionalIn=False, additionalAllies=None, 
-        ambushIn=0, randomEncounterIn=False, coordinatesIn=None):
-    global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface, enemySurface, commandSurface, clearScreen, previousMode,  \
-            actionsInflicted, actionsEndured, chosenActions, optional, defeatedEnemies, defeatedAllies
-    global ambush, boss, initialAllies, initialEnemies, randomEncounter, coordinates
+def fight(
+        enemiesIn, 
+        afterCombatEventIn=None, 
+        previousModeIn=dungeonmode.dungeon_mode, 
+        runnableIn=True, 
+        bossFight=False, 
+        optionalIn=False, 
+        additionalAllies=None, 
+        ambushIn=0, 
+        randomEncounterIn=False, 
+        coordinatesIn=None):
+    global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface 
+    global enemySurface, commandSurface, clearScreen, previousMode
+    global actionsInflicted, actionsEndured, chosenActions, optional, defeatedEnemies
+    global ambush, boss, initialAllies, initialEnemies, randomEncounter, coordinates, defeatedAllies
     randomEncounter = randomEncounterIn
     if randomEncounter:
         assert coordinatesIn
         coordinates = coordinatesIn
     universal.state.enemies = person.Party(enemiesIn)
-    universal.state.allies = person.Party(list(universal.state.party) + (additionalAllies if additionalAllies else []))
+    universal.state.allies = person.Party(list(universal.state.party) + (additionalAllies if 
+        additionalAllies else []))
     initialEnemies = []
     initialAllies = []
     for ally in universal.state.allies:
-        initialAllies.append((ally.get_id(), list(ally.primaryStats), dict(ally.statusDict), list(ally.increaseSpellPoints), list(ally.increaseStatPoints)))
+        ally.apply_defensive_enchantments()
+        initialAllies.append((ally.get_id(), list(ally.primaryStats), dict(ally.statusDict), 
+            list(ally.increaseSpellPoints), list(ally.increaseStatPoints)))
     for enemy in universal.state.enemies:
+        enemy.apply_defensive_enchantments()
         initialEnemies.append((enemy.get_id(), list(enemy.primaryStats), dict(enemy.statusDict)))
     boss = bossFight
     ambush = ambushIn
@@ -131,9 +145,11 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
     defeatedEnemies = []
     optional = optionalIn
     try:
-        actionsInflicted = {combatant:[] for combatant in enemiesIn + person.get_party().members + (additionalAllies if additionalAllies is not None else [])}
+        actionsInflicted = {combatant:[] for combatant in enemiesIn + person.get_party().members + 
+                (additionalAllies if additionalAllies is not None else [])}
     except TypeError:
-        actionsInflicted = {combatant:[] for combatant in [enemiesIn] + person.get_party().members + (additionalAllies if additionalAllies is not None else [])}
+        actionsInflicted = {combatant:[] for combatant in [enemiesIn] + person.get_party().members + 
+                (additionalAllies if additionalAllies is not None else [])}
     chosenActions = []
     previousMode = previousModeIn
     bg = get_background()

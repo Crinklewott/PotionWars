@@ -35,17 +35,15 @@ class Firebolt(p.Combat):
     numTargets = 1
     tier = 0
     cost = 3
+    name = 'Firebolt'
 
     def __init__(self, attacker, defenders):
         super(Firebolt, self).__init__(attacker, defenders)
-        self.name = 'Firebolt'
         self.description = 'Flings a small bolt of fire at a single opponent.' 
         self.effectFormula = 'DAMAGE: magic + bonus(magic - enemy.magic)'
         self.numTargets = 1
         self.minDamage = 2 
         self.magicMultiplier = 1
-        self.grappleStatus = Firebolt.grappleStatus
-        self.cost = Firebolt.cost
         self.expertise = BASIC
 
     def effect_statement(self, defender, dam):
@@ -64,16 +62,13 @@ class Icebolt(p.Combat):
     tier = 0
     numTargets = 1
     cost = 4
+    name = 'Icebolt'
     def __init__(self, attacker, defenders):
         super(Icebolt, self).__init__(attacker, defenders)
-        self.name = 'Icebolt'
         self.description = 'Flings a small icicle at a single opponent.' 
         self.effectFormula = 'DAMAGE: magic + bonus(1.2 * magic - enemy.magic)'
         self.numTargets = 1
-        self.grappleStatus = Icebolt.grappleStatus
-        self.tier = Icebolt.tier
         self.minDamage = 3 
-        self.cost = Icebolt.cost
         self.magicMultiplier = 1.2
         self.expertise = ADVANCED
     
@@ -94,18 +89,15 @@ class Magicbolt(p.Combat):
     numTargets = 1
     tier = 0
     cost = 5
+    name = 'Magicbolt'
     def __init__(self, attacker, defenders):
         super(Magicbolt, self).__init__(attacker, defenders)
-        self.name = 'Magicbolt'
         self.description = 'Flings a small bolt of raw magic at a single opponent.' 
         self.effectFormula = 'DAMAGE: magic + bonus(1.4 * magic - enemy.magic)'
         self.numTargets = 1
-        self.grappleStatus = Magicbolt.grappleStatus
-        self.tier = Magicbolt.tier
         self.minDamage = 4
         self.magicMultiplier = 1.4
         self.rawMagic = True
-        self.cost = Magicbolt.cost
         self.expertise = EXPERT
 
 
@@ -131,18 +123,15 @@ class Weaken(p.Status):
     tier = 0
     cost = 1
     statusInflicted = statusEffects.WEAKENED
+    name = 'Weaken'
     def __init__(self, attacker, defenders):
         super(Weaken, self).__init__(attacker, defenders)
-        self.name = 'Weaken'
         self.description = 'Wraps your enemy in a field that interferes with the implicit magic responsible for lending strength to their muscles, making them physically weaker and slower.'
         self.effectFormula = 'EFFECT: -2 penalty to Dexterity and Strength\nDURATION: max(2, resilience - enemy.resilience)'
         self.numTargets = 1
-        self.grappleStatus = Weaken.grappleStatus
         self.rawMagic = True
-        self.tier = Weaken.tier
         self.statusInflicted = statusEffects.WEAKENED
         self.effectClass = combatAction.WARRIORS_GRAPPLERS
-        self.cost = Weaken.cost
         self.resilienceMultiplier = 1
         self.expertise = ADVANCED
         self.minDuration = 3
@@ -179,18 +168,15 @@ class DistortMagic(p.Status):
     tier = 0
     statusInflicted = statusEffects.MAGIC_DISTORTED
     cost = 1
+    name = 'Distort Magic'
     def __init__(self, attacker, defenders):
         super(DistortMagic, self).__init__(attacker, defenders)
-        self.name = 'Distort Magic'
         self.description = 'Wraps your enemy in a field that interferes with their ability to cast and protect against spells.'
         self.effectFormula = 'EFFECT: -2 penalty to Talent and Willpower\n DURATION: max(0, resilience - enemy.resilience)'
         self.numTargets = 1
-        self.grappleStatus = DistortMagic.grappleStatus
         self.rawMagic = True
-        self.tier = DistortMagic.tier
         self.statusInflicted = statusEffects.MAGIC_DISTORTED
         self.effectClass = combatAction.SPELL_SLINGERS
-        self.cost = DistortMagic.cost
         self.resilienceMultiplier = 15
         self.magicMultiplier = 2
         self.expertise = BASIC
@@ -231,18 +217,15 @@ class WeakCharm(p.CharmMagic):
     tier = 0
     statusInflicted = statusEffects.CHARMED
     cost = 7
+    name = 'Weak Charm'
     def __init__(self, attacker, defenders):
         super(WeakCharm, self).__init__(attacker, defenders)
-        self.name = 'Weak Charm'
         self.description = 'The weakest of the mind control spells. Even this simple charm spell is so complex, that only a specialist can cast it without permanently damaging the recipient\'s brain. Furthermore, it can only be cast when the caster is grappling an opponent.'
         self.effectFormula = 'EFFECT: Target is forced to fight for their opponents\nSUCCESS CHANCE (%): 20 | 10 * resilience bonus\n DURATION: 4 | 4 *magic bonus'
         self.numTargets = 1
-        self.grappleStatus = WeakCharm.grappleStatus
         self.rawMagic = False
-        self.tier = WeakCharm.tier
         self.statusInflicted = statusEffects.CHARMED
         self.effectClass = combatAction.ALL
-        self.cost = WeakCharm.cost
         self.expertise = EXPERT
         self.minProbability = 20
         self.resilienceMultiplier = 10
@@ -281,18 +264,15 @@ class Heal(p.Healing):
     numTargets = 1
     tier = 0
     cost = 2
+    name = 'Heal'
     def __init__(self, attacker, defenders):
         super(Heal, self).__init__(attacker, defenders)
         self.fortify = False
         self.numTargets = 1
-        self.grappleStatus = Heal.grappleStatus
-        self.cost = Heal.cost
-        self.name = 'Heal'
         self.description = 'Converts mana into health, and infuses the recipient with it.'
         self.effectFormula = 'HEALS: between 1.2 * magic and target\'s health - target\'s current health'
         self.magicMultiplier = 1.2
         self.rawMagic = True
-        self.tier = Heal.tier
         self.expertise = BASIC
 
     def effect_statement(self, defender):
@@ -309,15 +289,13 @@ class Fortify(p.Healing):
     numTargets = 1
     tier = 0
     cost = 3
+    name = 'Fortify'
     def __init__(self, attacker, defenders):
         super(Fortify, self).__init__(attacker, defenders)
         self.fortify = True
         self.cost = Fortify.cost
-        self.name = 'Fortify'
         self.numTargets = 1
-        self.grappleStatus = Fortify.grappleStatus
         self.fortifyCap = 40
-        self.tier = Fortify.tier
         self.description = 'Converts mana into health, and infuses the recipient with it. Note that this spell can heal a character past their maximum health. However, it has no effect if the character\'s current health is already above its maximum. Unfortunately, because of the extra energy needed to infuse a character with extra health, this spell does not heal as many hit points as Heal. It caps out at 40.'
         self.effectFormula = 'HEALS: between magic and 40'
         self.magicMultiplier = 1
@@ -341,15 +319,12 @@ class SuperFortify(p.Healing):
     numTargets = 1
     tier = 0
     cost = 4
+    name = 'Super Fortify'
     def __init__(self, attacker, defenders):
         super(SuperFortify, self).__init__(attacker, defenders)
         self.fortify = True
-        self.cost = SuperFortify.cost
         self.fortifyCap = 50
         self.numTargets = 1
-        self.name = 'Super Fortify'
-        self.tier = SuperFortify.tier
-        self.grappleStatus = SuperFortify.grappleStatus
         self.description = 'Converts mana into health, and infuses the recipient with it. Note that this spell can heal a character past their maximum health. However, it has no effect if the character\'s current health is already above its maximum. Furthermore, it is just as powerful as Heal. However, it is also slightly more expensive than Fortify. It caps out at 45.'
         self.effectFormula = 'HEALS: 2*magic | 50'
         self.magicMultiplier = 2
@@ -381,15 +356,12 @@ class SpectralPush(p.Spectral):
     numTargets = 1
     tier = 1
     cost = 2
+    name = 'Spectral Push'
     def __init__(self, attacker, defenders):
         super(SpectralPush, self).__init__(attacker, defenders)
-        self.cost = SpectralPush.cost
         self.targetType = combatAction.ENEMY
         self.rawMagic = True
-        self.tier = SpectralPush.tier
-        self.grappleStatus = SpectralPush.grappleStatus
         self.numTargets = 1
-        self.name = 'Spectral Push'
         self.effectClass = combatAction.WARRIORS_GRAPPLERS
         self.minDamage = 1
         self.successMultiplier = 40
@@ -476,14 +448,11 @@ class SpectralPull(p.Spectral):
     numTargets = 1
     tier = SpectralPush.tier
     cost = 3
+    name = 'Spectral Pull'
     def __init__(self, attacker, defenders):
         super(SpectralPull, self).__init__(attacker, defenders)
-        self.cost = SpectralPull.cost
         self.targetType = combatAction.ENEMY
-        self.name = 'Spectral Pull'
         self.rawMagic = True
-        self.grappleStatus = SpectralPull.grappleStatus
-        self.tier = SpectralPull.tier
         self.effectClass = combatAction.ALL
         self.minDamage = 1
         self.magicMultiplier = 2
@@ -571,14 +540,11 @@ class SpectralShove(p.Spectral):
     numTargets = 1
     tier = SpectralPush.tier
     cost = 4
+    name = 'Spectral Shove'
     def __init__(self, attacker, defenders):
         super(SpectralShove, self).__init__(attacker, defenders)
-        self.cost = SpectralShove.cost
-        self.name = 'Spectral Shove'
         self.targetType = combatAction.ENEMY
         self.rawMagic = True
-        self.tier = SpectralShove.tier
-        self.grappleStatus = SpectralShove.grappleStatus
         self.effectClass = combatAction.WARRIORS_GRAPPLERS
         self.minDamage = 2
         self.magicMultiplier = 2
@@ -671,17 +637,14 @@ class Lightningbolt(p.Combat):
     numTargets = 3
     tier = 1
     cost = 6
+    name = 'Lightningbolt'
     def __init__(self, attacker, defenders):
         super(Lightningbolt, self).__init__(attacker, defenders)
-        self.name = 'Lightningbolt'
         self.description = 'Unleashes a trio of lightning bolts from the caster\'s fingertips. Does as much damage as firebolt, but affects up to 3 enemies at once. Unfortunately, casting this spell while grappling would hurt the caster as much as the target, so it can\'t be cast when the caster is grappling.' 
         self.effectFormula = 'DAMAGE: 2 -> 2 * magic bonus'
         self.numTargets = 3
-        self.grappleStatus = Lightningbolt.grappleStatus
-        self.tier = Lightningbolt.tier
         self.minDamage = 2 
         self.magicMultiplier = 2
-        self.cost = Lightningbolt.cost
         self.expertise = BASIC
 
     def effect_statement(self, defender, dam):
@@ -702,17 +665,14 @@ class Thunderbolt(p.Combat):
     numTargets = 3
     tier = 1
     cost = 8
+    name = 'Thunderbolt'
     def __init__(self, attacker, defenders):
         super(Thunderbolt, self).__init__(attacker, defenders)
-        self.name = 'Thunderbolt'
         self.description = 'A more powerful version of Lightningbolt. Does as much damage as Icebolt to up to 3 enemies.' 
         self.effectFormula = 'DAMAGE: 3 -> 3 * magic bonus'
-        self.grappleStatus = Thunderbolt.grappleStatus
         self.numTargets = 3
-        self.tier = Thunderbolt.tier
         self.minDamage = 3 
         self.magicMultiplier = 3
-        self.cost = Thunderbolt.cost
         self.expertise = ADVANCED
 
 
@@ -732,17 +692,14 @@ class Magicstrike(p.Combat):
     numTargets = 3
     tier = 1
     cost = 7
+    name = 'Magic Strike'
     def __init__(self, attacker, defenders):
         super(Magicstrike, self).__init__(attacker, defenders)
-        self.name = 'Magic Strike'
-        self.grappleStatus = Magicstrike.grappleStatus
         self.description = 'What the average spellcaster can do with lightning, a specialist can do with far more powerful (but volatile) raw magical energy. In addition to being more powerful and more efficient then Thunderbolt, this spell can be cast when grappled. Unfortunately, iron provides protection against this spell.' 
         self.effectFormula = 'DAMAGE: 4 -> 4 * magic bonus'
         self.numTargets = 3
-        self.tier = Magicstrike.tier
         self.minDamage = 4 
         self.magicMultiplier = 4
-        self.cost = Magicstrike.cost
         self.expertise = EXPERT
         self.rawMagic = True
 
@@ -767,20 +724,17 @@ class MassWeaken(p.Status):
     tier = 1
     statusInflicted = statusEffects.WEAKENED
     cost = 4
+    name = 'Mass Weaken'
 
     def __init__(self, attacker, defenders):
         super(MassWeaken, self).__init__(attacker, defenders)
-        self.name = 'Mass Weaken'
         self.description = 'Wraps up to 3 enemies in a field that interferes with the implicit magic responsible for lending strength to their muscles, making them physically weaker and slower.'
         self.effectFormula = 'EFFECT: -2 penalty to Strength and Dexterity\nSUCCESS CHANCE (%): 30 | 15 * resilience bonus | 98 \nDURATION: 3 | magic bonus'
         self.resilienceMultiplier = 15
-        self.grappleStatus = MassWeaken.grappleStatus
         self.numTargets = 3
         self.rawMagic = True
-        self.tier = MassWeaken.tier
         self.statusInflicted = statusEffects.WEAKENED
         self.effectClass = combatAction.WARRIORS_GRAPPLERS
-        self.cost = MassWeaken.cost
         self.expertise = BASIC
         self.magicMultiplier = 1
         self.minDuration = 2
@@ -819,19 +773,16 @@ class MassDistortMagic(p.Status):
     tier = 1
     statusInflicted = statusEffects.MAGIC_DISTORTED
     cost = 4
+    name = 'Mass Distort Magic'
     def __init__(self, attacker, defenders):
         super(MassDistortMagic, self).__init__(attacker, defenders)
-        self.name = 'Mass Distort Magic'
         self.description = 'Wraps up to 3 enemies in a field that interfers with their ability to cast and protect against spells.'
         self.effectFormula = 'EFFECT: -2 penalty to Talent and Willpower\nSUCCESS CHANCE (%): 40 | 15 * resilience bonus | 95\n DURATION: 3 | 2 *magic bonus'
         self.numTargets = 3
-        self.grappleStatus = MassDistortMagic.grappleStatus
         self.rawMagic = True
         self.magicMultiplier = 2
-        self.tier = MassDistortMagic.tier
         self.statusInflicted = statusEffects.MAGIC_DISTORTED
         self.effectClass = combatAction.SPELL_SLINGERS
-        self.cost = MassDistortMagic.cost
         self.resilienceMultiplier = 15
         self.expertise = ADVANCED
         self.maxProbability = 95
@@ -868,18 +819,15 @@ class Charm(p.CharmMagic):
     tier = 1
     statusInflicted = statusEffects.CHARMED
     cost = 7
+    name = 'Charm'
     def __init__(self, attacker, defenders):
         super(Charm, self).__init__(attacker, defenders)
-        self.name = 'Charm'
         self.description = 'A more powerful version of Weak Charm. Charm has a higher chance of success and lasts longer.'
         self.effectFormula = 'EFFECT: Target is forced to fight for their enemies.\nSUCCESS CHANCE (%): 30 | 20 * resilience bonus | 95 \n DURATION: 4 | 4 *magic bonus'
-        self.grappleStatus = Charm.grappleStatus
         self.numTargets = 1
         self.rawMagic = False
-        self.tier = Charm.tier
         self.statusInflicted = statusEffects.CHARMED
         self.effectClass = combatAction.ALL
-        self.cost = Charm.cost
         self.expertise = EXPERT
         self.minProbability = 20
         self.resilienceMultiplier = 20
@@ -919,15 +867,12 @@ class Shield(p.Buff):
     tier = 1
     statusInflicted = statusEffects.SHIELDED
     cost = 3
+    name = 'Shield'
     def __init__(self, attacker, defenders):
         super(Shield, self).__init__(attacker, defenders)
-        self.cost = Shield.cost
-        self.name = 'Shield'
         self.description = 'Wraps an ally in a magical shield that protects them from physical attacks.'
         self.effectFormula = 'EFFECT: +2 defense\nDURATION: magic'
         self.rawMagic = True
-        self.grappleStatus = Shield.grappleStatus
-        self.tier = Shield.tier
         self.expertise = BASIC
         self.magicMultiplier = 1
         self.statusInflicted = statusEffects.SHIELDED
@@ -958,16 +903,13 @@ class MagicShield(p.Buff):
     tier = 1
     statusInflicted = statusEffects.MAGIC_SHIELDED
     cost = 3
+    name = 'Magic Shield'
     def __init__(self, attacker, defenders):
         super(MagicShield, self).__init__(attacker, defenders)
-        self.cost = MagicShield.cost
-        self.grappleStatus = MagicShield.grappleStatus
-        self.name = 'Magic Shield'
         self.description = 'Wraps an ally in a magical shield that protects them from magical attacks.'
         self.effectFormula = 'EFFECT: +2 magic defense\nDURATION: magic'
         self.magicMultiplier = 1
         self.rawMagic = True
-        self.tier = MagicShield.tier
         self.statusInflicted = statusEffects.MAGIC_SHIELDED
         self.minDuration = 1
         self.numTargets = 1
@@ -994,16 +936,13 @@ class SuperShield(p.Buff):
     tier = 1
     statusInflicted = statusEffects.SHIELDED
     cost = 3
+    name = 'Super Shield'
     def __init__(self, attacker, defenders):
         super(SuperShield, self).__init__(attacker, defenders)
-        self.cost = SuperShield.cost
-        self.name = 'Super Shield'
-        self.grappleStatus = SuperShield.grappleStatus
         self.description = 'Wraps an ally in a magical shield that protects them from physical and magical attacks.'
         self.effectFormula = 'EFFECT: +2 defense, +2 magic defense\nDURATION: magic'
         self.magicMultiplier = 1
         self.rawMagic = True
-        self.tier = SuperShield.tier
         self.statusInflicted = statusEffects.SHIELDED
         self.minDuration = 1
         self.numTargets = 1
@@ -1062,11 +1001,9 @@ class SpectralStrapping(p.SpectralSpanking):
     statusInflicted = statusEffects.HUMILIATED
     cost = 16
     severity = spanking.LEATHER_STRAP_SEVERITY
+    name = 'Spectral Strapping'
     def __init__(self, attacker, defenders):
         super(SpectralStrapping, self).__init__(attacker, defenders)
-        self.name = 'Spectral Strapping'
-        self.cost = SpectralStrapping.cost
-        self.grappleStatus = SpectralStrapping.grappleStatus
         self.description = 'Conjures a \'hand\' and \'strap\' made of raw magic. The hand grabs the target and lifts them into the air. The strap lands a number of swats on the target\'s backside. Once the spanking is done, the hand lifts the target up, and throws them into the ground. For each round that the strapping continues, the caster uses 2 mana.'
         self.effectFormula = 'SPANKING DURATION: talent + bonus(1.2 * talent - enemy.talent)\nHUMILIATION DURATION: 1.4 * resilience - enemy.resilience\nDAMAGE: 1.2 * talent'
         self.numTargets = 1
@@ -1076,7 +1013,6 @@ class SpectralStrapping(p.SpectralSpanking):
         self.effectClass = combatAction.ALL
         self.statusInflicted = statusEffects.HUMILIATED
         self.rawMagic = True
-        self.tier = SpectralStrapping.tier 
         self.expertise = ADVANCED
         self.probModifier = 19
         self.minProbability = 37
@@ -1137,17 +1073,14 @@ class SpectralCaning(p.SpectralSpanking):
     effectClass = combatAction.ALL
     cost = 32
     severity = spanking.CANE_SEVERITY
+    name = 'Spectral Caning'
     def __init__(self, attacker, defenders):
         super(SpectralCaning, self).__init__(attacker, defenders)
-        self.name = 'Spectral Caning'
-        self.cost = SpectralCaning.cost
         self.description = 'Conjures a \'hand\' and \'cane\' made of raw magic. The hand grabs the target and lifts them into the air. The cane lands a number of swats on the target\'s backside. Once the caning is done, the hand lifts the target up, and throws them into the ground. However, for every round that the spanking continues, the caster uses 3 mana.'
         self.effectFormula = 'SPANKING DURATION: talent + bonus(1.4 * talent - enemy.talent)\nHUMILIATION DURATION: 1.6 * resilience - enemy.resilience\nDAMAGE: 1.2 * talent'
         self.numTargets = 1
-        self.grappleStatus = SpectralCaning.grappleStatus
         self.magicMultiplier = 1.4
         self.smackMultiplier = 5
-        self.tier = SpectralCaning.tier
         self.expertise = EXPERT
         self.resilienceMultiplier = 1.6
         self.targetType = combatAction.ENEMY
