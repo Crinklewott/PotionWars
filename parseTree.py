@@ -147,6 +147,7 @@ inlineCommandsPlayer = {
     #Note: This is not ideal, because it has itemspotionwars baked in. Need to figure out an alternative.
     r'\phasbelt':("itemspotionwars.has_belt(universal.state.player, )", 2),
     r'\pisbaring':("items.baring_underwear(universal.state.player.underwear(), ", 3),
+    r'\pisbare':("items.bare(universal.state.player, ", 2),
     r'\pistight':("items.tight_msg(universal.state.player.lower_clothing(), ", 2),
     r'\pisloose':("items.loose_msg(universal.state.player.lower_clothing(), ", 2),
     r'\pwearingshirt':("items.wearing_shirt(universal.state.player, ", 3),
@@ -225,7 +226,8 @@ inlineCommands = {
     r'\otrousers':("items.wearing_trousers(", 4),
     r'\odress':("items.wearing_dress(", 4),
     r'\owearingunderwear':("items.wearing_underwear(", 3),
-    r'\owielding':("items.weapon_msg(", 4)
+    r'\owielding':("items.weapon_msg(", 4),
+    r'\npcisbare':("items.bare(", 3)
     }
 
 

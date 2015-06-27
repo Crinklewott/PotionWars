@@ -895,7 +895,7 @@ def loose_msg(person, looseMsg, tightMsg):
 
 def lower_clothing_msg(person, pantsMsg, shortsMsg, skirtMsg, dressMsg, noPantsMsg):
     pantsType = person.lower_clothing().armorType
-    if pants == Pants.armorType:
+    if pantsType == Pants.armorType:
         return pantsMsg
     elif pantsType == Shorts.armorType:
         return shortsMsg
@@ -931,5 +931,11 @@ def wearing_dress(person, wearingDress, notWearingDress='', noOuterClothing=''):
 
 def baring_underwear(underwear, baringMsg, notBaringMsg, notWearingUnderwearMsg=''):
     return notWearingUnderwearMsg if underwear == emptyUnderwear else universal.msg_selector(underwear.baring, {True:baringMsg, False:notBaringMsg})
+
+def bare(person, baring='', notBaring=''):
+    if person.lower_clothing().baring and person.underwear().baring:
+        return baring
+    else:
+        return notBaring
 
 
