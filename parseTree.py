@@ -155,7 +155,8 @@ inlineCommandsPlayer = {
     r'\isfemale':("person.is_female_msg(universal.state.player, ", 2),
     r'\stageDirections':("pwutilities.stage_directions(", 1),
     r'\ppajamatype':("items.pajama_type_msg(universal.state.player,", 3),
-    r'\pwielding':("items.weapon_msg(universal.state.player,", 3)
+    r'\pwielding':("items.weapon_msg(universal.state.player,", 3),
+    r'\phairstyle':("person.hairstyle_msg(universall.state.player,", 5)
     }
 
 #The first line of all these commands is code: the person to apply the function to.
@@ -231,6 +232,7 @@ inlineCommands = {
     r'\npcwearingdress':("items.wearing_dress(", 4),
     r'\npcwearingtrousers':("items.wearing_trousers(", 4),
     r'\npcwearingshirt':("items.wearing_trousers(", 4),
+    r'\npchairstyle':("person.hairstyle_msg(", 6)
     }
 
 

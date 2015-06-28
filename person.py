@@ -3355,3 +3355,8 @@ def is_female_msg(person, femaleMsg, maleMsg):
 def hair_length_based_msg(person, shortMsg, shoulderMsg, backMsg, buttMsg):
     return universal.msg_selector(person.hairLength, {HAIR_LENGTH[0]:shortMsg, HAIR_LENGTH[1]:shoulderMsg, HAIR_LENGTH[2]:backMsg, HAIR_LENGTH[3]:buttMsg})
 
+def hairstyle_msg(person, down, ponytail, braid, pigtails, bun):
+    return universal.msg_selector(person.hairStyle, {BUTT_HAIR_STYLE[0]:down, 
+        BUTT_HAIR_STYLE[1]:ponytail, BUTT_HAIR_STYLE[2]:braid, BUTT_HAIR_STYLE[3]:pigtails,
+        BUTT_HAIR_STYLE[4]:bun})
+
