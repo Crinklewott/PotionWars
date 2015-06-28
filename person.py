@@ -515,15 +515,6 @@ class Person(universal.RPGObject):
             adjList = ['quivering', 'bobbing', 'shivering', 'shifting']
         return random.choice(adjList)
 
-    def is_slim(self):
-        return self.bodyType == 'slim'
-
-    def is_average(self):
-        return self.bodyType == 'average'
-
-    def is_heavyset(self):
-        return self.bodyType == 'heavyset'
-
     def muscle_adj(self):
         if self.musculature == 'soft':
             adjList = ['jiggly', 'wobbly', 'pillowy', 'cushioned']
@@ -3359,4 +3350,7 @@ def hairstyle_msg(person, down, ponytail, braid, pigtails, bun):
     return universal.msg_selector(person.hairStyle, {BUTT_HAIR_STYLE[0]:down, 
         BUTT_HAIR_STYLE[1]:ponytail, BUTT_HAIR_STYLE[2]:braid, BUTT_HAIR_STYLE[3]:pigtails,
         BUTT_HAIR_STYLE[4]:bun})
+
+def wearing_lower_clothing_msg(person, wearing, notWearing):
+    return wearing if person.wearing_lower_clothing() else notWearing
 

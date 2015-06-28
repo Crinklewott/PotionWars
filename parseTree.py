@@ -152,6 +152,7 @@ inlineCommandsPlayer = {
     r'\pisloose':("items.loose_msg(universal.state.player.lower_clothing(), ", 2),
     r'\pwearingshirt':("items.wearing_shirt(universal.state.player, ", 3),
     r'\pwearingdress':("items.wearing_dress(universal.state.player, ", 3),
+    r'\pwearinglowerclothing':("person.wearing_lower_clothing_msg(universal.state.player, ", 2),
     r'\isfemale':("person.is_female_msg(universal.state.player, ", 2),
     r'\stageDirections':("pwutilities.stage_directions(", 1),
     r'\ppajamatype':("items.pajama_type_msg(universal.state.player,", 3),
@@ -232,7 +233,8 @@ inlineCommands = {
     r'\npcwearingdress':("items.wearing_dress(", 4),
     r'\npcwearingtrousers':("items.wearing_trousers(", 4),
     r'\npcwearingshirt':("items.wearing_trousers(", 4),
-    r'\npchairstyle':("person.hairstyle_msg(", 6)
+    r'\npchairstyle':("person.hairstyle_msg(", 6),
+    r'\npcwearinglowerclothing':("person.wearing_lower_clothing(", 3)
     }
 
 
