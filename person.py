@@ -1218,11 +1218,14 @@ class Person(universal.RPGObject):
 
     def clad_bottom(self, useName=True, pajama=False):
         if pajama:
-            return hisher(self) + " " + self.pajama_bottom().name + "-clad bottom"
+            return self.pj_clad_bottom(useName, pajama)
         else:
             return (hisher(self) + (" " + self.underwear().name + "-clad bottom" if self.underwear() != items.emptyUnderwear else self.lower_clothing_type() + " bottom") 
                     if self.lower_clothing() == items.emptyLowerArmor else "the seat of " + (self.printedName + "'s" if useName else hisher(self)) + " " + 
                     self.lower_clothing_type())
+
+    def pj_clad_bottom(self, useName=True, pajama=True):
+        return hisher(self) + " " + self.pajama_bottom().name + "-clad bottom"
 
     def clothing_below_the_waist(self):         
         return self.underwear() if self.lower_clothing().name == items.emptyLowerArmor.name else self.lower_clothing()
