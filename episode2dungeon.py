@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import collections
 import dungeonmode
 import pwutilities
 
@@ -79,29 +80,39 @@ def e1_18_18():
         return False
 
 
-slumsLevel1Events = (
-                   #0    1    2   3     4   5    6    7     8   9    10   11   12   13  14    15   16   17   18   19
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #19
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,e1_18_18,None), #18
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #17
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #16
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #15
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #14
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #13
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #12
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,e1_16_11,None,None,None), #11
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #10
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #9
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #8
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #7
-                 (None,None,None,None,None,None,None,None,None,None,e1_10_6,None,None,None,None,None,None,None,None,None), #6
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #5
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #4
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #3
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #2
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #1
-                 (e1_0_0,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #0
-                 )
+def e1_9_19():
+    if 'ep2ChasingEditaEvent3' in pwutilities.keywords() and universal.state.party.defeated():
+        pwutilities.trigger_event('ep2 javier defeat rest at brothel')
+        universal.state.location.coordinates = (1, 10, 19)
+        return True
+    else:
+        return False
+
+def e1_11_19():
+    return e1_9_19()
+
+def e1_10_19():
+    if 'ep2ChasingEditaEvent3' in pwutilities.keywords():
+        return False
+    elif 'ep2ChasingEdita' in pwutilities.keywords():
+        pwutilities.add_keyword('ep2ChasingEditaEvent3')
+        pwutilities.remove_keyword('ep2ChasingEdita')
+        pwutilities.trigger_event('ep2 chase edita event 3')
+        return True
+    else:
+        return False
+        
+slumsLevel1Events = {i:collections.defaultdict(pwutilities.none) for i in 
+        range(len(slumsLevel1Map))}
+
+slumsLevel1Events[0][0] = e1_0_0
+slumsLevel1Events[10][6] = e1_10_6
+slumsLevel1Events[16][11] = e1_16_11
+slumsLevel1Events[18][18] = e1_18_18
+slumsLevel1Events[10][19] = e1_10_19
+slumsLevel1Events[9][19] = e1_10_19
+slumsLevel1Events[11][19] = e1_10_19
+
 
 slumEvents = [slumsLevel1Events]
 allegriasDomain = dungeonmode.Dungeon("Allegria's Domain", [slumsLevel1Map], slumEvents, bgMusic=pwutilities.TAIRONAN,

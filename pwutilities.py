@@ -261,3 +261,10 @@ def trigger_event(nodeName, eventTitle):
     maze.litany = node.index
     conversation.converse_with(maze, dungeonmode.dungeon_mode)
 
+
+def none():
+    """
+    A function that just returns None. Used by the defaultdict map events as a factory for squares
+    with no events
+    """
+    return None
