@@ -735,10 +735,6 @@ def itthem(armor):
     else:
         return "it"
 
-def pjitthem(armor):
-    of 
-
-
 def itthey(armor):
     if armor.armorType == Pants.armorType or armor.armorType == Shorts.armorType:
         return "they"
