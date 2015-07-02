@@ -101,6 +101,17 @@ def e1_10_19():
         return True
     else:
         return False
+
+def e1_10_18():
+    if 'ep2ChasingEditaEvent3' in pwutilities.keywords():
+        pwutilities.add_keyword('ep2MeetMagola')
+        pwutilities.trigger_event('ep2 meet magola')
+        return True
+    elif 'ep2MeetMagola' in pwutilities.keywords():
+        return False
+    else:
+        pwutilities.trigger_event('ep2 magola busy')
+        return True
         
 slumsLevel1Events = {i:collections.defaultdict(pwutilities.none) for i in 
         range(len(slumsLevel1Map))}
@@ -112,6 +123,7 @@ slumsLevel1Events[18][18] = e1_18_18
 slumsLevel1Events[10][19] = e1_10_19
 slumsLevel1Events[9][19] = e1_10_19
 slumsLevel1Events[11][19] = e1_10_19
+
 
 
 slumEvents = [slumsLevel1Events]
