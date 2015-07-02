@@ -3358,3 +3358,6 @@ def is_female_msg(person, femaleMsg, maleMsg):
 def hair_length_based_msg(person, shortMsg, shoulderMsg, backMsg, buttMsg):
     return universal.msg_selector(person.hairLength, {HAIR_LENGTH[0]:shortMsg, HAIR_LENGTH[1]:shoulderMsg, HAIR_LENGTH[2]:backMsg, HAIR_LENGTH[3]:buttMsg})
 
+
+def weapon_name(character):
+    return character.weapon().name
