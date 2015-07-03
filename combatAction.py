@@ -233,24 +233,35 @@ class AttackAction(CombatAction):
         opponents = enemies if self.attacker in allies else allies
         if not defender in opponents:
             return AttackAction(attacker, opponents[randrange(0, len(opponents))]).effect(inCombat, allies, enemies)
-        resultString = ''
         defender.guardians = [guardian for guardian in defender.guardians if guardian.current_health() > 0]
         if defender.guardians:
-            #If the defender is being guarded, then we use the first guardians instead of the current defender. 
+            #If the defender is being guarded, then we use the first guardian instead of the current defender. 
             guardian = defender.guardians.pop()
             self.defenders = [guardian]
             attackEffect = self.effect(inCombat, allies, enemies)
-            return ('\n'.join([' '.join([guardian.printedName, 'defends', defender.printedName, 'from', attacker.printedName + '!']), attackEffect[0]]), 
-                    attackEffect[1], attackEffect[2]) 
+            return ('\n'.join([' '.join([guardian.printedName, 'defends', defender.printedName, 
+                'from', attacker.printedName + '!']), attackEffect[0]]), attackEffect[1], 
+                attackEffect[2]) 
         else:
-            attacker = self.attacker
-            dam = compute_damage(attacker.warfare(), attacker.warfare() + attacker.attack() - (defender.warfare() + defender.defense())) 
-            defender.receives_damage(dam) 
-            damageString = ' '.join([attacker.printedName, 'hits', defender.printedName, 'for', str(dam), 'damage!'])
-            resultString = '\n'.join([resultString, damageString]) if resultString != '' else damageString
-            if defender.current_health() <= 0:
-                resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
+            dam = self.calculate_damage(attacker, defender)
+            self.inflict_damage(defender, dam)
+            resultString = self.display_result(attacker, defender, dam)
             return (resultString, [dam], self)
+
+    def calculate_damage(self, attacker, defender):
+        return compute_damage(attacker.warfare(), attacker.warfare() + attacker.attack() - 
+                (defender.warfare() + defender.defense())) 
+
+    def display_result(self, attacker, defender, damage):
+        resultString = ' '.join([attacker.printedName, 'hits', defender.printedName, 
+            'for', str(dam), 'damage!'])
+        if defender.current_health() <= 0:
+            resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
+        return resultString
+
+    def inflict_damage(self, defender, dam):
+        defender.receives_damage(dam)
+
 
 
 MINIMUM_NEGATIVE_DAMAGE = -5
@@ -738,7 +749,6 @@ class DefendAction(CombatAction):
 #--------------------------------Catfight actions---------------------------
 
 class CatSpankAction(SpankAction):
-    actionType = 'catfight spank'
     noPantsBonus = 5
     noPantiesBonus = 5
 
@@ -801,10 +811,34 @@ class CatSpankAction(SpankAction):
                 humiliationDamage += self.noPantiesBonus
                 resilienceDamage += self.noPantsBonus
 
-           spankee.inflict_resilience_damage(resilienceDamage)
-           spankee.inflict_humiliation_damage(humiliationDamage)
-           if spankee.humiliation() >= spankee.max_humiliation():
+           spankee.receives_stamina_damage(resilienceDamage)
+           spankee.receives_humiliation_damage(humiliationDamage)
+           if spankee.current_humiliation() >= spankee.humiliation():
                resultString += ''.join(['\n', spankee.printedName, ' surrenders!'])
         return (resultString, [spankingDuration], self)
 
 class CatAttackAction(AttackAction):
+
+    def inflict_damage(self, defender, dam): 
+        defender.receives_stamina_damage(dam)
+
+    def display_result(self, attacker, defender, damage):
+        possible_strings = [
+                ' '.join([attacker.printedName, "bitch slaps", defender.printedName +"!"]),
+                ' '.join([attacker.printedName, "rakes", defender.printedName, "with", 
+                        attacker.hisher(), "nails!"]),
+                ' '.join([attacker.printedName, "grabs", defender.grab_hair_message(), 
+                        "and gives a vicious tug!"]),
+                ' '.join([attacker.printedName, "punches", defender.printedName, "in the",
+                    "boob!" if defender.is_female() else "chest!"]),
+                ' '.join([attacker.printedName, "pokes", defender.printedName, "in the eye!"]),
+                ' '.join([attacker.printedName, "punches", defender.printedName, "in the belly!"]),
+                ' '.join([attacker.printedName, "smacks", defender.printedName, 
+                        "hard on the ass!"]),
+                ' '.join([attacker.printedName, "digs", attacker.hisher(), "nails into",
+                    defender.printedName + "'s", "forearm!"])
+        ]
+        return random.choice(possible_strings)
+
+            
+

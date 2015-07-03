@@ -265,13 +265,13 @@ def print_allies(allies, targetList=None, title='Party'):
         universal.say(allies, surface=allySurface, columnNum=1)
     else:
         if is_catfight():
-            universal.say('\t'.join(['', 'Embarrassment:', 'Mana:', 'Grappling:\n\t']),
+            universal.say('\t'.join(['', 'Humiliation:', 'Stamina:', 'Grappling:\n\t']),
                     surface=allySurface, columnNum=4)
         else:
             universal.say('\t'.join(['', 'Health:', 'Mana:',  'Grappling:\n\t']), 
                     surface=allySurface, columnNum=4)
         if is_catfight():
-            universal.say(universal.state.player.display_catfight(grappling=True), 
+            universal.say(allies.display_catfight(grappling=True), 
                     surface=allySurface, columnNum=4)
         else:
             universal.say(allies.display_party(ally=activeAlly, targeted=targetList, 
@@ -1703,18 +1703,18 @@ def print_round_results():
 def end_round():
     global allies, enemies, chosenActions, actionResults, defeatedAllies, defeatedEnemies
     if is_catfight()
-        activeAllies = [ally for ally in allies if ally.humiliation() < ally.max_humiliation()]
-        defeatedAllies.extend([ally for ally in allies if ally.humiliation() >= 
-            ally.max_humiliation()])
+        activeAllies = [ally for ally in allies if ally.current_humiliation() < ally.humiliation()]
+        defeatedAllies.extend([ally for ally in allies if ally.current_humiliation() >= 
+            ally.humiliation()])
     else:
         activeAllies = [ally for ally in allies if ally.current_health() > 0]
         defeatedAllies.extend([ally for ally in allies if ally.current_health() <= 0])
     allies = person.Party(activeAllies)
     if is_catfight():
-        activeEnemies = [enemy for enemy in enemies if enemy.humiliation() < 
-                enemy.max_humiliation()]
-        defeatedEnemies.extend([enemy for enemy in enemies if enemy.humiliation() >= 
-            enemy.max_humiliation()])
+        activeEnemies = [enemy for enemy in enemies if enemy.current_humiliation() < 
+                enemy.humiliation()]
+        defeatedEnemies.extend([enemy for enemy in enemies if enemy.current_humiliation() >= 
+            enemy.humiliation()])
     else:
         activeEnemies = [enemy for enemy in enemies if enemy.current_health() > 0]
         defeatedEnemies.extend([enemy for enemy in enemies if enemy.current_health() <= 0])

@@ -314,23 +314,23 @@ def order_name(order):
     def current_stamina(self):
         return max(0, self.stamina() - self.staminaDamage)
 
-    def inflict_stamina_damage(self, damage):
+    def receives_stamina_damage(self, damage):
         self.staminaDamage += damage
 
     def heal_stamina_damage(self, heal):
-        self.inflict_stamina_damage(-heal)
+        self.receives_stamina_damage(-heal)
 
-    def humiliation(self):
+    def current_humiliation(self):
         return self.humiliation
 
-    def max_humiliation(self):
+    def humiliation(self):
         return 10 * self.willpower()
 
-    def inflict_humiliation_damage(self, damage):
+    def receives_humiliation_damage(self, damage):
         self.humiliation += damage
 
     def heal_humiliation_damage(self, heal):
-        self.inflict_humiliation_damage(-heal)
+        self.receives_humiliation_damage(-heal)
 
 
 def display_person(person):
@@ -572,6 +572,14 @@ class Person(universal.RPGObject):
             return BACK_HAIR_STYLE
         elif self.hairLength == 'butt-length':
             return BUTT_HAIR_STYLE
+
+    def grab_hair_message(self):
+        if self.hairStyle == BUTT_HAIR_STYLE[0]:
+            return ' '.join(["a fistful of", self.printedName + "'s", "hair"])
+        elif self.hairStyle == BUTT_HAIR_STYLE[1]:
+            return ' '.join(["one of", self.printedName + "'s", "pigtails"])
+        else:
+            return ' '.join([self.printedName + "'s", self.hairStyle])
 
     def risque(self):
         risqueLevel = sum(equipment.risque for equipment in self.equipmentList if not isinstance(equipment, items.Weapon))
@@ -2379,6 +2387,11 @@ class Party(universal.RPGObject):
         return '\n'.join(partyNames)
 
     def display_party(self, showHP=True, ally=None, targeted=None, grappling=False):
+        return self.generic_display(showHP, ally, targeted, grappling, Person.current_health,
+                Person.health, Person.current_mana, Person.mana)
+
+    def generic_display(self, showHP=True, ally=None, targeted=None, grappling=False, 
+            currentHealthFunction, healthFunction, currentManaFunction, manaFunction):
         allyIndex = -1
         targetedIndices = []
         if ally is not None and ally in self.members:
@@ -2388,16 +2401,25 @@ class Party(universal.RPGObject):
         memberNames = [': '.join([member.printedName, member.status_string()]) for member in self]
         if showHP:
             partyTxt = ['\t'.join([target(n, arrow(n, allyIndex), targetedIndices) + '. '
-                + memberName, str(member.current_health()) + '/' + str(member.health()), str(member.current_mana()) + '/' + str(member.mana())])
-                for (n, member, memberName) in zip([i for i in range(1, len(self.members)+1)], self.members, memberNames)]
+                + memberName, str(currentHealthFunction(member)) + '/' + str(healthFunction(member)), 
+                str(currentManaFunction(member)) + '/' + str(manaFunction(member)])
+                for (n, member, memberName) in zip([i for i in range(1, len(self.members)+1)], 
+                    self.members, memberNames)]
             if grappling:
                 grappled = None
-                partyTxt = ['\t'.join([memberTxt, display_person(mem)]) for (memberTxt, mem) in zip(partyTxt, self.members)]
+                partyTxt = ['\t'.join([memberTxt, display_person(mem)]) for (memberTxt, mem) in 
+                    zip(partyTxt, self.members)]
             return '\n\t'.join(partyTxt)
         else:
             return '\t'.join([target(n, arrow(n, allyIndex), targetedIndices) + '. ' + '\n'
                 + memberName for (n, member, memberName) in 
                 zip([i for i in range(1, len(self.members)+1)], self.members, memberNames)])
+
+    def display_catfight(self, showHP=True, ally=None, targeted=None, grappling=True):
+        return self.generic_display(showHP, ally, targeted, grappling, Person.current_stamina, 
+            Person.stamina, Person.current_humiliation, Person.humiliation)
+            
+    
 
 
     def display(self):
