@@ -47,82 +47,12 @@ class Enemy(person.Person):
         self.equip(items.emptyUpperArmor)
         self.equip(items.emptyUnderwear)
         self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
-        self.spankingFunctions = {
-                positions.overTheKnee: (self.otk_intro, self.otk_round, self.otk_failure, self.otk_reversal),
-                positions.standing: (self.standing_intro, self.standing_round, self.standing_failure, self.standing_reversal),
-                positions.onTheGround: (self.on_the_ground_intro, self.on_the_ground_round, self.on_the_ground_failure, self.on_the_ground_reversal)
-            }
 
         self.firstRound = True
 
     def get_id(self):
         return super(Enemy, self).get_id() + str(self.count)
 
-    def spanks(self, bottom, position):
-        return self.spankingFunctions[position][0](self, bottom)
-
-    def spanked_by(self, top, position):
-        return self.spankingFunctions[position][0](top, self)
-
-    def continue_spanking(self, bottom, position):
-        return self.spankingFunctions[position][self.ROUND_INDEX](self, bottom)
-
-    def continue_being_spanked(self, top, position):
-        return self.spankingFunctions[position][self.ROUND_INDEX](top, self)
-
-    def reverses(self, top, position):
-        return self.spankingFunctions[position][-1](top, self)
-
-    def reversed_by(self, bottom, position):
-        return self.spankingFunctions[position][-1](self, bottom)
-
-    def failed(self, bottom, position):
-        return self.spankingFunctions[position][-2](self, bottom)
-
-    def blocks(self, top, position):
-        return self.spankingFunctions[position][-2](top, self)
-
-    def otk_intro(self, top, bottom):
-        raise NotImplementedError()
-
-    def otk_round(self, top, bottom):
-        raise NotImplementedError()
-
-    def otk_failure(self, top, bottom):
-        raise NotImplementedError()
-
-    def otk_reversal(self, top, bottom):
-        raise NotImplementedError()
-
-    def standing_intro(self, top, bottom):
-        raise NotImplementedError()
-
-    def standing_round(self, top, bottom):
-        raise NotImplementedError()
-
-    def standing_failure(self, top, bottom):
-        raise NotImplementedError()
-
-    def standing_reversal(self, top, bottom):
-        raise NotImplementedError()
-
-    def on_the_ground_intro(self, top, bottom):
-        raise NotImplementedError()
-
-    def on_the_ground_round(self, top, bottom):
-        raise NotImplementedError()
-
-    def on_the_ground_failure(self, top, bottom):
-        raise NotImplementedError()
-
-    def on_the_ground_reversal(self, top, bottom):
-        raise NotImplementedError()
-
-    def end_spanking(self, top, bottom):
-        self.firstRound = True
-        return universal.format_line(['''Finally, with a mighty effort,''', bottom.printedName, '''manages to wriggle''', bottom.himselfherself(), '''free of''', top.printedName + "'s", 
-        '''merciless grasp.''', bottom.HeShe(), '''scrambles away from''', top.printedName, '''clutching at''', bottom.hisher(), '''burning bottom with one hand, while snatching up''', 
-        bottom.hisher(), '''dropped weapon with the other.'''])
 
     def drop(self):
         "TODO: Implement"

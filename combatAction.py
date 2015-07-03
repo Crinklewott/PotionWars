@@ -433,9 +433,47 @@ class SpankAction(CombatAction):
         self.severity = severity
         self.minDuration = 2
 
+    def administer_spanking(self, inCombat, allies, enemies):
+        spanker, spankee = self.attacker, self.defenders[0]
+        spankerGrapple, spankeeGrapple = spanker.grapple(), spankee.grapple()
+        spankerResilience, spankeeResilience = spanker.resilience(), spankee.resilience()
+        resultStringFunction = spanking.spanking_string
+        durationMultiplier = 1
+        if random.randrange(100) < self.REVERSAL_CHANCE and universal.state.enemiesCanSpank:
+            spankee, spanker = spanker, spankee
+            durationMultiplier = -1
+            #Reversals suck. They use whichever combination of grapples and willpowers that most benefits the new spanker, and hurts the new spankee! 
+            spankerGrapple, spankeeGrapple = max(spanker.grapple(), spankee.grapple()), min(spanker.grapple(), spankee.grapple())
+            spankerResilience, spankeeResilience = max(spanker.resilience(), spankee.resilience()), min(spanker.resilience(), spankee.resilience())
+            resultStringFunction = spanking.reversed_spanking
+        resultString = resultStringFunction(spanker, spankee, self.position)
+        grappleBonus = int(math.trunc((self.position.maintainability / self.DIVISOR) * spankerGrapple))
+        durationBonus = int(math.trunc((self.position.humiliating / self.DIVISOR) * spankerGrapple))
+        spankingDuration =  durationMultiplier * max(self.MIN_SPANKING_DURATION, spankerGrapple - spankeeGrapple) + grappleBonus
+        if durationMultiplier > 0 and spankingDuration < self.minDuration:
+            spankingDuration = self.minDuration
+        elif durationMultiplier < 0 and spankingDuration > -self.minDuration:
+            spankingDuration =  -self.minDuration
+        assert durationMultiplier > 0 or spankingDuration < 0, "Duration Multiplier: %d spankingDuration: %d" % (durationMultiplier, spankingDuration)
+        spanker.begin_spanking(spankee, self.position, spankingDuration if spankingDuration > 0 else -spankingDuration)
+        spankee.begin_spanked_by(spanker, self.position, spanker.grappleDuration)
+        duration = max(self.MIN_HUMILIATED_DURATION, spankerResilience - spankeeResilience) + durationBonus
+        if spankee.is_inflicted_with(statusEffects.Humiliated.name):
+            spanker.spankeeAlreadyHumiliated = True
+        else:
+            spankee.inflict_status(statusEffects.build_status(statusEffects.Humiliated.name,
+                duration))
+            spanker.spankeeAlreadyHumiliated = False
+        assert spankingDuration
+        return (resultString, [spankingDuration], self, spanker, spankee)
+
+    def attack_action(self, inCombat, allies, enemies):
+        return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
+
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
-            Returns a triple: The result of the spanking, the duration if the spanking was successful, the negative duration if the spanking was reversed, and the actual action performed.
+            Returns a triple: The result of the spanking, the duration if the 
+            spanking was successful, the negative duration if the spanking was reversed, and the actual action performed.
         """
         spankingEffect = self.being_spanked()
         if spankingEffect:
@@ -447,42 +485,12 @@ class SpankAction(CombatAction):
         if not defender in opponents:
             return DefendAction(attacker, opponents[randrange(0, len(opponents))]).effect(inCombat, allies, enemies)
         if attacker.is_grappling(defender):
-            spanker, spankee = attacker, defender
-            spankerGrapple, spankeeGrapple = spanker.grapple(), spankee.grapple()
-            spankerResilience, spankeeResilience = spanker.resilience(), spankee.resilience()
-            resultStringFunction = spanking.spanking_string
-            durationMultiplier = 1
-            if random.randrange(100) < self.REVERSAL_CHANCE and universal.state.enemiesCanSpank:
-                spankee, spanker = spanker, spankee
-                durationMultiplier = -1
-                #Reversals suck. They use whichever combination of grapples and willpowers that most benefits the new spanker, and hurts the new spankee! 
-                spankerGrapple, spankeeGrapple = max(spanker.grapple(), spankee.grapple()), min(spanker.grapple(), spankee.grapple())
-                spankerResilience, spankeeResilience = max(spanker.resilience(), spankee.resilience()), min(spanker.resilience(), spankee.resilience())
-                resultStringFunction = spanking.reversed_spanking
-            resultString = resultStringFunction(spanker, spankee, self.position)
-            grappleBonus = int(math.trunc((self.position.maintainability / self.DIVISOR) * spankerGrapple))
-            durationBonus = int(math.trunc((self.position.humiliating / self.DIVISOR) * spankerGrapple))
-            spankingDuration =  durationMultiplier * max(self.MIN_SPANKING_DURATION, spankerGrapple - spankeeGrapple) + grappleBonus
-            if durationMultiplier > 0 and spankingDuration < self.minDuration:
-                spankingDuration = self.minDuration
-            elif durationMultiplier < 0 and spankingDuration > -self.minDuration:
-                spankingDuration =  -self.minDuration
-            assert durationMultiplier > 0 or spankingDuration < 0, "Duration Multiplier: %d spankingDuration: %d" % (durationMultiplier, spankingDuration)
-            spanker.begin_spanking(spankee, self.position, spankingDuration if spankingDuration > 0 else -spankingDuration)
-            spankee.begin_spanked_by(spanker, self.position, spanker.grappleDuration)
-            duration = max(self.MIN_HUMILIATED_DURATION, spankerResilience - spankeeResilience) + durationBonus
-            if spankee.is_inflicted_with(statusEffects.Humiliated.name):
-                spanker.spankeeAlreadyHumiliated = True
-            else:
-                spankee.inflict_status(statusEffects.build_status(statusEffects.Humiliated.name, duration))
-                spanker.spankeeAlreadyHumiliated = False
-            assert spankingDuration
-            return (resultString, [spankingDuration], self)
+            return self.administer_spanking(inCombat, allies, enemies)
+        elif attacker.graple() > defender.grapple():
+            return GrappleAction(attacker, defender).effect(inCombat, allies, enemies)
         else:
-            if attacker.grapple() > defender.grapple():
-                return GrappleAction(attacker, defender).effect(inCombat, allies, enemies)
-            else:
-                return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
+            return self.attack_action(inCombat, allies, enemies)
+
 
 class ContinueSpankingAction(CombatAction):
     targetType = ALLY
@@ -695,7 +703,8 @@ class DefendAction(CombatAction):
     secondaryStat = universal.WILLPOWER
     actionType = 'defend'
     def __init__(self, attacker, defenders):
-        super(DefendAction, self).__init__(attacker, defenders, RESILIENCE, DefendAction.secondaryStat)
+        super(DefendAction, self).__init__(attacker, defenders, DefendAction.primaryStat, 
+                DefendAction.secondaryStat)
         self.targetType = ALLY
         self.grappleStatus = GRAPPLER_ONLY
         self.primaryStat = DefendAction.primaryStat
@@ -724,3 +733,78 @@ class DefendAction(CombatAction):
             return (' '.join([attacker.printedName, 'defends', defender.printedName + '!']), [None], self)
 
 
+
+
+#--------------------------------Catfight actions---------------------------
+
+class CatSpankAction(SpankAction):
+    actionType = 'catfight spank'
+    noPantsBonus = 5
+    noPantiesBonus = 5
+
+    def __init__(self, attacker, defenders, position, severity=0):
+        super(CatSpankAction, self).__init__(attacker, defenders, position, severity)
+
+    def attack_action(self, inCombat, allies, enemies):
+        return CatAttackAction(inCombat, allies, enemies)
+
+    def administer_spanking(self, inCombat, allies, enemies):
+        spanker, spankee = self.attacker, self.defenders[0]
+
+        if spankee.guardians:
+            guardian = spankee.guardians.pop()
+            (resultString, effects, action) = CatAttackAction(spanker, 
+                    [guardian], self.position, self.severity).effect(inCombat, allies, enemies)
+            resultString = ' '.join([guardian.printedName, 'defends', spankee.printedName + 
+                '!\n']) + resultString
+            return (resultString, effects, action)
+
+        spankerBonus = (spanker.musculature_bonus() + spanker.body_type_bonus() + 
+                spanker.size_bonus())
+        spankeeBonus = (spankee.musculature_bonus() + spankee.body_type_bonus() + 
+                spankee.size_bonus())
+        spankeeRandomModifier = spankee.grapple() + spankee.current_stamina()
+
+        def generate_spankee_threshhold():
+            return rand(spankeeRandomModifier) - spankee.hair_penalty() + spankeeBonus
+
+        def generate_spanker_threshhold():
+            return rand(spankerRandomModifier) - spanker.hair_penalty() + spankerBonus
+
+        wasSuccessful = generate_spankee_threshhold() <= generate_spanker_threshhold
+        resultString = ''
+
+        if not wasSuccessful and generate_spankee_threshhold() >= generate_spanker_threshhold():
+            spanker, spankee = spankee, spanker
+            spankerBonus, spankeeBonus = spankeeBonus, spankerBonus
+            spankerThreshhold, spankeeThreshhold = spankeeThreshhold, spankerThreshhold
+            wasSuccessful = rand(spankeeThreshhold) <= rand(spankerThreshhold)
+            resultString = spanker.reversed_by(spankee, self.position)
+        elif wasSuccessful:
+            resultString = spanker.spanks(spankee, self.position)
+
+        if not wasSuccessful:
+            return (' '.join(spanker.failed_spanking(spankee, position)), [0], self)
+        else:
+            spankingDuration = compute_damage(spanker.grapple(), spankee.grapple())
+            spankingDuration += (spankerBonus - spanker.hair_penalty()) - (
+                    spankeeBonus - spankee.hair_penalty())
+            spanker.begin_spanking(spankee, self.position, spankingDuration)
+
+            resilienceDamage = compute_damage(spanker.warfare(), spankee.warfare())
+            humiliationDamage = compute_damage(spanker.resilience(), spankee.resilience())
+            resilienceDamage += spankerBonus - spankeeBonus
+            if not defender.wearing_lower_clothing():
+                humiliationDamage += self.noPantsBonus 
+                resilienceDamage += self.noPantsBonus
+            if not defender.wearing_underwear() or defender.underwear().baring():
+                humiliationDamage += self.noPantiesBonus
+                resilienceDamage += self.noPantsBonus
+
+           spankee.inflict_resilience_damage(resilienceDamage)
+           spankee.inflict_humiliation_damage(humiliationDamage)
+           if spankee.humiliation() >= spankee.max_humiliation():
+               resultString += ''.join(['\n', spankee.printedName, ' surrenders!'])
+        return (resultString, [spankingDuration], self)
+
+class CatAttackAction(AttackAction):

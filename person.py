@@ -226,6 +226,112 @@ def order_name(order):
     elif order == sixth_order:
         return str(6)
 
+    def spanks(self, bottom, position):
+        return self.spankingFunctions[position][0](self, bottom)
+
+    def spanked_by(self, top, position):
+        return self.spankingFunctions[position][0](top, self)
+
+    def continue_spanking(self, bottom, position):
+        return self.spankingFunctions[position][self.ROUND_INDEX](self, bottom)
+
+    def continue_being_spanked(self, top, position):
+        return self.spankingFunctions[position][self.ROUND_INDEX](top, self)
+
+    def reverses(self, top, position):
+        return self.spankingFunctions[position][-1](top, self)
+
+    def reversed_by(self, bottom, position):
+        return self.spankingFunctions[position][-1](self, bottom)
+
+    def failed(self, bottom, position):
+        return self.spankingFunctions[position][-2](self, bottom)
+
+    def blocks(self, top, position):
+        return self.spankingFunctions[position][-2](top, self)
+
+    def otk_intro(self, top, bottom):
+        raise NotImplementedError()
+
+    def otk_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def otk_failure(self, top, bottom):
+        raise NotImplementedError()
+
+    def otk_reversal(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_intro(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_failure(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_reversal(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_intro(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_failure(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_reversal(self, top, bottom):
+        raise NotImplementedError()
+
+    def end_spanking(self, top, bottom):
+        self.firstRound = True
+        return universal.format_line(['''Finally, with a mighty effort,''', bottom.printedName, '''manages to wriggle''', bottom.himselfherself(), '''free of''', top.printedName + "'s", 
+        '''merciless grasp.''', bottom.HeShe(), '''scrambles away from''', top.printedName, '''clutching at''', bottom.hisher(), '''burning bottom with one hand, while snatching up''', 
+        bottom.hisher(), '''dropped weapon with the other.'''])
+
+    def failed_spanking(self, spankee position):
+        return [self.printedName, 'failed to spank', spankee.printedName + '!']
+
+    def size_bonus(self):
+        return HEIGHTS.index(self.bodyType)
+
+    def hair_penalty(self):
+        return HAIR_LENGTH.index(self.hairLength) - (BUTT_HAIR_STYLE.index(self.hairStyle) - 1)
+
+    def body_type_bonus(self):
+        return BODY_TYPES.index(self.bodyType)
+
+    def musculature_bonus(self):
+        return MUSCULATURE.index(self.musculature)
+
+    def stamina(self):
+        return 10 * (self.strength() + self.dexterity() + self.willpower() - self.size_bonus() 
+                + self.musculature_bonus())
+
+    def current_stamina(self):
+        return max(0, self.stamina() - self.staminaDamage)
+
+    def inflict_stamina_damage(self, damage):
+        self.staminaDamage += damage
+
+    def heal_stamina_damage(self, heal):
+        self.inflict_stamina_damage(-heal)
+
+    def humiliation(self):
+        return self.humiliation
+
+    def max_humiliation(self):
+        return 10 * self.willpower()
+
+    def inflict_humiliation_damage(self, damage):
+        self.humiliation += damage
+
+    def heal_humiliation_damage(self, heal):
+        self.inflict_humiliation_damage(-heal)
+
 
 def display_person(person):
     if person.grapplingPartner:
@@ -258,7 +364,7 @@ MUSCULATURE = ['soft', 'fit', 'muscular']
 HAIR_LENGTH = ['short', 'shoulder-length', 'back-length', 'butt-length']
 
 SHORT_HAIR_STYLE = ['down']
-SHOULDER_HAIR_STYLE = SHORT_HAIR_STYLE + ['ponytail', 'braid', 'pigtails', 'bun']
+SHOULDER_HAIR_STYLE = SHORT_HAIR_STYLE + ['pigtails', 'ponytail', 'braid', 'bun']
 BACK_HAIR_STYLE = SHOULDER_HAIR_STYLE
 BUTT_HAIR_STYLE = BACK_HAIR_STYLE
 
@@ -374,6 +480,16 @@ class Person(universal.RPGObject):
         self.spankingEnded = False
         self.spankeeAlreadyHumiliated = False
         self.implement = spanking.hand
+        self.humiliation = 0
+        self.staminaDamage = 0
+        self.spankingFunctions = {
+            positions.overTheKnee: (self.otk_intro, self.otk_round, self.otk_failure, 
+                self.otk_reversal),
+            positions.standing: (self.standing_intro, self.standing_round, 
+                self.standing_failure, self.standing_reversal),
+            positions.onTheGround: (self.on_the_ground_intro, self.on_the_ground_round, 
+                self.on_the_ground_failure, self.on_the_ground_reversal)
+        }
 
     def __repr__(self):
         result = ["\n-----------------", self.name, "------------------"]

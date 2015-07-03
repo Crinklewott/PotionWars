@@ -89,6 +89,10 @@ randomEncounter = False
 coordinates = None
 defeatedAllies = []
 defeatedEnemies = []
+interpreter = None
+
+def is_catfight():
+    return interpreter == catfight_interpreter
 
 def end_fight():
     if randomEncounter:
@@ -105,11 +109,12 @@ def end_fight():
     chosenActions = []
 
 def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon_mode, runnableIn=True, bossFight=False, optionalIn=False, additionalAllies=None, 
-        ambushIn=0, randomEncounterIn=False, coordinatesIn=None):
+        ambushIn=0, randomEncounterIn=False, coordinatesIn=None, catfight=False):
     global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface, enemySurface, commandSurface, clearScreen, previousMode,  \
             actionsInflicted, actionsEndured, chosenActions, optional, defeatedEnemies, defeatedAllies
     global ambush, boss, initialAllies, initialEnemies, randomEncounter, coordinates
     randomEncounter = randomEncounterIn
+    interpreter = catfight_interpreter if catfight else battle_interpreter
     if randomEncounter:
         assert coordinatesIn
         coordinates = coordinatesIn
@@ -129,7 +134,8 @@ def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon
         enemy.restores()
     defeatedAllies = []
     defeatedEnemies = []
-    optional = optionalIn
+    #All catfights are optional
+    optional = optionalIn or catfight
     try:
         actionsInflicted = {combatant:[] for combatant in enemiesIn + person.get_party().members + (additionalAllies if additionalAllies is not None else [])}
     except TypeError:
@@ -258,9 +264,18 @@ def print_allies(allies, targetList=None, title='Party'):
     if isinstance(allies, basestring):
         universal.say(allies, surface=allySurface, columnNum=1)
     else:
-        universal.say('\t'.join(['', 'Health:', 'Mana:',  'Grappling:\n\t']), surface=allySurface, columnNum=4)
-        universal.say(allies.display_party(ally=activeAlly, targeted=targetList, grappling=True), 
-                surface=allySurface, columnNum=4)
+        if is_catfight():
+            universal.say('\t'.join(['', 'Embarrassment:', 'Mana:', 'Grappling:\n\t']),
+                    surface=allySurface, columnNum=4)
+        else:
+            universal.say('\t'.join(['', 'Health:', 'Mana:',  'Grappling:\n\t']), 
+                    surface=allySurface, columnNum=4)
+        if is_catfight():
+            universal.say(universal.state.player.display_catfight(grappling=True), 
+                    surface=allySurface, columnNum=4)
+        else:
+            universal.say(allies.display_party(ally=activeAlly, targeted=targetList, 
+                grappling=True), surface=allySurface, columnNum=4)
     flush_text(TITLE_OFFSET)
     screen.blit(allySurface, enemySurface.get_rect().bottomleft)
 
@@ -277,6 +292,50 @@ def print_command(command):
     pygame.draw.rect(commandSurface, LIGHT_GREY, 
             pygame.Rect(cmdMidTop[0] - fontSize[0], cmdMidTop[1], fontSize[0] + fontSize[0], fontSize[1] + fontSize[1]), 10) 
     screen.blit(commandSurface, commandScreenCoord)
+
+
+def catfight_interpreter(keyEvent):
+    global chosenActions, activeAlly
+    if keyEvent.key == K_BACKSPACE:
+        if allies[0] != activeAlly:
+            activeAlly = allies[allies.index(activeAlly)-1]
+            del chosenActions[-1]
+            display_combat_status(printEnemies=False, printAllies=False)
+    elif activeAlly.is_spanking():
+        if keyEvent.key == K_RETURN:    
+            continue_spanking()
+        elif keyEvent.key == K_s:
+            terminate_spanking()
+    elif activeAlly.is_being_spanked():
+        if keyEvent.key == K_RETURN:
+            struggle()
+        elif keyEvent.key == K_e:
+            endure()
+    elif keyEvent.key == K_RETURN:
+        attack(-1)
+    elif keyEvent.key in universal.NUMBER_KEYS:
+        number = int(universal.key_name(keyEvent)) - 1
+        if number < len(enemies):
+            attack(number)
+    elif keyEvent.key == K_c:
+        catcast()
+    elif keyEvent.key == K_d:
+        defend()
+    elif activeAlly.is_grappling():
+        if keyEvent.key == K_s:
+            spank()
+        if keyEvent.key == K_t:
+            strip()
+        elif keyEvent.key == K_b:
+            break_grapple()
+    elif keyEvent.key == K_g:
+        grapple()
+    elif keyEvent.key == K_r:
+        activeAlly = allies[0]
+        chosenActions = []
+        display_combat_status(printEnemies=False, printAllies=False)
+    elif keyEvent.key == K_l:
+        look()
 
 def battle_interpreter(keyEvent):
     global chosenActions, activeAlly
@@ -512,11 +571,18 @@ def attack(target):
         target = enemies.index(activeAlly.grapplingPartner) if activeAlly.is_grappling() else 0
     activeAlly.previousTarget = target
     if activeAlly.is_grappling() and target == enemies.index(activeAlly.grapplingPartner):
-        chosenActions.append(combatAction.AttackAction(activeAlly, activeAlly.grapplingPartner))
+        if is_catfight():
+            chosenActions.append(combatAction.CatAttackACtion(activeAlly, 
+                activeAlly.grapplingPartner))
+        else:
+            chosenActions.append(combatAction.AttackAction(activeAlly, activeAlly.grapplingPartner))
         next_character()
     elif not activeAlly.is_grappling():
         if 0 <= target and target < len(enemies) and enemies[target] in [enemy for enemy in enemies if enemy.current_health() > 0] and not enemies[target].is_grappling():
-            chosenActions.append(combatAction.AttackAction(activeAlly, enemies[target]))
+            if is_catfight():
+                chosenActions.append(combatAction.CatAttackAction(activeAlly, enemies[target]))
+            else:
+                chosenActions.append(combatAction.AttackAction(activeAlly, enemies[target]))
             next_character()
         elif enemies[target].is_grappling():
             print_enemies("Cannot attack a grappled enemy. You might hit your ally!")
@@ -810,11 +876,74 @@ def spank_interpreter(keyEvent):
 
 def confirm_spanking_interpreter(keyEvent):
     if keyEvent.key == K_RETURN: 
-        chosenActions.append(combatAction.SpankAction(activeAlly, activeAlly.grapplingPartner, chosenPos))
+        if is_catfight():
+            chosenActions.append(combatAction.CatSpankAction(activeAlly, 
+                activeAlly.grapplingPartner, chosenPos))
+        else:
+            chosenActions.append(combatAction.SpankAction(activeAlly, activeAlly.grapplingPartner, 
+                chosenPos))
         next_character()
     elif keyEvent.key == K_BACKSPACE:
         print_allies(allies)
         spank()
+
+def strip_command(numCommand, stripCommands):
+    return ''.join([str(numCommand), '. ', 'Strip ', clothing.name()])
+
+def strip():
+    assert is_catfight()
+    print_command('Strip')
+    stripCommands = []
+    grapplingPartner = activeAlly.grapplingPartner
+    if grapplingPartner.wearing_lower_clothing():
+        stripCommands.append(strip_command(grapplingPartner.lower_clothing(), len(stripCommands)+1))
+    elif grapplingPartner.wearing_underwear():
+        stripCommands.append(strip_command(grapplingPartner.underwear(), len(stripCommands)+1))
+    #We need to make sure we don't add a command to strip the same garment twice if the 
+    #character is wearing a dress or similar full-body outfit.
+    if grapplingPartner.wearing_shirt() and not (grapplingPartner.shirt() is 
+            grapplingPartner.lower_clothing()):
+        stripCommands.append(strip_command(grapplingPartner.shirt(), len(stripCommands)+1))
+
+    set_command_interpreter(strip_interpreter)
+
+def num_strip_commands(grapplingPartner):
+    numCommands = 0
+    if grapplingParnter.wearing_lower_clothing() or grapplingParnter.wearing_underwear():
+        numCommands += 1
+    if grapplingPartner.wearing_shirt() and not (grapplingPartner.shirt is 
+            grapplingPartner.lower_clothing()):
+        numCommands += 1
+    return numCommands
+
+def clothing_to_strip(grapplingPartner):
+    clothing = []
+    if grapplingPartner.wearing_lower_clothing():
+        clothing.append(grapplingPartner.lower_clothing())
+    elif grapplingPartner.wearing_underwear():
+        clothing.append(grapplingPartner.underwear())
+    if grapplingPartner.wearing_shirt():
+        clothing.append(grapplingPartner.shirt())
+    return clothing
+
+
+def strip_interpreter(keyEvent):
+    validCommands = num_strip_commands(activeAlly.grapplingParnter)
+    clothing = clothing_to_strip(activeAlly.grapplingPartner)
+    if keyEvent.key == K_BACKSPACE:
+        display_combat_status(printAllies=False, printEnemies=False)
+    try:
+        selectedNum = int(keyEvent.key.name) - 1
+    except AttributeError:
+        return
+    try:
+        selectedClothing = clothing[int]
+    except IndexError:
+        return
+    else:
+        chosenActions.append(combatAction.StripAction(activeAlly, [activeAlly.grapplingPartner], 
+            selectedClothing))
+        next_character()
 
 def throw():
     print_command('Throw')
@@ -1620,6 +1749,8 @@ def game_over_interpreter(keyEvent):
         activeAlly = allies[0]
         if boss:
             music.play_music(music.BOSS)
+        elif is_catfight():
+            music.play_music(music.CATFIGHT)
         else:
             music.play_music(music.COMBAT)
     elif keyEvent.key == K_ESCAPE:
