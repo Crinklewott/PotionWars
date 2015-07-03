@@ -1534,16 +1534,28 @@ def start_round(chosenActions):
     chosenActions = [action for action in chosenActions if not action in alreadyGrappling and not action in defendActions]
     spellActions = sorted([action for action in chosenActions if person.is_spell(action)])
     #Then all characters attacking with spears
-    spearAttacks = sorted([action for action in chosenActions if action.attacker.weapon().weaponType == items.Spear.weaponType and action.actionType == combatAction.AttackAction.actionType],
-            key=actions_sort_key, reverse=True)
-    #Then all characters attacking with swords
-    swordAttacks = sorted([action for action in chosenActions if action.attacker.weapon().weaponType == items.Sword.weaponType and 
-        action.actionType == combatAction.AttackAction.actionType], key=actions_sort_key, reverse=True)
-    knifeAttacks = sorted([action for action in chosenActions if action.attacker.weapon().weaponType == items.Knife.weaponType and action.actionType == combatAction.AttackAction.actionType],
-            key=actions_sort_key, reverse=True)
-    spankActions = sorted([action for action in chosenActions if action.attacker.weapon().weaponType == items.Knife.weaponType and action.actionType == combatAction.SpankAction.actionType],
-            key=actions_sort_key, reverse=True)
-    grappleTypes = [combatAction.GrappleAction.actionType, combatAction.BreakAllysGrappleAction.actionType]
+    if is_catfight():
+        knieActions = sorted([action for action in chosenActions if action.actionType == 
+            combatAction.AttackAction.actionType], key=actions_sort_key, reverse=True)
+        spearAttacks = []
+        swordAttacks = []
+    else:
+        knifeAttacks = sorted([action for action in chosenActions if 
+            action.attacker.weapon().weaponType == items.Knife.weaponType and action.actionType == 
+            combatAction.AttackAction.actionType], key=actions_sort_key, reverse=True)
+        spearAttacks = sorted([action for action in chosenActions if 
+            action.attacker.weapon().weaponType == items.Spear.weaponType and action.actionType == 
+            combatAction.AttackAction.actionType], key=actions_sort_key, reverse=True)
+        #Then all characters attacking with swords
+        swordAttacks = sorted([action for action in chosenActions if 
+            action.attacker.weapon().weaponType == items.Sword.weaponType and 
+            action.actionType == combatAction.AttackAction.actionType], key=actions_sort_key, 
+            reverse=True)
+    spankActions = sorted([action for action in chosenActions if 
+        action.attacker.weapon().weaponType == items.Knife.weaponType and action.actionType == 
+        combatAction.SpankAction.actionType], key=actions_sort_key, reverse=True)
+    grappleTypes = [combatAction.GrappleAction.actionType, 
+            combatAction.BreakAllysGrappleAction.actionType]
     grappleActions = sorted([action for action in chosenActions if action.actionType in grappleTypes], key=actions_sort_key, reverse=True)
     tiers = defendActions + alreadyGrappling + spellActions + spearAttacks + swordAttacks + knifeAttacks + spankActions + grappleActions
     #TODO: Need to grab all the other actions, not in any of the above
