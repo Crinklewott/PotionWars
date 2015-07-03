@@ -1690,11 +1690,22 @@ def print_round_results():
 
 def end_round():
     global allies, enemies, chosenActions, actionResults, defeatedAllies, defeatedEnemies
-    activeAllies = [ally for ally in allies if ally.current_health() > 0]
-    defeatedAllies.extend([ally for ally in allies if ally.current_health() <= 0])
+    if is_catfight()
+        activeAllies = [ally for ally in allies if ally.humiliation() < ally.max_humiliation()]
+        defeatedAllies.extend([ally for ally in allies if ally.humiliation() >= 
+            ally.max_humiliation()])
+    else:
+        activeAllies = [ally for ally in allies if ally.current_health() > 0]
+        defeatedAllies.extend([ally for ally in allies if ally.current_health() <= 0])
     allies = person.Party(activeAllies)
-    activeEnemies = [enemy for enemy in enemies if enemy.current_health() > 0]
-    defeatedEnemies.extend([enemy for enemy in enemies if enemy.current_health() <= 0])
+    if is_catfight():
+        activeEnemies = [enemy for enemy in enemies if enemy.humiliation() < 
+                enemy.max_humiliation()]
+        defeatedEnemies.extend([enemy for enemy in enemies if enemy.humiliation() >= 
+            enemy.max_humiliation()])
+    else:
+        activeEnemies = [enemy for enemy in enemies if enemy.current_health() > 0]
+        defeatedEnemies.extend([enemy for enemy in enemies if enemy.current_health() <= 0])
     enemies = person.Party(activeEnemies)
     for ally in allies:
         ally.decrement_statuses()
@@ -1824,49 +1835,59 @@ def improve_characters(victorious, afterCombatEvent=None):
     for ally in allies.members + defeatedAllies:
         #We temporarily remove the ally's status effects, so that they don't interfere with stat gain.
         #TODO: Similarly remove the effect of bonuses.
-        allyStatuses = ally.get_statuses()
-        ally.clear_statuses()
-        for i in range(len(ally.increaseStatPoints)):
-            statPoints = ally.increaseStatPoints[i]
-            stat = ally.stat(i) if i == universal.HEALTH else ally.stat(i) * universal.STAT_GROWTH_RATE_MULTIPLIER 
-            spells = [universal.COMBAT_MAGIC, universal.STATUS_MAGIC, universal.BUFF_MAGIC, universal.SPECTRAL_MAGIC]
-            specialtyModifier = 1
-            if ally.is_specialized_in(i) or (i == universal.TALENT and ally.specialization in spells):
-                specialtyModifier = .5
-            elif ally.is_weak_in(i):
-                specialtyModifier = 2
-            gain = 0
-            manaGain = 0
-            while int(math.floor(stat * specialtyModifier)) <= statPoints:
-                if i == universal.HEALTH:
-                    gain += int(math.ceil(stat * HEALTH_MULTIPLIER))
-                    ally.improve_stat(i, gain)
-                    ally.increaseStatPoints[i] = 0
-                else:
-                    gain += 1
-                    ally.improve_stat(i, 1)
-                    if i == universal.TALENT:
-                        manaGain += 3
-                        ally.improve_stat(person.MANA, manaGain)
-                    ally.increaseStatPoints[i] -= stat 
+        if not is_catfight():
+            allyStatuses = ally.get_statuses()
+            ally.clear_statuses()
+            for i in range(len(ally.increaseStatPoints)):
                 statPoints = ally.increaseStatPoints[i]
-                stat = ally.stat(i) * universal.STAT_GROWTH_RATE_MULTIPLIER
-            if gain:
-                universal.say(format_line([ally.name, 'has gained', str(gain), person.primary_stat_name(i) + '.\n']))
-            if manaGain:
-                universal.say(format_line([ally.name, 'has gained', str(manaGain), 'Mana.\n']))
-        for i in range(len(ally.increaseSpellPoints)): 
-            #Note: This is much MUCH simpler than what we will actually allow. This simply checks if the player has 5 spell points, and then has the player learn the advanced spell if the player 
-            #doesn't already know it.
-            #This is only a stop-gap measure. The actual learning spell mechanic will be much more complicated, but I don't want to implement that until I've built a proper GUI.
-            if ally.increaseSpellPoints[i] >= (ally.tier*universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS) and not ally.knows_spell(person.allSpells[0][i][1]):
-                learn_spell(ally, i+universal.COMBAT_MAGIC)
-                ally.increaseSpellPoints[i] -= ally.tier*universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
-        #Now that we're done increasing stats, we can reinflict any lingering statuses
-        for statusName in allyStatuses:
-            status = allyStatuses[statusName][0]
-            status.duration = allyStatuses[statusName][1]
-            ally.inflict_status(status)
+                if i == universal.HEALTH:
+                    stat = ally.stat(i)
+                else:
+                    stat = ally.stat(i) * universal.STAT_GROWTH_RATE_MULTIPLIER
+                spells = [universal.COMBAT_MAGIC, universal.STATUS_MAGIC, universal.BUFF_MAGIC, 
+                        universal.SPECTRAL_MAGIC]
+                specialtyModifier = 1
+                if ally.is_specialized_in(i) or (i == universal.TALENT and ally.specialization in 
+                        spells):
+                    specialtyModifier = .5
+                elif ally.is_weak_in(i):
+                    specialtyModifier = 2
+                gain = 0
+                manaGain = 0
+                while int(math.floor(stat * specialtyModifier)) <= statPoints:
+                    if i == universal.HEALTH:
+                        gain += int(math.ceil(stat * HEALTH_MULTIPLIER))
+                        ally.improve_stat(i, gain)
+                        ally.increaseStatPoints[i] = 0
+                    else:
+                        gain += 1
+                        ally.improve_stat(i, 1)
+                        if i == universal.TALENT:
+                            manaGain += 3
+                            ally.improve_stat(person.MANA, manaGain)
+                        ally.increaseStatPoints[i] -= stat 
+                    statPoints = ally.increaseStatPoints[i]
+                    stat = ally.stat(i) * universal.STAT_GROWTH_RATE_MULTIPLIER
+                if gain:
+                    universal.say(format_line([ally.name, 'has gained', str(gain), 
+                        person.primary_stat_name(i) + '.\n']))
+                if manaGain:
+                    universal.say(format_line([ally.name, 'has gained', str(manaGain), 'Mana.\n']))
+            for i in range(len(ally.increaseSpellPoints)): 
+                #Note: This is much MUCH simpler than what we will actually allow. This simply checks if the player has 5 spell points, and then has the player learn the advanced spell if the player 
+                #doesn't already know it.
+                #This is only a stop-gap measure. The actual learning spell mechanic will be much more complicated, but I don't want to implement that until I've built a proper GUI.
+                statThreshhold = (ally.tier*universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else 
+                        person.TIER_0_SPELL_POINTS)
+                if ally.increaseSpellPoints[i] >= statThreshhold and not ally.knows_spell(
+                                person.allSpells[0][i][1]):
+                    learn_spell(ally, i+universal.COMBAT_MAGIC)
+                    ally.increaseSpellPoints[i] -= ally.tier*universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
+            #Now that we're done increasing stats, we can reinflict any lingering statuses
+            for statusName in allyStatuses:
+                status = allyStatuses[statusName][0]
+                status.duration = allyStatuses[statusName][1]
+                ally.inflict_status(status)
     if afterCombatEvent is not None:
         acknowledge(afterCombatEvent, defeatedAllies, defeatedEnemies, victorious)
     else:
@@ -1902,18 +1923,3 @@ def learn_spell(ally, spellSchool):
         ally.increaseSpellPoints[i-universal.COMBAT_MAGIC] = ally.tier * universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
         
 
-""" 
-def add_experience(experience, afterCombatEvent, activeAllies, activeEnemies, victorious):
-    assert len(allies) == len(experience), 'allies and experience should be the same length.'
-    for i in range(len(experience) - 1):
-        allies[i].add_experience(experience[i])
-    if afterCombatEvent is None:
-        afterCombatEvent = previousMode
-    allies[-1].add_experience(experience[-1], afterCombatEvent, activeAllies, activeEnemies, victorious)
-"""
-
-
-def print_round_results_interpreter(keyEvent):
-    if keyEvent.key == K_RETURN:
-        global delay
-        delay = 0
