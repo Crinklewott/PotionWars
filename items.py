@@ -826,10 +826,30 @@ def clad_pajama_bottom(personName):
 
 def is_lower_clothing(item):
     try:
-        return (item.armorType == Pants.armorType or item.armorType == Skirt.armorType or item.armorType == Shorts.armorType or item.armorType == Dress.armorType or 
-            item.armorType == LowerArmor.armorType or item.armorType == FullArmor.armorType or item.armorType == Underwear.armorType)
+        armorType = item.armorType
     except AttributeError:
         return False
+    else:
+        return any([armorType == Pants.armorType, armorType == Skirt.armorType, 
+            armorType == Shorts.armorType, armorType == Dress.armorType,
+            armorType == LowerArmor.armorType, armorType == FullArmor.armorType, 
+            armorType == Underwear.armorType, armorType == Robe.armorType])
+
+def is_underwear(item):
+    try:
+        return any([item.armorType == Underwear.armorType, item.armorType == Thong.armorType])
+    except AttributeError:
+        return False
+
+def is_shirt(item):
+    try:
+        armorType = item.armorType
+    except AttributeError:
+        return False
+    else:
+        return any([armorType == Shirt.armorType, armorType == UpperArmor.armorType, 
+                armorType == FullArmor.armorType, armorType == Dress.armorType,
+                armorType == Robe.armorType])
 
 def waistband_hem(lowerClothing):
     return lowerClothing.waistband_hem()

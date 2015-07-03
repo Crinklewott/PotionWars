@@ -1089,6 +1089,27 @@ class Person(universal.RPGObject):
             except ValueError:
                 pass
 
+    def put_some_clothing_on(self):
+        """
+        Meant to be used after catfights, this goes through and re-equips any clothing that may
+        have been removed. Note that this method isn't very smart. It just equips the first of
+        each type of outfit that it finds, so it may equip the wrong thing if the player has 
+        multiple types of clothing in their inventory.
+        """
+        if not self.wearing_underwear():
+            underwear = [item for item in self.inventory if items.is_underwear(item)]
+            if underwear:
+                self.equip(underwear.pop())
+        if not self.wearing_lower_clothing():
+            lowerClothing = [item for item in self.inventory if items.is_lower_clothing(item)
+                    and not items.is_underwear(item)]
+            if lowerClothing:
+                self.equip(lowerClothing.pop())
+        if not self.wearing_shirt():
+            shirts = [item for item in self.inventory if items.is_shirt(item)]
+            if shirts:
+                self.equip(shirts.pop())
+
 
     def unequip(self, equipment, couldBeNaked=True):
         if not equipment in items.emptyEquipment:
