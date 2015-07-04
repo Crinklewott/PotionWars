@@ -779,7 +779,11 @@ emptyPajamaTop = PajamaTop('Topless', 'Who needs to sleep with a top on?', 0)
 
 emptyPajamaBottom = PajamaBottom('Bottomless', 'Who needs to sleep with a bottom on?', 0)
 
-emptyEquipment = [emptyItem, emptyWeapon, emptyUpperArmor, emptyLowerArmor, emptyUnderwear, emptyPajamaTop, emptyPajamaBottom]
+emptyEquipment = [emptyItem, emptyWeapon, emptyUpperArmor, emptyLowerArmor, emptyUnderwear, 
+        emptyPajamaTop, emptyPajamaBottom]
+
+def is_empty(item):
+    return any([item.name == empty.name for empty in emptyEquipment])
 
 #The purpose of the following functions is to simplify the latex translation for when trying to get the equipment of arbitrary characters.
 def weapon(personName):

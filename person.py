@@ -25,6 +25,7 @@ import episode
 import items
 import math
 import operator
+import positions
 import random
 import statusEffects
 import spanking
@@ -226,112 +227,6 @@ def order_name(order):
     elif order == sixth_order:
         return str(6)
 
-    def spanks(self, bottom, position):
-        return self.spankingFunctions[position][0](self, bottom)
-
-    def spanked_by(self, top, position):
-        return self.spankingFunctions[position][0](top, self)
-
-    def continue_spanking(self, bottom, position):
-        return self.spankingFunctions[position][self.ROUND_INDEX](self, bottom)
-
-    def continue_being_spanked(self, top, position):
-        return self.spankingFunctions[position][self.ROUND_INDEX](top, self)
-
-    def reverses(self, top, position):
-        return self.spankingFunctions[position][-1](top, self)
-
-    def reversed_by(self, bottom, position):
-        return self.spankingFunctions[position][-1](self, bottom)
-
-    def failed(self, bottom, position):
-        return self.spankingFunctions[position][-2](self, bottom)
-
-    def blocks(self, top, position):
-        return self.spankingFunctions[position][-2](top, self)
-
-    def otk_intro(self, top, bottom):
-        raise NotImplementedError()
-
-    def otk_round(self, top, bottom):
-        raise NotImplementedError()
-
-    def otk_failure(self, top, bottom):
-        raise NotImplementedError()
-
-    def otk_reversal(self, top, bottom):
-        raise NotImplementedError()
-
-    def standing_intro(self, top, bottom):
-        raise NotImplementedError()
-
-    def standing_round(self, top, bottom):
-        raise NotImplementedError()
-
-    def standing_failure(self, top, bottom):
-        raise NotImplementedError()
-
-    def standing_reversal(self, top, bottom):
-        raise NotImplementedError()
-
-    def on_the_ground_intro(self, top, bottom):
-        raise NotImplementedError()
-
-    def on_the_ground_round(self, top, bottom):
-        raise NotImplementedError()
-
-    def on_the_ground_failure(self, top, bottom):
-        raise NotImplementedError()
-
-    def on_the_ground_reversal(self, top, bottom):
-        raise NotImplementedError()
-
-    def end_spanking(self, top, bottom):
-        self.firstRound = True
-        return universal.format_line(['''Finally, with a mighty effort,''', bottom.printedName, '''manages to wriggle''', bottom.himselfherself(), '''free of''', top.printedName + "'s", 
-        '''merciless grasp.''', bottom.HeShe(), '''scrambles away from''', top.printedName, '''clutching at''', bottom.hisher(), '''burning bottom with one hand, while snatching up''', 
-        bottom.hisher(), '''dropped weapon with the other.'''])
-
-    def failed_spanking(self, spankee position):
-        return [self.printedName, 'failed to spank', spankee.printedName + '!']
-
-    def size_bonus(self):
-        return HEIGHTS.index(self.bodyType)
-
-    def hair_penalty(self):
-        return HAIR_LENGTH.index(self.hairLength) - (BUTT_HAIR_STYLE.index(self.hairStyle) - 1)
-
-    def body_type_bonus(self):
-        return BODY_TYPES.index(self.bodyType)
-
-    def musculature_bonus(self):
-        return MUSCULATURE.index(self.musculature)
-
-    def stamina(self):
-        return 10 * (self.strength() + self.dexterity() + self.willpower() - self.size_bonus() 
-                + self.musculature_bonus())
-
-    def current_stamina(self):
-        return max(0, self.stamina() - self.staminaDamage)
-
-    def receives_stamina_damage(self, damage):
-        self.staminaDamage += damage
-
-    def heal_stamina_damage(self, heal):
-        self.receives_stamina_damage(-heal)
-
-    def current_humiliation(self):
-        return self.humiliation
-
-    def humiliation(self):
-        return 10 * self.willpower()
-
-    def receives_humiliation_damage(self, damage):
-        self.humiliation += damage
-
-    def heal_humiliation_damage(self, heal):
-        self.receives_humiliation_damage(-heal)
-
 
 def display_person(person):
     if person.grapplingPartner:
@@ -480,7 +375,7 @@ class Person(universal.RPGObject):
         self.spankingEnded = False
         self.spankeeAlreadyHumiliated = False
         self.implement = spanking.hand
-        self.humiliation = 0
+        self.humiliationLevel = 0
         self.staminaDamage = 0
         self.spankingFunctions = {
             positions.overTheKnee: (self.otk_intro, self.otk_round, self.otk_failure, 
@@ -490,6 +385,115 @@ class Person(universal.RPGObject):
             positions.onTheGround: (self.on_the_ground_intro, self.on_the_ground_round, 
                 self.on_the_ground_failure, self.on_the_ground_reversal)
         }
+
+    def spanks(self, bottom, position):
+        return self.spankingFunctions[position][0](self, bottom)
+
+    def spanked_by(self, top, position):
+        return self.spankingFunctions[position][0](top, self)
+
+    def continue_spanking(self, bottom, position):
+        return self.spankingFunctions[position][1](self, bottom)
+
+    def continue_being_spanked(self, top, position):
+        return self.spankingFunctions[position][1](top, self)
+
+    def reverses(self, top, position):
+        return self.spankingFunctions[position][2](top, self)
+
+    def reversed_by(self, bottom, position):
+        return self.spankingFunctions[position][2](self, bottom)
+
+    def failed(self, bottom, position):
+        return self.spankingFunctions[position][-2](self, bottom)
+
+    def blocks(self, top, position):
+        return self.spankingFunctions[position][-2](top, self)
+
+    def otk_intro(self, top, bottom):
+        raise NotImplementedError()
+
+    def otk_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def otk_failure(self, top, bottom):
+        raise NotImplementedError()
+
+    def otk_reversal(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_intro(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_failure(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_reversal(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_intro(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_failure(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_reversal(self, top, bottom):
+        raise NotImplementedError()
+
+    def end_spanking(self, top, bottom):
+        self.firstRound = True
+        return universal.format_line(['''Finally, with a mighty effort,''', bottom.printedName, 
+            '''manages to wriggle''', bottom.himselfherself(), '''free of''', 
+            top.printedName + "'s", 
+        '''merciless grasp.''', bottom.HeShe(), '''scrambles away from''', top.printedName, 
+        '''clutching at''', bottom.hisher(), '''burning bottom with one hand.'''])
+
+    def failed_spanking(self, spankee, position):
+        return [self.printedName, 'failed to spank', spankee.printedName + '!']
+
+    def size_bonus(self):
+        return HEIGHTS.index(self.bodyType)
+
+    def hair_penalty(self):
+        return max(0, HAIR_LENGTH.index(self.hairLength) + 1 - 
+                BUTT_HAIR_STYLE.index(self.hairStyle)) 
+            
+    def body_type_bonus(self):
+        return BODY_TYPES.index(self.bodyType)
+
+    def musculature_bonus(self):
+        return MUSCULATURE.index(self.musculature)
+
+    def stamina(self):
+        return 10 * (self.strength() + self.dexterity() + self.willpower() - self.size_bonus() 
+                + self.musculature_bonus())
+
+    def current_stamina(self):
+        return max(0, self.stamina() - self.staminaDamage)
+
+    def receives_stamina_damage(self, damage):
+        self.staminaDamage += damage
+
+    def heal_stamina_damage(self, heal):
+        self.receives_stamina_damage(-heal)
+
+    def current_humiliation(self):
+        return self.humiliationLevel
+
+    def humiliation(self):
+        return 10 * self.willpower()
+
+    def receives_humiliation_damage(self, damage):
+        self.humiliationLevel += damage
+
+    def heal_humiliation_damage(self, heal):
+        self.receives_humiliation_damage(-heal)
 
     def __repr__(self):
         result = ["\n-----------------", self.name, "------------------"]
@@ -764,23 +768,15 @@ class Person(universal.RPGObject):
             return 2
 
     #BODY_TYPES = ['slim', 'average', 'voluptuous', 'heavyset']
-    def is_slim(self):
-        return self.bodyType == BODY_TYPES[0]
-
-    def is_average(self):
-        return self.bodyType == BODY_TYPES[1]
-
-    def is_voluptuous(self):
-        return self.bodyType == BODY_TYPES[2]
-
-    def is_heavyset(self):
-        return self.bodyType == BODY_TYPES[3]
 
     def is_average_or_thinner(self):
         return self.is_slim() or self.is_average()
 
     def is_average_or_fatter(self):
         return not self.is_slim()
+    
+    def is_voluptuous(self):
+        return self.bodyType == BODY_TYPES[2]
 
     def is_voluptuous_or_thinner(self):
         return self.is_voluptuous() or self.is_average_or_thinner()
@@ -923,35 +919,6 @@ class Person(universal.RPGObject):
 
     def add_mark(self, mark):
         self.marks.append(mark)
-
-#----------------------------------------------------------------Abstract Methods---------------------------------------------------------------------
-    #abstractmethod
-    def spanks(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement spanks for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-
-    def spanked_by(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement spanked_by for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-
-    def reverses(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement reverses for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-
-    def reversed_by(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement reversed_by for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-
-    #abstractmethod
-    def failed(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement failed for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-
-    def blocks(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement blocked for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-
-#-----------------------------------------------------------------End Abstract Methods--------------------------------------------------------------------------
 
     def take_item(self, item):
         if not item in self.inventory and not item in items.emptyEquipment:
@@ -1360,6 +1327,17 @@ class Person(universal.RPGObject):
 
     def wearing_lower_clothing(self):
         return self.lower_clothing().name != items.emptyLowerArmor.name
+
+    def wearing_shirt(self):
+        return self.shirt().name != items.emptyUpperArmor.name
+
+    def wearing(self, itemType):
+        """
+        Given a natural number representing an itemType (found at the top of this file. Search for
+        "WEAPON ="  to find the list), returns whether or not the character is wearing something
+        of that item type.
+        """
+        return items.is_empty(self.equipmentList[itemType])
 
     def clad_bottom(self, useName=True, pajama=False):
         if pajama:
@@ -2412,7 +2390,8 @@ class Party(universal.RPGObject):
                 Person.health, Person.current_mana, Person.mana)
 
     def generic_display(self, showHP=True, ally=None, targeted=None, grappling=False, 
-            currentHealthFunction, healthFunction, currentManaFunction, manaFunction):
+            currentHealthFunction=Person.current_health, healthFunction=Person.health, 
+            currentManaFunction=Person.current_mana, manaFunction=Person.mana):
         allyIndex = -1
         targetedIndices = []
         if ally is not None and ally in self.members:
@@ -2423,7 +2402,7 @@ class Party(universal.RPGObject):
         if showHP:
             partyTxt = ['\t'.join([target(n, arrow(n, allyIndex), targetedIndices) + '. '
                 + memberName, str(currentHealthFunction(member)) + '/' + str(healthFunction(member)), 
-                str(currentManaFunction(member)) + '/' + str(manaFunction(member)])
+                str(currentManaFunction(member)) + '/' + str(manaFunction(member))])
                 for (n, member, memberName) in zip([i for i in range(1, len(self.members)+1)], 
                     self.members, memberNames)]
             if grappling:
@@ -2563,16 +2542,8 @@ class Spell(combatAction.CombatAction):
     effectClass = None
     numTargets = 0
     cost = 0
-    """
-    Fields from CombatAction:
-    grappleStatus = combatAction.GRAPPLER_ONLY
-    effectClass = ALL
-    grappleStatus = GRAPPLER_ONLY
-    targetType = ALLY
-    attacker = None
-    defenders = []
+    actionType = 'spell'
 
-    """
     def __init__(self, attacker, defenders, secondaryStat=None):
         super(Spell, self).__init__(attacker, defenders, universal.MAGIC, secondaryStat)
         self.name = None
@@ -2588,6 +2559,10 @@ class Spell(combatAction.CombatAction):
         self.magicMultiplier = None
         self.castableOutsideCombat = False
         self.primaryStat = Spell.primaryStat
+
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will cast', self.name, 'on', self.display_defenders() + 
+            '.'])
 
     def __str__(self):
         return self.name
@@ -2723,6 +2698,7 @@ class Combat(Spell):
         self.spellSchool = universal.COMBAT_MAGIC
         self.targetType = combatAction.ENEMY
         self.actionType = 'combat'
+
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(Combat, self).effect(inCombat, allies, enemies)

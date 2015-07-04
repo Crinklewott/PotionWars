@@ -17,12 +17,13 @@ along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 from __future__ import division
 import abc
+import items
 import spanking
 import statusEffects
-import random
-import person
 import math
+import person
 import positions
+import random
 from random import randrange
 import types
 import universal
@@ -89,6 +90,12 @@ class CombatAction(universal.RPGObject):
         self.targetType = None
         self.primaryStat = primaryStat
         self.secondaryStat = secondaryStat
+
+    def confirmation_message(self):
+        raise NotImplementedError()
+
+    def display_defenders(self):
+        return ', '.join([defender.printedName for defender in self.defenders])
 
     def __repr__(self):
         result = []
@@ -204,6 +211,7 @@ class AttackAction(CombatAction):
     primaryStat = universal.DEXTERITY
     secondaryStat = universal.STRENGTH
     actionType = 'attack'
+
     def __init__(self, attacker, defenders):
         super(AttackAction, self).__init__(attacker, defenders, universal.WARFARE, AttackAction.secondaryStat)
         self.targetType = ENEMY
@@ -213,6 +221,9 @@ class AttackAction(CombatAction):
         self.actionType = 'attack'
         self.primaryStat = AttackAction.primaryStat
         self.secondaryStat = AttackAction.secondaryStat
+
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will attack', self.display_defenders() + '.'])
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
@@ -254,7 +265,7 @@ class AttackAction(CombatAction):
 
     def display_result(self, attacker, defender, damage):
         resultString = ' '.join([attacker.printedName, 'hits', defender.printedName, 
-            'for', str(dam), 'damage!'])
+            'for', str(damage), 'damage!'])
         if defender.current_health() <= 0:
             resultString = '\n'.join([resultString, ' '.join([defender.printedName, 'collapses!'])])
         return resultString
@@ -301,6 +312,9 @@ class GrappleAction(CombatAction):
         self.grappleStatus = NOT_WHEN_GRAPPLED
         self.enemyInitiated = enemyInitiated
         self.actionType = 'GrappleAction'
+
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will grapple', self.display_defenders() + '.'])
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
@@ -362,6 +376,10 @@ class BreakGrappleAction(CombatAction):
         self.effectClass = ALL
         self.actionType = 'breakGrappleAction'
 
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will attempt to stop grappling', self.display_defenders() + 
+            '.'])
+
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
         Returns a triple: The string indicating the result, true if the break succeeded false otherwise, and itself if the break grapple occured. Otherwise, if the 
@@ -421,6 +439,9 @@ class RunAction(CombatAction):
         else:
             return(' '.join(['The party has failed to flee.']), [False], self)
             
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will try to flee.'])
+
 class SpankAction(CombatAction):
     targetType = ENEMY
     grappleStatus = ONLY_WHEN_GRAPPLED_GRAPPLER_ONLY
@@ -443,6 +464,9 @@ class SpankAction(CombatAction):
         self.position = position
         self.severity = severity
         self.minDuration = 2
+
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will start spanking', self.display_defenders(), '.'])
 
     def administer_spanking(self, inCombat, allies, enemies):
         spanker, spankee = self.attacker, self.defenders[0]
@@ -479,7 +503,7 @@ class SpankAction(CombatAction):
         return (resultString, [spankingDuration], self, spanker, spankee)
 
     def attack_action(self, inCombat, allies, enemies):
-        return AttackAction(attacker, defender).effect(inCombat, allies, enemies)
+        return AttackAction(self.attacker, self.defenders)
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
@@ -500,7 +524,7 @@ class SpankAction(CombatAction):
         elif attacker.graple() > defender.grapple():
             return GrappleAction(attacker, defender).effect(inCombat, allies, enemies)
         else:
-            return self.attack_action(inCombat, allies, enemies)
+            return self.attack_action(inCombat, allies, enemies).effect(inCombat, allies, enemies)
 
 
 class ContinueSpankingAction(CombatAction):
@@ -514,6 +538,9 @@ class ContinueSpankingAction(CombatAction):
     def __init__(self, attacker, defenders, position, severity=0):
         super(ContinueSpankingAction, self).__init__(attacker, defenders, GRAPPLE, SpankAction.secondaryStat)
         self.severity = severity
+
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will continue to spank', self.display_defenders() + '.'])
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
@@ -562,6 +589,9 @@ class StruggleAction(CombatAction):
     def __init__(self, attacker, defenders):
         super(StruggleAction, self).__init__(attacker, defenders, GRAPPLE, SpankAction.secondaryStat)
 
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will struggle against the spanking.'])
+
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
         Returns a triple: The result string, a list containing nothing, and this action
@@ -587,6 +617,9 @@ class EndureAction(CombatAction):
     actionType = 'struggle'
     def __init__(self, attacker, defenders):
         super(EndureAction, self).__init__(attacker, defenders, GRAPPLE, SpankAction.secondaryStat)
+
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will endure the spanking.'])
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
@@ -615,6 +648,11 @@ class ThrowAction(CombatAction):
         self.grappleStatus = ONLY_WHEN_GRAPPLED
         self.effectClass = ALL
         self.actionType = 'throw'
+
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will throw', self.defenders[0].printedName, 
+            'at', self.defenders[1].printedName + '.'])
+            
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         spankingEffect = self.being_spanked()
@@ -678,6 +716,10 @@ class BreakAllysGrappleAction(CombatAction):
         #Need to make sure to break the grapple if it's one of your spell slingers that's been grappled.
         self.effectClass = SPELL_SLINGERS
         self.actionType = 'breakAllysGrappleAction'
+
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will break', self.defenders[0].printedName + "'s", 
+            'grapple.'])
     
 
     def effect(self, inCombat=True, allies=None, enemies=None):
@@ -723,6 +765,9 @@ class DefendAction(CombatAction):
         self.effectClass = SPELL_SLINGERS
         self.actionType = 'defend'
 
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will defend', self.display_defenders() + '.'])
+
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
         Returns a triple: The result, [None], this action.
@@ -756,24 +801,24 @@ class CatSpankAction(SpankAction):
         super(CatSpankAction, self).__init__(attacker, defenders, position, severity)
 
     def attack_action(self, inCombat, allies, enemies):
-        return CatAttackAction(inCombat, allies, enemies)
+        return CatAttackAction(self.attacker, self.defenders)
 
     def administer_spanking(self, inCombat, allies, enemies):
         spanker, spankee = self.attacker, self.defenders[0]
-
         if spankee.guardians:
             guardian = spankee.guardians.pop()
-            (resultString, effects, action) = CatAttackAction(spanker, 
+            (resultString, effects, action) = CatSpankAction(spanker, 
                     [guardian], self.position, self.severity).effect(inCombat, allies, enemies)
             resultString = ' '.join([guardian.printedName, 'defends', spankee.printedName + 
                 '!\n']) + resultString
             return (resultString, effects, action)
 
-        spankerBonus = (spanker.musculature_bonus() + spanker.body_type_bonus() + 
-                spanker.size_bonus())
-        spankeeBonus = (spankee.musculature_bonus() + spankee.body_type_bonus() + 
-                spankee.size_bonus())
-        spankeeRandomModifier = spankee.grapple() + spankee.current_stamina()
+        spankerBonus = sum([spanker.musculature_bonus(), spanker.body_type_bonus(), 
+            spanker.size_bonus()])
+        spankerRandomModifier = spanker.strength() + spanker.current_stamina()
+        spankeeBonus = sum([spankee.musculature_bonus(), spankee.body_type_bonus(), 
+            spankee.size_bonus()])
+        spankeeRandomModifier = spankee.strength() + spankee.current_stamina()
 
         def generate_spankee_threshhold():
             return rand(spankeeRandomModifier) - spankee.hair_penalty() + spankeeBonus
@@ -781,29 +826,36 @@ class CatSpankAction(SpankAction):
         def generate_spanker_threshhold():
             return rand(spankerRandomModifier) - spanker.hair_penalty() + spankerBonus
 
-        wasSuccessful = generate_spankee_threshhold() <= generate_spanker_threshhold
+        wasSuccessful = generate_spankee_threshhold() <= generate_spanker_threshhold()
         resultString = ''
 
         if not wasSuccessful and generate_spankee_threshhold() >= generate_spanker_threshhold():
             spanker, spankee = spankee, spanker
             spankerBonus, spankeeBonus = spankeeBonus, spankerBonus
-            spankerThreshhold, spankeeThreshhold = spankeeThreshhold, spankerThreshhold
+            spankerThreshhold = generate_spanker_threshhold()
+            spankeeThreshhold = generate_spankee_threshhold()
             wasSuccessful = rand(spankeeThreshhold) <= rand(spankerThreshhold)
             resultString = spanker.reversed_by(spankee, self.position)
         elif wasSuccessful:
             resultString = spanker.spanks(spankee, self.position)
 
         if not wasSuccessful:
-            return (' '.join(spanker.failed_spanking(spankee, position)), [0], self)
+            return (' '.join(spanker.failed_spanking(spankee, self.position)), [0], self)
         else:
-            spankingDuration = compute_damage(spanker.grapple(), spankee.grapple())
-            spankingDuration += (spankerBonus - spanker.hair_penalty()) - (
-                    spankeeBonus - spankee.hair_penalty())
+            spankingDuration = compute_damage(spanker.grapple(), 
+                    spankee.grapple())
+            spankingDuration += sum([spankerBonus, 
+                spanker.current_stamina(), 
+                -spanker.hair_penalty(),
+                -spankeeBonus, 
+                spankee.hair_penalty(), 
+                -spankee.current_stamina()]) 
             spanker.begin_spanking(spankee, self.position, spankingDuration)
 
             resilienceDamage = compute_damage(spanker.warfare(), spankee.warfare())
             humiliationDamage = compute_damage(spanker.resilience(), spankee.resilience())
             resilienceDamage += spankerBonus - spankeeBonus
+            defender = self.defenders[0]
             if not defender.wearing_lower_clothing():
                 humiliationDamage += self.noPantsBonus 
                 resilienceDamage += self.noPantsBonus
@@ -811,10 +863,10 @@ class CatSpankAction(SpankAction):
                 humiliationDamage += self.noPantiesBonus
                 resilienceDamage += self.noPantsBonus
 
-           spankee.receives_stamina_damage(resilienceDamage)
-           spankee.receives_humiliation_damage(humiliationDamage)
-           if spankee.current_humiliation() >= spankee.humiliation():
-               resultString += ''.join(['\n', spankee.printedName, ' surrenders!'])
+            spankee.receives_stamina_damage(resilienceDamage)
+            spankee.receives_humiliation_damage(humiliationDamage)
+            if spankee.current_humiliation() >= spankee.humiliation():
+                resultString += ''.join(['\n', spankee.printedName, ' surrenders!'])
         return (resultString, [spankingDuration], self)
 
 class CatAttackAction(AttackAction):
@@ -840,5 +892,110 @@ class CatAttackAction(AttackAction):
         ]
         return random.choice(possible_strings)
 
-            
+class StripAction(CombatAction):
+    targetType = ENEMY
+    grappleStatus = ONLY_WHEN_GRAPPLED
+    effectClass = ALL
+    numTargets = 1
+    primaryStat = universal.STRENGTH
+    secondaryStat = universal.DEXTERITY
+    actionType = 'strip'
 
+    def __init__(self, attacker, defenders, clothingTypeToStrip):
+        """
+        clothingTypeToStrip is the integer representing a clothing type. The types can be 
+        found in person.py. Search for "SHIRT =".
+        """
+        self.attacker = attacker
+        self.defenders = defenders
+        self.clothingTypeToStrip = clothingTypeToStrip
+
+    def get_clothing_to_strip(self, target):
+        """
+        If the target is still wearing the clothingToStrip, we just return the clothingToStrip.
+        If however the target is not wearing the clothingToStrip, then we find some clothing
+        to strip. If the target is completely naked, we return None.
+        """
+        if target.wearing(self.clothingToStrip):
+            return self.clothingToStrip
+        elif target.wearing(person.SHIRT):
+            return person.SHIRT
+        elif target.wearing(person.LOWER_CLOTHING):
+            return person.LOWER_CLOTHING
+        elif target.wearing(person.UNDERWEAR):
+            return person.UNDERWEAR
+
+    def effect(self, inCombat=True, allies=None, enemies=None):
+        """
+        Returns a triple: A string indicating what happened, a list containing a single
+        number: 1 if the strip was successful, 0 if not, -1 if reversed, and this action.
+        """
+        attacker = self.attacker
+        defender = self.defenders[0]
+        if not attacker.is_grappling(): 
+            return attacker.CatAttackAction(attacker, self.defenders).effect(inCombat, allies, 
+                    enemies)
+        elif not attacker.is_grappling(defender):
+            newTarget = attacker.grapplingPartner
+            newClothingToStrip = self.get_clothing_to_strip(newTarget)
+            if newClothingToStrip is None:
+                return attacker.CatAttackAction(attacker, [newTarget]).effect(inCombat, allies,
+                        enemies)
+            else:
+                return StripAction(attacker, [newTarget], newClothingToStrip).effect(
+                        inCombat, allies, enemies)
+        else:
+            def strip_threshhold(character):
+                return sum([rand(character.strength() + 
+                    character.dexterity() // 2 + character.willpower() // 2), 
+                    character.current_stamina(),
+                    character.size_bonus(), character.hair_penalty(), 
+                    character.musculature_bonus(), character.body_type_bonus()])
+            stripper, stripee = attacker, defender
+            successNum = 1
+            if strip_threshhold(stripper) < strip_threshhold(stripee):
+                #If the stripper fails twice, things get reversed.
+                if strip_threshhold(stripper) < strip_threshhold(stripee):
+                    stripper, stripee = stripee, stripper
+                    self.clothingToStrip = self.get_clothing_to_strip(stripee)
+                    successNum = -1
+                else:
+                    resultString = ' '.join([stripper.printedName, "fails to rip off", 
+                        stripee.printedName + "'s", stripee.equipment(self.clothingToStrip) + "!"])
+                    return (resultString, [0], self)
+            resultString = self.stripping_string(stripper, stripee)  
+            stripee.unequip(stripee.equipment(self.clothingToStrip), couldBeNaked=True)
+            stripee.receives_humiliation_damage(max(1, (stripee.humiliation - 
+                stripee.current_humiliation()) // 4))
+            return (resultString, [-1], self)
+
+    def stripping_string(self, stripper, stripee):
+        clothing = stripee.equipment(self.clothingToStrip)
+        if items.is_shirt(clothing):
+            return self.shirt_stripping(stripper, stripee)
+        elif items.is_underwear(clothing):
+            return self.underwear_stripping(stripper, stripee)
+        elif items.is_lower_clothing(clothing):
+            return self.lower_clothing_stripping(stripper, stripee)
+        else:
+            raise ValueError(' '.join([clothing.name, "is not clothing, and cannot be stripped"]))
+
+    def confirmation_message(self):
+        return ' '.join([self.attacker.printedName, "will strip off", 
+            self.defenders[0].printedName + "'s", 
+            self.defenders[0].equipment[self.clothingTypeToStrip].name + "."])
+                
+    def shirt_stripping(self, stripper, stripee):
+        stripperName = stripper.printedName
+        stripeeName = stripee.printedName
+        shirtName = stripee.shirt().name
+        possibleStrings = [
+                ' '.join([stripperName, "grabs the back of", stripeeName + "'s", shirtName, 
+                    "and tugs.", stripeeName, "hunches over,", stripee.hisher(), "arms flailing",
+                    "wildly. The two sway, and the", shirtName, "inches its way up", 
+                    stripeeName + "'s", "back, briefly gets tangled in", stripee.hisher(),
+                    "hair and arms, then snaps off.", stripeeName, "blushes furiously, while",
+                    stripperName, "waves the shirt over", stripper.hisher(), "head, and flings",
+                    "it into a corner."])
+        ]
+        return random.choice(possibleStrings)

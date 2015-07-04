@@ -78,6 +78,10 @@ def set_combat(music):
     global COMBAT
     COMBAT = decrypt(music, 'combat')
 
+def set_catfight(music):
+    global CATFIGHT
+    CATFIGHT = decrypt(music, 'catfight')
+
 def set_defeated(music):
     global DEFEATED
     DEFEATED = decrypt(music, 'defeated')
@@ -95,6 +99,7 @@ TOWN = None
 THEME = None
 DEFEATED = None
 COMBAT = None
+CATFIGHT = None
 BOSS = None
 import threading
 lock = threading.Lock()
@@ -128,3 +133,5 @@ def end_music(arglist):
 
 def close_music_files():
     pass
+
+

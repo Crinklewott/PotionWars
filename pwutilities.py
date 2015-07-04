@@ -18,6 +18,7 @@ along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 import conversation
 import dungeonmode
 import episode
+import items
 import music
 import person
 import titleScreen
@@ -238,7 +239,9 @@ ROMANTIC = music.decrypt(universal.resource_path('POL-love-theme-long.wav'), 'ro
 PETER = music.decrypt(universal.resource_path('POL-telekinesis-long.wav'), 'peter')
 COMBAT = music.decrypt(universal.resource_path('POL-chase-long.wav'), 'combat')
 DEFEAT = music.decrypt(universal.resource_path('POL-graveyard-lord-long.wav'), 'defeat')
+CATFIGHT = COMBAT
 music.set_combat(universal.resource_path('POL-chase-long.wav'))
+music.set_catfight(universal.resource_path('POL-chase-long.wav'))
 music.set_boss(universal.resource_path('POL-last-duel-long.wav'))
 music.set_town(universal.resource_path('POL-spiritual-path-long.wav'))
 music.set_theme(universal.resource_path('POL-the-challenge-long.wav'))
