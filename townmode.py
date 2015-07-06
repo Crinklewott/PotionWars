@@ -672,10 +672,10 @@ def save(previousModeIn):
     global saveFiles, previousMode
     previousMode = previousModeIn
     try:
-        saveFiles = [f for f in os.listdir('save') if f[0] != '.']
+        saveFiles = sorted([file for file in os.listdir('save') if file[0] != '.'])
     except OSError:
         os.mkdir('save')
-        saveFiles = [f for f in os.listdir('save') if f[0] != '.']
+        saveFiles = sorted([file for file in os.listdir('save') if file[0] != '.'])
     universal.clear_world_view()
     universal.say_title('Save')
     try:
@@ -787,7 +787,7 @@ def load(returnMode=None):
         returnTo = returnMode
     else:
         returnTo = town_mode
-    saveFiles = [fileName for fileName in os.listdir('save') if fileName[0] != '.']
+    saveFiles = sorted([fileName for fileName in os.listdir('save') if fileName[0] != '.'])
     try:
         saveFiles.insert(0, saveFiles.pop(saveFiles.index('quick.sav')))
     except ValueError: 
