@@ -31,7 +31,7 @@ import os
 import math
 import ast
 
-DEBUG = True
+DEBUG = False
 playOnMac = False
 SAVE_DELIMITER = '%%%'
 
