@@ -108,6 +108,11 @@ def end_fight():
     activeAlly = None
     chosenActions = []
 
+def cat_fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon_mode, 
+        additionalAllies=None, coordinatesIn=None):
+    fight(enemiesIn, afterCombatEventIn, previousModeIn, False, False, True, additionalAllies,
+            0, False, coordinatesIn, True)
+
 def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon_mode, runnableIn=True, bossFight=False, optionalIn=False, additionalAllies=None, 
         ambushIn=0, randomEncounterIn=False, coordinatesIn=None, catfight=False):
     global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface, enemySurface, commandSurface, clearScreen, previousMode,  \
