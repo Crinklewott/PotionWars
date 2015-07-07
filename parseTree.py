@@ -154,7 +154,8 @@ inlineCommandsPlayer = {
     r'\isfemale':("person.is_female_msg(universal.state.player, ", 2),
     r'\stageDirections':("pwutilities.stage_directions(", 1),
     r'\ppajamatype':("items.pajama_type_msg(universal.state.player,", 3),
-    r'\pwielding':("items.weapon_msg(universal.state.player,", 3)
+    r'\pwielding':("items.weapon_msg(universal.state.player,", 3),
+    r'\pwearingouterclothing':("items.wearing_outer_clothing(universal.state.player,", 3)
     }
 
 #The first line of all these commands is code: the person to apply the function to.
@@ -191,15 +192,15 @@ inlineCommands = {
     #r'\SirMaam':("person.SirMaam(universal.state.get_character(", 1),  
     #r'\bastardbitch':("person.bastardbitch(universal.state.get_character(", 1),  
     #r'\BastardBitch':("person.BastardBitch(universal.state.get_character(", 1),  
-    r'\oweaponName':("items.weapon_name(", 1),  
-    r'\oweapon':("items.weapon_name(", 1),
-    r'\ocladbottom': ("items.clad_bottom(", 1),
-    r'\omuscleadj': ("person.muscle_adj(", 1),
-    r'\obumadj': ("person.bum_adj(", 1),
-    r'\oliftlower': ("items.liftlower(", 1),
-    r'\olowerlift': ("items.lowerlift(", 1),
-    r'\oliftslowers': ("items.liftslowers(", 1),
-    r'\olowerslifts': ("items.lowerslifts(", 1),
+    r'\npcweaponName':("items.weapon_name(", 1),  
+    r'\npcweapon':("items.weapon_name(", 1),
+    r'\npccladbottom': ("items.clad_bottom(", 1),
+    r'\npcmuscleadj': ("person.muscle_adj(", 1),
+    r'\npcbumadj': ("person.bum_adj(", 1),
+    r'\npcliftlower': ("items.liftlower(", 1),
+    r'\npclowerlift': ("items.lowerlift(", 1),
+    r'\npcliftslowers': ("items.liftslowers(", 1),
+    r'\npclowerslifts': ("items.lowerslifts(", 1),
     r'\npcunderwear':("items.underwear_name(", 1),
     r'\npctrousers': ("items.lower_clothing_name(", 1),
     r'\npcpajamabottoms': ("items.pajama_bottom_name(", 1),
@@ -221,12 +222,13 @@ inlineCommands = {
     r'\npcisliftedlowered':("items.liftlowered_based_msg(", 3),
     r'\cond':("universal.cond(", 3),
     r'\bummarks':("pwutilities.bummarks(", 2),
-    r'\opajamatype':("items.pajama_type_msg(", 4),
+    r'\npcpajamatype':("items.pajama_type_msg(", 4),
     r'\itthem':("items.itthem(", 1),
-    r'\otrousers':("items.wearing_trousers(", 4),
-    r'\odress':("items.wearing_dress(", 4),
-    r'\owearingunderwear':("items.wearing_underwear(", 3),
-    r'\owielding':("items.weapon_msg(", 4)
+    r'\npctrousers':("items.wearing_trousers(", 4),
+    r'\npcdress':("items.wearing_dress(", 4),
+    r'\npcwearingunderwear':("items.wearing_underwear(", 3),
+    r'\npcwielding':("items.weapon_msg(", 4),
+    r'\npcwearingouterclothing':("items.wearing_outer_clothing(", 4)
     }
 
 
