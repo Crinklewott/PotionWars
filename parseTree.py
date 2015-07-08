@@ -228,7 +228,8 @@ inlineCommands = {
     r'\npcdress':("items.wearing_dress(", 4),
     r'\npcwearingunderwear':("items.wearing_underwear(", 3),
     r'\npcwielding':("items.weapon_msg(", 4),
-    r'\npcwearingouterclothing':("items.wearing_outer_clothing(", 4)
+    r'\npcwearingouterclothing':("items.wearing_outer_clothing(", 4),
+    r'\clothingname':("items.clothing_name(", 1)
     }
 
 

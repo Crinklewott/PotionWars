@@ -941,3 +941,6 @@ def baring_underwear(underwear, baringMsg, notBaringMsg, notWearingUnderwearMsg=
             underwear.baring, {True:baringMsg, False:notBaringMsg})
 
 
+def clothing_name(clothing):
+    return clothing.name
+
