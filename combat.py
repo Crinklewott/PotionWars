@@ -103,7 +103,7 @@ def end_fight():
     activeAlly = None
     chosenActions = []
 
-def cat_fight(enemy, after_combat_event_in, previous_mode_in):
+def catfight(enemy, after_combat_event_in, previous_mode_in):
     """
     Initiates a catfight between the player, and the passed in enemy.
     Catfights are basically brawls. No real damage is done, and weapons are
