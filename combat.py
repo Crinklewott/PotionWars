@@ -40,17 +40,12 @@ import math
 import logging
 
 """
-Note: The interpreters all assume that you will only ever face up to 9 enemies at 
-once. If you want to face more than 9 enemies, you'll have to modify the interpreters to 
-take multi-digit numbers as well (see the save_game interpreter for ideas on how to do that).
-
-Furthermore, I've commented out the code that allows the player and enemies to spank each other in combat. The reason for this is two-fold:
-        1. The spankings are kind of boring. They exist in a vaccum, and I can't really write any interesting interaction between the spanker and spankee. Therefore,
-        these essentially boil down to trying to find a thousand ways of saying "Person A hit Person B's bottom, and it was sexy." While these types of generic spankings
-        could be enjoyable in a game with graphics, in a text-based game they're kind of boring.
-        2. It seriously messes with the atmosphere of combat. Combat is treated in the story-proper as a pretty serious, and dangerous thing. Furthermore, there may be
-        very dark, and serious moments right before a battle. Being able to spank your opponent is kind of silly in that respect, and detracts from said seriousness.
-        Basically, Pandemonium Cycle has become too serious for this kind of mechanic.
+Note: The interpreters all assume that you will only ever face up to 9 enemies
+at
+once. If you want to face more than 9 enemies, you'll have to modify the
+interpreters to
+take multi-digit numbers as well (see the save_game interpreter for ideas on
+how to do that).
 """
 
 
@@ -108,31 +103,53 @@ def end_fight():
     activeAlly = None
     chosenActions = []
 
-def cat_fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon_mode, 
-        additionalAllies=None, coordinatesIn=None):
-    fight(enemiesIn, afterCombatEventIn, previousModeIn, False, False, True, additionalAllies,
-            0, False, coordinatesIn, True)
+def cat_fight(enemy, after_combat_event_in, previous_mode_in):
+    """
+    Initiates a catfight between the player, and the passed in enemy.
+    Catfights are basically brawls. No real damage is done, and weapons are
+    not used. The player will also only have access to certain silly spells
+    (not yet implemented)
+    :param enemy: The person being fought
+    :param after_combat_event_in: The callable event that will occur after
+    battle. Usually a function that processes the result.
+    :param previous_mode_in: The type of game mode (town or dungeon) that
+    the game was in before battle began.
+    """
+    fight(enemy, after_combat_event_in, previous_mode_in, False, False, True,
+          None, 0, False, None, True, [universal.state.player])
 
-def fight(enemiesIn, afterCombatEventIn=None, previousModeIn=dungeonmode.dungeon_mode, runnableIn=True, bossFight=False, optionalIn=False, additionalAllies=None, 
-        ambushIn=0, randomEncounterIn=False, coordinatesIn=None, catfight=False):
-    global afterCombatEvent, activeAlly, worldView, enemies, bg, allies, allySurface, enemySurface, commandSurface, clearScreen, previousMode,  \
-            actionsInflicted, actionsEndured, chosenActions, optional, defeatedEnemies, defeatedAllies
-    global ambush, boss, initialAllies, initialEnemies, randomEncounter, coordinates
+def fight(enemiesIn, afterCombatEventIn=None,
+          previousModeIn=dungeonmode.dungeon_mode, runnableIn=True,
+          bossFight=False, optionalIn=False, additionalAllies=None,
+          ambushIn=0, randomEncounterIn=False, coordinatesIn=None,
+          catfight=False, party=None):
+    # Way too many global variables. This code really needs to be rewritten.
+    global afterCombatEvent, activeAlly, worldView, enemies, bg, allies,\
+        allySurface, enemySurface, commandSurface, clearScreen, previousMode,\
+        actionsInflicted, actionsEndured, chosenActions, optional,\
+        defeatedEnemies, defeatedAllies
+    global ambush, boss, initialAllies, initialEnemies, randomEncounter, \
+        coordinates, interpreter
     randomEncounter = randomEncounterIn
     interpreter = catfight_interpreter if catfight else battle_interpreter
     if randomEncounter:
         assert coordinatesIn
         coordinates = coordinatesIn
     universal.state.enemies = person.Party(enemiesIn)
-    universal.state.allies = person.Party(list(universal.state.party) + (additionalAllies if additionalAllies else []))
+    allies = party if party else list(universal.state.party)
+    universal.state.allies = person.Party(list(allies) + (
+        additionalAllies if additionalAllies else []))
     initialEnemies = []
     initialAllies = []
     for ally in universal.state.allies:
-        initialAllies.append((ally.get_id(), list(ally.primaryStats), dict(ally.statusDict), list(ally.increaseSpellPoints), list(ally.increaseStatPoints)))
+        initialAllies.append((ally.get_id(), list(ally.primaryStats),
+            dict(ally.statusDict), list(ally.increaseSpellPoints),
+            list(ally.increaseStatPoints)))
         ally.humiliationLevel = 0
         ally.staminaDamage = 0
     for enemy in universal.state.enemies:
-        initialEnemies.append((enemy.get_id(), list(enemy.primaryStats), dict(enemy.statusDict)))
+        initialEnemies.append((enemy.get_id(), list(enemy.primaryStats),
+            dict(enemy.statusDict)))
         enemy.humiliationLevel = 0
         enemy.staminaDamage = 0 
     boss = bossFight
@@ -303,6 +320,10 @@ def print_command(command):
     screen.blit(commandSurface, commandScreenCoord)
 
 
+def catcast():
+    raise NotImplementedError()
+
+
 def catfight_interpreter(keyEvent):
     global chosenActions, activeAlly
     if keyEvent.key == K_BACKSPACE:
@@ -327,7 +348,8 @@ def catfight_interpreter(keyEvent):
         if number < len(enemies):
             attack(number)
     elif keyEvent.key == K_c:
-        catcast()
+        pass
+        #catcast()
     elif keyEvent.key == K_d:
         defend()
     elif activeAlly.is_grappling():
@@ -1445,16 +1467,6 @@ def select_targets(chosenAction, enemy):
         for target in list(targets):
             avgDamEndured = avg_damage_endured(target, chosenAction)
             targets.extend([target for i in range(max(1, avgDamEndured - avgdam))])
-    elif chosenAction.actionType == combatAction.DefendAction.actionType:
-        targets.append(enemy)
-        for target in list(targets):
-            #We want to defend the magic users above all else.
-            targets.extend([target for i in range(max(0, target.magic()) // 3)])
-            targets.extend([target for i in range(target.health() - companion.current_health()) if target.current_health() <= max_damage(opponents)])
-        if len(defendTargets) > 0:
-            defenders.append(defendTargets[random.randrange(0, len(defendTargets))])    
-        else:
-            defenders.append(enemy)
     defenders = []
     if chosenAction == combatAction.ThrowAction:
         defenders.append(enemy.grapplingPartner)
@@ -1546,7 +1558,10 @@ def max_damage(companions, chosenAction=None):
             actEndured.extend([action for action in actionsEndured[comp]])
     else:
         for comp in companions:
-            actEndured = [action for action in actionsEndured[comp] if isinstance(combatAction.executed_action(action), type(chosenAction))]
+            actEndured = [action for action in actionsEndured[comp] if isinstance(
+
+
+                combatAction.executed_action(action), type(chosenAction))]
     maxDam = 0
     for action in actEndured:
         try:
@@ -1641,7 +1656,9 @@ def start_round(chosenActions):
                 return
             else:
                 try:    
-                    actionsInflicted[action.attacker].append((combatAction.executed_action(actionEffect), combatAction.effects(actionEffect)))
+                    actionsInflicted[action.attacker].append((
+                                                             combatAction.executed_action(
+                                                                 actionEffect), combatAction.effects(actionEffect)))
                 except KeyError, e:
                     raise KeyError(str(e))
                 defenders = combatAction.executed_action(actionEffect).defenders
@@ -1649,7 +1666,9 @@ def start_round(chosenActions):
                 print(actionEffect[0])
                 for defender, effect in zip(defenders, combatAction.effects(actionEffect)):
                     if defender is not None:
-                        actionsEndured[defender].append((combatAction.executed_action(actionEffect), effect))
+                        actionsEndured[defender].append((
+                                                        combatAction.executed_action(
+                                                            actionEffect), effect))
                         if defender.current_health() <= 0:
                             if defender.is_grappling():
                                 defender.break_grapple()
@@ -1666,11 +1685,16 @@ def start_round(chosenActions):
                                 action2 = chosenActions[index2]
                                 if action2 and action2.attacker == defender:
                                     chosenActions[index2] = None
-                    isSpanking = isinstance(combatAction.executed_action(actionEffect), combatAction.SpankAction)
-                    isSpellSpanking = isinstance(combatAction.executed_action(actionEffect), person.SpectralSpanking)
+                    isSpanking = isinstance(
+                        combatAction.executed_action(actionEffect), combatAction.SpankAction)
+                    isSpellSpanking = isinstance(
+                        combatAction.executed_action(actionEffect), person.SpectralSpanking)
                     isSpanking = isSpanking or isSpellSpanking
-                    if not (combatAction.result_string(actionEffect), isSpanking) in actionResults:
-                            actionResults.append((combatAction.result_string(actionEffect), isSpanking))
+                    if not (
+                    combatAction.action_result_string(actionEffect), isSpanking) in actionResults:
+                            actionResults.append((
+                                                 combatAction.action_result_string(
+                                                     actionEffect), isSpanking))
     decrement_grappling()
     print_round_results()
 

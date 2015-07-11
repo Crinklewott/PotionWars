@@ -4646,7 +4646,6 @@ def ep1_paloma_otk_hand_slipper(keyEvent, num=None):
         set_command_interpreter(ep1_paloma_otk_hand_slipper_belt)
 
 def ep1_paloma_otk_hand_slipper_lift(keyEvent):
-    #&&&
     try:
         num = universal.response(keyEvent)
     except ValueError:

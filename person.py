@@ -1,6 +1,9 @@
 """ Copyright 2014, 2015 Andrew Russell 
 
-This file is part of PotionWars.  PotionWars is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This file is part of PotionWars.  PotionWars is free software: you can
+redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
 
 PotionWars is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -9,9 +12,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
+"""
 
-WARNING: Due to fiddling with the name of Edita (she was Carlita, then Lucilla, then Carlita again, then Edita), I've had to add some code to the state object to exchange Lucilla and Carlita for Edita in the player's keywords, in order to ensure
-that keywords are registering properly for people loading saves from versions where Edita's name was Lucilla or Carlita. This code should be removed for any future games. Otherwise, if you name a 
+"""
+WARNING: Due to fiddling with the name of Edita (she was Carlita, then Lucilla,
+then Carlita again, then Edita), I've had to add some code to the state object
+to exchange Lucilla and Carlita for Edita in the player's keywords, in order to
+ensure
+that keywords are registering properly for people loading saves from versions
+where Edita's name was Lucilla or Carlita. This code should be removed for any
+future games. Otherwise, if you name a
 character Lucilla or Carlita, you end up with one named Edita!
 
 The same is true about the Person class' load feature.
@@ -61,11 +71,15 @@ BALANCED = 6
 
 TALENT_PER_TIER = 10
 
-allStats = [universal.WARFARE, universal.MAGIC, universal.RESILIENCE, universal.GRAPPLE, universal.SPEED, universal.HEALTH, universal.MANA, universal.CURRENT_HEALTH, 
-        universal.CURRENT_MANA]
+allStats = [universal.WARFARE, universal.MAGIC, universal.RESILIENCE,
+                   universal.GRAPPLE, universal.SPEED, universal.HEALTH,
+                   universal.MANA, universal.CURRENT_HEALTH,
+                   universal.CURRENT_MANA]
 
-allPrimaryStats = [universal.STRENGTH, universal.DEXTERITY, universal.WILLPOWER, universal.TALENT, universal.ALERTNESS, universal.HEALTH, universal.MANA, 
-        universal.CURRENT_HEALTH, universal.CURRENT_MANA]
+allPrimaryStats = [universal.STRENGTH, universal.DEXTERITY,
+                   universal.WILLPOWER, universal.TALENT, universal.ALERTNESS,
+                   universal.HEALTH, universal.MANA,
+                   universal.CURRENT_HEALTH, universal.CURRENT_MANA]
 
 
 MALE = 0
@@ -78,7 +92,8 @@ XP_INCREASE_PER_LEVEL = 100
 
 STATUS_OBJ = 0
 DURATION = 1
-#This is used for saving purposes
+# This is used for saving purposes
+
 
 def remove_character(person):
     if person.name in universal.state.characters:
@@ -86,11 +101,14 @@ def remove_character(person):
 
 universal.state.player = universal.state.player
 
+
 def get_PC():
     return universal.state.player
 
-def set_PC(playerCharacter):
-    universal.state.player = playerCharacter
+
+def set_PC(player_character):
+    universal.state.player = player_character
+
 
 class InvalidEquipmentError(Exception):
     pass
@@ -285,8 +303,11 @@ class Person(universal.RPGObject):
     """
     enemy = False
     def __init__(self, name, gender, defaultLitany, litany, description="", printedName=None, 
-            coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle='', marks=None,
-            musculature='', hairLength='', height='', bodyType='', identifier=None, weaknesses=None): 
+            coins=20, specialization=universal.BALANCED, order=zeroth_order,
+            dropChance=0, rawName=None, skin_color='', eyeColor='',
+            hairColor='', hairStyle='', marks=None,
+            musculature='', hairLength='', height='', bodyType='',
+            identifier=None, weaknesses=None):
         self.name = name
         self.gender = gender
         self.previousTarget = 0
@@ -349,7 +370,7 @@ class Person(universal.RPGObject):
         self.musculature = musculature
         self.bumStatus = 0
         self.welts = []
-        self.skinColor = skinColor
+        self.skin_color = skin_color
         self.hairColor = hairColor
         self.eyeColor = eyeColor
         self.hairStyle = hairStyle
@@ -1696,7 +1717,7 @@ class Person(universal.RPGObject):
             Person.add_data('\n'.join(welts), saveData)
         else:
             Person.add_data('', saveData)
-        Person.add_data(str(self.skinColor), saveData)
+        Person.add_data(str(self.skin_color), saveData)
         Person.add_data(str(self.hairColor), saveData)
         Person.add_data(str(self.eyeColor), saveData)
         Person.add_data(str(self.hairStyle), saveData)
@@ -1920,7 +1941,7 @@ class Person(universal.RPGObject):
                 hairStyleDescription += ' cute pigtails.'
             else:
                 hairStyleDescription += ' '.join(['', 'a', self.hairStyle])
-        appearance = [[self.name + "'s", '''skin is a''', self.skinColor + ".", HeShe(self), '''has''', self.eyeColor, '''eyes, and is wearing''', hisher(self),
+        appearance = [[self.name + "'s", '''skin is a''', self.skin_color + ".", HeShe(self), '''has''', self.eyeColor, '''eyes, and is wearing''', hisher(self),
             self.hairLength + ",", self.hairColor,'''hair''', hairStyleDescription + "."],
             [HeShe(self), '''stands at a fairly''', self.height, '''height.''', HeShe(self), '''has a''', self.musculature + ",", self.bodyType, '''body.''']]
         bumDesc = ' '.join([self.muscle_adj() + ",", self.bum_adj()])
@@ -2012,7 +2033,7 @@ class PlayerCharacter(Person):
     the entire game, so long as the two never fight each other).
     """
     def __init__(self, name, gender, description="", currentEpisode=None, order=zeroth_order, nickname=""):
-        super(PlayerCharacter, self).__init__(name, gender, None, None, description=description, order=zeroth_order, rawName='$$$universal.state.player$$$', skinColor='rich caramel',
+        super(PlayerCharacter, self).__init__(name, gender, None, None, description=description, order=zeroth_order, rawName='$$$universal.state.player$$$', skin_color='rich caramel',
                 eyeColor='brown', hairColor='dark brown')
         self.keywords = set()
         self.currentEpisode = currentEpisode
@@ -2544,8 +2565,9 @@ class Spell(combatAction.CombatAction):
     cost = 0
     actionType = 'spell'
 
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(Spell, self).__init__(attacker, defenders, universal.MAGIC, secondaryStat)
+    def __init__(self, attacker, defenders, secondary_stat=None):
+        super(Spell, self).__init__(attacker, defenders, universal.MAGIC,
+                                    secondary_stat)
         self.name = None
         self.description = None
         self.effectFormula = None
@@ -2690,8 +2712,8 @@ class Combat(Spell):
     targetType = ENEMY
     effectClass = None
     actionType = 'combat'
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(Combat, self).__init__(attacker, defenders, secondaryStat)
+    def __init__(self, attacker, defenders, secondary_stat=None):
+        super(Combat, self).__init__(attacker, defenders, secondary_stat)
         self.minDamage = None
         #Deprecated. Do not use.
         self.spellType = COMBAT
@@ -2891,7 +2913,7 @@ class Buff(Spell):
     primaryStat = universal.WILLPOWER
     secondaryStat = universal.TALENT
 
-    def __init__(self, attacker, defenders, secondaryStat=None):
+    def __init__(self, attacker, defenders, secondary_stat=None):
         super(Buff, self).__init__(attacker, defenders, Buff.secondaryStat)
         self.targetType = combatAction.ALLY
         self.effectClass = None
@@ -2950,8 +2972,8 @@ class Buff(Spell):
         return ''
 
 class Healing(Buff):
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(Healing, self).__init__(attacker, defenders, secondaryStat)
+    def __init__(self, attacker, defenders, secondary_stat=None):
+        super(Healing, self).__init__(attacker, defenders, secondary_stat)
         self.minHealedHealth = None
         #If fortify is true, then this healing spell can heal health past the character's maximum health.
         self.fortify = False
@@ -3012,8 +3034,8 @@ class Healing(Buff):
 
 
 class Resurrection(Healing):
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(Resurrection, self).__init__(attacker, defenders, secondaryStat)
+    def __init__(self, attacker, defenders, secondary_stat=None):
+        super(Resurrection, self).__init__(attacker, defenders, secondary_stat)
         self.fortify = False
         self.fortifyCap = None
 
@@ -3030,8 +3052,8 @@ class Spectral(Spell):
     """
     Note: Because Spectral spells are so varied, we can't implement a generic effect function. Each spectral spell will have to implement its own.
     """
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(Spectral, self).__init__(attacker, defenders, secondaryStat)
+    def __init__(self, attacker, defenders, secondary_stat=None):
+        super(Spectral, self).__init__(attacker, defenders, secondary_stat)
         self.targetType = combatAction.ENEMY
         self.effectClass = None
         self.spellType = SPECTRAL #Deprecated. Do not use.

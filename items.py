@@ -281,6 +281,7 @@ class Armor(Item):
         return '\n'.join([displayString, 'attack defense: ' + str(self.attackDefense), 
             'attack penalty: ' + str(self.attackPenalty), 'casting penalty: ' + str(self.castingPenalty), 'casting defense: ' + str(self.magicDefense)])
 
+
 class UpperArmor(Armor):
     armorType = 'chest armor'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6, risque=0):
@@ -298,11 +299,13 @@ class UpperArmor(Armor):
         char._set_shirt(emptyUpperArmor)
         char.take_item(self)
 
+
 class Shirt(UpperArmor):
     armorType = 'shirt'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=9, risque=0):
         super(Shirt, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
         self.armorType = Shirt.armorType
+
 
 class FullArmor(Armor):
     armorType = 'full armor'
@@ -839,7 +842,53 @@ def is_lower_clothing(item):
             armorType == LowerArmor.armorType, armorType == FullArmor.armorType, 
             armorType == Underwear.armorType, armorType == Robe.armorType])
 
+
+def is_dress(item):
+    """
+    Checks if a particular item could be considered a "dress," basically a
+    long, flowing garment that covers the full body.
+    :param item: The item to be checked
+    :return: True if the item is a dress by the definition provided above,
+    False otherwise
+    """
+    try:
+        armor_type = item.armorType
+    except AttributeError:
+        return False
+    else:
+        return any([
+            armor_type == Dress.armorType,
+            armor_type == Robe.armorType,
+            armor_type == FullArmor.armorType
+        ])
+
+
+def is_skirt(item):
+    """
+    Checks if a particular item could be considered a "skirt," basically a
+    flowing garment that covers only the lower body and can be either lowered
+    or raised.
+    :param item: The item to be checked
+    :return: True if the item is a skirt by the definition provided above,
+    False otherwise
+    """
+    try:
+        armor_type = item.armorType
+    except AttributeError:
+        return False
+    else:
+        return armor_type == Skirt.armorType
+
+
 def is_underwear(item):
+    """
+    Checks if a particular item could be considered "underwear," basically a
+    small, thin garment that covers only the lower body and be either lowered
+    or wedgied.
+    :param item: The item to be checked
+    :return: True if the item is underwear by the definition provided above,
+    False otherwise
+    """
     try:
         return any([item.armorType == Underwear.armorType, item.armorType == Thong.armorType])
     except AttributeError:

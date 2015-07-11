@@ -56,7 +56,7 @@ try:
 except KeyError:
     ildri = person.Person('Ildri', person.FEMALE, None, None, ' '.join(["Ildri is a towering, muscular, golden-haired, and fair-skinned woman. She looks to be about the same age as Adrian. She is",
         "wearing an apron, a",
-        "short-sleeve tunic, a pair of wool trousers, and a heavy pair of boots. Her long blonde hair is pulled back into a single thick braid."]), skinColor="peach", eyeColor="blue", 
+        "short-sleeve tunic, a pair of wool trousers, and a heavy pair of boots. Her long blonde hair is pulled back into a single thick braid."]), skin_color="peach", eyeColor="blue",
         hairColor="blonde", hairStyle="braid", musculature="muscular", hairLength="back-length", height="huge", bodyType="voluptuous")
 else:
     ildri.description = ' '.join(["Ildri is a towering, muscular, golden-haired, and fair-skinned woman. She looks to be about the same age as Adrian. She is",
@@ -74,14 +74,14 @@ try:
     deidre = universal.state.get_character('Deidre.person')
 except KeyError:
     deidre = person.Person('Deidre', person.FEMALE, None, None, ''.join(["A tall, slender woman with frizzy, shoulder-length blonde hair pulled back into a bun. She has piercing blue eyes, and",
-        " carries herself with rod-straight posture. A black beret sits on top of her head."]), specialization=universal.STATUS_MAGIC, order=person.first_order, skinColor="peach", eyeColor="blue",
+        " carries herself with rod-straight posture. A black beret sits on top of her head."]), specialization=universal.STATUS_MAGIC, order=person.first_order, skin_color="peach", eyeColor="blue",
         hairColor="blonde", hairLength="shoulder-length", hairStyle="bun", height="tall", bodyType="slim", musculature="fit")
 try:
     alondra = universal.state.get_character('Alondra.person')
 except KeyError:
     alondra = person.Person('Alondra', person.FEMALE, None, None, ''.join(['''Alondra is a Taironan woman with rich, dark caramel skin, . She is a little on the short side of average.''',
         '''She has shoulder-length hair black hair, and relatively small, dark brown eyes. In contrast to her height, her breasts are a little on the large side of average.''',
-        '''She has a round, protruding bottom that rolls enticingly when she walks.''']), specialization=universal.SPEED, order=person.second_order, skinColor="caramel", eyeColor="brown",
+        '''She has a round, protruding bottom that rolls enticingly when she walks.''']), specialization=universal.SPEED, order=person.second_order, skin_color="caramel", eyeColor="brown",
         hairColor="black", coins=90, hairLength="shoulder-length", hairStyle="down", height="average", bodyType="voluptuous", musculature="soft")
     alondra.set_all_stats(strength=2, willpower=2, talent=3, dexterity=1, alertness=4, health=23, mana=18)
 

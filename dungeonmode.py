@@ -1093,7 +1093,10 @@ def select_targets_interpreter(keyEvent):
         numTargets = chosenSpell.numTargets - len(targetList)
         universal.set_commands([ ' '.join(['(#) Select', str(numTargets), 'target' + ('s.' if numTargets > 1 else '.')]), '<==Back'])
     if chosenSpell.numTargets == len(targetList):
-        spellResult = chosenSpell.__class__(selectedSlinger, targetList).effect(inCombat=False, allies=person.get_party())
+        spellResult = chosenSpell.__class__(selectedSlinger, targetList).effect(
+
+
+            in_combat=False, allies=person.get_party())
         selectedSlinger.uses_mana(chosenSpell.cost)
         say(spellResult[0])
         if spellResult[-1]:
@@ -1107,7 +1110,8 @@ def confirm_cast_interpreter(keyEvent):
     #Cast spell if "y". Remove last target if "n."
     global targetList, selectedSlinger
     if keyEvent.key == K_y:
-        spellResult = chosenSpell.__class__(selectedSlinger, targetList).effect(inCombat=False, allies=person.get_party())
+        spellResult = chosenSpell.__class__(selectedSlinger, targetList).effect(
+            in_combat=False, allies=person.get_party())
         selectedSlinger.uses_mana(chosenSpell.cost)
         say(spellResult[0])
         targetList = []
