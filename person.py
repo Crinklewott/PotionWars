@@ -479,7 +479,7 @@ class Person(universal.RPGObject):
         return [self.printedName, 'failed to spank', spankee.printedName + '!']
 
     def size_bonus(self):
-        return HEIGHTS.index(self.bodyType)
+        return HEIGHTS.index(self.height)
 
     def hair_penalty(self):
         return max(0, HAIR_LENGTH.index(self.hairLength) + 1 - 
