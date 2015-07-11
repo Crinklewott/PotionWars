@@ -219,7 +219,15 @@ class FloorEvents(universal.RPGObject):
     def __init__(self, events):
         self.events = events
         self.height = len(events)
-        self.width = len(max(events, key=lambda x : len(x)))
+        try:
+            self.width = len(max(events, key=lambda x : len(x)))
+        #Means events are stored as a nested dictionary mapping integers to dictionaries that 
+        #map integers to events, rather than tuples
+        except TypeError:
+            dictionaryIndices = []
+            for dictionary in [dictionary for row, dictionary in events.iteritems()]:
+                dictionaryIndices.extend(dictionary)
+            self.width = max(dictionaryIndices)
 
     def __getitem__(self, key):
         """
