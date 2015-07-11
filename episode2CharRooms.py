@@ -79,11 +79,20 @@ except KeyError:
 try:
     alondra = universal.state.get_character('Alondra.person')
 except KeyError:
-    alondra = person.Person('Alondra', person.FEMALE, None, None, ''.join(['''Alondra is a Taironan woman with rich, dark caramel skin, . She is a little on the short side of average.''',
-        '''She has shoulder-length hair black hair, and relatively small, dark brown eyes. In contrast to her height, her breasts are a little on the large side of average.''',
-        '''She has a round, protruding bottom that rolls enticingly when she walks.''']), specialization=universal.SPEED, order=person.second_order, skin_color="caramel", eyeColor="brown",
-        hairColor="black", coins=90, hairLength="shoulder-length", hairStyle="down", height="average", bodyType="voluptuous", musculature="soft")
-    alondra.set_all_stats(strength=2, willpower=2, talent=3, dexterity=1, alertness=4, health=23, mana=18)
+    alondra = person.Person('Alondra', person.FEMALE, None, None, ''.join(['''Alondra is a''',
+            '''Taironan woman with rich, dark caramel skin, . She is a little on the short side''',
+            '''of''',
+            '''average.''',
+            '''She has shoulder-length hair black hair, and relatively small, dark brown eyes.''',
+            '''In''',
+            '''contrast to her height, her breasts are a little on the large side of average.''',
+            '''She has a round, protruding bottom that rolls enticingly when she walks.''']), 
+        specialization=universal.SPEED, order=person.second_order, skin_color="caramel", 
+        eyeColor="brown",
+        hairColor="black", coins=90, hairLength="shoulder-length", hairStyle="down", 
+        height="average", bodyType="voluptuous", musculature="soft")
+    alondra.set_all_stats(strength=2, willpower=2, talent=3, dexterity=1, alertness=4, health=23, 
+            mana=18)
 
 if alondra.is_naked():
     alondra.take_item(itemspotionwars.alondrasSkirt)
@@ -110,6 +119,14 @@ except KeyError:
     airell = person.Person("Airell", person.MALE, None, None, ''.join(['''A slouching,''',
                 '''exceptionally pale man with out of control red hair and a big bushy red''',
                 '''beard that extends all the way down to his chest.''']))
+try:
+    cosima = universal.state.get_character("Cosima.person")
+except KeyError:
+    cosima = person.Person("Cosima", person.FEMALE, None, None, ''.join(['''A tall, lanky,''',
+    '''middle-aged, woman with olive-skin, dark hair and matching eyes.''']))
+
+cosima.set_all_stats(strength=90, willpower=70, talent=30, dexterity=85, alertness=87, health=400,
+        mana=0)
 
 
 

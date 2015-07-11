@@ -571,15 +571,24 @@ def request_hair_style_interpreter(keyEvent):
         else:
             select_shirt()
 
-#[itemspotionwars.thong, itemspotionwars.lacyUnderwear, itemspotionwars.boyShorts, itemspotionwars.underShorts
+STARTING_INVENTORY = [itemspotionwars.thong, itemspotionwars.lacyUnderwear, 
+    itemspotionwars.boyShorts, itemspotionwars.underShorts, itemspotionwars.shorts, 
+    itemspotionwars.shortShorts, itemspotionwars.plainSkirt, itemspotionwars.miniSkirt, 
+    itemspotionwars.blackDress, itemspotionwars.sunDress, itemspotionwars.vNeckTunic, 
+    itemspotionwars.pencilSkirt, itemspotionwars.blouse, itemspotionwars.largeShirt, 
+    itemspotionwars.pinkPajamaShirt, itemspotionwars.pinkPajamaPants, 
+    itemspotionwars.bluePajamaShirt, itemspotionwars.bluePajamaPants, 
+    itemspotionwars.flowerPrintShirt, itemspotionwars.blueVest, 
+    itemspotionwars.flowerPrintTrousers, itemspotionwars.blueShorts, 
+    itemspotionwars.flowerPrintDress, itemspotionwars.pinkDress]
 shirtList = []
 chosenShirt = None
 #TODO: Refactor all of this to allow me to set it through the game file rather than in titleScreen.
 def select_shirt():
     global shirtList
     universal.say_title('Select Shirt')
-    shirtList = [itemspotionwars.vNeckTunic, itemspotionwars.tunic, itemspotionwars.blouse, itemspotionwars.bra, itemspotionwars.blackDress, itemspotionwars.sunDress,
-            itemspotionwars.robe, items.emptyUpperArmor]
+    shirtList = [item for item in STARTING_INVENTORY if item.armorType == 
+            items.Shirt.armorType]
     universal.say('\n'.join(universal.numbered_list([shirt.name for shirt in shirtList])), justification=0)
     set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(select_shirt_interpreter)
@@ -620,8 +629,8 @@ def select_lower_clothing():
         select_underwear()
     else:
         universal.say_title('Select Lower Clothing')
-        pantsList = [itemspotionwars.trousers, itemspotionwars.shorts, itemspotionwars.shortShorts, itemspotionwars.plainSkirt, itemspotionwars.miniSkirt, itemspotionwars.pencilSkirt,
-                items.emptyLowerArmor]
+        pantsList = [item for item in STARTING_INVENTORY if 
+                items.is_lower_clothing(item)]
         universal.say('\n'.join(universal.numbered_list([pants.name for pants in pantsList])), justification=0)
         set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
         set_command_interpreter(select_lower_clothing_interpreter)
@@ -655,8 +664,7 @@ chosenUnderwear = None
 
 def select_underwear():
     global underwearList
-    underwearList = [itemspotionwars.thong, itemspotionwars.lacyUnderwear, itemspotionwars.boyShorts, itemspotionwars.underShorts, itemspotionwars.modestUnderwear,
-            items.emptyUnderwear]
+    underwearList = [item for item in STARTING_INVENTORY if items.is_underwear(item)]
     if universal.state.player.lower_clothing() == items.emptyLowerArmor:
         underwearList.remove(items.emptyUnderwear)
     universal.say_title('Select Underwear')        

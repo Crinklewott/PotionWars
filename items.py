@@ -904,6 +904,12 @@ def is_shirt(item):
                 armorType == FullArmor.armorType, armorType == Dress.armorType,
                 armorType == Robe.armorType])
 
+def is_underwear(item):
+    try:
+        return item.armorType == Underwear.armorType or item.armorType == Thong.armorType
+    except AttributeError:
+        return False
+
 def waistband_hem(lowerClothing):
     return lowerClothing.waistband_hem()
 
@@ -960,6 +966,23 @@ def is_loose(clothing):
 def loose_msg(person, looseMsg, tightMsg):
     return universal.msg_selector(person.lower_clothing().tightness == LOOSE, {True:looseMsg, False:tightMsg})
 
+def lower_clothing_msg(person, pantsMsg, shortsMsg, skirtMsg, dressMsg, noPantsMsg):
+    pantsType = person.lower_clothing().armorType
+    if pantsType == Pants.armorType:
+        return pantsMsg
+    elif pantsType == Shorts.armorType:
+        return shortsMsg
+    elif pantsType == Skirt.armorType:
+        return skirtMsg
+    elif pantsType == Dress.armorType:
+        return dressMsg
+    elif is_underwear(person.lower_clothing()):
+        return noPantsMsg
+    else:
+        raise ValueError(' '.join([pantsType, "is not a valid lower clothing type."]))
+
+
+
 def wearing_trousers(person, wearingTrousers, notWearingTrousers='', noLowerClothing=''):
     if person.is_pantsless():
         return noLowerClothing
@@ -992,4 +1015,12 @@ def baring_underwear(underwear, baringMsg, notBaringMsg, notWearingUnderwearMsg=
 
 def clothing_name(clothing):
     return clothing.name
+
+
+def bare(person, baring='', notBaring=''):
+    if person.lower_clothing().baring and person.underwear().baring:
+        return baring
+    else:
+        return notBaring
+
 

@@ -142,20 +142,24 @@ inlineCommandsPlayer = {
     r'\pisliftedlowered':("items.liftlowered_based_msg(universal.state.player, ", 2),
     r'\pisloweredlifted':("items.loweredlifted_based_msg(universal.state.player, ", 2),
     r'\ptrousers':("items.wearing_trousers(universal.state.player, ", 3),
+    r'\plowerclothing':("items.lower_clothing_msg(universal.state.player,", 5),
     r'\pdress':("items.wearing_dress(universal.state.player, ", 3),
     r'\pwearingunderwear':("items.wearing_underwear(universal.state.player, ", 2),
     #Note: This is not ideal, because it has itemspotionwars baked in. Need to figure out an alternative.
     r'\phasbelt':("itemspotionwars.has_belt(universal.state.player, )", 2),
     r'\pisbaring':("items.baring_underwear(universal.state.player.underwear(), ", 3),
+    r'\pisbare':("items.bare(universal.state.player, ", 2),
     r'\pistight':("items.tight_msg(universal.state.player.lower_clothing(), ", 2),
     r'\pisloose':("items.loose_msg(universal.state.player.lower_clothing(), ", 2),
     r'\pwearingshirt':("items.wearing_shirt(universal.state.player, ", 3),
     r'\pwearingdress':("items.wearing_dress(universal.state.player, ", 3),
+    r'\pwearinglowerclothing':("person.wearing_lower_clothing_msg(universal.state.player, ", 2),
     r'\isfemale':("person.is_female_msg(universal.state.player, ", 2),
     r'\stageDirections':("pwutilities.stage_directions(", 1),
     r'\ppajamatype':("items.pajama_type_msg(universal.state.player,", 3),
     r'\pwielding':("items.weapon_msg(universal.state.player,", 3),
-    r'\pwearingouterclothing':("items.wearing_outer_clothing(universal.state.player,", 3)
+    r'\pwearingouterclothing':("items.wearing_outer_clothing(universal.state.player,", 3),
+    r'\phairstyle':("person.hairstyle_msg(universall.state.player,", 5)
     }
 
 #The first line of all these commands is code: the person to apply the function to.
@@ -229,7 +233,13 @@ inlineCommands = {
     r'\npcwearingunderwear':("items.wearing_underwear(", 3),
     r'\npcwielding':("items.weapon_msg(", 4),
     r'\npcwearingouterclothing':("items.wearing_outer_clothing(", 4),
-    r'\clothingname':("items.clothing_name(", 1)
+    r'\clothingname':("items.clothing_name(", 1),
+    r'\npcisbare':("items.bare(", 3),
+    r'\npcwearingdress':("items.wearing_dress(", 4),
+    r'\npcwearingtrousers':("items.wearing_trousers(", 4),
+    r'\npcwearingshirt':("items.wearing_trousers(", 4),
+    r'\npchairstyle':("person.hairstyle_msg(", 6),
+    r'\npcwearinglowerclothing':("person.wearing_lower_clothing(", 3)
     }
 
 

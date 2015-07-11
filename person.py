@@ -638,12 +638,12 @@ class Person(universal.RPGObject):
     def bum_adj(self):
         if self.bodyType == 'slim':
             adjList = ['small', 'petite', 'heart-shaped', 'lithe', 'svelt', 'combact', 'narrow', 'willowy']
-        elif self.bodyType == 'average':
-            adjList = ['plump', 'round', 'curved', 'rotund']
         elif self.bodyType == 'voluptuous':
             adjList = ['ample', 'curvaceous', 'large', 'shapely', 'curvy']
         elif self.bodyType == 'heavyset':
             adjList = ['fleshy', 'wide', 'expansive', 'corpulent', 'sizeable', 'generous']
+        else:
+            adjList = ['plump', 'round', 'curved', 'rotund']
         return random.choice(adjList)
 
     def quiver(self):
@@ -664,22 +664,13 @@ class Person(universal.RPGObject):
             adjList = ['quivering', 'bobbing', 'shivering', 'shifting']
         return random.choice(adjList)
 
-    def is_slim(self):
-        return self.bodyType == 'slim'
-
-    def is_average(self):
-        return self.bodyType == 'average'
-
-    def is_heavyset(self):
-        return self.bodyType == 'heavyset'
-
     def muscle_adj(self):
         if self.musculature == 'soft':
             adjList = ['jiggly', 'wobbly', 'pillowy', 'cushioned']
-        elif self.musculature == 'fit':
-            adjList = ['firm', 'toned', 'bouncy', 'well-developed', 'well-defined', 'tight']
         elif self.musculature == 'muscular':
             adjList = ['hard', 'solid', 'muscular', 'dense', 'sinewy', 'brawny']
+        else:
+            adjList = ['firm', 'toned', 'bouncy', 'well-developed', 'well-defined', 'tight']
         return random.choice(adjList)
 
     def is_fit(self):
@@ -3518,3 +3509,14 @@ def hair_length_based_msg(person, shortMsg, shoulderMsg, backMsg, buttMsg):
 
 def weapon_name(character):
     return character.weapon().name
+
+
+def hairstyle_msg(person, down, ponytail, braid, pigtails, bun):
+    return universal.msg_selector(person.hairStyle, {BUTT_HAIR_STYLE[0]:down, 
+        BUTT_HAIR_STYLE[1]:ponytail, BUTT_HAIR_STYLE[2]:braid, BUTT_HAIR_STYLE[3]:pigtails,
+        BUTT_HAIR_STYLE[4]:bun})
+
+
+def wearing_lower_clothing_msg(person, wearing, notWearing):
+    return wearing if person.wearing_lower_clothing() else notWearing
+

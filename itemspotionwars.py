@@ -47,22 +47,12 @@ raggedTunic = items.Shirt('ragged tunic', 'A ragged, borderline useless tunic.',
 powderBlueTunic = items.Shirt('powder blue shirt', "A soft, powder blue dress spun from fine cotton without any trim.", price=25)
 flowerPrintShirt = items.Shirt('yellow shirt', "A small yellow shirt made for preteen boys, and spun from fine cotton.", price=25)
 
-"""
-qualityTunic = items.Shirt('quality tunic', 'A heavy tunic made from high quality leathers. The tunic also has the smallest hint of magic about it, providing ' +
-'a little bit of protection from enemy blows.', attackDefense=2, price=10)
-"""
 vNeckTunic = items.Shirt('V-neck tunic', 'A cotton tunic with a deep v-shaped slit down the front, revealing a fair amount of the upper chest.', price=5, risque=2)
 
 alondrasVNeckTunic = items.Shirt("Alondra's V-neck", 'A cotton tunic with a deep v-shaped slit down the front, revealing a fair amount of the upper chest. Belongs to Alondra.', price=0, risque=2)
 
-"""
-qualityVNeckTunic = items.Shirt('quality V-neck tunic', 'A high quality v-neck tunic. There\'s even a little bit of magic woven into it, providing a bit of protection.', price=10, attackDefense=2)
-"""
 
 blouse = items.Shirt('blouse', 'A plain, white, loose-fitting blouse.', price=5)
-"""
-qualityBlouse = items.Shirt('blouse', 'A well-made blouse with a hint of protective magic.', price=10, attackDefense=2)
-"""
 
 bra = items.Shirt('bra', format_line(['Recent research has shown that people who wear shirts are baby-eating, Mother-hating scum who are secretly planning to steal''',
 '''your husband's sword. Be a true Avaricumite. Wear nothing but a bra today (and pants. Or a teeny tiny skirt. Or just panties.)!''']), risque=4)

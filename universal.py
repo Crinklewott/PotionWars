@@ -951,6 +951,8 @@ import sets
 
 
 class State(object):
+
+    NUM_SAVE_VALUES_VERSION_2_12 = 11
     def __init__(self):
         self.player = None
         self.bedroom = None
@@ -973,6 +975,15 @@ class State(object):
         self.livingExpenses = 3
 
     def save(self, saveFile):
+        """
+        Given a file, writes the state of the game to that file in chunks of save data. These
+        chunks are between two lines that say "State Data:" except for the last chunk, which
+        has no "State Data:" at the end.
+
+        IMPORTANT: To elegantly preserve backwards compatibility, all new data that needs to
+        be saved should be added to the END and the END ONLY. I burned myself by not doing this.
+        DO NOT REPEAT MY MISTAKES. Or I vill break you!
+        """
         saveData = []
         saveData.append("State Data:")
         saveData.append(str(self.enemiesCanSpank))
@@ -1011,11 +1022,143 @@ class State(object):
         saveFile.write('\n'.join(saveData))
 
     def load(self, loadFile):
-        import episode, person, townmode, items 
         fileData = []
         for line in loadFile:
             fileData.append(line.replace("textCommandsMusic", "pwutilities"))
         fileData = '\n'.join(fileData)
+        saveData = [line.strip() for line in fileData.split('State Data:')]
+        if len(saveData) < self.NUM_SAVE_VALUES_VERSION_2_12:
+            self.old_load(fileData)
+        else:
+            self.new_load(saveData)
+
+    def new_load(self, fileData):
+        """
+        Given a list of save data chunks (defined as phrase between two 'State Data:' lines in the 
+        save file), builds the state of the game.
+
+        """
+        #Yes, I know it's ugly. I really need to reorganize things. Put state into its own
+        #file.
+        import episode, person, townmode, items 
+        #First element is empty, because first line is "State Data:"
+        currentIndex = 1
+        enemiesCanSpank = fileData[currentIndex]
+        currentIndex += 1
+        self.enemiesCanSpank = enemiesCanSpank.strip().lower() == "true"
+        player = fileData[currentIndex]
+        currentIndex += 1
+        person.PlayerCharacter.load(player, self.player)   
+        characters = fileData[currentIndex]
+        currentIndex += 1
+        rooms = fileData[currentIndex]
+        currentIndex += 1
+        rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
+        for roomData in rooms:
+           name, _, roomData = roomData.partition('\n')
+           try:
+               townmode.Room.load(roomData, self.rooms[name])
+           except KeyError, e:
+               if name == "Wesley and Anne's Weapons and Armor":
+                   name = "Wesley and Anne's Smithy"
+                   townmode.Room.load(roomData, self.rooms[name])
+                   self.rooms[name].name = "Wesley and Anne's Smithy"
+               else:
+                   townmode.Room.load(roomData, self._backwards_compatibility_room_names(name, e))
+        bedroom = fileData[currentIndex]
+        currentIndex += 1
+        if bedroom.strip() != "None":
+            self.bedroom = self.rooms[bedroom.strip()] 
+        party = fileData[currentIndex]
+        currentIndex += 1
+        party = party.strip().split('\n')
+        party = [name.strip() for name in party if name.strip()]
+        self.party = person.Party([self.player if memberName == self.player.get_id() else self.characters[memberName] for memberName in party])
+        location = fileData[currentIndex]
+        currentIndex += 1
+        try:
+            self.location = self.rooms[location.strip()]
+        except KeyError:
+            if location.strip() == "Wesley and Anne's Weapons and Armor":
+                self.location = self.rooms["Wesley and Anne's Smithy"]
+                self.location.name = "Wesley and Anne's Smithy"
+            else:
+                raise
+        itemList = fileData[currentIndex] 
+        currentIndex += 1
+        itemList = [itemName.strip() for itemName in itemList.split("Item:") if itemName.strip()]
+        hasQualityDagger = False
+        for itemData in itemList:
+            name, _, itemData = itemData.partition('\n')
+            try:
+                items.Item.load(itemData, self.items[name.strip()])
+            except KeyError:
+                self._backwards_compatibility_items(name.strip())
+        difficulty = fileData[currentIndex]
+        currentIndex += 1
+        try:
+            self.difficulty = int(difficulty.strip())
+        except ValueError:
+            self.difficulty = None
+        clearedSquares = fileData[currentIndex]
+        currentIndex += 1
+        clearedSquares = [square for square in clearedSquares.split('Square:') if square.split()]
+        self.clearedSquares = []
+        for square in clearedSquares:
+            if square:
+                self.clearedSquares.append(ast.literal_eval(square))
+        if self.player.currentEpisode:
+            currentEpisode = episode.allEpisodes[self.player.currentEpisode]
+            currentEpisode.init()
+            characters = [charData.strip() for charData in characters.split("Character:") if charData.strip()]
+            for charData in characters:
+               name, _, charData = charData.partition('\n')
+               if name.strip().lower() == 'lucilla.person' or name.strip().lower() == 'anastacia.person':
+                   name = "Edita.person"
+               try:
+                   if self.characters[name.strip()].enemy:
+                       continue
+               except KeyError:
+                   print("WARNING: Person name not found: " + name.strip() + "." "If this is not the name of an enemy, then it's a bug.")
+                   continue
+               try:
+                   person.Person.load(charData, self.characters[name.strip()])
+               except KeyError:
+                   try:
+                       person.Person.load(charData, self.characters[name.strip() + '.playerCharacter'])
+                   except KeyError:
+                       pass
+            currentScene = currentEpisode.scenes[currentEpisode.currentSceneIndex]
+            currentScene.startScene(True)
+        else:
+            characters = [charData.strip() for charData in characters.split("Character:") if charData.strip()]
+            for charData in characters:
+               name, _, charData = charData.partition('\n')
+               if name.strip().lower() == 'lucilla.person' or name.strip().lower() == 'anastacia.person' or name.strip().lower() == "carlita.person":
+                   name = "Edita.person"
+                #We don't want to save or load any enemies. They're supposed to be temporary opponents.
+               try:
+                   if self.characters[name.strip()].enemy:
+                       continue
+               except KeyError:
+                   print("WARNING: Person name not found: " + name.strip() + "." "If this is not the name of an enemy, then it's a bug.")
+                   continue
+               try:
+                   person.Person.load(charData, self.characters[name.strip() + '.person'])
+               except KeyError:
+                   try:
+                       person.Person.load(charData, self.characters[name.strip() + '.playerCharacter'])
+                   except KeyError:
+                       pass
+
+    def old_load(self, fileData):
+        """
+        This exists because the new_load method is actually sane (creates a list of save data,
+        rather than a massive stream of comma-separated tuple crap). Unfortunately, that may break
+        backwards compatibility for really old save files. Those save files then use old_load.
+        """
+        #Yes, I know it's ugly. I really need to reorganize things. Put state into its own
+        import episode, person, townmode, items 
         #Note: The first entry in the list is just the empty string.
         try:
             _, enemiesCanSpank, player, characters, rooms, bedroom, party, location, itemList, difficulty, clearedSquares = fileData.split('State Data:')
@@ -1026,7 +1169,7 @@ class State(object):
                 _, player, characters, rooms, bedroom, party, location, itemList, difficulty = fileData.split('State Data:')
                 clearedSquares = ''
             enemiesCanSpank = "True"
-        self.enemiesCanSpank = enemiesCanSpank.lower() == "true"
+        self.enemiesCanSpank = enemiesCanSpank.strip().lower() == "true"
         person.PlayerCharacter.load(player, self.player)   
         rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
         for roomData in rooms:

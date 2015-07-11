@@ -1912,23 +1912,41 @@ def specialization_bonus(ally, i):
     return bonus
 
 HIGH_STAT_PENALTY = .1
-HEALTH_MULTIPLIER = .05
-MANA_MULTIPLIER = .2
+BASE_HEALTH_INCREASE = 8
 def improve_characters(victorious, afterCombatEvent=None):
     """
     Takes as argument the function that should be invoked after leveling up is complete.
     """
+    if is_catfight():
+        if afterCombatEvent is not None:
+            acknowledge(afterCombatEvent, defeatedAllies, defeatedEnemies,
+                        victorious)
+        else:
+            acknowledge(previousMode)
+        return
     #Characters can gain stat points even if they are knocked out.
     for ally in allies.members + defeatedAllies:
         #We temporarily remove the ally's status effects, so that they don't interfere with stat gain.
         #TODO: Similarly remove the effect of bonuses.
-        if not is_catfight():
-            allyStatuses = ally.get_statuses()
-            ally.clear_statuses()
-            for i in range(len(ally.increaseStatPoints)):
-                statPoints = ally.increaseStatPoints[i]
+        allyStatuses = ally.get_statuses()
+        ally.clear_statuses()
+        for i in range(len(ally.increaseStatPoints)):
+            statPoints = ally.increaseStatPoints[i]
+            stat = ally.stat(i) if i == universal.HEALTH else ally.stat(i) * universal.STAT_GROWTH_RATE_MULTIPLIER 
+            spells = [universal.COMBAT_MAGIC, universal.STATUS_MAGIC, universal.BUFF_MAGIC, universal.SPECTRAL_MAGIC]
+            specialtyModifier = 1
+            if ally.is_specialized_in(i) or (i == universal.TALENT and ally.specialization in spells):
+                specialtyModifier = .5
+            elif ally.is_weak_in(i):
+                specialtyModifier = 2
+            gain = 0
+            manaGain = 0
+            threshhold = int(math.floor(stat * specialtyModifier))
+            while threshhold <= statPoints:
                 if i == universal.HEALTH:
-                    stat = ally.stat(i)
+                    gain += BASE_HEALTH_INCREASE + (statPoints - threshhold)
+                    ally.improve_stat(i, gain)
+                    ally.increaseStatPoints[i] = 0
                 else:
                     stat = ally.stat(i) * universal.STAT_GROWTH_RATE_MULTIPLIER
                 spells = [universal.COMBAT_MAGIC, universal.STATUS_MAGIC, universal.BUFF_MAGIC, 
