@@ -825,11 +825,40 @@ def clad_pajama_bottom(personName):
     return universal.state.get_character(personName).clad_bottom(pajama=True)
 
 def is_lower_clothing(item):
+    """
+    Checks if the passed "item" is lower clothing
+    :param item:  The item to be checked.
+    :return: True if the item covers a a character's genitalia, False
+    otherwise.
+    """
     try:
-        return (item.armorType == Pants.armorType or item.armorType == Skirt.armorType or item.armorType == Shorts.armorType or item.armorType == Dress.armorType or 
-            item.armorType == LowerArmor.armorType or item.armorType == FullArmor.armorType or item.armorType == Underwear.armorType)
+        armor_type = item.armorType
     except AttributeError:
         return False
+    else:
+        return any(
+            map(lambda x : x.armorType == armor_type,
+                [Pants, Skirt, Shorts, Dress, LowerArmor, FullArmor, Underwear]
+                )
+        )
+
+
+def is_upper_clothing(item):
+    """
+    Checks if "item" is upper clothing
+    :param item: The item to be checked.
+    :return: True if the item covers a character's chest, False otherwise.
+    """
+    try:
+        armor_type = item.armorType
+    except AttributeError:
+        return False
+    else:
+        return any(
+            map(lambda x : x.armorType == armor_type,
+                [Shirt, FullArmor, Dress, Robe])
+        )
+
 
 
 def is_underwear(item):
@@ -950,3 +979,18 @@ def bare(person, baring='', notBaring=''):
         return notBaring
 
 
+def is_full_clothing(item):
+    """
+    Checks if the item is full clothing
+    :param item: The item to be checked.
+    :return: True if the item is both upper and lower clothing, False
+    otherwise.
+    """
+    try:
+        armor_type = item.armorType
+    except AttributeError:
+        return False
+    else:
+        return any(
+            map(lambda x : x.armorType == armor_type, [Dress, FullArmor, Robe])
+        )

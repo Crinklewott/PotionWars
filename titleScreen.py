@@ -612,7 +612,7 @@ def select_clothing_interpreter(clothing_list, key_event, previous_selection):
     """
     global user_input
     next_digit = universal.key_name(key_event)
-    if len(shirtList) < 10:
+    if len(clothing_list) < 10:
         try:
             num = int(next_digit) - 1
         except ValueError:
@@ -639,12 +639,16 @@ def select_clothing_interpreter(clothing_list, key_event, previous_selection):
             elif key_event.key == K_RETURN:
                 clothing_index = int(user_input) - 1
                 try:
-                    return clothing_list[clothing_index]
+                    selected_clothing = clothing_list[clothing_index]
                 except IndexError:
                     universal.say(' '.join(['"' + user_input + '"',
                         'is too large. Please provide a number between 1 and',
                         str(len(clothing_list))]))
                     acknowledge(select_shirt, ())
+                else:
+                    global user_input
+                    user_input = ''
+                    return selected_clothing
         else:
             user_input += next_digit
             set_commands(universal.add_number_to_select_number_command(
@@ -652,15 +656,21 @@ def select_clothing_interpreter(clothing_list, key_event, previous_selection):
 
 def select_shirt():
     """
-    Asks the user to select a shirt for the player character.
+    Asks the player to select a shirt for the player character.
     """
     global shirtList, user_input
     user_input = ''
     universal.say_title('Select Shirt')
-    shirtList = [item for item in STARTING_INVENTORY if item.armorType == 
-            items.Shirt.armorType]
-    universal.say('\n'.join(universal.numbered_list([shirt.name for shirt in shirtList])), justification=0)
-    set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
+    shirtList = [item for item in STARTING_INVENTORY if
+                 items.is_upper_clothing(item)]
+    universal.say(
+        '\n'.join(
+            universal.numbered_list([shirt.name for shirt in shirtList])
+        ),
+        justification=0
+    )
+    if user_input:
+        set_commands(universal.add_number_to_select_number_command(user_input))
     set_command_interpreter(select_shirt_interpreter)
 
 def select_shirt_interpreter(key_event):
@@ -707,7 +717,8 @@ def select_lower_clothing():
     else:
         universal.say_title('Select Lower Clothing')
         pantsList = [item for item in STARTING_INVENTORY if
-                items.is_outer_lower_clothing(item)]
+                items.is_outer_lower_clothing(item) and
+                     not items.is_full_clothing(item)]
         universal.say('\n'.join(universal.numbered_list([pants.name for pants
                 in pantsList])), justification=0)
         set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
@@ -765,7 +776,8 @@ def select_underwear_interpreter(key_event):
     a number and the associated underwear returned. If it's backspace, the
     last digit is deleted. If it's anything else, we ignore it.
     """
-    if universal.state.player.shirt() is universal.state.lower_clothing():
+    player = universal.state.player
+    if player.shirt() is player.lower_clothing():
         underwear = select_clothing_interpreter(underwearList, key_event,
                 select_shirt)
     else:
