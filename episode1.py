@@ -1128,7 +1128,7 @@ def guard_greeting_1_1_quip():
     '''spear he carries only adds to his intimidating appearance.'''],
     '''"What's your name?" asks the guard.'''])
     guard_greeting_1_1.playerComments = ['''"I don't have to answer that."''', '"' + universal.state.player.name + '"', '"' + universal.state.player.fakeName + '"']
-    music.play_music(pwutilities.GUARDS)
+    music.play_music(pwutilities.TENSION)
 
 southGuard.litany = too_busy.index
 #southGuard.defaultLitany = too_busy.index
@@ -8657,7 +8657,7 @@ def scene_3_guild():
             ['''The guard scowls. "Of course. What do you take me for?"'''],
             ['''"Indeed," says Adrian. He throws''', name(), '''a reassuring smile, before turning and disappearing back into the milieu.'''],
             ['''A sharp cry comes from the main entranceway. It sounds familiar.''', name(), '''starts to push past the guards, and enters the main''',
-                '''room.\n\n''']]), justification=0, music=[pwutilities.GUARDS])
+                '''room.\n\n''']]), justification=0, music=[pwutilities.TENSION])
     universal.say(universal.format_text([['''\mThe main room is a complete mess. There is not a single table, chair, or die that hasn't been shattered. The counter has''',
         '''been cut in half, and the two gaping holes in the wall between the kitchen and the main entranceway have merged into one giant hole. The''',
         '''dirt floor is littered with holes, bloodstains, and shattered weapons. The front door has been blown completely off. The room is crawling''',

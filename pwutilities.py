@@ -220,33 +220,46 @@ def initialize_default_char_locations():
 
 
 #-------------------------------------Music Files----------------------------------------
-CHURCH = music.decrypt(universal.resource_path('POL-apparition-long.wav'), 'church')
-GUARDS = music.decrypt(universal.resource_path('POL-war-victims-long.wav'), 'guards')
-TAIRONAN = music.decrypt(universal.resource_path('POL-holy-forest-long.wav'), 'taironan')
-LIGHT_HEARTED = music.decrypt(universal.resource_path('POL-jesu-long.wav'), 'light-hearted')
-INTENSE = music.decrypt(universal.resource_path('POL-hurry-up-long.wav'), 'intense')
-SADISTIC_GAME = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'), 'sadistic_game')
-VENGADOR = music.decrypt(universal.resource_path('POL-antique-market-long.wav'), 'vengador')
-OMINOUS = music.decrypt(universal.resource_path('POL-bridge-over-darkness-long.wav'), 'ominous')
-CARLITA = music.decrypt(universal.resource_path('POL-goodbye-long.wav'), 'carlita')
-MARIA = music.decrypt(universal.resource_path('POL-moonlight-long.wav'), 'maria')
-ROLAND = music.decrypt(universal.resource_path('POL-risky-plan-long.wav'), 'roland')
-ELISE = music.decrypt(universal.resource_path('POL-land-of-peace-long.wav'), 'elise')
-CATALIN = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'), 'catalin')
-CARRIE = music.decrypt(universal.resource_path('POL-smart-ideas-long.wav'), 'carrie')
-ALONDRA = music.decrypt(universal.resource_path('POL-moonshine-piano-long.wav'), 'alondra')
-ROMANTIC = music.decrypt(universal.resource_path('POL-love-theme-long.wav'), 'romantic')
-PETER = music.decrypt(universal.resource_path('POL-telekinesis-long.wav'), 'peter')
-COMBAT = music.decrypt(universal.resource_path('POL-chase-long.wav'), 'combat')
-DEFEAT = music.decrypt(universal.resource_path('POL-graveyard-lord-long.wav'), 'defeat')
+CHURCH = music.register(universal.resource_path('05-305-Heresy.mp3'), 'church')
+LIGHT_HEARTED = music.register(universal.resource_path(
+            '1-07-158-B-White-Elephants_Back-it-Up_Mix.mp3'), 
+        'light-hearted')
+BRATTY = music.register(universal.resource_path('1-13-173-Who-Left-the-Milk-Out!.mp3', 'bratty')
+INTENSE = music.register(universal.resource_path('02-300-B-Liliths-Rage.mp3'), 'intense')
+TAIRONAN = music.register(universal.resource_path('1-14-288-Dont-MEss-with-Me.mp3'), 'taironan')
+VENGADOR = music.register(universal.resource_path('1-15-289-Heated-Battle.mp3'), 'vengador')
+OMINOUS = music.register(universal.resource_path('POL-bridge-over-darkness-long.wav'), 'ominous')
+CARLITA = music.register(universal.resource_path('2-02-291-B-Lost.mp3'), 'carlita')
+MARIA = music.register(universal.resource_path('2-01-291-A-Never-Forget.mp3'), 'maria')
+ROLAND = music.register(universal.resource_path('09-309-Desert-Battle.mp3'), 'roland')
+ELISE = music.register(universal.resource_path('POL-land-of-peace-long.wav'), 'elise')
+CATALIN = music.register(universal.resource_path('POL-sadistic-game-long.wav'), 'catalin')
+CARRIE = music.register(universal.resource_path('1-17-290-My-Friend.wav'), 'carrie')
+ALONDRA = music.register(universal.resource_path('POL-moonshine-piano-long.wav'), 'alondra')
+ROMANTIC = music.register(universal.resource_path('POL-love-theme-long.wav'), 'romantic')
+PETER = music.register(universal.resource_path('POL-telekinesis-long.wav'), 'peter')
+TRISTANA = music.register(universal.resource_path('07-307-Wrath.mp3'), 'tristana')
+OMINOUS_BUT_INSPIRING = music.register(universal.resource_path('1-15-192-A-Blood-Mambo.mp3'), 
+'ominous but inspiring')
+JAVIER = OMINOUS_BUT_INSPIRING
+DEFEAT = music.register(universal.resource_path('POL-graveyard-lord-long.wav'), 'defeat')
+SNEAKY = music.register(universal.resource_path('2-05-293-A-Fire-Drill.mp3'), 'sneaky')
 CATFIGHT = COMBAT
-music.set_combat(universal.resource_path('POL-chase-long.wav'))
-music.set_catfight(universal.resource_path('POL-chase-long.wav'))
-music.set_boss(universal.resource_path('POL-last-duel-long.wav'))
-music.set_town(universal.resource_path('POL-spiritual-path-long.wav'))
-music.set_theme(universal.resource_path('POL-the-challenge-long.wav'))
-music.set_defeated(universal.resource_path('POL-graveyard-lord-long.wav'))
-music.set_victory(universal.resource_path('POL-the-challenge-long.wav'))
+TENSION = music.register(universal.resource_path('1-10-162-A-Pre-Boss-Battle-Tension.mp3'), 
+    'tension')
+OUTCOME_IN_DOUBT = music.register(universal.resource_path('2-06-293-B-This-Is-Not-a-Drill.mp3'),
+        'outcome-in-doubt')
+COMBAT = OUTCOME_IN_DOUBT
+HEROIC = music.register(universal.resource_path('2-07-294-Leviathan.mp3'), 'heroic')
+RIGHTEOUS_RAGE = music.register(universal.resource_path('2-11-297-Bloodlust.mp3'), 'righteous rage')
+
+music.set_combat(COMBAT)
+music.set_catfight(CATFIGHT)
+music.set_boss(HEROIC)
+music.set_town(music.register(universal.resource_path('2-08-295-Insidia.mp3')))
+music.set_theme(music.register(universal.resource_path('POL-the-challenge-long.wav')))
+music.set_defeated(music.register(universal.resource_path('POL-graveyard-lord-long.wav')))
+music.set_victory(music.register(universal.resource_path('POL-the-challenge-long.wav')))
 titleScreen.set_opening_crawl(CHURCH)
 
 #A dummy character who exists solely to give us someone to talk to for arbitrary conversations. Conversations are incorporated into the dungeons as follows:

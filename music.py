@@ -24,29 +24,7 @@ currentMusic = None
 currentMusicFileName = None
 musicFiles = {}
 
-def decrypt(fileName, songName):
-    """
-    We'll have to encrypt our music files once it's time to release the game, and decrypt
-    them as a temporary file. This function
-    will decrypt the music before attempting to play it.
-    Note: This function will need to use the tempfile python module in order to create the 
-    temporary file to maintain security, in particular mkstemp. However, Pygame doesn't
-    like it if we return a file object, so this has to return the path to the unencrypted
-    file.
-    If key is None, that means this code is being released, in which case, the music can't be played (since we can't reveal the key). By returning None, we ensure that
-    the game won't try to play it.
-    
-    #if key is None:
-        return None
-    else:
-        with open(fileName, 'rb') as f:
-            ciph = ''.join(f.readlines())
-        plain = obj.decrypt(ciph)
-        musicFiles.append(tempfile.mkstemp(suffix='.wav')[1])
-        with open(musicFiles[-1], 'wb') as f:
-            f.write(plain)
-        return musicFiles[-1]
-    """
+def register(fileName, songName):
     if os.path.exists(fileName):
         musicFiles[songName] = fileName
         return fileName
@@ -76,11 +54,11 @@ def set_town(music):
     TOWN = decrypt(music, 'town')
 def set_combat(music):
     global COMBAT
-    COMBAT = decrypt(music, 'combat')
+    COMBAT = music
 
 def set_catfight(music):
     global CATFIGHT
-    CATFIGHT = decrypt(music, 'catfight')
+    CATFIGHT = music
 
 def set_defeated(music):
     global DEFEATED
