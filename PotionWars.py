@@ -41,10 +41,13 @@ universal.set_name('Potion Wars')
 
 titleScreen.title('Pandemonium Cycle')
 titleScreen.subtitle('The Potion Wars')
-titleScreen.set_title_image(universal.resource_path('PotionWarsTitleScreen'), 'png', 6)
+titleScreen.set_title_image(universal.resource_path('PotionWarsTitleScreen'),
+        'png', 6)
 
-#Clears out errors.log every time the game begins. If I didn't do this, then the errors.log
-#file would eventually become absurdly huge, since it's logging all the battle data.
+#Clears out errors.log every time the game begins. If I didn't do this, then
+# the errors.log
+#file would eventually become absurdly huge, since it's logging all the battle
+# data.
 open('errors.log', 'a').close()
 for i in range(4, 0, -1):
     open('errors_' + str(i) + '.log', 'a').close()
