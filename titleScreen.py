@@ -71,14 +71,14 @@ def set_opening_crawl(musicFile, alreadyDecrypted=True):
     else:
         OPENING_CRAWL = music.decrypt(resource_path(musicFile))
 
-def title_screen_interpreter(keyEvent):
-    if keyEvent.key == pygame.K_s:
+def title_screen_interpreter(key_event):
+    if key_event.key == pygame.K_s:
         request_difficulty()
-    elif keyEvent.key == pygame.K_ESCAPE:
+    elif key_event.key == pygame.K_ESCAPE:
         quit()
-    elif keyEvent.key == pygame.K_l:
+    elif key_event.key == pygame.K_l:
         load_game()
-    elif keyEvent.key == pygame.K_a:
+    elif key_event.key == pygame.K_a:
         display_acknowledgments()
 
 def display_acknowledgments():
@@ -269,10 +269,10 @@ def title_screen(episode=None):
         titleImage = pygame.transform.scale(titleImage, (pygame.display.Info().current_w, pygame.display.Info().current_h))
     except IOError:
         textSurface = textrect.render_textrect(get_title(), #+ (":" if get_subtitle() != "" else ""), 
-                font, worldView, LIGHT_GREY, DARK_GREY, 1)
+                universal.font, universal.worldView, LIGHT_GREY, DARK_GREY, 1)
     except IndexError:
         textSurface = textrect.render_textrect(get_title(), #+ (":" if get_subtitle() != "" else ""), 
-                font, worldView, LIGHT_GREY, DARK_GREY, 1)
+                universal.font, universal.worldView, LIGHT_GREY, DARK_GREY, 1)
     titleImages = []
     if os.path.exists(os.path.join(os.getcwd(), 'save')) and '.init.sav' in os.listdir(os.path.join(os.getcwd(), 'save')):
         #townmode.clear_rooms()
@@ -333,20 +333,20 @@ def request_difficulty():
     universal.set_commands(['(H)and', '(S)trap', '(C)ane', '(Esc)Quit', '<==Back'])
     universal.set_command_interpreter(request_difficulty_interpreter)
 
-def request_difficulty_interpreter(keyEvent):
+def request_difficulty_interpreter(key_event):
     validCommand = False
-    if keyEvent.key == pygame.K_ESCAPE:
+    if key_event.key == pygame.K_ESCAPE:
         quit()
-    elif keyEvent.key == pygame.K_h:
+    elif key_event.key == pygame.K_h:
         universal.set_difficulty(universal.HAND)
         validCommand = True
-    elif keyEvent.key == pygame.K_s:
+    elif key_event.key == pygame.K_s:
         universal.set_difficulty(universal.STRAP)
         validCommand = True
-    elif keyEvent.key == pygame.K_c:
+    elif key_event.key == pygame.K_c:
         universal.set_difficulty(universal.CANE)
         validCommand = True
-    elif keyEvent.key == pygame.K_BACKSPACE:
+    elif key_event.key == pygame.K_BACKSPACE:
         title_screen(firstEpisode)
     if validCommand:
         request_gender()
@@ -418,23 +418,23 @@ def request_nickname():
     universal.say('_')
     universal.set_command_interpreter(request_nickname_interpreter)
 
-def request_nickname_interpreter(keyEvent):
+def request_nickname_interpreter(key_event):
     global partialName
-    if keyEvent.key == K_RETURN:
+    if key_event.key == K_RETURN:
         universal.state.player.nickname = partialName
         request_body_type()
-    elif keyEvent.key == K_ESCAPE:
+    elif key_event.key == K_ESCAPE:
         partialName = ''
         request_name()
     else:
-        playerInput = pygame.key.name(keyEvent.key)
+        playerInput = pygame.key.name(key_event.key)
         if re.match(re.compile(r'^\w$'), playerInput):
             partialName += playerInput
-        elif keyEvent.key == K_BACKSPACE:
+        elif key_event.key == K_BACKSPACE:
             partialName = partialName[:-1]
         universal.say('Provide a nickname for your character:\n')
         partialName = simpleTitleCase(partialName)
-        if keyEvent.key == K_SPACE:
+        if key_event.key == K_SPACE:
             partialName += ' '
         universal.say(partialName)
         universal.say('_')
@@ -447,11 +447,11 @@ def request_body_type():
     set_command_interpreter(request_body_type_interpreter)
     set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
 
-def request_body_type_interpreter(keyEvent):
+def request_body_type_interpreter(key_event):
     try:
-        num = int(universal.key_name(keyEvent)) - 1
+        num = int(universal.key_name(key_event)) - 1
     except ValueError:
-        if keyEvent.key == K_BACKSPACE:
+        if key_event.key == K_BACKSPACE:
             request_nickname()
         return
     else:
@@ -480,11 +480,11 @@ def request_height():
     set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(request_height_interpreter)
 
-def request_height_interpreter(keyEvent):
+def request_height_interpreter(key_event):
     try:
-        num = int(universal.key_name(keyEvent)) - 1
+        num = int(universal.key_name(key_event)) - 1
     except ValueError:
-        if keyEvent.key == K_BACKSPACE:
+        if key_event.key == K_BACKSPACE:
             request_body_type()
         return
     else:
@@ -509,11 +509,11 @@ def request_musculature():
     set_command_interpreter(request_musculature_interpreter)
     set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
 
-def request_musculature_interpreter(keyEvent):
+def request_musculature_interpreter(key_event):
     try:
-        num = int(universal.key_name(keyEvent)) - 1
+        num = int(universal.key_name(key_event)) - 1
     except ValueError:
-        if keyEvent.key == K_BACKSPACE:
+        if key_event.key == K_BACKSPACE:
             request_height()
         return
     else:
@@ -534,11 +534,11 @@ def request_hair_length():
     set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(request_hair_length_interpreter)
 
-def request_hair_length_interpreter(keyEvent):
+def request_hair_length_interpreter(key_event):
     try:
-        num = int(universal.key_name(keyEvent)) - 1
+        num = int(universal.key_name(key_event)) - 1
     except ValueError:
-        if keyEvent.key == K_BACKSPACE:
+        if key_event.key == K_BACKSPACE:
             request_musculature()
         return
     else:
@@ -568,11 +568,11 @@ def request_hair_style():
     set_commands(SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(request_hair_style_interpreter)
 
-def request_hair_style_interpreter(keyEvent):
+def request_hair_style_interpreter(key_event):
     try:
-        num = int(universal.key_name(keyEvent)) - 1
+        num = int(universal.key_name(key_event)) - 1
     except ValueError:
-        if keyEvent.key == K_BACKSPACE:
+        if key_event.key == K_BACKSPACE:
             request_hair_length()
         return
     else:
@@ -663,35 +663,35 @@ def select_shirt():
     set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(select_shirt_interpreter)
 
-def select_shirt_interpreter(keyEvent):
+def select_shirt_interpreter(key_event):
     """
     Interprets commands given by the user when selecting a shirt.
-    :param keyEvent: The user provided keyboard key.
+    :param key_event: The user provided keyboard key.
     """
-    shirt = select_clothing_interpreter(shirtList, keyEvent,
+    shirt = select_clothing_interpreter(shirtList, key_event,
         request_hair_style)
     if shirt:
         global chosenShirt
         chosenShirt = shirt
         universal.say(chosenShirt.display())
-        set_command_interpreter(chosen_shirt_interpreter)
+        set_command_interpreter(confirm_shirt_interpreter)
         set_commands(['(Enter) Equip shirt', '<==Back'])
 
 
 
-def confirm_shirt_interpreter(keyEvent):
+def confirm_shirt_interpreter(key_event):
     """
     Asks the user for final confirmation of a shirt.
-    :param keyEvent: The user provided keystroke.
+    :param key_event: The user provided keystroke.
     """
-    if keyEvent.key == K_RETURN:
+    if key_event.key == K_RETURN:
         universal.state.player._set_shirt(copy.deepcopy(chosenShirt))
         if isinstance(chosenShirt, items.FullArmor):
             universal.state.player._set_lower_clothing(universal.state.player.shirt())
         else:
             universal.state.player._set_lower_clothing(items.emptyLowerArmor)
         select_lower_clothing()
-    elif keyEvent.key == K_BACKSPACE:
+    elif key_event.key == K_BACKSPACE:
         select_shirt()
 
 chosenPants = None
@@ -713,12 +713,12 @@ def select_lower_clothing():
         set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
         set_command_interpreter(select_lower_clothing_interpreter)
 
-def select_lower_clothing_interpreter(keyEvent):
+def select_lower_clothing_interpreter(key_event):
     """
     Interpreters the player's keystroke when selecting lower clothing.
-    :param keyEvent: The player's keystroke.
+    :param key_event: The player's keystroke.
     """
-    pants = select_clothing_interpreter(pantsList, keyEvent, select_shirt)
+    pants = select_clothing_interpreter(pantsList, key_event, select_shirt)
     if pants:
         global chosenPants
         chosenPants = pants
@@ -726,16 +726,16 @@ def select_lower_clothing_interpreter(keyEvent):
         set_command_interpreter(confirm_lower_clothing_interpreter)
         set_commands(['(Enter) Equip pants', '<==Back'])
 
-def confirm_lower_clothing_interpreter(keyEvent):
+def confirm_lower_clothing_interpreter(key_event):
     """
     Asks for confirmation for the selected lower clothing.
-    :param keyEvent: The player's keystroke. Enter confirms, Backspace undoes
+    :param key_event: The player's keystroke. Enter confirms, Backspace undoes
     the selection, any other key is ignored.
     """
-    if keyEvent.key == K_RETURN:
+    if key_event.key == K_RETURN:
         universal.state.player._set_lower_clothing(copy.deepcopy(chosenPants))
         select_underwear()
-    elif keyEvent.key == K_BACKSPACE:
+    elif key_event.key == K_BACKSPACE:
         select_lower_clothing()
 
 underwearList = []
@@ -754,22 +754,22 @@ def select_underwear():
     set_commands(SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(select_underwear_interpreter)
 
-def select_underwear_interpreter(keyEvent):
+def select_underwear_interpreter(key_event):
     """
     Interprets the player's keystrokes when selecting underwear. If a number is
     provided, that number is saved until the player hits enter (unless there
     are less than 10 choices, in which case the selected equipment is
     immediately selected.
-    :param keyEvent: The user's input. If it's a number, it's added to a
+    :param key_event: The user's input. If it's a number, it's added to a
     string of digits and saved. If it's RETURN, the digits are converted into
     a number and the associated underwear returned. If it's backspace, the
     last digit is deleted. If it's anything else, we ignore it.
     """
     if universal.state.player.shirt() is universal.state.lower_clothing():
-        underwear = select_clothing_interpreter(underwearList, keyEvent,
+        underwear = select_clothing_interpreter(underwearList, key_event,
                 select_shirt)
     else:
-        underwear = select_clothing_interpreter(undearList, keyEvent,
+        underwear = select_clothing_interpreter(underwearList, key_event,
                 select_lower_clothing)
     if underwear:
         global chosenUnderwear
@@ -778,11 +778,11 @@ def select_underwear_interpreter(keyEvent):
         set_commands(['(Enter) Equip underwear', '<==Back'])
         set_command_interpreter(confirm_underwear_interpreter)
 
-def confirm_underwear_interpreter(keyEvent):
-    if keyEvent.key == K_RETURN:
+def confirm_underwear_interpreter(key_event):
+    if key_event.key == K_RETURN:
         universal.state.player._set_underwear(copy.deepcopy(chosenUnderwear))
         select_weapon()
-    elif keyEvent.key == K_BACKSPACE:
+    elif key_event.key == K_BACKSPACE:
         select_underwear()
   
 weaponList = []
@@ -800,12 +800,12 @@ def select_weapon():
     set_commands(SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(select_weapon_interpreter)
 
-def select_weapon_interpreter(keyEvent):
+def select_weapon_interpreter(key_event):
     global chosenWeapon
     try:
-        num = int(universal.key_name(keyEvent)) - 1
+        num = int(universal.key_name(key_event)) - 1
     except ValueError:
-        if keyEvent.key == K_BACKSPACE:
+        if key_event.key == K_BACKSPACE:
             select_underwear()
         return
     else:
@@ -818,11 +818,11 @@ def select_weapon_interpreter(keyEvent):
             set_commands(['(Enter) Equip Weapon', '<==Back'])
             set_command_interpreter(confirm_weapon_interpreter)
 
-def confirm_weapon_interpreter(keyEvent):
-    if keyEvent.key == K_RETURN:
+def confirm_weapon_interpreter(key_event):
+    if key_event.key == K_RETURN:
         universal.state.player._set_weapon(copy.deepcopy(chosenWeapon))
         can_enemies_spank()
-    elif keyEvent.key == K_BACKSPACE:
+    elif key_event.key == K_BACKSPACE:
         select_weapon()
 
 def can_enemies_spank():
@@ -833,14 +833,14 @@ def can_enemies_spank():
     set_commands(['(Y)es', '(N)o', '<==Back'])
     set_command_interpreter(can_enemies_spank_interpreter)
 
-def can_enemies_spank_interpreter(keyEvent):
-    if keyEvent.key == K_y:
+def can_enemies_spank_interpreter(key_event):
+    if key_event.key == K_y:
         universal.state.enemiesCanSpank = True
         final_confirmation()
-    elif keyEvent.key == K_n:
+    elif key_event.key == K_n:
         universal.state.enemiesCanSpank = False
         final_confirmation()
-    elif keyEvent.key == K_BACKSPACE:
+    elif key_event.key == K_BACKSPACE:
         select_weapon()
     
 
@@ -874,37 +874,37 @@ def request_description():
     universal.set_command_interpreter(request_description_interpreter)
 
 partialDescription = ''
-def request_description_interpreter(keyEvent):
+def request_description_interpreter(key_event):
     global partialDescription
-    if keyEvent.key == K_RETURN:
+    if key_event.key == K_RETURN:
         universal.state.player.description = ' '.join([universal.state.player.description, partialDescription])
         final_confirmation()
-    elif keyEvent.key == K_ESCAPE:
+    elif key_event.key == K_ESCAPE:
         partialDescription = ''
         request_name()
     else:
-        playerInput = pygame.key.name(keyEvent.key)
+        playerInput = pygame.key.name(key_event.key)
         if re.match(re.compile(r'^\w$'), playerInput):
             if pygame.key.get_pressed()[K_LSHIFT] or pygame.key.get_pressed()[K_RSHIFT]:
                 partialDescription += str.capitalize(playerInput)
             else:
                 partialDescription += playerInput
-        elif keyEvent.key == K_PERIOD:
+        elif key_event.key == K_PERIOD:
             partialDescription += '.'
-        elif keyEvent.key == K_COMMA:
+        elif key_event.key == K_COMMA:
             partialDescription += ','
-        elif keyEvent.key == K_LEFTPAREN:
+        elif key_event.key == K_LEFTPAREN:
             partialDescription += '('
-        elif keyEvent.key == K_RIGHTPAREN:
+        elif key_event.key == K_RIGHTPAREN:
             partialDescription += ')'
-        elif keyEvent.key == K_SEMICOLON:
+        elif key_event.key == K_SEMICOLON:
             partialDescription += ';'
-        elif keyEvent.key == K_COLON:
+        elif key_event.key == K_COLON:
             partialDescription += ':'
-        elif keyEvent.key == K_BACKSPACE:
+        elif key_event.key == K_BACKSPACE:
             partialDescription = partialDescription[:-1]
         universal.say(requestDescriptionString)
-        if keyEvent.key == K_SPACE:
+        if key_event.key == K_SPACE:
             partialDescription += ' '
         universal.say(' '.join([universal.state.player.description, partialDescription]))
         universal.say('_')
@@ -916,17 +916,17 @@ def request_gender():
     universal.set_commands(['(M)ale', '', '(F)emale', '<==Back', '(Esc)Quit'])
     universal.set_command_interpreter(request_gender_interpreter)
 
-def request_gender_interpreter(keyEvent):
+def request_gender_interpreter(key_event):
     global gender
-    if keyEvent.key == K_m:
+    if key_event.key == K_m:
         gender = person.MALE
         request_name()
-    elif keyEvent.key == K_f:
+    elif key_event.key == K_f:
         gender= person.FEMALE
         request_name()
-    elif keyEvent.key == K_BACKSPACE:
+    elif key_event.key == K_BACKSPACE:
         request_difficulty()
-    elif keyEvent.key == K_ESCAPE:
+    elif key_event.key == K_ESCAPE:
         quit()
 
 
@@ -960,17 +960,17 @@ def final_confirmation():
     universal.set_commands(['(Enter) Begin Game', '<==Back', '(Esc) To Title Screen'])
     universal.set_command_interpreter(final_confirmation_interpreter)
 
-def final_confirmation_interpreter(keyEvent):
+def final_confirmation_interpreter(key_event):
     #universal.state.player = person.get_PC()
-    if keyEvent.key == K_RETURN:
+    if key_event.key == K_RETURN:
         universal.state.player.currentEpisode = firstEpisode.name
         episode.allEpisodes[universal.state.player.currentEpisode].currentSceneIndex = 0
         #episode.set_post_title_card(townmode.save_game, ['.init', townmode.town_mode, False])
         episode.allEpisodes[universal.state.player.currentEpisode].start_episode(False)
         townmode.saveName = ''
-    elif keyEvent.key == K_BACKSPACE:
+    elif key_event.key == K_BACKSPACE:
         can_enemies_spank()
-    elif keyEvent.key == K_ESCAPE:
+    elif key_event.key == K_ESCAPE:
         global spellPoints
         global statPoints
         spellPoints = 3
