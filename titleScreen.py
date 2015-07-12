@@ -587,6 +587,7 @@ STARTING_INVENTORY = [itemspotionwars.thong, itemspotionwars.lacyUnderwear,
     itemspotionwars.boyShorts, itemspotionwars.underShorts, itemspotionwars.shorts, 
     itemspotionwars.shortShorts, itemspotionwars.plainSkirt, itemspotionwars.miniSkirt, 
     itemspotionwars.blackDress, itemspotionwars.sunDress, itemspotionwars.vNeckTunic, 
+    itemspotionwars.tunic
     itemspotionwars.pencilSkirt, itemspotionwars.blouse, itemspotionwars.largeShirt, 
     itemspotionwars.pinkPajamaShirt, itemspotionwars.pinkPajamaPants, 
     itemspotionwars.bluePajamaShirt, itemspotionwars.bluePajamaPants, 
