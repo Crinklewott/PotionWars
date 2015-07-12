@@ -91,10 +91,10 @@ defeatedAllies = []
 defeatedEnemies = []
 
 def end_fight():
+    global allies, enemies, actionsInflicted, actionsEndured, activeAlly, chosenActions, initialAllies, initialEnemies
     if randomEncounter:
         for enemy in enemies:
             universal.state.remove_character(enemy)
-    global allies, enemies, actionsInflicted, actionsEndured, activeAlly, chosenActions, initialAllies, initialEnemies
     allies = None
     enemies = None
     initialAllies = []
@@ -1265,16 +1265,6 @@ def select_targets(chosenAction, enemy):
         for target in list(targets):
             avgDamEndured = avg_damage_endured(target, chosenAction)
             targets.extend([target for i in range(max(1, avgDamEndured - avgdam))])
-    elif chosenAction == combatAction.DefendAction:
-        targets.append(enemy)
-        for target in list(targets):
-            #We want to defend the magic users above all else.
-            targets.extend([target for i in range(max(0, target.magic()) // 3)])
-            targets.extend([target for i in range(target.health() - companion.current_health()) if target.current_health() <= max_damage(opponents)])
-        if len(defendTargets) > 0:
-            defenders.append(defendTargets[random.randrange(0, len(defendTargets))])    
-        else:
-            defenders.append(enemy)
     defenders = []
     if chosenAction == combatAction.ThrowAction:
         defenders.append(enemy.grapplingPartner)
