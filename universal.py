@@ -39,8 +39,23 @@ SAVE_DELIMITER = '%%%'
 STAT_GROWTH_RATE_MULTIPLIER = 10
 NUM_TIERS = 10
 
-SELECT_NUMBER_COMMAND = ['(#) Select a number.']
+SELECT_NUMBER_COMMAND = ['Select a number:_']
 SELECT_NUMBER_BACK_COMMAND = SELECT_NUMBER_COMMAND + ['<==Back']
+
+def add_number_to_select_number_command(number):
+    """
+    Creates a new list of command strings where 'number' has been inserted
+    into SELECT_NUMBER_COMMAND before the underscore.
+    :param number: The number to be added the select a number command.
+    Must support being converted into a string representation of a number.
+    :return: A list of strings containing two elements:
+    1. SELECT_NUMBER_COMMAND with the number inserted before the underscore
+    2. '<==Back'
+    """
+    number = str(number)
+    number_command = SELECT_NUMBER_COMMAND[0]
+    number_command = ''.join([number_command[:-1], ' ', number, '_'])
+    return [number_command, '<==Back']
 
 ARROW_KEYS = [K_UP, K_DOWN, K_LEFT, K_RIGHT]
 

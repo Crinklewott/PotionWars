@@ -1,6 +1,9 @@
 """ Copyright 2014, 2015 Andrew Russell 
 
-This file is part of PotionWars.  PotionWars is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This file is part of PotionWars.  PotionWars is free software: you can
+redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
 
 PotionWars is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,10 +29,6 @@ import episode
 import items
 import itemspotionwars
 import copy
-
-""" Note: This file will have to be modified if we ever decide to have multiple universal.state.player's. Not quite sure what the best way of handling the case of multiple universal.state.player's is. We'll have
-    to see.
-"""
 
 gameTitle = ''
 
@@ -352,10 +351,18 @@ def request_difficulty_interpreter(keyEvent):
     if validCommand:
         request_gender()
 
-requestNameString = 'Please provide a name, and hit enter when done. Note: The beginning of your name will be automatically capitalized as you type. To erase, use the backspace. To return to the previous screen, press the Esc key.\n'
+requestNameString = 'Please provide a name, and hit enter when done. Note: ' \
+                    'The beginning of your name will be automatically ' \
+                    'capitalized as you type. To erase, use the backspace. ' \
+                    'To return to the previous screen, press the Esc key.\n'
 
 partialName = ''
+
+
 def request_name():
+    """
+        Asks the player for the PC's name.
+    """
     global partialName, gender
     universal.say(requestNameString)
     universal.set_commands(['Esc'])
@@ -368,9 +375,14 @@ def request_name():
     universal.set_command_interpreter(request_name_interpreter)
 
 
-def request_name_interpreter(keyEvent):
+def request_name_interpreter(key_event):
+    """
+    Receives input from the player on the PC's name.
+    :param key_event: The Pygame key event representing the keyboard key
+    pressed.
+    """
     global partialName
-    if keyEvent.key == K_RETURN:
+    if key_event.key == K_RETURN:
         universal.state.player = person.PlayerCharacter(partialName, gender)
         person.get_PC().set_all_stats(2, 2, 2, 2, 2, 20, 10)
         person.set_party(person.Party([person.get_PC()]))
@@ -378,18 +390,18 @@ def request_name_interpreter(keyEvent):
         universal.state.player.name = partialName
         universal.state.player.set_fake_name()
         request_nickname()
-    elif keyEvent.key == K_ESCAPE:
+    elif key_event.key == K_ESCAPE:
         partialName = ''
         request_gender()
     else:
-        playerInput = pygame.key.name(keyEvent.key)
+        playerInput = pygame.key.name(key_event.key)
         if re.match(re.compile(r'^\w$'), playerInput):
             partialName += playerInput
-        elif keyEvent.key == K_BACKSPACE:
+        elif key_event.key == K_BACKSPACE:
             partialName = partialName[:-1]
         universal.say(requestNameString)
         partialName = simpleTitleCase(partialName)
-        if keyEvent.key == K_SPACE:
+        if key_event.key == K_SPACE:
             partialName += ' '
         universal.say(partialName)
         universal.say('_')
@@ -584,8 +596,66 @@ STARTING_INVENTORY = [itemspotionwars.thong, itemspotionwars.lacyUnderwear,
 shirtList = []
 chosenShirt = None
 #TODO: Refactor all of this to allow me to set it through the game file rather than in titleScreen.
+
+user_input = ''
+
+def select_clothing_interpreter(clothing_list, key_event, previous_selection):
+    """
+        Based on player input, selects the desired article of clothing from
+        clothing_list, and returns the chosen article.
+    :param clothing_list: The list of clothing to choose from.
+    :param key_event: The keyboard event representing the next number in
+        the player's choice.
+    :param previous_selection:
+    :return The article of clothing selected by the user, or None if the
+        user hasn't finished selectin yet.
+    """
+    global user_input
+    next_digit = universal.key_name(key_event)
+    if len(shirtList) < 10:
+        try:
+            num = int(next_digit) - 1
+        except ValueError:
+            if key_event.key == K_BACKSPACE:
+                previous_selection()
+        else:
+            try:
+                chosen_clothing = clothing_list[num]
+            except IndexError:
+                return
+            else:
+                return chosen_clothing
+    else:
+        try:
+            int(next_digit)
+        except ValueError:
+            if key_event.key == K_BACKSPACE:
+                if user_input:
+                    user_input = user_input[:-1]
+                    set_commands(universal.add_number_to_select_number_command(
+                        user_input))
+                else:
+                    previous_selection()
+            elif key_event.key == K_RETURN:
+                clothing_index = int(user_input) - 1
+                try:
+                    return clothing_list[clothing_index]
+                except IndexError:
+                    universal.say(' '.join(['"' + user_input + '"',
+                        'is too large. Please provide a number between 1 and',
+                        str(len(clothing_list))]))
+                    acknowledge(select_shirt, ())
+        else:
+            user_input += next_digit
+            set_commands(universal.add_number_to_select_number_command(
+                user_input))
+
 def select_shirt():
-    global shirtList
+    """
+    Asks the user to select a shirt for the player character.
+    """
+    global shirtList, user_input
+    user_input = ''
     universal.say_title('Select Shirt')
     shirtList = [item for item in STARTING_INVENTORY if item.armorType == 
             items.Shirt.armorType]
@@ -594,23 +664,26 @@ def select_shirt():
     set_command_interpreter(select_shirt_interpreter)
 
 def select_shirt_interpreter(keyEvent):
-    global chosenShirt
-    try:
-        num = int(universal.key_name(keyEvent)) - 1
-    except ValueError:
-        if keyEvent.key == K_BACKSPACE:
-            request_hair_style()
-    else:
-        try:
-            chosenShirt = shirtList[num]
-        except IndexError:
-            return
-        else:
-            universal.say(chosenShirt.display())
-            set_command_interpreter(confirm_shirt_interpreter)
-            set_commands(['(Enter) Equip shirt', '<==Back'])
+    """
+    Interprets commands given by the user when selecting a shirt.
+    :param keyEvent: The user provided keyboard key.
+    """
+    shirt = select_clothing_interpreter(shirtList, keyEvent,
+        request_hair_style)
+    if shirt:
+        global chosenShirt
+        chosenShirt = shirt
+        universal.say(chosenShirt.display())
+        set_command_interpreter(chosen_shirt_interpreter)
+        set_commands(['(Enter) Equip shirt', '<==Back'])
+
+
 
 def confirm_shirt_interpreter(keyEvent):
+    """
+    Asks the user for final confirmation of a shirt.
+    :param keyEvent: The user provided keystroke.
+    """
     if keyEvent.key == K_RETURN:
         universal.state.player._set_shirt(copy.deepcopy(chosenShirt))
         if isinstance(chosenShirt, items.FullArmor):
@@ -624,35 +697,41 @@ def confirm_shirt_interpreter(keyEvent):
 chosenPants = None
 pantsList = []
 def select_lower_clothing():
+    """
+    Asks the user for lower clothing to wear.
+    """
     global pantsList
-    if universal.state.player.lower_clothing() is universal.state.player.shirt():
+    if universal.state.player.lower_clothing() is \
+            universal.state.player.shirt():
         select_underwear()
     else:
         universal.say_title('Select Lower Clothing')
-        pantsList = [item for item in STARTING_INVENTORY if 
-                items.is_lower_clothing(item)]
-        universal.say('\n'.join(universal.numbered_list([pants.name for pants in pantsList])), justification=0)
+        pantsList = [item for item in STARTING_INVENTORY if
+                items.is_outer_lower_clothing(item)]
+        universal.say('\n'.join(universal.numbered_list([pants.name for pants
+                in pantsList])), justification=0)
         set_commands(universal.SELECT_NUMBER_BACK_COMMAND)
         set_command_interpreter(select_lower_clothing_interpreter)
 
 def select_lower_clothing_interpreter(keyEvent):
-    global chosenPants
-    try:
-        num = int(universal.key_name(keyEvent)) - 1
-    except ValueError:
-        if keyEvent.key == K_BACKSPACE:
-            select_shirt()
-    else:
-        try:
-            chosenPants = pantsList[num]
-        except IndexError:
-            return
-        else:
-            universal.say(chosenPants.display())
-            set_command_interpreter(confirm_lower_clothing_interpreter)
-            set_commands([' '.join(['(Enter) Equip', chosenPants.armorType]), '<==Back'])
-    
+    """
+    Interpreters the player's keystroke when selecting lower clothing.
+    :param keyEvent: The player's keystroke.
+    """
+    pants = select_clothing_interpreter(pantsList, keyEvent, select_shirt)
+    if pants:
+        global chosenPants
+        chosenPants = pants
+        universal.say(chosenPants.display())
+        set_command_interpreter(confirm_lower_clothing_interpreter)
+        set_commands(['(Enter) Equip pants', '<==Back'])
+
 def confirm_lower_clothing_interpreter(keyEvent):
+    """
+    Asks for confirmation for the selected lower clothing.
+    :param keyEvent: The player's keystroke. Enter confirms, Backspace undoes
+    the selection, any other key is ignored.
+    """
     if keyEvent.key == K_RETURN:
         universal.state.player._set_lower_clothing(copy.deepcopy(chosenPants))
         select_underwear()
@@ -663,6 +742,9 @@ underwearList = []
 chosenUnderwear = None
 
 def select_underwear():
+    """
+    Asks the user which set of underwear the player character should wear.
+    """
     global underwearList
     underwearList = [item for item in STARTING_INVENTORY if items.is_underwear(item)]
     if universal.state.player.lower_clothing() == items.emptyLowerArmor:
@@ -673,24 +755,28 @@ def select_underwear():
     set_command_interpreter(select_underwear_interpreter)
 
 def select_underwear_interpreter(keyEvent):
-    try:
-        num = int(universal.key_name(keyEvent)) - 1
-    except ValueError:
-        if keyEvent.key == K_BACKSPACE:
-            if universal.state.player.shirt() is universal.state.player.lower_clothing():
-                select_shirt()
-            else:
-                select_lower_clothing()
+    """
+    Interprets the player's keystrokes when selecting underwear. If a number is
+    provided, that number is saved until the player hits enter (unless there
+    are less than 10 choices, in which case the selected equipment is
+    immediately selected.
+    :param keyEvent: The user's input. If it's a number, it's added to a
+    string of digits and saved. If it's RETURN, the digits are converted into
+    a number and the associated underwear returned. If it's backspace, the
+    last digit is deleted. If it's anything else, we ignore it.
+    """
+    if universal.state.player.shirt() is universal.state.lower_clothing():
+        underwear = select_clothing_interpreter(underwearList, keyEvent,
+                select_shirt)
     else:
+        underwear = select_clothing_interpreter(undearList, keyEvent,
+                select_lower_clothing)
+    if underwear:
         global chosenUnderwear
-        try:
-            chosenUnderwear = underwearList[num]
-        except IndexError:
-            return
-        else:
-            universal.say(chosenUnderwear.display())
-            set_commands(['(Enter) Equip underwear', '<==Back'])
-            set_command_interpreter(confirm_underwear_interpreter)
+        chosenUnderwear = underwear
+        universal.say(chosenUnderwear.display())
+        set_commands(['(Enter) Equip underwear', '<==Back'])
+        set_command_interpreter(confirm_underwear_interpreter)
 
 def confirm_underwear_interpreter(keyEvent):
     if keyEvent.key == K_RETURN:
@@ -702,10 +788,15 @@ def confirm_underwear_interpreter(keyEvent):
 weaponList = []
 chosenWeapon = None
 def select_weapon():
+    """
+    Asks the user to select a weapon, one of a dagger, sword, or spear.
+    """
     global weaponList
-    weaponList = [itemspotionwars.familyDagger, itemspotionwars.familySword, itemspotionwars.familySpear]
+    weaponList = [itemspotionwars.familyDagger, itemspotionwars.familySword,
+            itemspotionwars.familySpear]
     universal.say_title('Request Weapon')
-    universal.say('\n'.join(universal.numbered_list([weapon.name for weapon in weaponList])), justification=0)
+    universal.say('\n'.join(universal.numbered_list([weapon.name for weapon in
+            weaponList])), justification=0)
     set_commands(SELECT_NUMBER_BACK_COMMAND)
     set_command_interpreter(select_weapon_interpreter)
 

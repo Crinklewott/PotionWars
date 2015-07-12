@@ -831,11 +831,22 @@ def is_lower_clothing(item):
     except AttributeError:
         return False
 
+
 def is_underwear(item):
     try:
         return item.armorType == Underwear.armorType or item.armorType == Thong.armorType
     except AttributeError:
         return False
+
+
+def is_outer_lower_clothing(item):
+    """
+    Checks if item is some sort of lower clothing that you would not wear as
+    underwear, i.e. pants, shorts, skirts, dresses.
+    :param item: The item to be checked
+    """
+    return is_lower_clothing(item) and not is_underwear(item)
+
 
 def waistband_hem(lowerClothing):
     return lowerClothing.waistband_hem()
