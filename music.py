@@ -48,29 +48,40 @@ def clean_up_music():
 
 def set_theme(theme):
     global THEME
-    THEME = decrypt(theme, 'theme')
+    THEME = theme
+    musicFiles['theme'] = THEME
+
+
 def set_town(music):
     global TOWN
-    TOWN = decrypt(music, 'town')
+    TOWN = music
+    musicFiles['town'] = music
+
+
 def set_combat(music):
     global COMBAT
     COMBAT = music
+    musicFiles['combat'] = COMBAT
 
 def set_catfight(music):
     global CATFIGHT
     CATFIGHT = music
+    musicFiles['catfight'] = CATFIGHT
 
 def set_defeated(music):
     global DEFEATED
-    DEFEATED = decrypt(music, 'defeated')
+    DEFEATED = music
+    musicFiles['defeated'] = music
 
 def set_victory(music):
     global VICTORY
-    VICTORY = decrypt(music, 'victory')
+    VICTORY = music
+    musicFiles['victory'] = music
 
 def set_boss(music):
     global BOSS
-    BOSS = decrypt(music, 'boss')
+    BOSS = music
+    musicFiles['boss'] = music
 
 VICTORY = None
 TOWN = None
@@ -98,6 +109,9 @@ def play_music(fileObject, fadeoutTime=250, wait=False):
                 pygame.mixer.music.set_volume(0.4)
                 pygame.mixer.music.play(-1)
             currentMusic = fileObject
+
+def stop_music():
+    pygame.mixer.stop()
 
 def fadeout_thread(fadeoutTime, fileObject):
     lock.acquire()
