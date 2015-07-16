@@ -2358,6 +2358,13 @@ class Party(universal.RPGObject):
     def index(self, member):
         return self.members.index(member)
 
+    def restore(self):
+        """
+        Fully restores the health, mana, and removes the statuses on every member of the party. 
+        """
+        for member in self:
+            member.restores()
+
     def __iter__(self):
         for member in self.members:
             yield member
