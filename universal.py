@@ -978,17 +978,10 @@ class State(object):
 
     def days_pass(self, numDays):
         """
-        Increments the days value, and decrements the player's coins by costPerDay * numDays.
-        For now, the coins bottom out at zero. However, I think I want to introduce some sort
-        of penalty to the player's health to represent her growing health deterioration from lack
-        of food.
-
-        pre: numDays >= 0
-        post: self.player.coins >= 0
+        Increments the days value.
         """
         assert numDays >= 0
         self.days += numDays 
-        self.player.coins = max(0, self.player.coins - numDays * self.costPerDay)
 
     def store_item(self, item, key=None):
         """
