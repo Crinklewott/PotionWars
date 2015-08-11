@@ -1893,15 +1893,9 @@ def maria_3_1_1_quip():
     maria_3_1_1.quip = universal.format_text(['''"And you're worried that maybe you need to change plans," says Maria, nodding. "Understandable. However, at this point, the Adventurer's Guild is practically the only place willing to hire Taironans. You can look around a bit if you want, but really the Guild is your only option, unless you want seasonal work on the farms. And that work's not pleasant, when it's there at all.''', '''"Fortunately, Adrian's a good man. He won't send you into anything that's over your head, and he treats his employees very well. In fact, let him know that I sent you, and he's certain to hire you. We've got a long, successful history together."'''])
 
     if not "Maria_intimidated_you" in universal.state.player.keywords:
-        if maria_3_1_1.children is None:
-            maria_3_1_1.children = [maria_3p1_1_1, maria_3p2_1_1, maria_3p3_1_1]
-        maria_3_1_1.children.extend([maria_3p1_1_1, maria_3p2_1_1, maria_3p3_1_1]) 
-        if maria_3_1_1.playerComments is None:
-            maria_3_1_1.playerComments = ['''"A 'history' eh? Didn't know you were that kind of girl."''', '''"Ooh, a 'history'? Got any dirty details to share?"''', 
+        maria_3_1_1.children = [maria_3p1_1_1, maria_3p2_1_1, maria_3p3_1_1]
+        maria_3_1_1.playerComments = ['''"A 'history' eh? Didn't know you were that kind of girl."''', '''"Ooh, a 'history'? Got any dirty details to share?"''', 
                     '''"Thanks, I will! Wait, this isn't some sort of prank is it? He doesn't actually like hate you or something does he? I won't get my booty blistered if I mention your name, will I?"''']
-        else:
-            maria_3_1_1.playerComments.extend(['''"A 'history' eh? Didn't know you were that kind of girl.", "Ooh, a 'history'? Got any dirty details to share?"''', 
-                '''"Thanks, I will! Wait, this isn't some sort of prank is it? He doesn't actually like hate you or something does he? I won't get my booty blistered if I mention your name, will I?"'''])
     else:
         maria_3_1_1.children = mariaRootChildren
         maria_3_1_1.playerComments = mariaRootPlayerComments
@@ -7775,7 +7769,7 @@ def necia_mercenary_lost_interpreter(keyEvent):
             name() + ".", '''"Terribly sorry about that. I can assure you, she will be paddled far longer and harder than you were. We'll''',
             '''send an agent to meet with you later. Just sit tight and act loyal to the guards."'''],
         ['''The warslinger and his companion run out the armory door.''']]), justification=0)
-        episode.allEpisodes[universal.state.player.currentEpisode].next_scene()
+    episode.allEpisodes[universal.state.player.currentEpisode].next_scene()
 
 
 def necia_wimpy_lost_interpreter(keyEvent):
