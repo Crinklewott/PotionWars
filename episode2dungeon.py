@@ -22,8 +22,8 @@ import pwutilities
 slumsLevel1Map = (
                  ( "___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___", "_"),
                  ("|   ","___","___","   ","___"," .,","   ","___","___","___",".,", "___","___"," .,","___"," .,","___"," .,"," .,","   ","|" ), #19
-                 ("|   ","|.,",";.,","|  ","|.,",";__","|  ","|__",";  ","___","   ","___","   ",";__","|.,",";.,",";.,",";__","|.,","|  ","|" ), #18
-                 ("|   ","|.,",";.,","|  ","|__","|.,","   ","|__",";  ",";__","|  ",";__","|  ",";__","|.,",";__",";__","|  ","|__",";  ","|" ), #17
+                 ("|   ","|.,",";.,","|  ","|.,",";__","|  ","|__",";  ","   ","   ","   ","   ",";__","|.,",";.,",";.,",";__","|.,","|  ","|" ), #18
+                 ("|   ","|.,",";.,","|  ","|__","|.,","   ","|__","   ","___","   ","___","|  ",";__","|.,",";__",";__","|  ","|__",";  ","|" ), #17
                  ("|   ","|.,",";.,","|  ",";__","|__","|  ","|__",";__",";__","|.,",";__","|__",";__","|__","___","   ","___","   ","___","|" ), #16 
                  ("|   ",";.,",";.,","|  ",";__","|.,","   ","___","___","   ","___","___","|__",";  ","||.,",";.","|  ",";.,","|  ","|.,","|" ), #15
                  ("|   ","|.,",";.,","|  ","|.,",";.,","|  ","|  ","   ","|  ","|__",";__",";__","   ","|.,",";.,",";  ","|__","|  ",";__","|" ), #14
@@ -112,7 +112,25 @@ def e1_10_18():
     else:
         pwutilities.trigger_event('ep2 magola busy')
         return True
-        
+       
+def e1_16_10():
+    if ('ep2BrothelMorning' in pwutilities.keywords() and 
+            not 'ep2BrothelMorningDone' in pwutilities.keywords()):
+        pwutilities.add_keyword('ep2BrothelMorningDone')
+        pwutilities.trigger_event('ep2 brothel common room morning')
+        return True
+    else:
+        return False
+
+def e1_11_2():
+    if not 'ep2VisitedSquatters' in pwutilities.keywords():
+        pwutilities.add_keyword('ep2VisitedSquatters')
+        pwutilities.trigger_event('ep2 visited squatters')
+        return True
+    else:
+        return False
+
+
 slumsLevel1Events = {i:collections.defaultdict(pwutilities.none) for i in 
         range(len(slumsLevel1Map))}
 
@@ -123,6 +141,7 @@ slumsLevel1Events[18][18] = e1_18_18
 slumsLevel1Events[10][19] = e1_10_19
 slumsLevel1Events[9][19] = e1_10_19
 slumsLevel1Events[11][19] = e1_10_19
+slumsLevel1Event[16][10] = e1_16_10
 
 
 
