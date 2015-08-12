@@ -31,12 +31,6 @@ import copy
 import random
 
 """
-TODO: My dungeon display code just outright isn't working. I need to delete the whole thing, and start over.
-
-I should probably better organize the whole damn thing.
-"""
-
-"""
 For the GUI of the dungeon view:
     We'll replace the commands with the character names, health and mana. We'll dynamically resize the commandView and worldView to be the minimum size needed to fit all the
     party members (ranging from 1/3rd the standard size for one character in the party up to double the standard size for 6 characters).
