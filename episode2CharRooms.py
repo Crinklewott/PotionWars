@@ -201,6 +201,30 @@ slumEvents = [slumsLevel1Events]
 allegriasDomain = dungeonmode.Dungeon("Allegria's Domain", [slumsLevel1Map], slumEvents, bgMusic=pwutilities.TAIRONAN,
         enemies=None)
 
+class Allegria(pwenemies.Enemy):
+
+    def __init(description, )__:
+        super(Allegria, self).__init__(
+                "Allegria", 
+                person.FEMALE, 
+                None, 
+                description, 
+                None, 
+                0, 
+                universal.COMBAT_MAGIC, 
+                0, 
+                person.MUSCULATURE[2], 
+                bodyType=person.BODY_TYPES[0],
+                height=person.HEIGHTS[2],
+                hairLength=person.HAIR_LENGTH[1],
+                hairStyle=SHORT_HAIR_STYLE[0], 
+                eyeColor='blue', 
+                skinColor='brown', 
+                order=person.zeroth_order, 
+                identifier=None, 
+                litany=None
+        )
+
 def start_scene_1_episode_3(loading=False): 
     universal.say("Next Time on Pandemonium Cycle: The Potion Wars")
     music.play_music(music.THEME)
