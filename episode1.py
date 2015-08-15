@@ -8538,6 +8538,7 @@ def start_scene_3_episode_1(loading=False):
     adrian.litany = adrian_end_episode_1.index
     elise = universal.state.get_character('Elise.person')
     elise.litany = elise_end_episode_1.index
+    enterLeft(elise, shrine)
     maria = universal.state.get_character('Maria.person')
     maria.litany = ep1_maria_home.index
     peter = universal.state.get_character('Peter.person')
