@@ -118,11 +118,20 @@ def catfight(enemy, after_combat_event_in, previous_mode_in):
     fight(enemy, after_combat_event_in, previous_mode_in, False, False, True,
           None, 0, False, None, True, [universal.state.player])
 
-def fight(enemiesIn, afterCombatEventIn=None,
-          previousModeIn=dungeonmode.dungeon_mode, runnableIn=True,
-          bossFight=False, optionalIn=False, additionalAllies=None,
-          ambushIn=0, randomEncounterIn=False, coordinatesIn=None,
-          catfight=False, party=None):
+def fight(
+        enemiesIn, 
+        afterCombatEventIn=None,
+        previousModeIn=dungeonmode.dungeon_mode, 
+        runnableIn=True,
+        bossFight=False, 
+        optionalIn=False, 
+        additionalAllies=None,
+        ambushIn=0, 
+        randomEncounterIn=False, 
+        coordinatesIn=None,
+        catfight=False, 
+        party=None
+):
     # Way too many global variables. This code really needs to be rewritten.
     global afterCombatEvent, activeAlly, worldView, enemies, bg, allies,\
         allySurface, enemySurface, commandSurface, clearScreen, previousMode,\
@@ -1944,7 +1953,7 @@ def improve_characters(victorious, afterCombatEvent=None):
             threshhold = int(math.floor(stat * specialtyModifier))
             while threshhold <= statPoints:
                 if i == universal.HEALTH:
-                    gain += BASE_HEALTH_INCREASE + (statPoints - threshhold)
+                    gain += BASE_HEALTH_INCREASE + min(5, (statPoints - threshhold))
                     ally.improve_stat(i, gain)
                     ally.increaseStatPoints[i] = 0
                 else:
