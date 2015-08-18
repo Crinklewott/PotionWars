@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
 Copyright 2014, 2015 Andrew Russell
 
