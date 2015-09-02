@@ -2091,7 +2091,7 @@ def elise_feel_weird_quip_function():
 elise_feel_weird.quip_function = elise_feel_weird_quip_function
 elise_feel_weird.comment = '''"I don't know, it'd feel weird."'''
 elise_feel_weird_shy = Node(144)
-elise_feel_weird.children = [elise_show_you_around_yes]
+elise_feel_weird.children = [elise_show_you_around_yes, elise_show_you_around_no]
 
 elise_feel_weird_shy.comment = '''"I just need some time by myself, I guess. To get used to the city."'''
 elise_feel_weird_shy.quip = '''"That's understandable," says Elise. "Is there anything else I can help you with?"''' 
