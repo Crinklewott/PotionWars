@@ -978,7 +978,7 @@ class Person(universal.RPGObject):
     def destroy_equipment(self):
         """
         Destroys all of this character's equipment forever.
-        "
+        """
         for item in self.equipmentList:
             self.drop(item)
             universal.state.remove_item(item)
@@ -1017,7 +1017,7 @@ class Person(universal.RPGObject):
 
     def increase_all_stats(self, num):
         """
-            Note: This method increases all of the character's stats EXCEPT health, mana, current health, and current mana. 
+        Note: This method increases all of the character's stats EXCEPT health, mana, current health, and current mana. 
         """
         for stat in range(len(self.primaryStats)):
             if stat != universal.HEALTH and stat != universal.MANA and stat != universal.CURRENT_MANA and stat != universal.CURRENT_HEALTH:
