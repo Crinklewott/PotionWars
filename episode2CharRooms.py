@@ -19,9 +19,10 @@ import dungeonmode
 import episode
 import items
 import itemspotionwars
-import pwutilities
 import music
 import person
+import pwenemies
+import pwutilities
 import spells_PotionWars
 import townmode
 import universal
@@ -203,7 +204,7 @@ allegriasDomain = dungeonmode.Dungeon("Allegria's Domain", [slumsLevel1Map], slu
 
 class Allegria(pwenemies.Enemy):
 
-    def __init(description, )__:
+    def __init__(description):
         super(Allegria, self).__init__(
                 "Allegria", 
                 person.FEMALE, 
