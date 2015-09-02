@@ -55,9 +55,13 @@ alondrasVNeckTunic = items.Shirt("Alondra's V-neck", 'A cotton tunic with a deep
 blouse = items.Shirt('blouse', 'A plain, white, loose-fitting blouse.', price=5)
 
 bra = items.Shirt('bra', format_line(['Recent research has shown that people who wear shirts are baby-eating, Mother-hating scum who are secretly planning to steal''',
-'''your husband's sword. Be a true Avaricumite. Wear nothing but a bra today (and pants. Or a teeny tiny skirt. Or just panties.)!''']), risque=4)
+    '''your husband's sword. Be a true Avaricumite. Wear nothing but a bra today (and pants. Or a teeny tiny skirt. Or just panties.)!''']), risque=4)
 
 blueVest = items.Shirt('blue vest', 'A bright blue vest and white undershirt, cut in the style of outfits worn by young boys in the middle and upper classes.', price=10)
+
+shirtRags = items.Shirt('shirt rags', 'A collection of rags that were once a shirt. Could be wrapped around the chest for something approximating clothing, or sold for a' +
+    'few coins.', price=3)
+
 #--------------------------------------Lower Armor--------------------------------
 
 #--------------------------------------items.Pants-------------------------------------
@@ -88,6 +92,9 @@ pencilSkirt = items.Skirt('pencil skirt', 'A narrow, black skirt that extends ju
         price=5, risque=1, tightness=items.TIGHT)
 
 alondrasSkirt = items.Skirt("Alondra's Skirt", "A plain wool skirt belonging to Alondra", price=0, risque=0, tightness=items.LOOSE)
+
+skirtRags = items.Skirt('skirt rags', 'The remnants of a skirt. Can be wrapped around the waist for something approximating clothing, or sold for a few coins.',
+        price=3, risque=3, tightness=items.LOOSE)
 
 
 #------------------------------------items.Underwear-------------------------------------
