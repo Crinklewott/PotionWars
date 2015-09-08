@@ -16,12 +16,14 @@ You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
 import conversation
+import dungeonmode
 import episode
+import items
 import music
+import person
 import titleScreen
 import townmode
 import universal
-import person
 
 
 def enterLeft(character, room):
@@ -218,43 +220,92 @@ def initialize_default_char_locations():
 
 
 #-------------------------------------Music Files----------------------------------------
-CHURCH = music.decrypt(universal.resource_path('POL-apparition-long.wav'), 'church')
-GUARDS = music.decrypt(universal.resource_path('POL-war-victims-long.wav'), 'guards')
-TAIRONAN = music.decrypt(universal.resource_path('POL-holy-forest-long.wav'), 'taironan')
-LIGHT_HEARTED = music.decrypt(universal.resource_path('POL-jesu-long.wav'), 'light-hearted')
-INTENSE = music.decrypt(universal.resource_path('POL-hurry-up-long.wav'), 'intense')
-SADISTIC_GAME = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'), 'sadistic_game')
-VENGADOR = music.decrypt(universal.resource_path('POL-antique-market-long.wav'), 'vengador')
-OMINOUS = music.decrypt(universal.resource_path('POL-bridge-over-darkness-long.wav'), 'ominous')
-CARLITA = music.decrypt(universal.resource_path('POL-goodbye-long.wav'), 'carlita')
-MARIA = music.decrypt(universal.resource_path('POL-moonlight-long.wav'), 'maria')
-ROLAND = music.decrypt(universal.resource_path('POL-risky-plan-long.wav'), 'roland')
-ELISE = music.decrypt(universal.resource_path('POL-land-of-peace-long.wav'), 'elise')
-CATALIN = music.decrypt(universal.resource_path('POL-sadistic-game-long.wav'), 'catalin')
-CARRIE = music.decrypt(universal.resource_path('POL-smart-ideas-long.wav'), 'carrie')
-ALONDRA = music.decrypt(universal.resource_path('POL-moonshine-piano-long.wav'), 'alondra')
-ROMANTIC = music.decrypt(universal.resource_path('POL-love-theme-long.wav'), 'romantic')
-PETER = music.decrypt(universal.resource_path('POL-telekinesis-long.wav'), 'peter')
-COMBAT = music.decrypt(universal.resource_path('POL-chase-long.wav'), 'combat')
-DEFEAT = music.decrypt(universal.resource_path('POL-graveyard-lord-long.wav'), 'defeat')
-music.set_combat(universal.resource_path('POL-chase-long.wav'))
-music.set_boss(universal.resource_path('POL-last-duel-long.wav'))
-music.set_town(universal.resource_path('POL-spiritual-path-long.wav'))
-music.set_theme(universal.resource_path('POL-the-challenge-long.wav'))
-music.set_defeated(universal.resource_path('POL-graveyard-lord-long.wav'))
-music.set_victory(universal.resource_path('POL-the-challenge-long.wav'))
-titleScreen.set_opening_crawl(CHURCH)
+CHURCH = music.register(universal.resource_path('1-04-149-Serenity.mp3'), 'church')
+LIGHT_HEARTED = music.register(universal.resource_path(
+        '1-07-158-B-White-Elephants_Back-it-Up_Mix.mp3'), 
+    'light-hearted')
+BRATTY = music.register(universal.resource_path('1-13-173-Who-Left-the-Milk-Out!.mp3'), 'bratty')
+INTENSE = music.register(universal.resource_path('02-300-B-Liliths-Rage.mp3'), 'intense')
+TAIRONAN = music.register(universal.resource_path('1-14-288-Dont-Mess-with-Me.mp3'), 'taironan')
+VENGADOR = music.register(universal.resource_path('1-15-289-Heated-Battle.mp3'), 'vengador')
+OMINOUS = music.register(universal.resource_path('01-300-A-Desecrated-Temple.mp3'), 'ominous')
+CARLITA = music.register(universal.resource_path('2-02-291-B-Lost.mp3'), 'carlita')
+MARIA = music.register(universal.resource_path('2-01-291-A-Never-Forget.mp3'), 'maria')
+ROLAND = music.register(universal.resource_path('09-309-Desert-Battle.mp3'), 'roland')
+ELISE = music.register(universal.resource_path('1-10-287-A-Reflections-in-Tranquility.mp3'), 
+    'elise')
+CATALIN = music.register(universal.resource_path('2-08-295-Insidia.mp3'), 'catalin')
+CARRIE = music.register(universal.resource_path('1-17-290-My-Friend.mp3'), 'carrie')
+ALONDRA = music.register(universal.resource_path('13-313-Bittersweet-Affection.mp3'), 'alondra')
+ROMANTIC = music.register(universal.resource_path('1-03-204-B-Snow.mp3'), 'romantic')
+HEART_BREAK = music.register(universal.resource_path('08-308-The-Tea-Garden-Enhanced-Version.mp3'),
+    'heart break')
+PETER = music.register(universal.resource_path('1-09-160-Rose-Petals.mp3'), 'peter')
+TRISTANA = music.register(universal.resource_path('07-307-Wrath.mp3'), 'tristana')
+OMINOUS_BUT_INSPIRING = music.register(universal.resource_path('1-15-192-A-Blood-Mambo.mp3'), 
+    'ominous but inspiring')
+JAVIER = OMINOUS_BUT_INSPIRING
+DEFEAT = music.register(universal.resource_path('05-305-Heresy.mp3'), 'defeat')
+SNEAKY = music.register(universal.resource_path('2-05-293-A-Fire-Drill.mp3'), 'sneaky')
+CATFIGHT = BRATTY
+TENSION = music.register(universal.resource_path('1-10-162-A-Pre-Boss-Battle-Tension.mp3'), 
+    'tension')
+OUTCOME_IN_DOUBT = music.register(universal.resource_path('2-06-293-B-This-Is-Not-a-Drill.mp3'),
+        'outcome-in-doubt')
+COMBAT = OUTCOME_IN_DOUBT
+HEROIC = music.register(universal.resource_path('2-07-294-Leviathan.mp3'), 'heroic')
+RIGHTEOUS_RAGE = music.register(universal.resource_path('2-11-297-Bloodlust.mp3'), 'righteous rage')
+VICTORY = music.register(universal.resource_path('POL-waving-grass-short.wav'), 'victory') 
+THEME = music.register(universal.resource_path('1-05-208-B-Megaboss-Up-tempo.mp3'), 'theme')
+TOWN = music.register(universal.resource_path('1-16-195-B-Wintry-Town.mp3'), 'town')
+
+music.set_combat(COMBAT)
+music.set_catfight(CATFIGHT)
+music.set_boss(HEROIC)
+music.set_town(TOWN)
+music.set_theme(THEME)
+music.set_defeated(DEFEAT)
+music.set_victory(VICTORY)
+titleScreen.set_opening_crawl(DEFEAT)
 
 #A dummy character who exists solely to give us someone to talk to for arbitrary conversations. Conversations are incorporated into the dungeons as follows:
-maze = person.Person("maze", person.FEMALE, None, None)
+maze = person.Person("Maze", person.FEMALE, None, None)
 
-def begin_maze_event(node, eventTitle):
+def trigger_event(nodeName, eventTitle):
     """
-    Given a conversation node, and the title of the desired dungeon event, begins the dungeon event.
+    Given the name of a conversation node, and the title of the desired dungeon event, begins the
+    dungeon event.
     This should be called in every event function that needs to display automatically generated conversation nodes.
     """
+    node = conversation.allNodeNames[nodeName]
     global maze
-    maze.name = eventTitle
+    maze.printedName = eventTitle
     maze.litany = node.index
-    conversation.converse_with(maze)
+    conversation.converse_with(maze, dungeonmode.dungeon_mode)
 
+
+def none():
+    """
+    A function that just returns None. Used by the defaultdict map events as a factory for squares
+    with no events
+    """
+    return None
+
+def play_event(eventName, keyword=""):
+    """
+    Executes a dungeon event.
+    Parameters:
+    eventName: The name of the event (the name of the first node of the event in the transcript) to 
+    be executed.
+    keyword:  The keyword that should be used to determine whether or not the event has already
+    been executed. If a keyword is provided, then the event will only be executed once per game. 
+    Otherwise, the event will be executed every time 
+    this method is called with eventName.
+    """
+    if keyword in keywords():
+        return True
+    else:
+        if keyword:
+            add_keyword(keyword)
+        trigger_event(eventName)
+        return True

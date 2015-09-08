@@ -1,6 +1,9 @@
 """ Copyright 2014, 2015 Andrew Russell 
 
-This file is part of PotionWars.  PotionWars is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This file is part of PotionWars.  PotionWars is free software: you can
+redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
 
 PotionWars is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -9,9 +12,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
+"""
 
-WARNING: Due to fiddling with the name of Edita (she was Carlita, then Lucilla, then Carlita again, then Edita), I've had to add some code to the state object to exchange Lucilla and Carlita for Edita in the player's keywords, in order to ensure
-that keywords are registering properly for people loading saves from versions where Edita's name was Lucilla or Carlita. This code should be removed for any future games. Otherwise, if you name a 
+"""
+WARNING: Due to fiddling with the name of Edita (she was Carlita, then Lucilla,
+then Carlita again, then Edita), I've had to add some code to the state object
+to exchange Lucilla and Carlita for Edita in the player's keywords, in order to
+ensure
+that keywords are registering properly for people loading saves from versions
+where Edita's name was Lucilla or Carlita. This code should be removed for any
+future games. Otherwise, if you name a
 character Lucilla or Carlita, you end up with one named Edita!
 
 The same is true about the Person class' load feature.
@@ -25,6 +35,7 @@ import episode
 import items
 import math
 import operator
+import positions
 import random
 import statusEffects
 import spanking
@@ -60,11 +71,15 @@ BALANCED = 6
 
 TALENT_PER_TIER = 10
 
-allStats = [universal.WARFARE, universal.MAGIC, universal.RESILIENCE, universal.GRAPPLE, universal.SPEED, universal.HEALTH, universal.MANA, universal.CURRENT_HEALTH, 
-        universal.CURRENT_MANA]
+allStats = [universal.WARFARE, universal.MAGIC, universal.RESILIENCE,
+                   universal.GRAPPLE, universal.SPEED, universal.HEALTH,
+                   universal.MANA, universal.CURRENT_HEALTH,
+                   universal.CURRENT_MANA]
 
-allPrimaryStats = [universal.STRENGTH, universal.DEXTERITY, universal.WILLPOWER, universal.TALENT, universal.ALERTNESS, universal.HEALTH, universal.MANA, 
-        universal.CURRENT_HEALTH, universal.CURRENT_MANA]
+allPrimaryStats = [universal.STRENGTH, universal.DEXTERITY,
+                   universal.WILLPOWER, universal.TALENT, universal.ALERTNESS,
+                   universal.HEALTH, universal.MANA,
+                   universal.CURRENT_HEALTH, universal.CURRENT_MANA]
 
 
 MALE = 0
@@ -77,7 +92,8 @@ XP_INCREASE_PER_LEVEL = 100
 
 STATUS_OBJ = 0
 DURATION = 1
-#This is used for saving purposes
+# This is used for saving purposes
+
 
 def remove_character(person):
     if person.name in universal.state.characters:
@@ -85,11 +101,14 @@ def remove_character(person):
 
 universal.state.player = universal.state.player
 
+
 def get_PC():
     return universal.state.player
 
-def set_PC(playerCharacter):
-    universal.state.player = playerCharacter
+
+def set_PC(player_character):
+    universal.state.player = player_character
+
 
 class InvalidEquipmentError(Exception):
     pass
@@ -258,7 +277,7 @@ MUSCULATURE = ['soft', 'fit', 'muscular']
 HAIR_LENGTH = ['short', 'shoulder-length', 'back-length', 'butt-length']
 
 SHORT_HAIR_STYLE = ['down']
-SHOULDER_HAIR_STYLE = SHORT_HAIR_STYLE + ['ponytail', 'braid', 'pigtails', 'bun']
+SHOULDER_HAIR_STYLE = SHORT_HAIR_STYLE + ['pigtails', 'ponytail', 'braid', 'bun']
 BACK_HAIR_STYLE = SHOULDER_HAIR_STYLE
 BUTT_HAIR_STYLE = BACK_HAIR_STYLE
 
@@ -284,8 +303,11 @@ class Person(universal.RPGObject):
     """
     enemy = False
     def __init__(self, name, gender, defaultLitany, litany, description="", printedName=None, 
-            coins=20, specialization=universal.BALANCED, order=zeroth_order, dropChance=0, rawName=None, skinColor='', eyeColor='', hairColor='', hairStyle='', marks=None,
-            musculature='', hairLength='', height='', bodyType='', identifier=None, weaknesses=None): 
+            coins=20, specialization=universal.BALANCED, order=zeroth_order,
+            dropChance=0, rawName=None, skin_color='', eyeColor='',
+            hairColor='', hairStyle='', marks=None,
+            musculature='', hairLength='', height='', bodyType='',
+            identifier=None, weaknesses=None):
         self.name = name
         self.gender = gender
         self.previousTarget = 0
@@ -348,7 +370,7 @@ class Person(universal.RPGObject):
         self.musculature = musculature
         self.bumStatus = 0
         self.welts = []
-        self.skinColor = skinColor
+        self.skin_color = skin_color
         self.hairColor = hairColor
         self.eyeColor = eyeColor
         self.hairStyle = hairStyle
@@ -374,6 +396,125 @@ class Person(universal.RPGObject):
         self.spankingEnded = False
         self.spankeeAlreadyHumiliated = False
         self.implement = spanking.hand
+        self.humiliationLevel = 0
+        self.staminaDamage = 0
+        self.spankingFunctions = {
+            positions.overTheKnee: (self.otk_intro, self.otk_round, self.otk_failure, 
+                self.otk_reversal),
+            positions.standing: (self.standing_intro, self.standing_round, 
+                self.standing_failure, self.standing_reversal),
+            positions.onTheGround: (self.on_the_ground_intro, self.on_the_ground_round, 
+                self.on_the_ground_failure, self.on_the_ground_reversal)
+        }
+
+    def spanks(self, bottom, position):
+        return self.spankingFunctions[position][0](self, bottom)
+
+    def spanked_by(self, top, position):
+        return self.spankingFunctions[position][0](top, self)
+
+    def continue_spanking(self, bottom, position):
+        return self.spankingFunctions[position][1](self, bottom)
+
+    def continue_being_spanked(self, top, position):
+        return self.spankingFunctions[position][1](top, self)
+
+    def reverses(self, top, position):
+        return self.spankingFunctions[position][2](top, self)
+
+    def reversed_by(self, bottom, position):
+        return self.spankingFunctions[position][2](self, bottom)
+
+    def failed(self, bottom, position):
+        return self.spankingFunctions[position][-2](self, bottom)
+
+    def blocks(self, top, position):
+        return self.spankingFunctions[position][-2](top, self)
+
+    def otk_intro(self, top, bottom):
+        raise NotImplementedError()
+
+    def otk_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def otk_failure(self, top, bottom):
+        raise NotImplementedError()
+
+    def otk_reversal(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_intro(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_failure(self, top, bottom):
+        raise NotImplementedError()
+
+    def standing_reversal(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_intro(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_round(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_failure(self, top, bottom):
+        raise NotImplementedError()
+
+    def on_the_ground_reversal(self, top, bottom):
+        raise NotImplementedError()
+
+    def end_spanking(self, top, bottom):
+        self.firstRound = True
+        return universal.format_line(['''Finally, with a mighty effort,''', bottom.printedName, 
+            '''manages to wriggle''', bottom.himselfherself(), '''free of''', 
+            top.printedName + "'s", 
+        '''merciless grasp.''', bottom.HeShe(), '''scrambles away from''', top.printedName, 
+        '''clutching at''', bottom.hisher(), '''burning bottom with one hand.'''])
+
+    def failed_spanking(self, spankee, position):
+        return [self.printedName, 'failed to spank', spankee.printedName + '!']
+
+    def size_bonus(self):
+        return HEIGHTS.index(self.height)
+
+    def hair_penalty(self):
+        return max(0, HAIR_LENGTH.index(self.hairLength) + 1 - 
+                BUTT_HAIR_STYLE.index(self.hairStyle)) 
+            
+    def body_type_bonus(self):
+        return BODY_TYPES.index(self.bodyType)
+
+    def musculature_bonus(self):
+        return MUSCULATURE.index(self.musculature)
+
+    def stamina(self):
+        return 10 * (self.strength() + self.dexterity() + self.willpower() - self.size_bonus() 
+                + self.musculature_bonus())
+
+    def current_stamina(self):
+        return max(0, self.stamina() - self.staminaDamage)
+
+    def receives_stamina_damage(self, damage):
+        self.staminaDamage += damage
+
+    def heal_stamina_damage(self, heal):
+        self.receives_stamina_damage(-heal)
+
+    def current_humiliation(self):
+        return self.humiliationLevel
+
+    def humiliation(self):
+        return 10 * self.willpower()
+
+    def receives_humiliation_damage(self, damage):
+        self.humiliationLevel += damage
+
+    def heal_humiliation_damage(self, heal):
+        self.receives_humiliation_damage(-heal)
 
     def __repr__(self):
         result = ["\n-----------------", self.name, "------------------"]
@@ -456,6 +597,14 @@ class Person(universal.RPGObject):
             return BACK_HAIR_STYLE
         elif self.hairLength == 'butt-length':
             return BUTT_HAIR_STYLE
+
+    def grab_hair_message(self):
+        if self.hairStyle == BUTT_HAIR_STYLE[0]:
+            return ' '.join(["a fistful of", self.printedName + "'s", "hair"])
+        elif self.hairStyle == BUTT_HAIR_STYLE[1]:
+            return ' '.join(["one of", self.printedName + "'s", "pigtails"])
+        else:
+            return ' '.join([self.printedName + "'s", self.hairStyle])
 
     def risque(self):
         risqueLevel = sum(equipment.risque for equipment in self.equipmentList if not isinstance(equipment, items.Weapon))
@@ -631,23 +780,15 @@ class Person(universal.RPGObject):
             return 2
 
     #BODY_TYPES = ['slim', 'average', 'voluptuous', 'heavyset']
-    def is_slim(self):
-        return self.bodyType == BODY_TYPES[0]
-
-    def is_average(self):
-        return self.bodyType == BODY_TYPES[1]
-
-    def is_voluptuous(self):
-        return self.bodyType == BODY_TYPES[2]
-
-    def is_heavyset(self):
-        return self.bodyType == BODY_TYPES[3]
 
     def is_average_or_thinner(self):
         return self.is_slim() or self.is_average()
 
     def is_average_or_fatter(self):
         return not self.is_slim()
+    
+    def is_voluptuous(self):
+        return self.bodyType == BODY_TYPES[2]
 
     def is_voluptuous_or_thinner(self):
         return self.is_voluptuous() or self.is_average_or_thinner()
@@ -791,35 +932,6 @@ class Person(universal.RPGObject):
     def add_mark(self, mark):
         self.marks.append(mark)
 
-#----------------------------------------------------------------Abstract Methods---------------------------------------------------------------------
-    #abstractmethod
-    def spanks(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement spanks for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-
-    def spanked_by(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement spanked_by for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-
-    def reverses(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement reverses for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-
-    def reversed_by(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement reversed_by for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-
-    #abstractmethod
-    def failed(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement failed for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-
-    def blocks(self, person, position):
-        raise NotImplementedError(' '.join(['Uh-Oh! Looks like', author, 'forgot to implement blocked for', self.name, 'please send them an e-mail at', 
-            get_author_email_bugs()]))
-
-#-----------------------------------------------------------------End Abstract Methods--------------------------------------------------------------------------
-
     def take_item(self, item):
         if not item in self.inventory and not item in items.emptyEquipment:
             self.inventory.append(copy.deepcopy(item))
@@ -955,6 +1067,27 @@ class Person(universal.RPGObject):
                 self.inventory.remove(equipment)
             except ValueError:
                 pass
+
+    def put_some_clothing_on(self):
+        """
+        Meant to be used after catfights, this goes through and re-equips any clothing that may
+        have been removed. Note that this method isn't very smart. It just equips the first of
+        each type of outfit that it finds, so it may equip the wrong thing if the player has 
+        multiple types of clothing in their inventory.
+        """
+        if not self.wearing_underwear():
+            underwear = [item for item in self.inventory if items.is_underwear(item)]
+            if underwear:
+                self.equip(underwear.pop())
+        if not self.wearing_lower_clothing():
+            lowerClothing = [item for item in self.inventory if items.is_lower_clothing(item)
+                    and not items.is_underwear(item)]
+            if lowerClothing:
+                self.equip(lowerClothing.pop())
+        if not self.wearing_shirt():
+            shirts = [item for item in self.inventory if items.is_shirt(item)]
+            if shirts:
+                self.equip(shirts.pop())
 
 
     def unequip(self, equipment, couldBeNaked=True):
@@ -1202,18 +1335,48 @@ class Person(universal.RPGObject):
         return self.lower_clothing().armorType if self.lower_clothing().name != items.emptyLowerArmor.name else self.lower_clothing().armorType
 
     def wearing_pants_or_shorts(self):
-        return self.lower_clothing().armorType == items.Pants.armorType or self.lower_clothing().armorType == items.Shorts.armorType
+        return self.wearing_pants() or self.wearing_pants()
+
+    def wearing_skirt_or_dress(self):
+        return self.wearing_skirt() or self.wearing_dress() 
+
+    def wearing_skirt(self):
+        return self.lower_clothing().armorType == items.Skirt.armorType
+
+    def wearing_dress(self):
+        return self.lower_clothing().armorType == items.Dress.armorType
+
+    def wearing_trousers(self):
+        return self.lower_clothing().armorType == items.Pants.armorType
+
+    def wearing_shorts(self):
+        return self.lower_clothing().armorType == items.Shorts.armorType
+
+    def wearing_shirt(self):
+        return self.shirt().name != items.emptyUpperArmor.name
+
 
     def wearing_lower_clothing(self):
         return self.lower_clothing().name != items.emptyLowerArmor.name
 
+    def wearing(self, itemType):
+        """
+        Given a natural number representing an itemType (found at the top of this file. Search for
+        "WEAPON ="  to find the list), returns whether or not the character is wearing something
+        of that item type.
+        """
+        return items.is_empty(self.equipmentList[itemType])
+
     def clad_bottom(self, useName=True, pajama=False):
         if pajama:
-            return hisher(self) + " " + self.pajama_bottom().name + "-clad bottom"
+            return self.pj_clad_bottom(useName, pajama)
         else:
             return (hisher(self) + (" " + self.underwear().name + "-clad bottom" if self.underwear() != items.emptyUnderwear else self.lower_clothing_type() + " bottom") 
                     if self.lower_clothing() == items.emptyLowerArmor else "the seat of " + (self.printedName + "'s" if useName else hisher(self)) + " " + 
                     self.lower_clothing_type())
+
+    def pj_clad_bottom(self, useName=True, pajama=True):
+        return hisher(self) + " " + self.pajama_bottom().name + "-clad bottom"
 
     def clothing_below_the_waist(self):         
         return self.underwear() if self.lower_clothing().name == items.emptyLowerArmor.name else self.lower_clothing()
@@ -1561,7 +1724,7 @@ class Person(universal.RPGObject):
             Person.add_data('\n'.join(welts), saveData)
         else:
             Person.add_data('', saveData)
-        Person.add_data(str(self.skinColor), saveData)
+        Person.add_data(str(self.skin_color), saveData)
         Person.add_data(str(self.hairColor), saveData)
         Person.add_data(str(self.eyeColor), saveData)
         Person.add_data(str(self.hairStyle), saveData)
@@ -1785,7 +1948,7 @@ class Person(universal.RPGObject):
                 hairStyleDescription += ' cute pigtails.'
             else:
                 hairStyleDescription += ' '.join(['', 'a', self.hairStyle])
-        appearance = [[self.name + "'s", '''skin is a''', self.skinColor + ".", HeShe(self), '''has''', self.eyeColor, '''eyes, and is wearing''', hisher(self),
+        appearance = [[self.name + "'s", '''skin is a''', self.skin_color + ".", HeShe(self), '''has''', self.eyeColor, '''eyes, and is wearing''', hisher(self),
             self.hairLength + ",", self.hairColor,'''hair''', hairStyleDescription + "."],
             [HeShe(self), '''stands at a fairly''', self.height, '''height.''', HeShe(self), '''has a''', self.musculature + ",", self.bodyType, '''body.''']]
         bumDesc = ' '.join([self.muscle_adj() + ",", self.bum_adj()])
@@ -1877,7 +2040,7 @@ class PlayerCharacter(Person):
     the entire game, so long as the two never fight each other).
     """
     def __init__(self, name, gender, description="", currentEpisode=None, order=zeroth_order, nickname=""):
-        super(PlayerCharacter, self).__init__(name, gender, None, None, description=description, order=zeroth_order, rawName='$$$universal.state.player$$$', skinColor='rich caramel',
+        super(PlayerCharacter, self).__init__(name, gender, None, None, description=description, order=zeroth_order, rawName='$$$universal.state.player$$$', skin_color='rich caramel',
                 eyeColor='brown', hairColor='dark brown')
         self.keywords = set()
         self.currentEpisode = currentEpisode
@@ -2211,6 +2374,13 @@ class Party(universal.RPGObject):
     def index(self, member):
         return self.members.index(member)
 
+    def restore(self):
+        """
+        Fully restores the health, mana, and removes the statuses on every member of the party. 
+        """
+        for member in self:
+            member.restores()
+
     def __iter__(self):
         for member in self.members:
             yield member
@@ -2251,6 +2421,12 @@ class Party(universal.RPGObject):
         return '\n'.join(partyNames)
 
     def display_party(self, showHP=True, ally=None, targeted=None, grappling=False):
+        return self.generic_display(showHP, ally, targeted, grappling, Person.current_health,
+                Person.health, Person.current_mana, Person.mana)
+
+    def generic_display(self, showHP=True, ally=None, targeted=None, grappling=False, 
+            currentHealthFunction=Person.current_health, healthFunction=Person.health, 
+            currentManaFunction=Person.current_mana, manaFunction=Person.mana):
         allyIndex = -1
         targetedIndices = []
         if ally is not None and ally in self.members:
@@ -2260,16 +2436,25 @@ class Party(universal.RPGObject):
         memberNames = [': '.join([member.printedName, member.status_string()]) for member in self]
         if showHP:
             partyTxt = ['\t'.join([target(n, arrow(n, allyIndex), targetedIndices) + '. '
-                + memberName, str(member.current_health()) + '/' + str(member.health()), str(member.current_mana()) + '/' + str(member.mana())])
-                for (n, member, memberName) in zip([i for i in range(1, len(self.members)+1)], self.members, memberNames)]
+                + memberName, str(currentHealthFunction(member)) + '/' + str(healthFunction(member)), 
+                str(currentManaFunction(member)) + '/' + str(manaFunction(member))])
+                for (n, member, memberName) in zip([i for i in range(1, len(self.members)+1)], 
+                    self.members, memberNames)]
             if grappling:
                 grappled = None
-                partyTxt = ['\t'.join([memberTxt, display_person(mem)]) for (memberTxt, mem) in zip(partyTxt, self.members)]
+                partyTxt = ['\t'.join([memberTxt, display_person(mem)]) for (memberTxt, mem) in 
+                    zip(partyTxt, self.members)]
             return '\n\t'.join(partyTxt)
         else:
             return '\t'.join([target(n, arrow(n, allyIndex), targetedIndices) + '. ' + '\n'
                 + memberName for (n, member, memberName) in 
                 zip([i for i in range(1, len(self.members)+1)], self.members, memberNames)])
+
+    def display_catfight(self, showHP=True, ally=None, targeted=None, grappling=True):
+        return self.generic_display(showHP, ally, targeted, grappling, Person.current_stamina, 
+            Person.stamina, Person.current_humiliation, Person.humiliation)
+            
+    
 
 
     def display(self):
@@ -2392,18 +2577,11 @@ class Spell(combatAction.CombatAction):
     effectClass = None
     numTargets = 0
     cost = 0
-    """
-    Fields from CombatAction:
-    grappleStatus = combatAction.GRAPPLER_ONLY
-    effectClass = ALL
-    grappleStatus = GRAPPLER_ONLY
-    targetType = ALLY
-    attacker = None
-    defenders = []
+    actionType = 'spell'
 
-    """
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(Spell, self).__init__(attacker, defenders, universal.MAGIC, secondaryStat)
+    def __init__(self, attacker, defenders, secondary_stat=None):
+        super(Spell, self).__init__(attacker, defenders, universal.MAGIC,
+                                    secondary_stat)
         self.name = None
         self.description = None
         self.effectFormula = None
@@ -2417,6 +2595,10 @@ class Spell(combatAction.CombatAction):
         self.magicMultiplier = None
         self.castableOutsideCombat = False
         self.primaryStat = Spell.primaryStat
+
+    def confirmation_message(self):
+        return ' '.join([self.attacker, 'will cast', self.name, 'on', self.display_defenders() + 
+            '.'])
 
     def __str__(self):
         return self.name
@@ -2544,14 +2726,15 @@ class Combat(Spell):
     targetType = ENEMY
     effectClass = None
     actionType = 'combat'
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(Combat, self).__init__(attacker, defenders, secondaryStat)
+    def __init__(self, attacker, defenders, secondary_stat=None):
+        super(Combat, self).__init__(attacker, defenders, secondary_stat)
         self.minDamage = None
         #Deprecated. Do not use.
         self.spellType = COMBAT
         self.spellSchool = universal.COMBAT_MAGIC
         self.targetType = combatAction.ENEMY
         self.actionType = 'combat'
+
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         super(Combat, self).effect(inCombat, allies, enemies)
@@ -2744,7 +2927,7 @@ class Buff(Spell):
     primaryStat = universal.WILLPOWER
     secondaryStat = universal.TALENT
 
-    def __init__(self, attacker, defenders, secondaryStat=None):
+    def __init__(self, attacker, defenders, secondary_stat=None):
         super(Buff, self).__init__(attacker, defenders, Buff.secondaryStat)
         self.targetType = combatAction.ALLY
         self.effectClass = None
@@ -2803,8 +2986,8 @@ class Buff(Spell):
         return ''
 
 class Healing(Buff):
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(Healing, self).__init__(attacker, defenders, secondaryStat)
+    def __init__(self, attacker, defenders, secondary_stat=None):
+        super(Healing, self).__init__(attacker, defenders, secondary_stat)
         self.minHealedHealth = None
         #If fortify is true, then this healing spell can heal health past the character's maximum health.
         self.fortify = False
@@ -2865,8 +3048,8 @@ class Healing(Buff):
 
 
 class Resurrection(Healing):
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(Resurrection, self).__init__(attacker, defenders, secondaryStat)
+    def __init__(self, attacker, defenders, secondary_stat=None):
+        super(Resurrection, self).__init__(attacker, defenders, secondary_stat)
         self.fortify = False
         self.fortifyCap = None
 
@@ -2883,8 +3066,8 @@ class Spectral(Spell):
     """
     Note: Because Spectral spells are so varied, we can't implement a generic effect function. Each spectral spell will have to implement its own.
     """
-    def __init__(self, attacker, defenders, secondaryStat=None):
-        super(Spectral, self).__init__(attacker, defenders, secondaryStat)
+    def __init__(self, attacker, defenders, secondary_stat=None):
+        super(Spectral, self).__init__(attacker, defenders, secondary_stat)
         self.targetType = combatAction.ENEMY
         self.effectClass = None
         self.spellType = SPECTRAL #Deprecated. Do not use.
@@ -3346,10 +3529,16 @@ def is_female_msg(person, femaleMsg, maleMsg):
 def hair_length_based_msg(person, shortMsg, shoulderMsg, backMsg, buttMsg):
     return universal.msg_selector(person.hairLength, {HAIR_LENGTH[0]:shortMsg, HAIR_LENGTH[1]:shoulderMsg, HAIR_LENGTH[2]:backMsg, HAIR_LENGTH[3]:buttMsg})
 
+
+def weapon_name(character):
+    return character.weapon().name
+
+
 def hairstyle_msg(person, down, ponytail, braid, pigtails, bun):
     return universal.msg_selector(person.hairStyle, {BUTT_HAIR_STYLE[0]:down, 
         BUTT_HAIR_STYLE[1]:ponytail, BUTT_HAIR_STYLE[2]:braid, BUTT_HAIR_STYLE[3]:pigtails,
         BUTT_HAIR_STYLE[4]:bun})
+
 
 def wearing_lower_clothing_msg(person, wearing, notWearing):
     return wearing if person.wearing_lower_clothing() else notWearing

@@ -86,31 +86,32 @@ def display_acknowledgments():
     universal.get_screen().blit(universal.get_background(), universal.get_world_view().topleft)
     universal.say(format_text([['Code, Story, Concept: Andrew Russell'], 
         ['Editor: Emily'],
-        ['Support Writers: Emily the Eccentric Emu, Bonemouth the Boxfish, Ken the Kookaburra, Skyblaster the Sardine'],
-        ['Beta Testers: Uninventive the Umbrellabird, Johny741 the Jackal, Bonemouth the Boxfish, Emily the Eccentric Emu, Ken the Kookaburra, Skyblaster the Sardine'],
+        ['Support Writers: Emily the Eccentric Emu, Bonemouth the Boxfish, Ken the Kookaburra, Skyblaster the Sardine, Monkeytoster the Mongoose'],
+        ['Beta Testers: Uninventive the Umbrellabird, Johny741 the Jackal, Bonemouth the Boxfish, Emily the Eccentric Emu, Ken the Kookaburra, Skyblaster the Sardine, Monkeytoster the Mongoose'],
         ['Images:'],
         ['  title screen image: Rak'],
         #['  Episode 1 titlecard: Lys'],
         #['Sound Effects: Filippo Vicarelli. Downloaded from his website: noiseforfun.com'],
         #['Dungeon step: Click Switch'],
-        ['Music: Filippo Vicarelli. Purchased through his website: playonloop.com.'], 
-        ['  Opening Crawl/Church theme: Apparition'],
-        ['  Title Theme: The Challenge'],
-        ['  Episode 1 Titlecard: Bridge over Darkness'],
-        ["  Vengador's Theme: Antique Market"],
-        ["  Guard's Theme: War Victims"],
-        ['  Avaricum Theme: Spiritual Path'],
-        ['  Battle Theme: The Chase'],
-        ["  Peaceful Theme(Adventurer's Guild): Jesu"],
-        ['  Tense Theme: Hurry Up'],
-        ['  Defeated Theme: Graveyard Lord'],
-        ["  Peter's Theme: Telekinesis"],
-        ["  Carlita's Theme: Goodbye"],
-        ["  Maria's Theme : Moonlight"],
-        ["  Carrie's Theme: Smart Ideas"],
-        ["  Catalin's Theme: Sadistic Game"],
-        ["  Roland's Theme: Risky Plan"],
-        ["  Elise's Theme: Land of Peace"],
+        ['All music are free tracks posted by the authors on their websites. None of them are' +
+            'involved in Pandemonium Cycle: The Potion Wars'],
+        ['Music 1: Filippo Vicarelli: playonloop.com.'], 
+        ['  Victory Theme: Waving Grass'],
+        ['Music 2: Aaron Krogh https://soundcloud.com/aaron-anderson-11']
+        ['  Title Theme: Megaboss Up Tempo'],
+        ['  Episode 1 Titlecard: Pre Boss Battle Tension'],
+        ["  Vengador's Theme: Heated Battle"],
+        ['  Avaricum Theme: Wintry Town'],
+        ['  Battle Theme: This Is Not A Drill'],
+        ['  Tense Theme: Pre Boss Battle Tension'],
+        ['  Defeated Theme: Heresy (also known as Splinter in the Mind)'],
+        ["  Peter's Theme: Rose Petals"],
+        ["  Edita's Theme: Lost"],
+        ["  Maria's Theme : Never Forget"],
+        ["  Carrie's Theme: My Friend"],
+        ["  Catalin's Theme: Insidia"],
+        ["  Roland's Theme: Desert Battle"],
+        ["  Elise's Theme: Reflections in Tranquility"],
         ['Coded in Python using the Pygame engine: pygame.org'],
         ]
         ))
@@ -253,10 +254,12 @@ def opening_crawl():
     display_crawl()
     delay_short()
     if not skip:
-        music.play_music(music.THEME, DELAY_TIME_SHORT, wait=True)
+        music.play_music(OPENING_CRAWL, fadeoutTime=0, wait=True)
+        pygame.mixer.music.load(music.THEME)
+        #music.play_music(music.THEME, DELAY_TIME_SHORT, wait=True)
     else:
         music.play_music(music.THEME, wait=True)
-    #delay_short()
+    delay_short()
 
 loadingGame = True
 

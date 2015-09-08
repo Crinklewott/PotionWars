@@ -281,6 +281,7 @@ class Armor(Item):
         return '\n'.join([displayString, 'attack defense: ' + str(self.attackDefense), 
             'attack penalty: ' + str(self.attackPenalty), 'casting penalty: ' + str(self.castingPenalty), 'casting defense: ' + str(self.magicDefense)])
 
+
 class UpperArmor(Armor):
     armorType = 'chest armor'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=6, risque=0):
@@ -298,11 +299,13 @@ class UpperArmor(Armor):
         char._set_shirt(emptyUpperArmor)
         char.take_item(self)
 
+
 class Shirt(UpperArmor):
     armorType = 'shirt'
     def __init__(self, name, description, price=0, attackDefense=0, attackPenalty=0, castingPenalty=0, magicDefense=0, enchantments=None, maxEnchantment=9, risque=0):
         super(Shirt, self).__init__(name, description, price, attackDefense, attackPenalty, castingPenalty, magicDefense, enchantments, maxEnchantment, risque)
         self.armorType = Shirt.armorType
+
 
 class FullArmor(Armor):
     armorType = 'full armor'
@@ -460,7 +463,7 @@ class Underwear(Armor):
         If couldBeNaked is True, then the player is trying to unequip this armor. If couldBeNaked is False, then this armor is being unequipped as part of equipping
         a different piece of equipment.
         """
-        if couldBeNaked and char.lower_clothing() == emptyLowerArmor:
+        if couldBeNaked and char.is_pantsless():
             raise NakedError()
         else:
             char._set_underwear(emptyUnderwear)
@@ -779,7 +782,11 @@ emptyPajamaTop = PajamaTop('Topless', 'Who needs to sleep with a top on?', 0)
 
 emptyPajamaBottom = PajamaBottom('Bottomless', 'Who needs to sleep with a bottom on?', 0)
 
-emptyEquipment = [emptyItem, emptyWeapon, emptyUpperArmor, emptyLowerArmor, emptyUnderwear, emptyPajamaTop, emptyPajamaBottom]
+emptyEquipment = [emptyItem, emptyWeapon, emptyUpperArmor, emptyLowerArmor, emptyUnderwear, 
+        emptyPajamaTop, emptyPajamaBottom]
+
+def is_empty(item):
+    return any([item.name == empty.name for empty in emptyEquipment])
 
 #The purpose of the following functions is to simplify the latex translation for when trying to get the equipment of arbitrary characters.
 def weapon(personName):
@@ -858,8 +865,6 @@ def is_upper_clothing(item):
             map(lambda x : x.armorType == armor_type,
                 [Shirt, FullArmor, Dress, Robe])
         )
-
-
 
 def is_underwear(item):
     try:
@@ -951,26 +956,38 @@ def lower_clothing_msg(person, pantsMsg, shortsMsg, skirtMsg, dressMsg, noPantsM
 
 
 def wearing_trousers(person, wearingTrousers, notWearingTrousers='', noLowerClothing=''):
-    if person.lower_clothing() == emptyLowerArmor:
+    if person.is_pantsless():
         return noLowerClothing
-    return universal.msg_selector(person.wearing_pants_or_shorts() or person.lower_clothing().armorType == Skirt.armorType, {True:wearingTrousers, False:notWearingTrousers})
+    return universal.msg_selector(person.wearing_pants_or_shorts() or 
+            person.lower_clothing().armorType == Skirt.armorType, 
+            {True:wearingTrousers, False:notWearingTrousers})
 
 def wearing_shirt(person, wearingShirt, notWearingShirt='', noLowerClothing=''):
     if person.shirt() == emptyUpperArmor:
         return noLowerClothing
-    return universal.msg_selector(person.shirt() != emptyUpperArmor, {True:wearingShirt, False:notWearingShirt})
+    return universal.msg_selector(person.shirt() != emptyUpperArmor, {True:wearingShirt, 
+        False:notWearingShirt})
 
 def wearing_underwear(person, wearingUnderwear, notWearingUnderwear=''):
-    return universal.msg_selector(person.underwear() != emptyUnderwear, {True:wearingUnderwear, False:notWearingUnderwear})
+    return universal.msg_selector(person.underwear() != emptyUnderwear, {True:wearingUnderwear, 
+        False:notWearingUnderwear})
 
 def wearing_dress(person, wearingDress, notWearingDress='', noOuterClothing=''):
-    if person.shirt() == emptyUpperArmor and person.lower_clothing() == emptyLowerArmor:
+    if person.shirt() == emptyUpperArmor and person.is_pantsless():
         return noOuterClothing
     else:
-        return universal.msg_selector(person.lower_clothing().armorType == Skirt.armorType or person.lower_clothing().armorType == Dress.armorType, {True:wearingDress, False:notWearingDress})
+        return universal.msg_selector(person.lower_clothing().armorType == Skirt.armorType or 
+                person.lower_clothing().armorType == Dress.armorType, 
+                {True:wearingDress, False:notWearingDress})
 
 def baring_underwear(underwear, baringMsg, notBaringMsg, notWearingUnderwearMsg=''):
-    return notWearingUnderwearMsg if underwear == emptyUnderwear else universal.msg_selector(underwear.baring, {True:baringMsg, False:notBaringMsg})
+    return notWearingUnderwearMsg if underwear == emptyUnderwear else universal.msg_selector(
+            underwear.baring, {True:baringMsg, False:notBaringMsg})
+
+
+def clothing_name(clothing):
+    return clothing.name
+
 
 def bare(person, baring='', notBaring=''):
     if person.lower_clothing().baring and person.underwear().baring:

@@ -1,17 +1,18 @@
-import universal
-import pwutilities
-import person
-import items
-import pwenemies
-import dungeonmode
-import itemspotionwars
-import random
+import combat
 import conversation
+import copy
+import dungeonmode
 import episode
-import townmode
-import episode
+import items
+import itemspotionwars
 import music
+import person
+import pwenemies
+import pwutilities
+import random
+import townmode
 import transExceptions
+import universal
 import episode2CharRooms
 def init_episode_2():
     episode2CharRooms.build_chars()
@@ -56958,14 +56959,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "into"
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "bun."
- , ' '])])) , ' ']), ''.join([ "{"
- , ' ']), ''.join([ person.HeShe() , ' ']), ''.join([ "pulls"
- , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "hair"
- , ' ']), ''.join([ "into"
- , ' ']), ''.join([ "a"
- , ' ']), ''.join([ "bun."
- , ' ']), ''.join([ "}"
- , ' '])], [''.join([ "Cosima"
+ , ' '])])) , ' '])], [''.join([ "Cosima"
  , ' ']), ''.join([ "puts"
  , ' ']), ''.join([ "her"
  , ' ']), ''.join([ "hands"
@@ -57028,7 +57022,28 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "again."
  , ' '])], [''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "eyes"
  , ' ']), ''.join([ "narrow."
- , ' ']), ''.join([ person.HeShe() , ' ']), ''.join([ "steps"
+ , ' '])]]), justification=0)
+        return conversation.continue_to_node(ep2_cosima_spar, ep2_cosima_fight, False)
+    ep2_cosima_spar.quip_function = ep2_cosima_spar_qf
+    ep2_cosima_fight = conversation.Node(635, '''ep2 cosima fight''')
+    
+    
+    def ep2_cosima_fight_qf():
+        cosima = universal.state.get_character("Cosima.person") 
+        def end_combat(defeatedAllies, defeatedEnemies, victorious):
+            cosima = universal.state.get_character("Cosima.person") 
+            cosima.litany = conversation.allNodeNames["ep2 cosima player defeated"]
+            conversation.converse_with(cosima)
+        return universal.acknowledge, [combat.catfight, cosima, end_combat, townmode.town_mode]
+        ep2_cosima_fight.quip = " "
+        universal.say(universal.format_text_translate([[], [], [], []]), justification=0)
+    ep2_cosima_fight.quip_function = ep2_cosima_fight_qf
+    ep2_cosima_player_defeated = conversation.Node(637, '''ep2 cosima player defeated''')
+    
+    
+    def ep2_cosima_player_defeated_qf():
+        ep2_cosima_player_defeated.quip = " "
+        universal.say(universal.format_text_translate([[], [''.join([ person.HeShe() , ' ']), ''.join([ "steps"
  , ' ']), ''.join([ "forward"
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "thrusts"
@@ -57265,8 +57280,8 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "me.'"
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
-        ep2_cosima_spar.add_child(ep2_cosima_charge)
-        ep2_cosima_spar.add_player_comment(universal.format_line_translate([""
+        ep2_cosima_player_defeated.add_child(ep2_cosima_charge)
+        ep2_cosima_player_defeated.add_player_comment(universal.format_line_translate([""
 , ''.join([ "Make"
  , ' ']), ''.join([ "one"
  , ' ']), ''.join([ "last"
@@ -57289,8 +57304,8 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "your"
  , ' ']), ''.join([ "might."
  , ' '])]))
-        ep2_cosima_spar.add_child(ep2_cosima_flee)
-        ep2_cosima_spar.add_player_comment(universal.format_line_translate([""
+        ep2_cosima_player_defeated.add_child(ep2_cosima_flee)
+        ep2_cosima_player_defeated.add_player_comment(universal.format_line_translate([""
 , ''.join([ "Cautiously"
  , ' ']), ''.join([ "back"
  , ' ']), ''.join([ "to"
@@ -57311,8 +57326,8 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "door."
  , ' '])]))
-    ep2_cosima_spar.quip_function = ep2_cosima_spar_qf
-    ep2_cosima_charge = conversation.Node(635, '''ep2 cosima charge''')
+    ep2_cosima_player_defeated.quip_function = ep2_cosima_player_defeated_qf
+    ep2_cosima_charge = conversation.Node(639, '''ep2 cosima charge''')
     
     
     def ep2_cosima_charge_qf():
@@ -58903,7 +58918,7 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "welts."
  , ' '])])) , ' '])]]), justification=0)
     ep2_cosima_charge.quip_function = ep2_cosima_charge_qf
-    ep2_cosima_flee = conversation.Node(637, '''ep2 cosima flee''')
+    ep2_cosima_flee = conversation.Node(641, '''ep2 cosima flee''')
     
     
     def ep2_cosima_flee_qf():
@@ -61564,7 +61579,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_cosima_flee.quip_function = ep2_cosima_flee_qf
-    ep2_cosima_administer_spanking = conversation.Node(639, '''ep2 cosima administer spanking''')
+    ep2_cosima_administer_spanking = conversation.Node(643, '''ep2 cosima administer spanking''')
     
     
     def ep2_cosima_administer_spanking_qf():
@@ -61748,7 +61763,7 @@ def init_scene_1_episode_2():
  , ' ']), person.himher(), ''.join([ "."
  , ' '])]]), justification=0)
     ep2_cosima_administer_spanking.quip_function = ep2_cosima_administer_spanking_qf
-    ep2_cosima_refuse_spanking = conversation.Node(641, '''ep2 cosima refuse spanking''')
+    ep2_cosima_refuse_spanking = conversation.Node(645, '''ep2 cosima refuse spanking''')
     
     
     def ep2_cosima_refuse_spanking_qf():

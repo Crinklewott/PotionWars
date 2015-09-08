@@ -31,12 +31,6 @@ import copy
 import random
 
 """
-TODO: My dungeon display code just outright isn't working. I need to delete the whole thing, and start over.
-
-I should probably better organize the whole damn thing.
-"""
-
-"""
 For the GUI of the dungeon view:
     We'll replace the commands with the character names, health and mana. We'll dynamically resize the commandView and worldView to be the minimum size needed to fit all the
     party members (ranging from 1/3rd the standard size for one character in the party up to double the standard size for 6 characters).
@@ -219,7 +213,15 @@ class FloorEvents(universal.RPGObject):
     def __init__(self, events):
         self.events = events
         self.height = len(events)
-        self.width = len(max(events, key=lambda x : len(x)))
+        try:
+            self.width = len(max(events, key=lambda x : len(x)))
+        #Means events are stored as a nested dictionary mapping integers to dictionaries that 
+        #map integers to events, rather than tuples
+        except TypeError:
+            dictionaryIndices = []
+            for dictionary in [dictionary for row, dictionary in events.iteritems()]:
+                dictionaryIndices.extend(dictionary)
+            self.width = max(dictionaryIndices)
 
     def __getitem__(self, key):
         """
@@ -285,8 +287,6 @@ def go_error_interpreter(keyEvent):
         moveTo[-1] += '_'
         universal.set_commands([''.join(["Coordinates to travel to:", ', '.join(moveTo)]), '(Esc) Cancel', '<==Back'])  
         universal.set_command_interpreter(go_interpreter)
-
-
 
 class Dungeon(townmode.Room):
     """
@@ -989,6 +989,9 @@ def dungeon_interpreter(keyEvent):
             pass
         else:
             universal.clear_screen()
+            room = dungeon.adjacent[0]
+            universal.say_title(room.name)
+            universal.say_replace(room.get_description())
     return dirtyRects
 
 def select_character_interpreter(keyEvent):
@@ -1092,7 +1095,10 @@ def select_targets_interpreter(keyEvent):
         numTargets = chosenSpell.numTargets - len(targetList)
         universal.set_commands([ ' '.join(['(#) Select', str(numTargets), 'target' + ('s.' if numTargets > 1 else '.')]), '<==Back'])
     if chosenSpell.numTargets == len(targetList):
-        spellResult = chosenSpell.__class__(selectedSlinger, targetList).effect(inCombat=False, allies=person.get_party())
+        spellResult = chosenSpell.__class__(selectedSlinger, targetList).effect(
+
+
+            in_combat=False, allies=person.get_party())
         selectedSlinger.uses_mana(chosenSpell.cost)
         say(spellResult[0])
         if spellResult[-1]:
@@ -1106,7 +1112,8 @@ def confirm_cast_interpreter(keyEvent):
     #Cast spell if "y". Remove last target if "n."
     global targetList, selectedSlinger
     if keyEvent.key == K_y:
-        spellResult = chosenSpell.__class__(selectedSlinger, targetList).effect(inCombat=False, allies=person.get_party())
+        spellResult = chosenSpell.__class__(selectedSlinger, targetList).effect(
+            in_combat=False, allies=person.get_party())
         selectedSlinger.uses_mana(chosenSpell.cost)
         say(spellResult[0])
         targetList = []

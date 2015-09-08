@@ -1128,7 +1128,7 @@ def guard_greeting_1_1_quip():
     '''spear he carries only adds to his intimidating appearance.'''],
     '''"What's your name?" asks the guard.'''])
     guard_greeting_1_1.playerComments = ['''"I don't have to answer that."''', '"' + universal.state.player.name + '"', '"' + universal.state.player.fakeName + '"']
-    music.play_music(pwutilities.GUARDS)
+    music.play_music(pwutilities.TENSION)
 
 southGuard.litany = too_busy.index
 #southGuard.defaultLitany = too_busy.index
@@ -1893,15 +1893,9 @@ def maria_3_1_1_quip():
     maria_3_1_1.quip = universal.format_text(['''"And you're worried that maybe you need to change plans," says Maria, nodding. "Understandable. However, at this point, the Adventurer's Guild is practically the only place willing to hire Taironans. You can look around a bit if you want, but really the Guild is your only option, unless you want seasonal work on the farms. And that work's not pleasant, when it's there at all.''', '''"Fortunately, Adrian's a good man. He won't send you into anything that's over your head, and he treats his employees very well. In fact, let him know that I sent you, and he's certain to hire you. We've got a long, successful history together."'''])
 
     if not "Maria_intimidated_you" in universal.state.player.keywords:
-        if maria_3_1_1.children is None:
-            maria_3_1_1.children = [maria_3p1_1_1, maria_3p2_1_1, maria_3p3_1_1]
-        maria_3_1_1.children.extend([maria_3p1_1_1, maria_3p2_1_1, maria_3p3_1_1]) 
-        if maria_3_1_1.playerComments is None:
-            maria_3_1_1.playerComments = ['''"A 'history' eh? Didn't know you were that kind of girl."''', '''"Ooh, a 'history'? Got any dirty details to share?"''', 
+        maria_3_1_1.children = [maria_3p1_1_1, maria_3p2_1_1, maria_3p3_1_1]
+        maria_3_1_1.playerComments = ['''"A 'history' eh? Didn't know you were that kind of girl."''', '''"Ooh, a 'history'? Got any dirty details to share?"''', 
                     '''"Thanks, I will! Wait, this isn't some sort of prank is it? He doesn't actually like hate you or something does he? I won't get my booty blistered if I mention your name, will I?"''']
-        else:
-            maria_3_1_1.playerComments.extend(['''"A 'history' eh? Didn't know you were that kind of girl.", "Ooh, a 'history'? Got any dirty details to share?"''', 
-                '''"Thanks, I will! Wait, this isn't some sort of prank is it? He doesn't actually like hate you or something does he? I won't get my booty blistered if I mention your name, will I?"'''])
     else:
         maria_3_1_1.children = mariaRootChildren
         maria_3_1_1.playerComments = mariaRootPlayerComments
@@ -4644,7 +4638,6 @@ def ep1_paloma_otk_hand_slipper(keyEvent, num=None):
         set_command_interpreter(ep1_paloma_otk_hand_slipper_belt)
 
 def ep1_paloma_otk_hand_slipper_lift(keyEvent):
-    #&&&
     try:
         num = universal.response(keyEvent)
     except ValueError:
@@ -7776,7 +7769,7 @@ def necia_mercenary_lost_interpreter(keyEvent):
             name() + ".", '''"Terribly sorry about that. I can assure you, she will be paddled far longer and harder than you were. We'll''',
             '''send an agent to meet with you later. Just sit tight and act loyal to the guards."'''],
         ['''The warslinger and his companion run out the armory door.''']]), justification=0)
-        episode.allEpisodes[universal.state.player.currentEpisode].next_scene()
+    episode.allEpisodes[universal.state.player.currentEpisode].next_scene()
 
 
 def necia_wimpy_lost_interpreter(keyEvent):
@@ -8658,7 +8651,7 @@ def scene_3_guild():
             ['''The guard scowls. "Of course. What do you take me for?"'''],
             ['''"Indeed," says Adrian. He throws''', name(), '''a reassuring smile, before turning and disappearing back into the milieu.'''],
             ['''A sharp cry comes from the main entranceway. It sounds familiar.''', name(), '''starts to push past the guards, and enters the main''',
-                '''room.\n\n''']]), justification=0, music=[pwutilities.GUARDS])
+                '''room.\n\n''']]), justification=0, music=[pwutilities.TENSION])
     universal.say(universal.format_text([['''\mThe main room is a complete mess. There is not a single table, chair, or die that hasn't been shattered. The counter has''',
         '''been cut in half, and the two gaping holes in the wall between the kitchen and the main entranceway have merged into one giant hole. The''',
         '''dirt floor is littered with holes, bloodstains, and shattered weapons. The front door has been blown completely off. The room is crawling''',
@@ -8761,7 +8754,7 @@ def help_Edita_interpreter_continued(keyEvent):
         
 def questioning():
     universal.say(universal.format_text([['\m ' + HeShe(), '''walks over to a remnant of the counter, and leans on it.'''],
-        ['''After a few minutes, the tall blonde woman approaches. "Hello, my name is Deidre."\n\n''']]), justification=0, music=[pwutilities.GUARDS])
+        ['''After a few minutes, the tall blonde woman approaches. "Hello, my name is Deidre."\n\n''']]), justification=0, music=[pwutilities.TENSION])
     if 'charmed_by_Deidre' in keywords():
         universal.say(universal.format_text([['''"Yes, we've met," says''', name(), '''flatly.'''],
             ['''"Indeed, which is why Sir Roland sent me to talk to you," says Deidre, gesturing towards the man with the blue raptor emblazoned on his''',
@@ -11474,16 +11467,6 @@ ep1_tavern_outgoing_dont_rub.quip_function = ep1_tavern_outgoing_dont_rub_qf
         
 
 def ep1_elise_sing(node):
-    songs = [pwutilities.ELISE, pwutilities.OMINOUS, pwutilities.ROLAND, pwutilities.CARLITA, pwutilities.GUARDS, pwutilities.CATALIN, pwutilities.CARLITA, pwutilities.ROLAND, pwutilities.CATALIN, pwutilities.ROLAND, pwutilities.CARLITA, pwutilities.ELISE, pwutilities.CARRIE, pwutilities.ROLAND, pwutilities.CARRIE]  
-    """
-    try:
-        node.music.extend(songs)
-    except AttributeError:
-        if node.music is None:
-            node.music = songs
-        else:
-            node.music = [node.music] + songs
-    """
     quip = universal.format_text([
     ['''Elise gets up on the stage, while Carrie takes the harpsichordist's place. She clears her throat, and begins to speak, her voice amplified by''',
         '''a touch of magic. "Hello everyone. For those of you who don't know me, my name is Elise. I wasn't planning on singing tonight, but all you schmucks wore me''',
@@ -11491,7 +11474,7 @@ def ep1_elise_sing(node):
         '''I've decided to sing a few songs for you."'''],
     ['''There's a cheer from the regulars.'''],
     ['''Elise flushes, and she gives a broad grin. "I'm not that good."'''],
-    ['''Carrie rolls her eyes and says something.''', name(), '''doesn't hear it, but Elise clearly does; her embarassed blush deepens.'''],
+    ['''Carrie rolls her eyes and says something.''', name(), '''doesn't hear it, but Elise clearly does; her embarrassed blush deepens.'''],
     ['''"Anyway," says Elise quickly. "I'll be singing two songs tonight."'''],
     ['''There's a groan.'''],
     ['''"Well if you want fewer-"'''],
@@ -12958,7 +12941,7 @@ def ep1_roland():
 #-----------------------------------------------End Episode 1: Tension---------------------------------------------------------------------
 def init_episode1():
     pass
-episode1 = episode.Episode(1, 'Tension', scenes=[episode1Scene1, episode1Scene2, episode1Scene3], titleTheme=pwutilities.VENGADOR) 
+episode1 = episode.Episode(1, 'Tension', scenes=[episode1Scene1, episode1Scene2, episode1Scene3], titleTheme=pwutilities.TENSION) 
 episode1.init = init_episode1
 
 #----------------------------------------------Episode 2: Back Alleys-------------------------------------------------------------------

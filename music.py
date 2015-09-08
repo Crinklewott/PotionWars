@@ -24,29 +24,7 @@ currentMusic = None
 currentMusicFileName = None
 musicFiles = {}
 
-def decrypt(fileName, songName):
-    """
-    We'll have to encrypt our music files once it's time to release the game, and decrypt
-    them as a temporary file. This function
-    will decrypt the music before attempting to play it.
-    Note: This function will need to use the tempfile python module in order to create the 
-    temporary file to maintain security, in particular mkstemp. However, Pygame doesn't
-    like it if we return a file object, so this has to return the path to the unencrypted
-    file.
-    If key is None, that means this code is being released, in which case, the music can't be played (since we can't reveal the key). By returning None, we ensure that
-    the game won't try to play it.
-    
-    #if key is None:
-        return None
-    else:
-        with open(fileName, 'rb') as f:
-            ciph = ''.join(f.readlines())
-        plain = obj.decrypt(ciph)
-        musicFiles.append(tempfile.mkstemp(suffix='.wav')[1])
-        with open(musicFiles[-1], 'wb') as f:
-            f.write(plain)
-        return musicFiles[-1]
-    """
+def register(fileName, songName):
     if os.path.exists(fileName):
         musicFiles[songName] = fileName
         return fileName
@@ -70,31 +48,47 @@ def clean_up_music():
 
 def set_theme(theme):
     global THEME
-    THEME = decrypt(theme, 'theme')
+    THEME = theme
+    musicFiles['theme'] = THEME
+
+
 def set_town(music):
     global TOWN
-    TOWN = decrypt(music, 'town')
+    TOWN = music
+    musicFiles['town'] = music
+
+
 def set_combat(music):
     global COMBAT
-    COMBAT = decrypt(music, 'combat')
+    COMBAT = music
+    musicFiles['combat'] = COMBAT
+
+def set_catfight(music):
+    global CATFIGHT
+    CATFIGHT = music
+    musicFiles['catfight'] = CATFIGHT
 
 def set_defeated(music):
     global DEFEATED
-    DEFEATED = decrypt(music, 'defeated')
+    DEFEATED = music
+    musicFiles['defeated'] = music
 
 def set_victory(music):
     global VICTORY
-    VICTORY = decrypt(music, 'victory')
+    VICTORY = music
+    musicFiles['victory'] = music
 
 def set_boss(music):
     global BOSS
-    BOSS = decrypt(music, 'boss')
+    BOSS = music
+    musicFiles['boss'] = music
 
 VICTORY = None
 TOWN = None
 THEME = None
 DEFEATED = None
 COMBAT = None
+CATFIGHT = None
 BOSS = None
 import threading
 lock = threading.Lock()
@@ -116,6 +110,9 @@ def play_music(fileObject, fadeoutTime=250, wait=False):
                 pygame.mixer.music.play(-1)
             currentMusic = fileObject
 
+def stop_music():
+    pygame.mixer.stop()
+
 def fadeout_thread(fadeoutTime, fileObject):
     lock.acquire()
     end_music([fadeoutTime, fileObject])
@@ -128,3 +125,5 @@ def end_music(arglist):
 
 def close_music_files():
     pass
+
+

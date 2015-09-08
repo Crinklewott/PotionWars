@@ -32,14 +32,14 @@ class Enemy(person.Person):
     ROUND_INDEX = 1
     enemy = True
     count = 0
-    def __init__(self, name, gender, defaultLitany, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3, musculature='', 
-            bodyType='', height='', hairLength='', hairStyle='', eyeColor='', skinColor='', order=person.zeroth_order, identifier=None, litany=None):
+    def __init__(self, name, gender, defaultLitany=None, description="", printedName=None, coins=20, specialization=universal.BALANCED, dropChance=3, musculature='', 
+            bodyType='', height='', hairLength='', hairStyle='', eyeColor='', skin_color='', order=person.zeroth_order, identifier=None, litany=None):
         """
         Drop chance determines the chances that this character will drop a piece of equipment.
         """
         self.count = Enemy.count = Enemy.count + 1
         super(Enemy, self).__init__(name, gender, defaultLitany, litany if litany else defaultLitany, description, printedName, coins, specialization, order, musculature=musculature,
-                bodyType=bodyType, height=height, hairLength=hairLength, hairStyle=hairStyle, eyeColor=eyeColor, skinColor=skinColor, identifier=identifier)
+                bodyType=bodyType, height=height, hairLength=hairLength, hairStyle=hairStyle, eyeColor=eyeColor, skin_color=skin_color, identifier=identifier)
         self.dropChance = dropChance
         self.printedName = self.printedName + (' (M)' if self.is_male() else ' (F)')
         self.equip(items.emptyWeapon)
@@ -47,82 +47,12 @@ class Enemy(person.Person):
         self.equip(items.emptyUpperArmor)
         self.equip(items.emptyUnderwear)
         self.positions = [positions.overTheKnee, positions.standing, positions.onTheGround]
-        self.spankingFunctions = {
-                positions.overTheKnee: (self.otk_intro, self.otk_round, self.otk_failure, self.otk_reversal),
-                positions.standing: (self.standing_intro, self.standing_round, self.standing_failure, self.standing_reversal),
-                positions.onTheGround: (self.on_the_ground_intro, self.on_the_ground_round, self.on_the_ground_failure, self.on_the_ground_reversal)
-            }
 
         self.firstRound = True
 
     def get_id(self):
         return super(Enemy, self).get_id() + str(self.count)
 
-    def spanks(self, bottom, position):
-        return self.spankingFunctions[position][0](self, bottom)
-
-    def spanked_by(self, top, position):
-        return self.spankingFunctions[position][0](top, self)
-
-    def continue_spanking(self, bottom, position):
-        return self.spankingFunctions[position][self.ROUND_INDEX](self, bottom)
-
-    def continue_being_spanked(self, top, position):
-        return self.spankingFunctions[position][self.ROUND_INDEX](top, self)
-
-    def reverses(self, top, position):
-        return self.spankingFunctions[position][-1](top, self)
-
-    def reversed_by(self, bottom, position):
-        return self.spankingFunctions[position][-1](self, bottom)
-
-    def failed(self, bottom, position):
-        return self.spankingFunctions[position][-2](self, bottom)
-
-    def blocks(self, top, position):
-        return self.spankingFunctions[position][-2](top, self)
-
-    def otk_intro(self, top, bottom):
-        raise NotImplementedError()
-
-    def otk_round(self, top, bottom):
-        raise NotImplementedError()
-
-    def otk_failure(self, top, bottom):
-        raise NotImplementedError()
-
-    def otk_reversal(self, top, bottom):
-        raise NotImplementedError()
-
-    def standing_intro(self, top, bottom):
-        raise NotImplementedError()
-
-    def standing_round(self, top, bottom):
-        raise NotImplementedError()
-
-    def standing_failure(self, top, bottom):
-        raise NotImplementedError()
-
-    def standing_reversal(self, top, bottom):
-        raise NotImplementedError()
-
-    def on_the_ground_intro(self, top, bottom):
-        raise NotImplementedError()
-
-    def on_the_ground_round(self, top, bottom):
-        raise NotImplementedError()
-
-    def on_the_ground_failure(self, top, bottom):
-        raise NotImplementedError()
-
-    def on_the_ground_reversal(self, top, bottom):
-        raise NotImplementedError()
-
-    def end_spanking(self, top, bottom):
-        self.firstRound = True
-        return universal.format_line(['''Finally, with a mighty effort,''', bottom.printedName, '''manages to wriggle''', bottom.himselfherself(), '''free of''', top.printedName + "'s", 
-        '''merciless grasp.''', bottom.HeShe(), '''scrambles away from''', top.printedName, '''clutching at''', bottom.hisher(), '''burning bottom with one hand, while snatching up''', 
-        bottom.hisher(), '''dropped weapon with the other.'''])
 
     def drop(self):
         "TODO: Implement"
@@ -800,3 +730,27 @@ class VengadorScout(Enemy):
         
     #abstractmethod
 
+
+class Thumper(Enemy):
+    """
+    These guys and gals are the shocktroops of the various street gangs that run the streets of the slums (with Tristana the Potion Lady's permission of course). Their job is simple: They collect a "toll" from anyone trying to use their gang's streets, and they work as the muscle when one of their bosses tries to intimidate someone into doing something for their gang. They also work as cannon fodder in fights with other gangs, and with the city guard. They carry heavy cudgels into battle, about the same length as a sword. Their name comes from their tendency to hammer their cudgels against the nearest wall to scare their victim. They're of average height and build, maybe a little on the thin side from not eating very well (being at the bottom of the pecking order and all that). Still, they have a certain wiry strength about them, and are equally dangerous both at armslength, and in a grapple. Note: Thumper is actually a derogatory name that people call them (not to their face).
+    """
+    pass
+
+class Crackler(Enemy):
+    """
+    Big and muscular, these guys and gals think that their size gives them a right to other people's food, money, and potions. They'll first try to intimidate their victims into giving up their valuables. If their victims refuse, they like to get in close, and use their vicious wooden knuckles to pummel their opponents. As a result, they are skilled grapplers, and have a very high health. Their name is a derogatory nickname that comes from their tendency to crack their knuckles when trying to intimidate someone.
+    """
+    pass
+
+class Sparkler(Enemy):
+    """
+    Mostly self-taught warslingers, these guys and gals know (and aren't afraid to use) the basic combat and healing spells. Their name, like Thumper is actually a derogatory name given them by the people of the Slums. The name comes from their tendency to roll sparks across their fingertips as a warning of what they're capable of.  They don't use any weapon, relying solely on their magic. Their magic grants them a lot of respect amongst the lower echelons of criminal society, so they tend to be better fed. As a result, they tend to be a little bit fleshier than most, and they're a little on the tall side of average.
+    """
+    pass
+
+class Stomper(Enemy):
+    """
+    Fighters of average build and height, these guys rely on large, thick quarterstaffs in combat (and they're quite good at using them too, both offensively and defensively). While Thumpers bang their cudgels against the walls, Stompers bang their staffs against the ground. In addition to their skill with staffs, Stompers also have some basic talent in Status spells.
+    """
+    pass

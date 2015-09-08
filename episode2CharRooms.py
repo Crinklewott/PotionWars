@@ -25,6 +25,7 @@ import person
 import spells_PotionWars
 import townmode
 import universal
+import episode2dungeon
 
 ildri = None
 kitchen = None
@@ -55,7 +56,7 @@ try:
 except KeyError:
     ildri = person.Person('Ildri', person.FEMALE, None, None, ' '.join(["Ildri is a towering, muscular, golden-haired, and fair-skinned woman. She looks to be about the same age as Adrian. She is",
         "wearing an apron, a",
-        "short-sleeve tunic, a pair of wool trousers, and a heavy pair of boots. Her long blonde hair is pulled back into a single thick braid."]), skinColor="peach", eyeColor="blue", 
+        "short-sleeve tunic, a pair of wool trousers, and a heavy pair of boots. Her long blonde hair is pulled back into a single thick braid."]), skin_color="peach", eyeColor="blue",
         hairColor="blonde", hairStyle="braid", musculature="muscular", hairLength="back-length", height="huge", bodyType="voluptuous")
 else:
     ildri.description = ' '.join(["Ildri is a towering, muscular, golden-haired, and fair-skinned woman. She looks to be about the same age as Adrian. She is",
@@ -73,16 +74,25 @@ try:
     deidre = universal.state.get_character('Deidre.person')
 except KeyError:
     deidre = person.Person('Deidre', person.FEMALE, None, None, ''.join(["A tall, slender woman with frizzy, shoulder-length blonde hair pulled back into a bun. She has piercing blue eyes, and",
-        " carries herself with rod-straight posture. A black beret sits on top of her head."]), specialization=universal.STATUS_MAGIC, order=person.first_order, skinColor="peach", eyeColor="blue",
+        " carries herself with rod-straight posture. A black beret sits on top of her head."]), specialization=universal.STATUS_MAGIC, order=person.first_order, skin_color="peach", eyeColor="blue",
         hairColor="blonde", hairLength="shoulder-length", hairStyle="bun", height="tall", bodyType="slim", musculature="fit")
 try:
     alondra = universal.state.get_character('Alondra.person')
 except KeyError:
-    alondra = person.Person('Alondra', person.FEMALE, None, None, ''.join(['''Alondra is a Taironan woman with rich, dark caramel skin, . She is a little on the short side of average.''',
-        '''She has shoulder-length hair black hair, and relatively small, dark brown eyes. In contrast to her height, her breasts are a little on the large side of average.''',
-        '''She has a round, protruding bottom that rolls enticingly when she walks.''']), specialization=universal.SPEED, order=person.second_order, skinColor="caramel", eyeColor="brown",
-        hairColor="black", coins=90, hairLength="shoulder-length", hairStyle="down", height="average", bodyType="voluptuous", musculature="soft")
-    alondra.set_all_stats(strength=2, willpower=2, talent=3, dexterity=1, alertness=4, health=23, mana=18)
+    alondra = person.Person('Alondra', person.FEMALE, None, None, ''.join(['''Alondra is a''',
+            '''Taironan woman with rich, dark caramel skin, . She is a little on the short side''',
+            '''of''',
+            '''average.''',
+            '''She has shoulder-length hair black hair, and relatively small, dark brown eyes.''',
+            '''In''',
+            '''contrast to her height, her breasts are a little on the large side of average.''',
+            '''She has a round, protruding bottom that rolls enticingly when she walks.''']), 
+        specialization=universal.SPEED, order=person.second_order, skin_color="caramel", 
+        eyeColor="brown",
+        hairColor="black", coins=90, hairLength="shoulder-length", hairStyle="down", 
+        height="average", bodyType="voluptuous", musculature="soft")
+    alondra.set_all_stats(strength=2, willpower=2, talent=3, dexterity=1, alertness=4, health=23, 
+            mana=18)
 
 if alondra.is_naked():
     alondra.take_item(itemspotionwars.alondrasSkirt)
@@ -114,6 +124,9 @@ try:
 except KeyError:
     cosima = person.Person("Cosima", person.FEMALE, None, None, ''.join(['''A tall, lanky,''',
     '''middle-aged, woman with olive-skin, dark hair and matching eyes.''']))
+
+cosima.set_all_stats(strength=90, willpower=70, talent=30, dexterity=85, alertness=87, health=400,
+        mana=0)
 
 
 
@@ -148,59 +161,6 @@ except KeyError:
         "conversation, typically while negotiating with clients."]), [], None, None, pwutilities.LIGHT_HEARTED, "pwutilities.LIGHT_HEARTED", None)
 
 
-    #               0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19
-slumsLevel1Map = (
-                 ( "___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___","___", "_"),
-                 ("|   ","___","___","   ","___"," .,","   ","___","___","___",".,", "___","___","___","___","___","___","___","___","   ","|" ), #19
-                 ("|   ","|.,",";.,","|  ","|.,",";__","|  ","|__",";  ","___","   ","___","   ",";__","|.,",";.,",";.,",";__","|.,","|  ","|" ), #18
-                 ("|   ","|.,",";.,","|  ","|__","|.,","   ","|__",";  ",";__","|  ",";__","|  ",";__","|.,",";__",";__","|  ","|__",";  ","|" ), #17
-                 ("|   ","|.,",";.,","|  ",";__","|__","|  ","|__",";__",";__","|.,",";__","|__",";__","|__","___","   ","___","   ","___","|" ), #16 
-                 ("|   ",";.,",";.,","|  ",";__","|.,","   ","___","___","   ","___","___","|__",";  ","||.,",";.","|  ",";.,","|  ","|.,","|" ), #15
-                 ("|   ","|.,",";.,","|  ","|.,",";.,","|  ","|  ","   ","|  ","|__",";__",";__","   ","|.,",";.,",";  ","|__","|  ",";__","|" ), #14
-                 ("|   ","|.,",";.,","|  ","|.,",";.,","|  ","|  ","   ","|  ","|  ","   ","   ","|  ","|__",";__","|  ",";__","|  ",";.,","|" ), #13
-                 ("|   ","|.,",";.,","|  ","|__",";.,","|  ",";  ","   ","|  ",";  ","   ","   ","|__","___","   ","   ","   ","   ","|__","|" ), #12
-                 ("|   ","|__",";__",";__","., ","|__","|  ","|__","___","|  ",";  ","   ","   ","|__",";__",";  ","   ","., ","   ",";.,","|" ), #11
-                 ("|   ","   ","   ","|.,",";.,",";.,","|  ","|.,","|.,","|.,","|__","___","___","|__","   ","., ","., ",";.,",";.,","|__","|" ), #10
-                 ("|   ","___","   ","|.,",";.,",";.,","|  ","|.,",";__",";__",";__",";__",";__","|__",";  ","|__","|__",";__",";__","|.,","|" ), #9
-                 ("|___","|  ","|  ","|.,",";.,",";.,","|  ","|.,","|  ","   ","   ","   ","   ","., ","., ","___","., ","___","   ",";.,","|" ), #8
-                 ("|___","___","|  ","|__",";__",";__","|  ","|__","|  ","   ","   ","   ","   ","|__","|__","|__",";__",";__","|., ","|__","|" ), #7
-                 ("|   ","   ","   ","___","___","___","___","___","   ","   ","   ","   ","   ","., ","___","., ","   ","___","|__","|.,","|" ), #6
-                 ("|   ","., ","   ","|  ","   ","   ","   ","|__",";  ","   ","   ","   ","   ","|.,",";.,","|.,","|  ",";__","|.,",";.,","|" ), #5
-                 ("|   ","|.,","|  ","|  ","   ","   ","   ","|__",";  ","___","___","___","   ","|__","|__","|__","|  ","., ",";__",";__","|" ), #4
-                 ("|   ","|.,","|  ","|  ","   ","   ","   ","|__",";  ","|.,",";.,",";.,",";.,",";.,","|  ","|.,","|  ","|__","   ","|.,","|" ), #3
-                 ("|   ","|.,","|.,","|  ","   ","   ","   ","___",";  ","|__",";__",";.,",";__",";__","|  ",";.,",";__","|.,",";__",";.,","|" ), #2
-                 ("|   ","|__",";__","|__","___","___","___","|.,","|  ","___","___","___","   ",";__",";__","|  ","|.,","|.,","|.,","|  ","|" ), #1  
-                 ("|s__","___","___","___","___","___","___","___","___",";__","___","___","|__","___","___","___","___","___","___","___","|" )  #0
-                 )
-
-slumsLevel1Events = (
-                   #0    1    2   3     4   5    6    7     8   9    10   11   12   13  14    15   16   17   18   19
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #19
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #18
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #17
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #16
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #15
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #14
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #13
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #12
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #11
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #10
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #9
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #8
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #7
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #6
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #5
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #4
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #3
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #2
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #1
-                 (None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None), #0
-                 )
-
-slumEvents = [slumsLevel1Events]
-allegriasDomain = dungeonmode.Dungeon("Allegria's Domain", [slumsLevel1Map], slumEvents, bgMusic=pwutilities.TAIRONAN,
-        enemies=None)
-
 def start_scene_1_episode_3(loading=False): 
     universal.say("Next Time on Pandemonium Cycle: The Potion Wars")
     music.play_music(music.THEME)
@@ -219,8 +179,7 @@ def start_scene_2_episode_2(loading=False):
     universal.set_command_interpreter(pwutilities.to_title_screen_interpreter)
 episode2Scene2 = episode.Scene('Episode 2 Scene 2', start_scene_2_episode_2, None)
 
+
 episode3Scene1 = episode.Scene("Episode 3 Scene 1", start_scene_1_episode_3, end_scene_1_episode3)
 episode3 = episode.Episode(3, 'No Good Deed', scenes=[episode3Scene1])
-
-
 
