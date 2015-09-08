@@ -1335,13 +1335,29 @@ class Person(universal.RPGObject):
         return self.lower_clothing().armorType if self.lower_clothing().name != items.emptyLowerArmor.name else self.lower_clothing().armorType
 
     def wearing_pants_or_shorts(self):
-        return self.lower_clothing().armorType == items.Pants.armorType or self.lower_clothing().armorType == items.Shorts.armorType
+        return self.wearing_pants() or self.wearing_pants()
 
-    def wearing_lower_clothing(self):
-        return self.lower_clothing().name != items.emptyLowerArmor.name
+    def wearing_skirt_or_dress(self):
+        return self.wearing_skirt() or self.wearing_dress() 
+
+    def wearing_skirt(self):
+        return self.lower_clothing().armorType == items.Skirt.armorType
+
+    def wearing_dress(self):
+        return self.lower_clothing().armorType == items.Dress.armorType
+
+    def wearing_trousers(self):
+        return self.lower_clothing().armorType == items.Pants.armorType
+
+    def wearing_shorts(self):
+        return self.lower_clothing().armorType == items.Shorts.armorType
 
     def wearing_shirt(self):
         return self.shirt().name != items.emptyUpperArmor.name
+
+
+    def wearing_lower_clothing(self):
+        return self.lower_clothing().name != items.emptyLowerArmor.name
 
     def wearing(self, itemType):
         """
