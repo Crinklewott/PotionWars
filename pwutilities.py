@@ -290,3 +290,22 @@ def none():
     with no events
     """
     return None
+
+def play_event(eventName, keyword=""):
+    """
+    Executes a dungeon event.
+    Parameters:
+    eventName: The name of the event (the name of the first node of the event in the transcript) to 
+    be executed.
+    keyword:  The keyword that should be used to determine whether or not the event has already
+    been executed. If a keyword is provided, then the event will only be executed once per game. 
+    Otherwise, the event will be executed every time 
+    this method is called with eventName.
+    """
+    if keyword in keywords():
+        return True
+    else:
+        if keyword:
+            add_keyword(keyword)
+        trigger_event(eventName)
+        return True
