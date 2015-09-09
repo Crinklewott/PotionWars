@@ -140,22 +140,22 @@ def e1_10_16():
     else:
         return False
 
-slumsLevel1Event[10][16] = e1_16_10
+slumsLevel1Events[10][16] = e1_10_16
 
 def e1_2_11():
     return pwutilities.play_event('ep2 visited squatters', 'ep2VisitedSquatters')
 
-slumsLevel1Event[2][11] = e1_2_11
+slumsLevel1Events[2][11] = e1_2_11
 
 def e1_1_16():
     return pwutilities.play_event('ep2FoughtFamily', 'ep2 squatter family')
 
-slumsLevel1Event[1][16] = e1_16_1
+slumsLevel1Events[1][16] = e1_1_16
         
 def e1_1_18():
     return pwutilities.play_event('ep2SquatterEdita', 'ep2 squatter edita')
 
-slumsLevel1Event[1][18] = e1_1_18
+slumsLevel1Events[1][18] = e1_1_18
 
 slumEvents = [slumsLevel1Events]
 
