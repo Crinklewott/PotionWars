@@ -32,7 +32,7 @@ import math
 import ast
 
 DEBUG = True
-Mac = True
+MAC = True
 playOnMac = False
 SAVE_DELIMITER = '%%%'
 
@@ -697,7 +697,7 @@ def init_game():
     pygame.display.set_caption(get_name())
     if DEBUG:
         if MAC:
-            set_screen(pygame.display.set_mode((1440, 900)))
+            set_screen(pygame.display.set_mode((1440, 750)))
         else:
             set_screen(pygame.display.set_mode((1920, 1080)))
     else:
