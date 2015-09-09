@@ -32,6 +32,7 @@ import math
 import ast
 
 DEBUG = True
+Mac = True
 playOnMac = False
 SAVE_DELIMITER = '%%%'
 
@@ -695,7 +696,10 @@ def init_game():
     TITLE_SIZE = int(math.floor(TITLE_SIZE * scale))
     pygame.display.set_caption(get_name())
     if DEBUG:
-        set_screen(pygame.display.set_mode((1920, 1080)))
+        if MAC:
+            set_screen(pygame.display.set_mode((1440, 900))
+        else:
+            set_screen(pygame.display.set_mode((1920, 1080)))
     else:
         set_screen(pygame.display.set_mode(size, pygame.FULLSCREEN | pygame.DOUBLEBUF))
     #set_screen(pygame.display.set_mode(size))
