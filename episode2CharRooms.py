@@ -19,9 +19,10 @@ import dungeonmode
 import episode
 import items
 import itemspotionwars
-import pwutilities
 import music
 import person
+import pwenemies
+import pwutilities
 import spells_PotionWars
 import townmode
 import universal

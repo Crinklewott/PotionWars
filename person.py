@@ -608,13 +608,12 @@ class Person(universal.RPGObject):
 
     def risque(self):
         risqueLevel = sum(equipment.risque for equipment in self.equipmentList if not isinstance(equipment, items.Weapon))
-        #For some stupid fucking reason the goddamn baring=True isn't holding for the fucking empty lower armor, and I have no fucking idea why. So we're going to insert a stupid fucking
-        #hack that makes fucking sure the fucking baring of fucking emptyLowerArmor is fucking TRUE!
-        if not items.emptyLowerArmor.baring:
-            items.emptyLowerArmor.baring = True
+        originalRisqueLevel = risqueLevel
         #If the lower clothing isn't baring, then we can't see the underwear, so its risque level doesn't matter.
+        items.emptyLowerArmor.baring = True
         if not self.lower_clothing().baring:
             risqueLevel -= self.underwear().risque
+            assert risqueLevel < originalRisqueLevel
         return risqueLevel
 
     def _set_weapon(self, weapon):
@@ -1105,6 +1104,18 @@ class Person(universal.RPGObject):
                 acknowledge(Person.character_sheet, self)
                 raise items.NakedError()
 
+    def strip_clothing(self):
+        for item in self.equipmentList:
+            self.unequip(item)
+
+    def destroy_equipment(self):
+        """
+        Destroys all of this character's equipment forever.
+        """
+        for item in self.equipmentList:
+            self.drop(item)
+            universal.state.remove_item(item)
+
 
     def display_equipment(self, slot):
         self.viewedSlot = slot
@@ -1139,7 +1150,7 @@ class Person(universal.RPGObject):
 
     def increase_all_stats(self, num):
         """
-            Note: This method increases all of the character's stats EXCEPT health, mana, current health, and current mana. 
+        Note: This method increases all of the character's stats EXCEPT health, mana, current health, and current mana. 
         """
         for stat in range(len(self.primaryStats)):
             if stat != universal.HEALTH and stat != universal.MANA and stat != universal.CURRENT_MANA and stat != universal.CURRENT_HEALTH:
