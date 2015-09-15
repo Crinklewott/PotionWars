@@ -154,10 +154,10 @@ slumsLevel1Events[18][18] = e1_18_18
 slumsLevel1Events[10][19] = e1_10_19
 slumsLevel1Events[9][19] = e1_10_19
 slumsLevel1Events[11][19] = e1_10_19
-slumsLevel1Event[11][16] = e1_11_16
-slumsLevel1Event[2][11] = e1_2_11
-slumsLevel1Event[1][17] = e1_1_17
-slumsLevel1Event[1][18] = e1_1_18
+slumsLevel1Events[11][16] = e1_11_16
+slumsLevel1Events[2][11] = e1_2_11
+slumsLevel1Events[1][17] = e1_1_17
+slumsLevel1Events[1][18] = e1_1_18
 
 
 

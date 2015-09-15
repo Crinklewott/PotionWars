@@ -43,9 +43,10 @@ import transExceptions
 
 IMPORTS = ['import combat','import conversation', 'import copy', 'import dungeonmode',
         'import episode', 'import items', 'import itemspotionwars','import music', 'import person', 
-        'import pwenemies', 'import pwutilities', 'import random', 'import townmode',
-        'import transExceptions',  'import universal']
-        
+        'import pwenemies', 'import pwutilities', 'import random', 'import shopmode', 
+        'import townmode', 'import transExceptions',  'import universal']
+
+                
 
 
                           #Removes comments | split around newlines and save the newlines | splits around spaces, and save the spacing | split around commands that begin an environment | split around 
