@@ -85,9 +85,10 @@ def display_acknowledgments():
     universal.say_title('Acknowledgments')
     universal.get_screen().blit(universal.get_background(), universal.get_world_view().topleft)
     universal.say(format_text([['Code, Story, Concept: Andrew Russell'], 
-        ['Editor: Emily'],
+        ['Editor: Emily the Eccentric Emu'],
         ['Support Writers: Emily the Eccentric Emu, Bonemouth the Boxfish, Ken the Kookaburra, Skyblaster the Sardine, Monkeytoster the Mongoose'],
-        ['Beta Testers: Uninventive the Umbrellabird, Johny741 the Jackal, Bonemouth the Boxfish, Emily the Eccentric Emu, Ken the Kookaburra, Skyblaster the Sardine, Monkeytoster the Mongoose'],
+        ['Beta Testers: Uninventive the Umbrellabird, Johny741 the Jackal, Bonemouth the Boxfish, Flash the Flamingo Emily the Eccentric Emu, Ken the Kookaburra, Skyblaster the Sardine, Monkeytoster the Mongoose'],
+        ['Number Cruncher: Flash the Flamingo'],
         ['Images:'],
         ['  title screen image: Rak'],
         #['  Episode 1 titlecard: Lys'],
@@ -198,7 +199,7 @@ def opening_crawl():
     delay()
     if not skip:
         music.play_music(OPENING_CRAWL, fadeoutTime=0, wait=True)
-    universal.say_replace(["Along the coast of the Medios Sea is a region rife with bickering city-states, known collectively as the 1024. The city-states are inhabited by two broad cultures: the bronze-skinned "
+    universal.say_replace(["Along the coast of the Medios Sea is a region rife with bickering city-states, known collectively as the Thousin Cities. The city-states are inhabited by two broad cultures: the bronze-skinned "
         "Taironans, and the much paler Carnutians."])
     display_crawl()
     delay()

@@ -16,11 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with PotionWars.  If not, see <http://www.gnu.org/licenses/>.
 """
-import universal
-from universal import *
+import enchantments
+import enchantmentspotionwars
 import items
 import spanking
 import person
+import universal
+from universal import *
 
 
 #-----------------------------------Upper Armor----------------------------
@@ -120,7 +122,7 @@ boyShorts = items.Underwear('boyshorts', 'A pair of dark red boyshorts that comp
 
 speedThong = items.Thong('loincloth of speed', ' '.join(["A brown loincloth that leaves the majority of the wearer's cheeks exposed. It is lightly imbued with magic. The magic provides the wearer with improved fine motor",
     '''control over their legs, improving the wearer's ability to move speedily. Provides a +1 bonus to speed.''']), price=50, 
-    enchantments=[items.Enchantment(1, universal.SPEED, 1)], risque=5)
+    enchantments=[enchantments.StatEnchantment(1, universal.SPEED, 1)], risque=5)
 
 chainmailBikini = items.Thong('chainmail bikini', "A two piece set of chainmail. The top piece covers a woman's breasts, but nothing else. The bottom is a chainmail thong. Though it looks as useless as useless can be, the armor is in fact infused with tremendously powerful magic that allows it to provide protection that's almost as good as a chain cuirass. Furthermore, thanks to the leather backing, the fact that the chain is very very finely woven, and a touch of magic, the armor is just as comfortable as thong lingerie (which admittedly isn't THAT comfortable, unless you like wedgies), just a little bit heavier. Furthermore, because the iron in the armor covers only a small part of one's body, the armor has a negligible impact on magic.", price=5000, attackDefense=16, risque=6, maxEnchantment=2) 
 
@@ -248,9 +250,16 @@ bluePajamaShirt = items.PajamaTop('blue pajama shirt', 'A delightfully soft, dar
 
 #----------------------------------Gems-----------------------------------------
 
-attackGem = items.Gem('Attack Gem', 
-    'Weapons enchanted with this gem gain a bonus to damage. Clothing enchanted with the gem gain a bonus to defense.', 
-    items.AttackEnchantment)
+attackGem = items.Gem(
+    'Attack Gem', 
+    'Weapons enchanted with this gem gain a +1 bonus to damage. Clothing enchanted with the gem ' + 
+    'gain a +1 bonus to defense.', 
+    enchantmentspotionwars.AttackEnchantment)
 
-speedGem = items.Gem('Speed Gem', "Grants a +1 bonus Alertness.", items.SpeedEnchantment)
-        
+poorWeaknessGem = items.Gem(
+        'Poor Weakness Gem', 
+        'Weapons enchanted with this gem have a ' +
+        '2% chance to inflict weakness for three rounds on every attack. Clothing enchanted with' +
+        'the gem ' +
+        'provides the wearer with immunity from one casting of Weakness per battle.', 
+        enchantmentspotionwars.poor_weakness_ennchantment)

@@ -307,6 +307,9 @@ def say(text, columnNum=1, justification=1, fontSize=36, italic=False, bold=Fals
     textJustification = justification
     assert type(numColumns) == int, "%s" % traceback.print_stack()
     numColumns = columnNum
+    if state.testing:
+        print(text)
+        return
     if type(text) is list:
         textToDisplay += ' '.join(text) 
     else:
@@ -392,6 +395,9 @@ def say_title(text, surface=None):
     Similar to say, except uses a larger font, and draws a line around the text rectangle to set it apart from the in-game text.
     """
     global titleText, chosenSurface
+    if state.testing:
+        print(text)
+        return
     if surface is not None:
         chosenSurface = surface
     else:
@@ -991,7 +997,35 @@ class State(object):
         self.enemiesCanSpank = True
         self.defeatedAllies = []
         self.defeatedEnemies = []
-        self.livingExpenses = 3
+        self.itemStore = {}
+        self.ENCHANTMENT_COST = 30
+        self.enchantmentFreebies = 0
+        self.testing = False
+        self.costPerDay = 0
+        self.days = 0
+
+    def days_pass(self, numDays):
+        """
+        Increments the days value.
+        """
+        assert numDays >= 0
+        self.days += numDays 
+
+    def store_item(self, item, key=None):
+        """
+        The state's item store is used to remember equipment that is made temporarily unavailable,
+        but needs to be made available again.
+        If a key to store the item under is not provided, then it uses the item's name.
+        """
+        if key is None:
+            key = item.name
+        self.itemStore[key] = item
+
+    def remove_item_from_store(self, item):
+        try:
+            del self.itemStore[item.name]
+        except KeyError:
+            pass
 
     def save(self, saveFile):
         """
@@ -1033,7 +1067,15 @@ class State(object):
             saveData.append(name)
             saveData.append(item.save())
         saveData.append("State Data:")
+        saveData.extend(str((key, item.name)) for key, item in self.itemStore.iteritems())
+        saveData.append("State Data:")
         saveData.append(str(self.difficulty))
+        saveData.append("State Data:")
+        saveData.append(str(self.enchantmentFreebies))
+        saveData.append("State Data:")
+        saveData.append(str(self.costPerDay))
+        saveData.append("State Data:")
+        saveData.append(str(self.days))
         saveData.append("State Data:")
         for coordinate in self.clearedSquares:
             saveData.append("Square:")
@@ -1179,16 +1221,59 @@ class State(object):
         #Yes, I know it's ugly. I really need to reorganize things. Put state into its own
         import episode, person, townmode, items 
         #Note: The first entry in the list is just the empty string.
-        try:
-            _, enemiesCanSpank, player, characters, rooms, bedroom, party, location, itemList, difficulty, clearedSquares = fileData.split('State Data:')
-        except ValueError:
-            try:
-                _, player, characters, rooms, bedroom, party, location, itemList, difficulty, clearedSquares = fileData.split('State Data:')
-            except ValueError:
-                _, player, characters, rooms, bedroom, party, location, itemList, difficulty = fileData.split('State Data:')
-                clearedSquares = ''
+        data = fileData.split("State Data:")
+        index = 1
+        if data[index].strip() == "True" or data[index].strip() == "False":
+            enemiesCanSpank = data[index]
+            index += 1
+        else:
             enemiesCanSpank = "True"
-        self.enemiesCanSpank = enemiesCanSpank.strip().lower() == "true"
+        player = data[index] 
+        index += 1
+        characters = data[index]
+        index += 1
+        rooms = data[index]
+        index += 1
+        bedroom = data[index]
+        index += 1
+        party = data[index]
+        index += 1
+        location = data[index]
+        index += 1
+        itemList = data[index]
+        index += 1
+        try:
+            int(data[index])
+        except ValueError:
+            itemStore = data[index].split('\n')
+            index += 1
+        else:
+            itemStore = []
+        difficulty = data[index]
+        index += 1
+        try:
+            self.enchantmentFreebies = int(data[index])
+        except ValueError:
+            self.enchantmentFreebies = 0
+        else:
+            index += 1
+        try:
+            self.costPerDay = int(data[index])
+        except ValueError:
+            self.costPerDay = 0
+        else:
+            index += 1
+        try:
+            self.days = int(data[index])
+        except ValueError:
+            self.days = 0
+        else:
+            index += 1
+        try:
+            clearedSquares = data[index]
+        except IndexError:
+            clearedSquares = ''
+        self.enemiesCanSpank = enemiesCanSpank.lower() == "true"
         person.PlayerCharacter.load(player, self.player)   
         rooms = [roomData.strip() for roomData in rooms.split("Room:") if roomData.strip()]
         for roomData in rooms:
@@ -1223,6 +1308,9 @@ class State(object):
                 items.Item.load(itemData, self.items[name.strip()])
             except KeyError:
                 self._backwards_compatibility_items(name.strip())
+        self.itemList = itemList
+        itemStore = [itemTuple.strip() for itemName in itemStore if itemTuple.strip()]
+        self.itemStore = {key:self.items[itemName] for key, itemName in itemStore}
         try:
             self.difficulty = int(difficulty.strip())
         except ValueError:
@@ -1492,10 +1580,6 @@ def set_state(stateIn):
 def set_initial_room(room):
     global state
     state.location = room
-
-def set_state(stateIn):
-    global state
-    state = stateIn
 
 def cond(condition, ifTrue, ifFalse=''):
     return ifTrue if condition else ifFalse

@@ -12,9 +12,16 @@ import pwutilities
 import random
 import shopmode
 import townmode
+<<<<<<< HEAD
 import transExceptions
 import universal
+=======
+import music
+import transExceptions
+import shopmode
+>>>>>>> advancements
 import episode2CharRooms
+import episode2dungeon
 def init_episode_2():
     episode2CharRooms.build_chars()
     episode2CharRooms.build_rooms()
@@ -117,10 +124,20 @@ def start_scene_1_episode_2(loading=False):
         peter.litany = conversation.allNodes[519]
     if not loading:
         elise = universal.state.get_character('''Elise.person''')
+<<<<<<< HEAD
         elise.litany = conversation.allNodes[576]
     if not loading:
         carrie = universal.state.get_character('''Carrie.person''')
         carrie.litany = conversation.allNodes[591]
+=======
+        elise.litany = conversation.allNodes[454]
+    if not loading:
+        carrie = universal.state.get_character('''Carrie.person''')
+        carrie.litany = conversation.allNodes[462]
+    if not loading:
+        airell = universal.state.get_character('''Airell.person''')
+        airell.litany = conversation.allNodes[478]
+>>>>>>> advancements
 
 
 def init_scene_1_episode_2():
@@ -39718,7 +39735,11 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_peter_shop_mode, ep2_enchantment_barter)
     ep2_peter_shop_mode.quip_function = ep2_peter_shop_mode_qf
+<<<<<<< HEAD
     ep2_enchantment_barter = conversation.Node(557, '''ep2 enchantment barter''')
+=======
+    ep2_enchantment_barter = conversation.Node(444, '''ep2 enchantment barter''')
+>>>>>>> advancements
     
     
     def ep2_enchantment_barter_qf():
@@ -39863,7 +39884,10 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "you're"
  , ' ']), ''.join([ "lucky."
  , ' ']), ''.join([ "Thirty"
+<<<<<<< HEAD
  , ' ']), ''.join([ "gold"
+=======
+>>>>>>> advancements
  , ' ']), ''.join([ "is"
  , ' ']), ''.join([ "beyond"
  , ' ']), ''.join([ "reasonable."
@@ -39899,7 +39923,11 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_enchantment_barter, ep2_peter_enchantment_agree)
     ep2_enchantment_barter.quip_function = ep2_enchantment_barter_qf
+<<<<<<< HEAD
     ep2_peter_enchantment_teaching_anne = conversation.Node(559, '''ep2 peter enchantment teaching anne''')
+=======
+    ep2_peter_enchantment_teaching_anne = conversation.Node(445, '''ep2 peter enchantment teaching anne''')
+>>>>>>> advancements
     
     
     def ep2_peter_enchantment_teaching_anne_qf():
@@ -40036,7 +40064,11 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_peter_enchantment_teaching_anne.quip_function = ep2_peter_enchantment_teaching_anne_qf
+<<<<<<< HEAD
     ep2_thirty_five_coins_per_month = conversation.Node(561, '''ep2 thirty five coins per month''')
+=======
+    ep2_thirty_five_coins_per_month = conversation.Node(446, '''ep2 thirty five coins per month''')
+>>>>>>> advancements
     
     
     def ep2_thirty_five_coins_per_month_qf():
@@ -40066,6 +40098,9 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "at"
  , ' ']), ''.join([ "your"
  , ' ']), ''.join([ "equipment?"
+<<<<<<< HEAD
+ ]), ''.join([ '"'
+=======
  ]), ''.join([ '"'
  , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "nods,"
  , ' ']), ''.join([ "though"
@@ -40077,6 +40112,55 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "a"
  , ' ']), ''.join([ "face."
  , ' '])]]), justification=0)
+        return conversation.continue_to_node(ep2_thirty_five_coins_per_month, ep2_peter_begin_enchantment_shopping, False)
+    ep2_thirty_five_coins_per_month.quip_function = ep2_thirty_five_coins_per_month_qf
+    ep2_fifteen_coins_per_month = conversation.Node(447, '''ep2 fifteen coins per month''')
+    
+    
+    def ep2_fifteen_coins_per_month_qf():
+        pwutilities.add_keyword('fifteenCoinsPerMonth')
+        pwutilities.add_keyword('enchantmentDeal')
+        universal.state.enchantmentFreebies += 1
+        ep2_fifteen_coins_per_month.quip = " "
+        universal.say(universal.format_text_translate([[], [], [], [], [], [], [''.join([ '"'
+ ]), ''.join([ "Alright"
+ , ' ']), ''.join([ "then,"
+ ]), ''.join([ '"'
+ , ' ']), ''.join([ "says"
+ , ' ']), ''.join([ "Peter."
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "You"
+ , ' ']), ''.join([ "get"
+ , ' ']), ''.join([ "one"
+ , ' ']), ''.join([ "free"
+ , ' ']), ''.join([ "enchantment,"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "fifteen"
+ , ' ']), ''.join([ "coins"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "month"
+ , ' ']), ''.join([ "for"
+ , ' ']), ''.join([ "teaching"
+ , ' ']), ''.join([ "Anne."
+ , ' ']), ''.join([ "Shall"
+ , ' ']), ''.join([ "we"
+ , ' ']), ''.join([ "look"
+ , ' ']), ''.join([ "at"
+ , ' ']), ''.join([ "your"
+ , ' ']), ''.join([ "equipment?"
+ ]), ''.join([ '"'
+>>>>>>> advancements
+ , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "nods,"
+ , ' ']), ''.join([ "though"
+ , ' ']), ''.join([ person.heshe() , ' ']), ''.join([ "can't"
+ , ' ']), ''.join([ "quite"
+ , ' ']), ''.join([ "help"
+ , ' ']), ''.join([ "but"
+ , ' ']), ''.join([ "make"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "face."
+ , ' '])]]), justification=0)
+<<<<<<< HEAD
         return conversation.continue_to_node(ep2_thirty_five_coins_per_month, ep2_peter_begin_enchantment_shopping, False)
     ep2_thirty_five_coins_per_month.quip_function = ep2_thirty_five_coins_per_month_qf
     ep2_fifteen_coins_per_month = conversation.Node(563, '''ep2 fifteen coins per month''')
@@ -40127,6 +40211,11 @@ def init_scene_1_episode_2():
         return conversation.continue_to_node(ep2_fifteen_coins_per_month, ep2_peter_begin_enchantment_shopping, False)
     ep2_fifteen_coins_per_month.quip_function = ep2_fifteen_coins_per_month_qf
     ep2_peter_two_enchantments = conversation.Node(565, '''ep2 peter two enchantments''')
+=======
+        return conversation.continue_to_node(ep2_fifteen_coins_per_month, ep2_peter_begin_enchantment_shopping, False)
+    ep2_fifteen_coins_per_month.quip_function = ep2_fifteen_coins_per_month_qf
+    ep2_peter_two_enchantments = conversation.Node(448, '''ep2 peter two enchantments''')
+>>>>>>> advancements
     
     
     def ep2_peter_two_enchantments_qf():
@@ -40173,7 +40262,11 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_peter_two_enchantments, ep2_peter_begin_enchantment_shopping, False)
     ep2_peter_two_enchantments.quip_function = ep2_peter_two_enchantments_qf
+<<<<<<< HEAD
     ep2_peter_enchantment_agree = conversation.Node(567, '''ep2 peter enchantment agree''')
+=======
+    ep2_peter_enchantment_agree = conversation.Node(449, '''ep2 peter enchantment agree''')
+>>>>>>> advancements
     
     
     def ep2_peter_enchantment_agree_qf():
@@ -40200,7 +40293,11 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_peter_enchantment_agree, ep2_peter_begin_enchantment_shopping, False)
     ep2_peter_enchantment_agree.quip_function = ep2_peter_enchantment_agree_qf
+<<<<<<< HEAD
     ep2_peter_begin_enchantment_shopping = conversation.Node(569, '''ep2 peter begin enchantment shopping''')
+=======
+    ep2_peter_begin_enchantment_shopping = conversation.Node(450, '''ep2 peter begin enchantment shopping''')
+>>>>>>> advancements
     
     
     def ep2_peter_begin_enchantment_shopping_qf():
@@ -40221,7 +40318,11 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "menu."
  , ' '])])) , ' '])], [], []]), justification=0)
     ep2_peter_begin_enchantment_shopping.quip_function = ep2_peter_begin_enchantment_shopping_qf
+<<<<<<< HEAD
     ep2_enchantment_shopping = conversation.Node(571, '''ep2 enchantment shopping''')
+=======
+    ep2_enchantment_shopping = conversation.Node(451, '''ep2 enchantment shopping''')
+>>>>>>> advancements
     
     
     def ep2_enchantment_shopping_qf():
@@ -40236,7 +40337,11 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "mode."
  , ' '])])) , ' '])], []]), justification=0)
     ep2_enchantment_shopping.quip_function = ep2_enchantment_shopping_qf
+<<<<<<< HEAD
     ep2_peter_leave = conversation.Node(573, '''ep2 peter leave''')
+=======
+    ep2_peter_leave = conversation.Node(452, '''ep2 peter leave''')
+>>>>>>> advancements
     
     
     def ep2_peter_leave_qf():
@@ -40255,7 +40360,11 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "things."
  , ' '])]]), justification=0)
     ep2_peter_leave.quip_function = ep2_peter_leave_qf
+<<<<<<< HEAD
     ep2_dont_help_repair_guild = conversation.Node(575, '''ep2 dont help repair guild''')
+=======
+    ep2_dont_help_repair_guild = conversation.Node(453, '''ep2 dont help repair guild''')
+>>>>>>> advancements
     
     
     def ep2_dont_help_repair_guild_qf():
@@ -40272,7 +40381,11 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Ildri."
  , ' '])], [], []]), justification=0)
     ep2_dont_help_repair_guild.quip_function = ep2_dont_help_repair_guild_qf
+<<<<<<< HEAD
     ep2_elise_prologue = conversation.Node(576, '''ep2 elise prologue''')
+=======
+    ep2_elise_prologue = conversation.Node(454, '''ep2 elise prologue''')
+>>>>>>> advancements
     
     
     def ep2_elise_prologue_qf():
@@ -40332,7 +40445,11 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_elise_prologue, ep2_elise_greeting)
     ep2_elise_prologue.quip_function = ep2_elise_prologue_qf
+<<<<<<< HEAD
     ep2_elise_second_hand_tragedy = conversation.Node(578, '''ep2 elise second hand tragedy''')
+=======
+    ep2_elise_second_hand_tragedy = conversation.Node(455, '''ep2 elise second hand tragedy''')
+>>>>>>> advancements
     
     
     def ep2_elise_second_hand_tragedy_qf():
@@ -40453,7 +40570,11 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_elise_second_hand_tragedy.quip_function = ep2_elise_second_hand_tragedy_qf
+<<<<<<< HEAD
     ep2_elise_second_hand_tragedy_still_annoyed = conversation.Node(580, '''ep2 elise second hand tragedy still annoyed''')
+=======
+    ep2_elise_second_hand_tragedy_still_annoyed = conversation.Node(456, '''ep2 elise second hand tragedy still annoyed''')
+>>>>>>> advancements
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_qf():
@@ -40719,7 +40840,11 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_elise_second_hand_tragedy_still_annoyed.quip_function = ep2_elise_second_hand_tragedy_still_annoyed_qf
+<<<<<<< HEAD
     ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha = conversation.Node(582, '''ep2 elise second hand tragedy still annoyed forgive Samantha''')
+=======
+    ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha = conversation.Node(457, '''ep2 elise second hand tragedy still annoyed forgive Samantha''')
+>>>>>>> advancements
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha_qf():
@@ -40933,7 +41058,11 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha, ep2_elise_gripe, False)
     ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha.quip_function = ep2_elise_second_hand_tragedy_still_annoyed_forgive_Samantha_qf
+<<<<<<< HEAD
     ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha = conversation.Node(584, '''ep2 elise second hand tragedy still annoyed dont forgive Samantha''')
+=======
+    ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha = conversation.Node(458, '''ep2 elise second hand tragedy still annoyed dont forgive Samantha''')
+>>>>>>> advancements
     
     
     def ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha_qf():
@@ -41004,7 +41133,11 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ person.heshe() , ' ']), ''.join([ "leaves."
  , ' '])]]), justification=0)
     ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha.quip_function = ep2_elise_second_hand_tragedy_still_annoyed_dont_forgive_Samantha_qf
+<<<<<<< HEAD
     ep2_elise_second_hand_tragedy_make_up = conversation.Node(586, '''ep2 elise second hand tragedy make up''')
+=======
+    ep2_elise_second_hand_tragedy_make_up = conversation.Node(459, '''ep2 elise second hand tragedy make up''')
+>>>>>>> advancements
     
     
     def ep2_elise_second_hand_tragedy_make_up_qf():
@@ -41054,7 +41187,11 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_elise_second_hand_tragedy_make_up, ep2_elise_gripe, False)
     ep2_elise_second_hand_tragedy_make_up.quip_function = ep2_elise_second_hand_tragedy_make_up_qf
+<<<<<<< HEAD
     ep2_elise_greeting = conversation.Node(588, '''ep2 elise greeting''')
+=======
+    ep2_elise_greeting = conversation.Node(460, '''ep2 elise greeting''')
+>>>>>>> advancements
     
     
     def ep2_elise_greeting_qf():
@@ -41097,7 +41234,11 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_elise_greeting, ep2_elise_gripe, False)
     ep2_elise_greeting.quip_function = ep2_elise_greeting_qf
+<<<<<<< HEAD
     ep2_elise_gripe = conversation.Node(590, '''ep2 elise gripe''')
+=======
+    ep2_elise_gripe = conversation.Node(461, '''ep2 elise gripe''')
+>>>>>>> advancements
     
     
     def ep2_elise_gripe_qf():
@@ -41860,7 +42001,11 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "Carrie."
  , ' '])], [], []]), justification=0)
     ep2_elise_gripe.quip_function = ep2_elise_gripe_qf
+<<<<<<< HEAD
     ep2_carrie = conversation.Node(591, '''ep2 carrie''')
+=======
+    ep2_carrie = conversation.Node(462, '''ep2 carrie''')
+>>>>>>> advancements
     
     
     def ep2_carrie_qf():
@@ -41871,7 +42016,11 @@ def init_scene_1_episode_2():
         elif True:
             return conversation.continue_to_node(ep2_carrie, ep2_carrie_subplot_begin)
     ep2_carrie.quip_function = ep2_carrie_qf
+<<<<<<< HEAD
     ep2_carrie_lost_temper_apologize = conversation.Node(593, '''ep2 carrie lost temper apologize''')
+=======
+    ep2_carrie_lost_temper_apologize = conversation.Node(463, '''ep2 carrie lost temper apologize''')
+>>>>>>> advancements
     
     
     def ep2_carrie_lost_temper_apologize_qf():
@@ -42106,7 +42255,11 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_lost_temper_apologize.quip_function = ep2_carrie_lost_temper_apologize_qf
+<<<<<<< HEAD
     ep2_carrie_lost_temper_double_apology = conversation.Node(595, '''ep2 carrie lost temper double apology''')
+=======
+    ep2_carrie_lost_temper_double_apology = conversation.Node(464, '''ep2 carrie lost temper double apology''')
+>>>>>>> advancements
     
     
     def ep2_carrie_lost_temper_double_apology_qf():
@@ -42195,7 +42348,11 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_lost_temper_double_apology.quip_function = ep2_carrie_lost_temper_double_apology_qf
+<<<<<<< HEAD
     ep2_carrie_lost_temper_chastise = conversation.Node(597, '''ep2 carrie lost temper chastise''')
+=======
+    ep2_carrie_lost_temper_chastise = conversation.Node(465, '''ep2 carrie lost temper chastise''')
+>>>>>>> advancements
     
     
     def ep2_carrie_lost_temper_chastise_qf():
@@ -42317,7 +42474,11 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_lost_temper_chastise, ep2_carrie_lost_temper_paddle, False)
     ep2_carrie_lost_temper_chastise.quip_function = ep2_carrie_lost_temper_chastise_qf
+<<<<<<< HEAD
     ep2_carrie_lost_temper_paddle = conversation.Node(599, '''ep2 carrie lost temper paddle''')
+=======
+    ep2_carrie_lost_temper_paddle = conversation.Node(466, '''ep2 carrie lost temper paddle''')
+>>>>>>> advancements
     
     
     def ep2_carrie_lost_temper_paddle_qf():
@@ -42824,7 +42985,11 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_lost_temper_paddle, ep2_carrie_outside, False)
     ep2_carrie_lost_temper_paddle.quip_function = ep2_carrie_lost_temper_paddle_qf
+<<<<<<< HEAD
     ep2_carrie_lost_temper_refuse_to_spank = conversation.Node(601, '''ep2 carrie lost temper refuse to spank''')
+=======
+    ep2_carrie_lost_temper_refuse_to_spank = conversation.Node(467, '''ep2 carrie lost temper refuse to spank''')
+>>>>>>> advancements
     
     
     def ep2_carrie_lost_temper_refuse_to_spank_qf():
@@ -43010,7 +43175,11 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_lost_temper_refuse_to_spank, ep2_carrie_outside, False)
     ep2_carrie_lost_temper_refuse_to_spank.quip_function = ep2_carrie_lost_temper_refuse_to_spank_qf
+<<<<<<< HEAD
     ep2_carrie_subplot_begin = conversation.Node(603, '''ep2 carrie subplot begin''')
+=======
+    ep2_carrie_subplot_begin = conversation.Node(468, '''ep2 carrie subplot begin''')
+>>>>>>> advancements
     
     
     def ep2_carrie_subplot_begin_qf():
@@ -43518,7 +43687,11 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_subplot_begin, ep2_carrie_outside, False)
     ep2_carrie_subplot_begin.quip_function = ep2_carrie_subplot_begin_qf
+<<<<<<< HEAD
     ep2_carrie_outside = conversation.Node(605, '''ep2 carrie outside''')
+=======
+    ep2_carrie_outside = conversation.Node(469, '''ep2 carrie outside''')
+>>>>>>> advancements
     
     
     def ep2_carrie_outside_qf():
@@ -44111,7 +44284,11 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_outside.quip_function = ep2_carrie_outside_qf
+<<<<<<< HEAD
     ep2_carrie_illegal = conversation.Node(607, '''ep2 carrie illegal''')
+=======
+    ep2_carrie_illegal = conversation.Node(470, '''ep2 carrie illegal''')
+>>>>>>> advancements
     
     
     def ep2_carrie_illegal_qf():
@@ -44533,7 +44710,11 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]))
     ep2_carrie_illegal.quip_function = ep2_carrie_illegal_qf
+<<<<<<< HEAD
     ep2_carrie_refuse = conversation.Node(609, '''ep2 carrie refuse''')
+=======
+    ep2_carrie_refuse = conversation.Node(471, '''ep2 carrie refuse''')
+>>>>>>> advancements
     
     
     def ep2_carrie_refuse_qf():
@@ -44977,7 +45158,11 @@ def init_scene_1_episode_2():
  , ' ']), ''.join([ "her."
  , ' '])]))
     ep2_carrie_refuse.quip_function = ep2_carrie_refuse_qf
+<<<<<<< HEAD
     ep2_carrie_ignore = conversation.Node(611, '''ep2 carrie ignore''')
+=======
+    ep2_carrie_ignore = conversation.Node(472, '''ep2 carrie ignore''')
+>>>>>>> advancements
     
     
     def ep2_carrie_ignore_qf():
@@ -45113,7 +45298,11 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_ignore, ep2_practice_spectral_magic, False)
     ep2_carrie_ignore.quip_function = ep2_carrie_ignore_qf
+<<<<<<< HEAD
     ep2_practice_spectral_magic = conversation.Node(613, '''ep2 practice spectral magic''')
+=======
+    ep2_practice_spectral_magic = conversation.Node(473, '''ep2 practice spectral magic''')
+>>>>>>> advancements
     
     
     def ep2_practice_spectral_magic_qf():
@@ -45322,7 +45511,11 @@ def init_scene_1_episode_2():
  , ' '])], [''.join([ universal.state.player.name , ' ']), ''.join([ "chuckles."
  , ' '])]]), justification=0)
     ep2_practice_spectral_magic.quip_function = ep2_practice_spectral_magic_qf
+<<<<<<< HEAD
     ep2_carrie_subplot_spanking = conversation.Node(615, '''ep2 carrie subplot spanking''')
+=======
+    ep2_carrie_subplot_spanking = conversation.Node(474, '''ep2 carrie subplot spanking''')
+>>>>>>> advancements
     
     
     def ep2_carrie_subplot_spanking_qf():
@@ -46170,7 +46363,11 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_subplot_spanking, ep2_practice_spectral_magic, False)
     ep2_carrie_subplot_spanking.quip_function = ep2_carrie_subplot_spanking_qf
+<<<<<<< HEAD
     ep2_carrie_distraction = conversation.Node(617, '''ep2 carrie distraction''')
+=======
+    ep2_carrie_distraction = conversation.Node(475, '''ep2 carrie distraction''')
+>>>>>>> advancements
     
     
     def ep2_carrie_distraction_qf():
@@ -48647,7 +48844,11 @@ def init_scene_1_episode_2():
  , ' '])]]), justification=0)
         return conversation.continue_to_node(ep2_carrie_distraction, ep2_carrie_subplot_end, False)
     ep2_carrie_distraction.quip_function = ep2_carrie_distraction_qf
+<<<<<<< HEAD
     ep2_carrie_agree = conversation.Node(619, '''ep2 carrie agree''')
+=======
+    ep2_carrie_agree = conversation.Node(476, '''ep2 carrie agree''')
+>>>>>>> advancements
     
     
     def ep2_carrie_agree_qf():
@@ -51298,7 +51499,11 @@ def init_scene_1_episode_2():
  , ' '])])) , ' '])], [], []]), justification=0)
         return conversation.continue_to_node(ep2_carrie_agree, ep2_carrie_subplot_end, False)
     ep2_carrie_agree.quip_function = ep2_carrie_agree_qf
+<<<<<<< HEAD
     ep2_carrie_subplot_end = conversation.Node(621, '''ep2 carrie subplot end''')
+=======
+    ep2_carrie_subplot_end = conversation.Node(477, '''ep2 carrie subplot end''')
+>>>>>>> advancements
     
     
     def ep2_carrie_subplot_end_qf():
@@ -51419,6 +51624,7 @@ def init_scene_1_episode_2():
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
     ep2_carrie_subplot_end.quip_function = ep2_carrie_subplot_end_qf
+<<<<<<< HEAD
 def end_scene_1_episode_2():
     deidre = universal.state.get_character("Deidre.person")
     maria = universal.state.get_character("Maria.person")
@@ -51465,6 +51671,23 @@ def start_scene_2_episode_2(loading=False):
 
 def init_scene_2_episode_2():
     ep2_briefing = conversation.Node(622, '''ep2 briefing''')
+=======
+    ep2_airell = conversation.Node(478, '''ep2 airell''')
+    
+    
+    def ep2_airell_qf():
+        pwutilities.add_keyword('ep2TalkedToAirell')
+        ep2_airell.quip = " "
+        universal.say(universal.format_text_translate([[], [], []]), justification=0)
+        if 'punched_Airell' in pwutilities.keywords():
+            return conversation.continue_to_node(ep2_airell, ep2_airell_face_punch)
+        elif 'talk_with_Airell' in pwutilities.keywords():
+            return conversation.continue_to_node(ep2_airell, ep2_airell_talk)
+        elif True:
+            return conversation.continue_to_node(ep2_airell, ep2_airell_busy)
+    ep2_airell.quip_function = ep2_airell_qf
+    ep2_airell_face_punch = conversation.Node(479, '''ep2 airell face punch''')
+>>>>>>> advancements
     
     
     def ep2_briefing_qf():
@@ -51661,10 +51884,25 @@ def init_scene_2_episode_2():
  , ' ']), ''.join([ "Very"
  , ' ']), ''.join([ "short"
  , ' ']), ''.join([ "and"
+<<<<<<< HEAD
  , ' ']), ''.join([ "thin,"
  , ' ']), ''.join([ "looked"
  , ' ']), ''.join([ "rather"
  , ' ']), ''.join([ "starved,"
+=======
+ , ' ']), ''.join([ "confront"
+ , ' ']), ''.join([ "Airell."
+ , ' '])]))
+    ep2_airell_face_punch.quip_function = ep2_airell_face_punch_qf
+    ep2_airell_wait = conversation.Node(480, '''ep2 airell wait''')
+    
+    
+    def ep2_airell_wait_qf():
+        ep2_airell_wait.quip = " "
+        universal.say(universal.format_text_translate([[], [], [''.join([ universal.state.player.name , ' ']), ''.join([ "paces"
+ , ' ']), ''.join([ "anxiously"
+ , ' ']), ''.join([ "back"
+>>>>>>> advancements
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "had"
  , ' ']), ''.join([ "a"
@@ -52095,9 +52333,15 @@ def init_scene_2_episode_2():
  , ' ']), ''.join([ "haystack."
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
+<<<<<<< HEAD
         return conversation.continue_to_node(ep2_briefing_helped_edita, ep2_alondra_eavesdropping, False)
     ep2_briefing_helped_edita.quip_function = ep2_briefing_helped_edita_qf
     ep2_briefing_continue = conversation.Node(626, '''ep2 briefing continue''')
+=======
+        return conversation.continue_to_node(ep2_airell_wait, ep2_remember_what_morey_was_trying_to_teach, False)
+    ep2_airell_wait.quip_function = ep2_airell_wait_qf
+    ep2_airell_dont_wait = conversation.Node(481, '''ep2 airell dont wait''')
+>>>>>>> advancements
     
     
     def ep2_briefing_continue_qf():
@@ -118464,6 +118708,7 @@ def init_scene_2_episode_2():
  , ' ']), ''.join([ "you,"
  , ' ']), ''.join([ "too."
  ]), ''.join([ '"'
+<<<<<<< HEAD
  , ' ']), ''.join([ "Carminda"
  , ' ']), ''.join([ "reaches"
  , ' ']), ''.join([ "into"
@@ -118499,6 +118744,27 @@ def init_scene_2_episode_2():
  , ' ']), ''.join([ "sting."
  , ' ']), ''.join([ "The"
  , ' ']), ''.join([ "crop"
+=======
+ , ' '])]]), justification=0)
+        return conversation.continue_to_node(ep2_airell_dont_wait, ep2_remember_what_morey_was_trying_to_teach, False)
+    ep2_airell_dont_wait.quip_function = ep2_airell_dont_wait_qf
+    ep2_remember_what_morey_was_trying_to_teach = conversation.Node(482, '''ep2 remember what morey was trying to teach''')
+    
+    
+    def ep2_remember_what_morey_was_trying_to_teach_qf():
+        ep2_remember_what_morey_was_trying_to_teach.quip = " "
+        universal.say(universal.format_text_translate([[], []]), justification=0)
+        ep2_remember_what_morey_was_trying_to_teach.add_child(ep2_airell_recall_moreys_lesson)
+        ep2_remember_what_morey_was_trying_to_teach.add_player_comment(universal.format_line_translate([""
+, ''.join([ "Hang"
+ , ' ']), ''.join([ "your"
+ , ' ']), ''.join([ "head"
+ , ' ']), ''.join([ "dejectedly."
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "That"
+ , ' ']), ''.join([ "I"
+ , ' ']), ''.join([ "should"
+>>>>>>> advancements
  , ' ']), ''.join([ "only"
  , ' ']), ''.join([ "struck"
  , ' ']), ''.join([ "a"
@@ -118536,6 +118802,7 @@ def init_scene_2_episode_2():
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "crop"
  , ' ']), ''.join([ "a"
+<<<<<<< HEAD
  , ' ']), ''.join([ "lot"
  , ' ']), ''.join([ "faster"
  , ' ']), ''.join([ "than"
@@ -118551,6 +118818,29 @@ def init_scene_2_episode_2():
  , ' ']), ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "ass"
  , ' ']), ''.join([ "so"
  , ' ']), ''.join([ "fast"
+=======
+ , ' ']), ''.join([ "cranky"
+ , ' ']), ''.join([ "old"
+ , ' ']), ''.join([ "windbag,"
+ , ' ']), ''.join([ "right?"
+ ]), ''.join([ '"'
+ , ' '])]))
+    ep2_remember_what_morey_was_trying_to_teach.quip_function = ep2_remember_what_morey_was_trying_to_teach_qf
+    ep2_airell_recall_moreys_lesson = conversation.Node(483, '''ep2 airell recall moreys lesson''')
+    
+    
+    def ep2_airell_recall_moreys_lesson_qf():
+        ep2_airell_recall_moreys_lesson.quip = " "
+        universal.say(universal.format_text_translate([[], [], [''.join([ '"'
+ ]), ''.join([ "Yes,"
+ , ' ']), ''.join([ "that"
+ , ' ']), ''.join([ "is"
+ , ' ']), ''.join([ "correct."
+ , ' ']), ''.join([ "Now,"
+ , ' ']), ''.join([ "we"
+ , ' ']), ''.join([ "shall"
+ , ' ']), ''.join([ "drive"
+>>>>>>> advancements
  , ' ']), ''.join([ "that"
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "sting"
@@ -118883,12 +119173,34 @@ def init_scene_2_episode_2():
  , ' ']), ''.join([ "boots"
  , ' ']), ''.join([ "like"
  , ' ']), ''.join([ "a"
+<<<<<<< HEAD
  , ' ']), ''.join([ "mangy"
  , ' ']), ''.join([ "dog"
  , ' ']), ''.join([ "would."
  , ' ']), ''.join([ "With"
  , ' ']), ''.join([ "your"
  , ' ']), ''.join([ "tongue."
+=======
+ , ' ']), ''.join([ "very"
+ , ' ']), ''.join([ "busy"
+ , ' ']), ''.join([ "man."
+ ]), ''.join([ '"'
+ , ' '])]]), justification=0)
+        return conversation.continue_to_node(ep2_airell_recall_moreys_lesson, ep2_airell_finish, False)
+    ep2_airell_recall_moreys_lesson.quip_function = ep2_airell_recall_moreys_lesson_qf
+    ep2_airell_moreys_lesson_bratty = conversation.Node(484, '''ep2 airell moreys lesson bratty''')
+    
+    
+    def ep2_airell_moreys_lesson_bratty_qf():
+        airell = universal.state.get_character("Airell.person")
+        airell.litany = airell.defaultLitany = None
+        ep2_airell_moreys_lesson_bratty.quip = " "
+        universal.say(universal.format_text_translate([[], [], [''.join([ '"'
+ ]), ''.join([ "What."
+ , ' ']), ''.join([ "Did."
+ , ' ']), ''.join([ "You."
+ , ' ']), ''.join([ "Say?"
+>>>>>>> advancements
  ]), ''.join([ '"'
  , ' '])], [''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ "eyes"
  , ' ']), ''.join([ "widen,"
@@ -119429,6 +119741,7 @@ def init_scene_2_episode_2():
  , ' ']), ''.join([ '"'
  ]), ''.join([ "Grab"
  , ' ']), ''.join([ "the"
+<<<<<<< HEAD
  , ' ']), ''.join([ "girl,"
  , ' ']), ''.join([ "and"
  , ' ']), ''.join([ "let's"
@@ -119438,6 +119751,27 @@ def init_scene_2_episode_2():
         return conversation.continue_to_node(ep2_carminda_punish_lick_foot, ep2_edita_taken, False)
     ep2_carminda_punish_lick_foot.quip_function = ep2_carminda_punish_lick_foot_qf
     ep2_edita_taken = conversation.Node(1133, '''ep2 edita taken''')
+=======
+ , ' ']), ''.join([ "classroom."
+ , ' '])], [''.join([ pwutilities.bummarks(universal.state.player, ''.join([""
+, ''.join([ universal.state.player.name, "'s" , ' ']), ''.join([ universal.state.player.bum_adj() , ' ']), ''.join([ "bottom"
+ , ' ']), ''.join([ "is"
+ , ' ']), ''.join([ "coated"
+ , ' ']), ''.join([ "in"
+ , ' ']), ''.join([ "handmarks,"
+ , ' ']), ''.join([ "overlaid"
+ , ' ']), ''.join([ "by"
+ , ' ']), ''.join([ "more"
+ , ' ']), ''.join([ "than"
+ , ' ']), ''.join([ "a"
+ , ' ']), ''.join([ "few"
+ , ' ']), ''.join([ "large"
+ , ' ']), ''.join([ "paddle"
+ , ' ']), ''.join([ "marks."
+ , ' '])])) , ' '])], [], []]), justification=0)
+    ep2_airell_moreys_lesson_bratty.quip_function = ep2_airell_moreys_lesson_bratty_qf
+    ep2_airell_talk = conversation.Node(485, '''ep2 airell talk''')
+>>>>>>> advancements
     
     
     def ep2_edita_taken_qf():
@@ -119838,6 +120172,7 @@ def init_scene_2_episode_2():
  , ' ']), ''.join([ "yet!"
  ]), ''.join([ '"'
  , ' '])]]), justification=0)
+<<<<<<< HEAD
         ep2_first_floor_end.add_child(ep2_first_floor_end_kick_author)
         ep2_first_floor_end.add_player_comment(universal.format_line_translate([""
 , ''.join([ "Kick"
@@ -119846,13 +120181,34 @@ def init_scene_2_episode_2():
  , ' ']), ''.join([ "in"
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "nuts/taco"
+=======
+        return conversation.continue_to_node(ep2_airell_talk, ep2_airell_finish, False)
+    ep2_airell_talk.quip_function = ep2_airell_talk_qf
+    ep2_airell_finish = conversation.Node(486, '''ep2 airell finish''')
+    
+    
+    def ep2_airell_finish_qf():
+        ep2_airell_finish.quip = " "
+        universal.say(universal.format_text_translate([[], []]), justification=0)
+        ep2_airell_finish.add_child(ep2_airell_finish_cooperative)
+        ep2_airell_finish.add_player_comment(universal.format_line_translate([''.join([ ""
+ , ' ']), ''.join([ '"'
+ ]), ''.join([ "Y-yes"
+ , ' ']), ''.join([ "sir."
+ ]), ''.join([ '"'
+>>>>>>> advancements
  , ' '])]))
         ep2_first_floor_end.add_child(ep2_first_floor_end_sulk)
         ep2_first_floor_end.add_player_comment(universal.format_line_translate([""
 , ''.join([ "Sulk"
  , ' '])]))
+<<<<<<< HEAD
     ep2_first_floor_end.quip_function = ep2_first_floor_end_qf
     ep2_first_floor_end_kick_author = conversation.Node(1137, '''ep2 first floor end kick author''')
+=======
+    ep2_airell_finish.quip_function = ep2_airell_finish_qf
+    ep2_airell_finish_cooperative = conversation.Node(487, '''ep2 airell finish cooperative''')
+>>>>>>> advancements
     
     
     def ep2_first_floor_end_kick_author_qf():
@@ -120741,12 +121097,68 @@ def init_scene_2_episode_2():
  , ' ']), ''.join([ "me"
  , ' ']), ''.join([ "into"
  , ' ']), ''.join([ "a"
+<<<<<<< HEAD
  , ' ']), ''.join([ "girl?"
  ]), ''.join([ '"'
  , ' '])], [''.join([ "I"
  , ' ']), ''.join([ "don't"
  , ' ']), ''.join([ "like"
  , ' ']), ''.join([ "narrating"
+=======
+ , ' ']), ''.join([ "few"
+ , ' ']), ''.join([ "large"
+ , ' ']), ''.join([ "paddle"
+ , ' ']), ''.join([ "marks."
+ , ' '])])) , ' '])], [], [], []]), justification=0)
+    ep2_airell_finish_cooperative.quip_function = ep2_airell_finish_cooperative_qf
+    ep2_airell_finish_combative = conversation.Node(488, '''ep2 airell finish combative''')
+    
+    
+    def ep2_airell_finish_combative_qf():
+        airell = universal.state.get_character("Airell.person")
+        airell.litany = airell.defaultLitany = None
+        ep2_airell_finish_combative.quip = " "
+        universal.say(universal.format_text_translate([[], [], [''.join([ universal.state.player.name , ' ']), ''.join([ "doesn't"
+ , ' ']), ''.join([ "have"
+ , ' ']), ''.join([ "time"
+ , ' ']), ''.join([ "to"
+ , ' ']), ''.join([ "finish"
+ , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "sentence"
+ , ' ']), ''.join([ "before"
+ , ' ']), ''.join([ person.heshe() , ' ']), ''.join([ "is"
+ , ' ']), ''.join([ "yanked"
+ , ' ']), ''.join([ "up"
+ , ' ']), ''.join([ "onto"
+ , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "feet,"
+ , ' ']), ''.join([ "had"
+ , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ items.wearing_trousers(universal.state.player, ''.join([""
+, ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ items.wearing_underwear(universal.state.player, ''.join([""
+, ''.join([ "and"
+ , ' ']), ''.join([ person.underwearpanties() , ' '])]), ''.join([""
+])) , ' ']), ''.join([ "whisked"
+ , ' ']), ''.join([ "down"
+ , ' ']), ''.join([ "to"
+ , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "ankles,"
+ , ' '])]), ''.join([""
+, ''.join([ person.hisher() , ' ']), ''.join([ universal.state.player.clothing_below_the_waist().name , ' ']), ''.join([ "lifted"
+ , ' ']), ''.join([ items.wearing_underwear(universal.state.player, ''.join([""
+, ''.join([ "and"
+ , ' ']), ''.join([ person.underwearpanties() , ' ']), ''.join([ "whisked"
+ , ' ']), ''.join([ "down"
+ , ' ']), ''.join([ "to"
+ , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "ankles,"
+ , ' '])]), ''.join([""
+])) , ' '])]), ''.join([""
+, ''.join([ person.hisher() , ' ']), ''.join([ universal.state.player.underwear().name , ' ']), ''.join([ "whisked"
+ , ' ']), ''.join([ "down"
+ , ' ']), ''.join([ "to"
+ , ' ']), ''.join([ person.hisher() , ' ']), ''.join([ "ankles,"
+ , ' '])])) , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "then"
+ , ' ']), ''.join([ "draped"
+ , ' ']), ''.join([ "back"
+ , ' ']), ''.join([ "over"
+>>>>>>> advancements
  , ' ']), ''.join([ "the"
  , ' ']), ''.join([ "spanking"
  , ' ']), ''.join([ "of"
@@ -121102,12 +121514,33 @@ def init_scene_2_episode_2():
  , ' ']), ''.join([ "to"
  , ' ']), ''.join([ "write"
  , ' ']), ''.join([ "a"
+<<<<<<< HEAD
  , ' ']), ''.join([ "spanking"
  , ' ']), ''.join([ "scene"
  , ' ']), ''.join([ "for"
  , ' ']), ''.join([ "it."
  , ' ']), ''.join([ "That"
  , ' ']), ''.join([ "scene"
+=======
+ , ' ']), ''.join([ "little"
+ , ' ']), ''.join([ "red."
+ , ' '])])) , ' '])], [], []]), justification=0)
+    ep2_airell_finish_combative.quip_function = ep2_airell_finish_combative_qf
+    ep2_airell_busy = conversation.Node(489, '''ep2 airell busy''')
+    
+    
+    def ep2_airell_busy_qf():
+        ep2_airell_busy.quip = " "
+        universal.say(universal.format_text_translate([[], [], [''.join([ universal.state.player.name , ' ']), ''.join([ "drops"
+ , ' ']), ''.join([ "by"
+ , ' ']), ''.join([ "Airell's"
+ , ' ']), ''.join([ "training"
+ , ' ']), ''.join([ "room,"
+ , ' ']), ''.join([ "and"
+ , ' ']), ''.join([ "peeks"
+ , ' ']), ''.join([ "in."
+ , ' ']), ''.join([ "Airell"
+>>>>>>> advancements
  , ' ']), ''.join([ "is"
  , ' ']), ''.join([ "intended"
  , ' ']), ''.join([ "for"

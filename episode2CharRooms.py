@@ -167,7 +167,7 @@ def start_scene_1_episode_3(loading=False):
     music.play_music(music.THEME)
     universal.say(["Roland and Elise are getting married, and", pwutilities.name(), "is asked to escort Elise to the Lowen Monastery for the wedding. But things get a little bit complicated when an old enemy of Roland's",
     "ambushes them!"])
-    universal.set_commands("Press Enter t osave")
+    universal.set_commands("Press Enter to save")
     universal.set_command_interpreter(pwutilities.end_content_interpreter)
 
 def end_scene_1_episode3():

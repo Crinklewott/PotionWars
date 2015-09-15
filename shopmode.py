@@ -256,7 +256,7 @@ def choose_character_to_carry_item():
 def choose_character_to_carry_item_interpreter(keyEvent):
     if keyEvent.key in NUMBER_KEYS:
         num = int(pygame.key.name(keyEvent.key)) - 1
-        if 0 <= num and num < get_party.len():
+        if 0 <= num and num < len(universal.state.party):
             personWhoBoughtGood = chosenPerson
             chosenPerson = person.get_party().get_member(num)
             chosenPerson.take_item(chosenGood)
@@ -349,3 +349,192 @@ def confirm_sell_interpreter(keyEvent):
         acknowledge(window_sell_person_chosen, ())
     elif keyEvent.key == K_n:
         window_sell_person_chosen()
+
+gemList = []
+
+def done_shopping():
+    if litany is None:
+        townmode.town_mode()
+    else:
+        shopkeeper.litany = litany
+        conversation.converse_with(shopkeeper, townmode.town_mode)
+
+def select_gem(shopkeeperIn=None, doneShoppingLitany=None):
+    global partialNum
+    if sum(person.coins for person in universal.state.party) < 30 and (
+            universal.state.enchantmentFreebies == 0):
+        universal.say("You don't have enough money to enchant anything!")
+        universal.acknowledge(done_shopping, ())
+        return
+    universal.say_title("Select Enhancement Gem")
+    global gemList, litany, shopkeeper
+    shopkeeper = shopkeeperIn
+    litany = doneShoppingLitany
+    gemList = []
+    for person in universal.state.party:
+        gemList.extend([(person, item) for item in person.get_inventory() if 
+            hasattr(item, "enchantmentType")])
+        gemStrings = [''.join([person.name, ": ", item.name]) for person, item in gemList]
+    universal.say(universal.numbered_list(gemStrings))
+    universal.set_commands(["(#) Select Gem: " + str(partialNum) + '_', "<==Back"])
+    universal.set_command_interpreter(select_gem_interpreter)
+    partialNum = ''
+        
+
+chosenPersonGem = None
+def select_gem_interpreter(keyEvent, testing=False):
+    global partialNum, chosenPersonGem
+    if keyEvent.key in NUMBER_KEYS:
+        if len(gemList) < 10:
+            num = int(pygame.key.name(keyEvent.key)) - 1
+            if 0 <= num and num < len(gemList):
+                global chosenPersonGem
+                chosenPersonGem = gemList[num]
+                if not testing:
+                    select_equipment()
+        else:
+            partialNum += pygame.key.name(keyEvent.key)
+            set_commands(['(#) Select Gem:' + str(partialNum) + '_', '<==Back'])
+    elif keyEvent.key == K_BACKSPACE:
+        if len(gemList) >= 10 and partialNum != '':
+            partialNum = partialNum[:-1]
+        elif litany is None:
+            townmode.town_mode()
+        else:
+            shopkeeper.litany = litany
+            conversation.converse_with(shopkeeper, townmode.town_mode)
+    elif keyEvent.key == K_RETURN:
+        if len(gemList) >= 10 and partialNum:
+            try:
+                chosenPersonGem = gemList[int(partialNum)-1]
+            except IndexError:
+                return
+            else:
+                if not testing:
+                    select_equipment()
+
+equipmentList = []
+def select_equipment():
+    universal.say_title("Select Equipment to Enchant:")
+    global equipmentList
+    global partialNum
+    equipmentList = []
+    partialNum = ''
+    for person in universal.state.party:
+        equipmentList.extend([(person, equipment) for equipment in person.equipmentList
+             if not items.is_empty_item(equipment) and 
+            not items.is_pajamas(equipment)])
+    personEquipmentStrings = [''.join([person.printedName, ": ", equipment.name]) for
+            person, equipment in equipmentList]
+    universal.say('\n'.join(universal.numbered_list(personEquipmentStrings)))
+    universal.set_commands(["(#) Select Equipment: " + str(partialNum) + '_', "<==Back"])
+    universal.set_command_interpreter(select_equipment_interpreter)
+
+chosenEquipment = None
+def select_equipment_interpreter(keyEvent, testing=False):
+    global partialNum, chosenEquipment
+    if keyEvent.key in NUMBER_KEYS:
+        if len(equipmentList) < 10:
+            num = int(pygame.key.name(keyEvent.key)) - 1
+            if 0 <= num and num < len(equipmentList):
+                global chosenEquipment
+                chosenEquipment = equipmentList[num][1]
+                gem = chosenPersonGem[1]
+                maxEnchantment = chosenEquipment.maxEnchantment
+                enchantmentLevel = chosenEquipment.enchantment_level()
+                if maxEnchantment - enchantmentLevel < gem.cost:
+                    universal.say(' '.join(["Cannot enchant", chosenEquipment.name, "with", 
+                        gem.name + ".", gem.name, "requires", str(gem.cost), "enchantment points,",
+                        "but", chosenEquipment.name, "only has", str(maxEnchantment - 
+                            enchantmentLevel), "points available."]))
+                    universal.acknowledge(select_equipment, ())
+                else:
+                    if not testing:
+                        confirm_enchantment()
+        else:
+            partialNum += pygame.key.name(keyEvent.key)
+            set_commands(['(#) Select Equipment:' + str(partialNum) + '_', '<==Back'])
+    elif keyEvent.key == K_BACKSPACE:
+        if len(equipmentList) >= 10 and partialNum != '':
+            partialNum = partialNum[:-1]
+        elif litany is None:
+            townmode.town_mode()
+        else:
+            shopkeeper.litany = litany
+            conversation.converse_with(shopkeeper, townmode.town_mode)
+    elif keyEvent.key == K_RETURN:
+        if len(equipmentList) < 10 and partialNum:
+            try:
+                chosenEquipment = equipmentList[int(partialNum)-1][1]
+            except IndexError:
+                return
+            else:
+                gem = chosenPersonGem[1]
+                maxEnchantment = chosenEquipment.maxEnchantment
+                enchantmentLevel = chosenEquipment.enchantment_level()
+                if maxEnchantment - enchantmentLevel < gem.cost:
+                    universal.say(' '.join(["Cannot enchant", chosenEquipment.name, "with", 
+                        gem.name + ".", gem.name, "requires", str(gem.cost), "enchantment points,",
+                        "but", chosenEquipment.name, "only has", str(maxEnchantment - 
+                            enchantmentLevel), "points available."]))
+                    universal.acknowledge(select_equipment, ())
+                else:
+                    if not testing:
+                        confirm_enchantment()
+
+def confirm_enchantment():
+    universal.say_title("Confirm:")
+    universal.say(' '.join(["Enchant", chosenEquipment.name, "with", 
+        chosenPersonGem[1].name + "?"]))
+    set_commands(["(Enter) Enchant", "<==Back", "(Esc) Cancel"])
+    set_command_interpreter(confirm_enchantment_interpreter)
+
+def confirm_enchantment_interpreter(keyEvent):
+    if keyEvent.key == K_RETURN:
+        enchant_equipment()
+    elif keyEvent.key == K_ESCAPE:
+        select_gem()
+    elif keyEvent.key == K_BACKSPACE:
+        select_equipment()
+
+def enchant_equipment():
+    gem = chosenPersonGem[1]
+    enchantment = gem.enchantmentType()
+    chosenEquipment.add_enchantment(enchantment)
+    chosenPersonGem[0].drop_item(gem)
+    universal.say( ' '.join([chosenEquipment.name, "has been enchanted with", gem.name + ".",
+        "It took 3 days."]))
+    for char in universal.state.party:
+        try:
+            char.marks.pop(0)
+        except IndexError:
+            continue
+        try:
+            char.marks.pop(0)
+        except IndexError:
+            continue
+        try:
+            char.marks.pop(0)
+        except IndexError:
+            continue
+    universal.state.party.restores()
+    universal.acknowledge(select_gem, (shopkeeper, litany))
+    if universal.state.enchantmentFreebies > 0:
+        universal.state.enchantmentFreebies -= 1
+    else:
+        assert sum(person.coins for person in universal.state.party) >= 30, (
+            "We shouldn't reach this point without more than 30 coins:%d" % (
+                sum(person.coins for person in universal.state.party),))
+        totalToPay = 30
+        while totalToPay:
+            cost = totalToPay // len(universal.state.party)
+            for person in universal.state.party:
+                if person.coins >= cost:
+                    person.coins -= cost
+                    totalToPay -= cost
+    universal.state.days_pass(3)
+        
+            
+
+
+

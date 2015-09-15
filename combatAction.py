@@ -271,7 +271,8 @@ class AttackAction(CombatAction):
 
     def effect(self, inCombat=True, allies=None, enemies=None):
         """
-        Returns a triple: A string indicating what happened, the damage inflicted by the action, and this action.
+        Returns a triple: A string indicating what happened, the damage inflicted by the action, 
+        and this action.
         """
         spankingEffect = self.being_spanked()
         if spankingEffect:

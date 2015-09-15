@@ -133,12 +133,13 @@ def fight(
         party=None
 ):
     # Way too many global variables. This code really needs to be rewritten.
-    global afterCombatEvent, activeAlly, worldView, enemies, bg, allies,\
-        allySurface, enemySurface, commandSurface, clearScreen, previousMode,\
-        actionsInflicted, actionsEndured, chosenActions, optional,\
-        defeatedEnemies, defeatedAllies
-    global ambush, boss, initialAllies, initialEnemies, randomEncounter, \
-        coordinates, interpreter
+    global afterCombatEvent, activeAlly, worldView, enemies, bg, allies
+    global allySurface, enemySurface, commandSurface, clearScreen, previousMode
+    global actionsInflicted, actionsEndured, chosenActions, optional,
+    global defeatedEnemies, defeatedAllies
+    global ambush, boss, initialAllies, initialEnemies, randomEncounter,
+    global coordinates, interpreter
+
     randomEncounter = randomEncounterIn
     interpreter = catfight_interpreter if catfight else battle_interpreter
     if randomEncounter:
@@ -172,9 +173,11 @@ def fight(
     #All catfights are optional
     optional = optionalIn or catfight
     try:
-        actionsInflicted = {combatant:[] for combatant in enemiesIn + person.get_party().members + (additionalAllies if additionalAllies is not None else [])}
+        actionsInflicted = {combatant:[] for combatant in enemiesIn + person.get_party().members + 
+                (additionalAllies if additionalAllies is not None else [])}
     except TypeError:
-        actionsInflicted = {combatant:[] for combatant in [enemiesIn] + person.get_party().members + (additionalAllies if additionalAllies is not None else [])}
+        actionsInflicted = {combatant:[] for combatant in [enemiesIn] + person.get_party().members + 
+                (additionalAllies if additionalAllies is not None else [])}
     chosenActions = []
     previousMode = previousModeIn
     bg = get_background()
@@ -2007,33 +2010,52 @@ def improve_characters(victorious, afterCombatEvent=None):
     else:
         acknowledge(previousMode)
 
+def process_spell_points(ally):
+    if ally.tier:
+        spellThreshold = ally.tier * universal.STAT_GROWTH_RATE_MULTIPLIER
+    else:
+        spellThreshold = person.TIER_0_SPELL_POINTS
+    for i in range(len(ally.increaseSpellPoints)): 
+        while ally.increaseSpellPoints[i] >= spellThreshold:
+            try:
+                learn_spell(ally, i+universal.COMBAT_MAGIC)
+            except AllSpellsLearned:
+                break
+            else:
+                ally.increaseSpellPoints -= spellThreshold
+
+
+class AllSpellsLearned(Exception):
+    pass
+
 def learn_spell(ally, spellSchool):
     """
-    TODO: Currently, the spells learned are random within a given school. However, this needs to be modified to give the player a choice. I'll implement for a choice as a part of episode 3, when I rework the GUI. Don't want to add too much more to the
-    GUI until I've reworked it.
+    Learns the next spell in the list. 
+    Spells are learned in the following order: basic, advanced, expert (if the ally is specialized
+    in that type of spell), next tier.
     """
     spellIndex = person.get_spell_index(spellSchool)
     unknownSpells = []
+    newSpell = None
     for i in range(0, ally.tier+1):
-        #Need to learn basic before you can learn advanced before you can learn specialized. Can only learn specialized if you are specialized in this particular type of
-        #magic.
-        try:
-            if not ally.knows_spell(person.allSpells[i][spellIndex][0]):
-                #We weight the spells based on their tier level. Spells that have tier 0 have 1 weight, spells of tier 1 have 2 weight and so on. This increases the chances
-                #of a character learning a more powerful spell sooner.
-                unknownSpells.append(person.allSpells[i][spellIndex][0])    
-            elif not ally.knows_spell(person.allSpells[i][spellIndex][1]):
-                unknownSpells.append(person.allSpells[i][spellIndex][1])    
-            elif ally.specialization == spellSchool and not ally.knows_spell(person.allSpells[i][spellIndex][2]):
-                unknownSpells.append(person.allSpells[i][spellIndex][2])    
-        except TypeError:
-            continue
-    if len(unknownSpells) > 0:
-        learnedSpell = unknownSpells[random.randint(0, len(unknownSpells)-1)]
-        ally.learn_spell(learnedSpell)
-        ally.add_quick_spell(learnedSpell)
-        universal.say(format_line([ally.name, 'has learned the spell', learnedSpell.name + '!\n']))
+        #Need to learn basic before you can learn advanced before you can learn specialized. Can 
+        #only learn specialized if you are specialized in this particular type of magic.
+        basicSpell = person.allSpells[i][spellIndex][0]
+        advancedSpell = person.allSpells[i][spellIndex][1]
+        expertSpell = person.allSpells[i][spellIndex][2]
+        if not ally.knows_spell(basicSpell):
+            newSpell = basicSpell
+            break
+        elif not ally.knows_spell(advancedSpell):
+            newSpell = advancedSpell
+            break
+        elif ally.specialization == spellSchool and not ally.knows_spell(expertSpell):
+            newSpell = expertSpell
+            break
+    if newSpell:
+        ally.learn_spell(newSpell)
+        universal.say(' '.join([ally.printedName, 'has learned the spell', newSpell.name + "!"]))
     else:
-        ally.increaseSpellPoints[i-universal.COMBAT_MAGIC] = ally.tier * universal.STAT_GROWTH_RATE_MULTIPLIER if ally.tier else person.TIER_0_SPELL_POINTS
+        raise AllSpellsLearned()
         
 
