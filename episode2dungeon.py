@@ -61,7 +61,6 @@ def e1_10_6():
         pwutilities.add_keyword('ep2Marketplace')
         pwutilities.trigger_event("ep2 marketplace", "Marketplace")
         return True
-
 slumsLevel1Events[10][6] = e1_10_6
 
 def e1_16_11():
@@ -139,6 +138,7 @@ def e1_11_16():
         return True
     else:
         return False
+slumsLevel1Events[11][16] = e1_11_16
 
 def e1_2_11():
     if not 'ep2VisitedSquatters' in pwutilities.keywords():
@@ -147,6 +147,7 @@ def e1_2_11():
         return True
     else:
         return False
+slumsLevel1Events[2][11] = e1_2_11
 
 def e1_1_17():
     if ('ep2BrothelMorning' in pwutilities.keywords() and 
@@ -154,29 +155,15 @@ def e1_1_17():
             not 'ep2FoundEdita' in pwutilities.keywords()):
         pwutilities.add_keyword('ep2FamilySquatterFight')
         pwutilities.trigger_event('ep2 squatter family')
+slumsLevel1Events[1][17] = e1_1_17
 
 def e1_1_18():
     if ('ep2BrothelMorning' in pwutilities.keywords() and
             not 'ep2FoundEdita' in pwutilities.keywords()):
         pwutilities.add_keyword('ep2FoundEdita')
         pwutilities.trigger_event('ep2 squatter edita')
-
 slumsLevel1Events[2][11] = e1_2_11
 
-slumsLevel1Events[0][0] = e1_0_0
-slumsLevel1Events[10][6] = e1_10_6
-slumsLevel1Events[16][11] = e1_16_11
-slumsLevel1Events[18][18] = e1_18_18
-slumsLevel1Events[10][19] = e1_10_19
-slumsLevel1Events[9][19] = e1_10_19
-slumsLevel1Events[11][19] = e1_10_19
-slumsLevel1Events[11][16] = e1_11_16
-slumsLevel1Events[2][11] = e1_2_11
-slumsLevel1Events[1][17] = e1_1_17
-slumsLevel1Events[1][18] = e1_1_18
-
-slumsLevel1Events[1][16] = e1_1_16
-        
 def e1_1_18():
     return pwutilities.play_event('ep2SquatterEdita', 'ep2 squatter edita')
 
